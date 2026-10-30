@@ -131,3 +131,6 @@ body.flicker #sweep{animation:sweepmove .7s ease-in}
 @media (prefers-reduced-motion:reduce){
   body.flicker #screen-title .title-stack,body.flicker #sweep{animation:none}
 }
+
+/* Logos with dark artwork stay readable on the dark modern theme */
+body[data-era-filter="off"] .badge img{background:#E6DCC6;border-radius:50%}
