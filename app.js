@@ -450,10 +450,11 @@
     Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
     return n;
   }
-  function lineChart(vals, avg, fmt) {
+  function lineChart(vals, avg, fmt, tight, unit) {
     var W = 340, H = 150, L = 30, R = 8, T = 10, B = 18;
     var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, class: 'chart', role: 'img' });
-    var hi = Math.max.apply(null, vals.concat(avg || 0)), lo = Math.min.apply(null, vals.concat(avg === undefined ? 0 : avg, 0));
+    var hi = Math.max.apply(null, vals.concat(avg || 0)), lo = Math.min.apply(null, vals.concat(avg === undefined ? (tight ? 999 : 0) : avg, tight ? 999 : 0));
+    if (tight) { lo = Math.floor(lo - 2); hi = Math.ceil(hi + 2); }
     if (hi === lo) hi = lo + 1;
     function X(i) { return L + (vals.length < 2 ? (W - L - R) / 2 : i * (W - L - R) / (vals.length - 1)); }
     function Y(v) { return T + (H - T - B) * (1 - (v - lo) / (hi - lo)); }
@@ -466,8 +467,8 @@
     }
     svg.appendChild(svgEl('polyline', { points: vals.map(function (v, i) { return X(i) + ',' + Y(v); }).join(' '), class: 'ln' }));
     vals.forEach(function (v, i) { svg.appendChild(svgEl('circle', { cx: X(i), cy: Y(v), r: vals.length > 30 ? 1.8 : 3, class: 'dot' })); });
-    var a = svgEl('text', { x: L, y: H - 4, class: 'axis' }); a.textContent = 'Game 1'; svg.appendChild(a);
-    var z = svgEl('text', { x: W - R, y: H - 4, class: 'axis', 'text-anchor': 'end' }); z.textContent = 'Game ' + vals.length; svg.appendChild(z);
+    var a = svgEl('text', { x: L, y: H - 4, class: 'axis' }); a.textContent = (unit || 'Game') + ' 1'; svg.appendChild(a);
+    var z = svgEl('text', { x: W - R, y: H - 4, class: 'axis', 'text-anchor': 'end' }); z.textContent = (unit || 'Game') + ' ' + vals.length; svg.appendChild(z);
     return svg;
   }
   function pairBars(a, b) {
@@ -675,11 +676,13 @@
       g[1].forEach(function (r) {
         var row = ratingRow(r[0], p.ratings[r[1]]);
         row.className += ' wide3';
+        if (p.prev && p.prev[r[1]] !== undefined) { var dv = p.ratings[r[1]] - p.prev[r[1]]; row.firstChild.textContent = r[0] + ' ' + (dv > 0 ? '\u25B2' + dv : dv < 0 ? '\u25BC' + Math.abs(dv) : '\u2013'); row.firstChild.className = dv > 0 ? 'up' : dv < 0 ? 'down' : ''; }
         var d = Math.round(p.ratings[r[1]] - avg(r[1]));
         row.lastChild.textContent = p.ratings[r[1]] + ' (' + (d > 0 ? '+' : '') + d + ')';
         body.appendChild(row);
       });
     });
+    if (p.prev) body.appendChild(el('p', 'sub', 'Arrows show the change since last season. Overall went from ' + p.prev.ovr + ' to ' + p.ratings.ovr + '.'));
     body.appendChild(el('p', 'sub', 'The number in brackets is the gap to the average ' + ({ G: 'guard', F: 'forward', C: 'centre' }[grp(p)]) + ' in the league.'));
   }
 
@@ -739,6 +742,12 @@
     if (cur && cur.g) row(seasonLabel(save.year), p.team ? oppName(p.team) : '', cur);
     if (!rows.length) { body.appendChild(el('p', 'sub', 'No seasons on record yet.')); return; }
     body.appendChild(dataTable(['Season', 'Team', 'GP', 'PTS', 'AST', 'FG%', 'FT%'], rows));
+    var oh = (p.ovrHist || []).map(function (h) { return h.o; }).concat([p.ratings.ovr]);
+    if (oh.length >= 2) {
+      body.appendChild(el('div', 'group-title', 'Overall rating by season'));
+      body.appendChild(lineChart(oh, undefined, function (v) { return Math.round(v); }, true, 'Season'));
+      body.appendChild(el('p', 'sub', 'Started at ' + oh[0] + ', now ' + oh[oh.length - 1] + ' (' + (oh[oh.length - 1] - oh[0] >= 0 ? '+' : '') + (oh[oh.length - 1] - oh[0]) + ').'));
+    }
     var all = { g: 0, pts: 0, ast: 0, fg: 0, fga: 0, ft: 0, fta: 0 };
     (p.career || []).forEach(function (c) { Object.keys(all).forEach(function (k) { all[k] += c[k] || 0; }); });
     if (cur && cur.g) Object.keys(all).forEach(function (k) { all[k] += cur[k] || 0; });
@@ -964,6 +973,7 @@
       var us = g.home === save.myId ? g.hs : g.as, them = g.home === save.myId ? g.as : g.hs;
       Events.afterGame(save, teamById(save.myId), null, rosterOf(save.myId), us > them);
     });
+    if (save.phase === 'regular') results.forEach(function (g) { League.noteTeamGame(save, g.home, g.away, g.hs, g.as); });
     Season.record(save, results);
     League.aiMoves(save, save.myId, save.ids.map(teamById));
     rosterCache = {};
@@ -1012,6 +1022,7 @@
     League.tickInjuries(save, me.id); League.tickInjuries(save, opp.id);
     var before = {}, stb = Season.standings(save);
     Object.keys(stb).forEach(function (d) { before[d] = stb[d][0].id; });
+    if (save.phase === 'regular') others.concat([mineResult]).forEach(function (g) { League.noteTeamGame(save, g.home, g.away, g.hs, g.as); });
     Season.record(save, others.concat([mineResult]));
     League.aiMoves(save, me.id, save.ids.map(teamById));
     rosterCache = {};
@@ -1500,6 +1511,53 @@
     return wrap;
   }
 
+  /* ---------- records and history ---------- */
+  var RV = { tab: 'Champions' };
+  var RTABS = ['Champions', 'Game highs', 'Season highs', 'Career', 'Honours'];
+  function openRecords() { RV.tab = RV.tab || 'Champions'; renderRecords(); show('screen-records'); }
+  function renderRecords() {
+    var v = League.recordsView(save), body = document.getElementById('records-body'), tabs = document.getElementById('records-tabs');
+    tabs.textContent = ''; body.textContent = '';
+    RTABS.forEach(function (t) {
+      var b = el('button', t === RV.tab ? 'on' : '', t); b.type = 'button';
+      b.addEventListener('click', function () { RV.tab = t; renderRecords(); document.getElementById('screen-records').scrollTop = 0; });
+      tabs.appendChild(b);
+    });
+    var city = function (id) { var t = id && teamById(id); return t ? t.city : '\u2013'; };
+    function section(title, heads, rows, empty) {
+      body.appendChild(el('h3', 'box-title', title));
+      if (!rows.length) { body.appendChild(el('p', 'sub', empty || 'Nothing on record yet.')); return; }
+      body.appendChild(dataTable(heads, rows));
+    }
+    function plr(p) { return p.name; }
+    if (RV.tab === 'Champions') {
+      section('Most championships', ['#', 'Club', 'Titles', 'Years'], v.teamTitles.map(function (x, i) { return [i + 1, city(x.id), x.n, x.years.map(function (y) { return seasonLabel(y).slice(-5); }).join(', ')]; }), 'No champions yet. The first one is crowned at the end of this season.');
+      section('Most titles by a player', ['#', 'Player', 'Titles'], v.playerTitles.map(function (x, i) { return [i + 1, plr(x.p), x.n]; }), 'No player has won a title yet.');
+      section('Champions by year', ['Season', 'Champion', 'Your club'], v.byYear.map(function (h) { return [seasonLabel(h.year), city(h.champion), h.rec || '']; }));
+    } else if (RV.tab === 'Game highs') {
+      var names = { pts: 'Most points in a game', ast: 'Most assists in a game', trb: 'Most rebounds in a game', fg: 'Most field goals in a game', ft: 'Most free throws in a game', stl: 'Most steals in a game', blk: 'Most blocks in a game' };
+      Object.keys(names).forEach(function (k) {
+        var list = (v.rec.game[k] || []).slice(0, 5);
+        section(names[k], ['#', 'Player', k.toUpperCase(), 'Opp', 'Season'], list.map(function (e, i) { return [i + 1, e.name, e.v, city(e.o), seasonLabel(e.y).slice(-5)]; }), 'Tracked from this save onward.');
+      });
+      section('Most points by a team', ['#', 'Club', 'Pts', 'Opp', 'Season'], (v.rec.team.score || []).slice(0, 5).map(function (e, i) { return [i + 1, city(e.t), e.v, city(e.o), seasonLabel(e.y).slice(-5)]; }));
+      section('Biggest margin of victory', ['#', 'Winner', 'Score', 'Opp', 'Season'], (v.rec.team.margin || []).slice(0, 5).map(function (e, i) { return [i + 1, city(e.t), e.sc + ' (+' + e.v + ')', city(e.o), seasonLabel(e.y).slice(-5)]; }));
+    } else if (RV.tab === 'Season highs') {
+      var sn = { ppg: 'Points per game', apg: 'Assists per game', pts: 'Total points in a season', ast: 'Total assists in a season' };
+      Object.keys(sn).forEach(function (k) {
+        section(sn[k], ['#', 'Player', k === 'ppg' || k === 'apg' ? 'Avg' : 'Total', 'Club', 'Season'], (v.rec.season[k] || []).slice(0, 10).map(function (e, i) { return [i + 1, e.name, e.v, city(e.t), seasonLabel(e.y).slice(-5)]; }), 'Filled in when each season ends.');
+      });
+    } else if (RV.tab === 'Career') {
+      [['Career points', v.career.pts, function (x) { return x; }], ['Career assists', v.career.ast, function (x) { return x; }], ['Games played', v.career.g, function (x) { return x; }], ['Points per game (20+ games)', v.career.ppg, function (x) { return x.toFixed(1); }], ['Field goal % (100+ shots)', v.career.fg, function (x) { return x.toFixed(1) + '%'; }], ['Free throw % (100+ tries)', v.career.ft, function (x) { return x.toFixed(1) + '%'; }]].forEach(function (c) {
+        section(c[0], ['#', 'Player', 'Value', 'Club'], c[1].map(function (e, i) { return [i + 1, e.p.name, c[2](e.v), e.p.team ? city(e.p.team) : (e.p.status === 'retired' ? 'Retired' : 'Free agent')]; }));
+      });
+    } else {
+      ['Most Valuable Player', 'Scoring champion', 'Assists leader'].forEach(function (k) {
+        section(k + 's', ['Season', 'Player'], (v.honours[k] || []).map(function (h) { return [seasonLabel(h.y), h.p.name]; }), 'Awarded when each season ends.');
+      });
+    }
+  }
+
   /* ---------- owner ---------- */
   function ensureOwner() {
     if (save.ownerTrust === undefined) save.ownerTrust = 60;
@@ -1740,6 +1798,10 @@
     tb.type = 'button';
     tb.addEventListener('click', function () { openTrade('season'); });
     bodyEl.appendChild(tb);
+    var hb = el('button', 'btn wide', 'Records & history');
+    hb.type = 'button';
+    hb.addEventListener('click', openRecords);
+    bodyEl.appendChild(hb);
   }
 
 
@@ -2078,6 +2140,7 @@
         if (q.status === 'active' && q.team === save.champion && x && x.g) award(q.id, 'League champion');
       });
     })();
+    League.noteSeason(save);
     Object.keys(save.lg.stats).forEach(function (id) {
       var x = save.lg.stats[id], p = League.byId(save, id);
       if (!p || !x.g) return;
@@ -2177,11 +2240,39 @@
       ow.appendChild(ratingRow('Owner trust', r.owner.trust));
       body.appendChild(ow);
       if (r.owner.fired) {
-        offDock('Return to the menu', function () {
-          store.set('save', null);
-          continueBtn.disabled = true;
-          show('screen-title');
+        body.appendChild(el('h3', 'box-title', 'Clubs that want you'));
+        body.appendChild(el('p', 'sub', 'Word travels fast. Three owners want to talk. Your new club starts with its own roster and a fresh start with the owner.'));
+        if (!r.offers) {
+          r.offers = save.ids.filter(function (id) { return id !== me.id; }).sort(function () { return Math.random() - 0.5; }).slice(0, 3);
+          persist();
+        }
+        r.offers.forEach(function (id) {
+          var t = teamById(id), c = el('button', 'card');
+          c.type = 'button';
+          c.appendChild(teamBadge(t));
+          var tx = el('span');
+          tx.appendChild(el('strong', null, t.city + ' ' + t.name));
+          tx.appendChild(el('span', 'meta', save.rec[id].w + '-' + save.rec[id].l + ' last season \u00B7 team rating ' + teamRating(id) + ' \u00B7 payroll ' + money(League.payroll(save, id))));
+          c.appendChild(tx);
+          c.addEventListener('click', function () {
+            League.rightsOf(save, me.id).forEach(function (p) { League.release(save, p); });
+            save.myId = id;
+            save.ownerTrust = 50;
+            save.owner = null;
+            var mo = Events.mood(save);
+            mo.fans = 50; mo.coach = 50; mo.streak = 0;
+            save.off.dev = [];
+            r.owner.fired = false;
+            r.owner.msg = 'You took over the ' + t.city + ' ' + t.name + '.';
+            r.owner.trust = 50;
+            r.offers = null;
+            rosterCache = {};
+            persist();
+            renderOff();
+          });
+          body.appendChild(c);
         });
+        offDock('Choose a club above', function () {}, true);
         return;
       }
     }

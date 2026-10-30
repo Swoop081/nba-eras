@@ -5,7 +5,7 @@
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou', 'dur'];
   var KNOWN_SALARY = { 'joe-fulks': 8000, 'tom-king': 16500 };
   var CAP = { 1946: 55000 };
-  var MIN_ROSTER = 9, MAX_ROSTER = 15;
+  var MIN_ROSTER = 9, MAX_ROSTER = 15, OPENING_ROSTER = 12;
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
@@ -52,11 +52,27 @@
         list.forEach(function (p) { if (!p.known) p.salary = Math.max(1000, round100(p.salary * f)); });
       }
     });
+    /* Opening night: every club carries the same number of players. Extras go to the free-agent pool; short clubs sign from it. */
     teams.forEach(function (t) {
       lg.players.filter(function (p) { return p.team === t.id; })
         .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })
-        .slice(MAX_ROSTER).forEach(function (p) { p.team = null; });
+        .slice(OPENING_ROSTER).forEach(function (p) { p.team = null; });
     });
+    var guard = 0, short = true;
+    while (short && guard++ < 40) {
+      short = false;
+      teams.forEach(function (t) {
+        var list = lg.players.filter(function (p) { return p.team === t.id; });
+        if (list.length >= OPENING_ROSTER) return;
+        short = true;
+        var pay = list.reduce(function (a, p) { return a + p.salary; }, 0);
+        var fa = lg.players.filter(function (p) { return !p.team && p.status === 'active'; })
+          .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
+        if (!fa) { short = false; return; }
+        fa.team = t.id; fa.yrs = 1 + Math.floor(Math.random() * 2);
+        fa.salary = Math.min(fa.salary, Math.max(1000, lg.cap - pay));
+      });
+    }
     save.lg = lg;
     ensurePicks(save, teams);
   }
@@ -79,6 +95,7 @@
       STAT_KEYS.forEach(function (k) { x[k] = (x[k] || 0) + (l.s[k] || 0); });
       if (meta && played) {
         var home = i < meta.nh, tid = home ? meta.h : meta.a;
+        noteHigh(save, l, tid, home ? meta.a : meta.h, meta.day);
         if (tid === save.myId) {
           (x.log || (x.log = [])).push([meta.day || 0, home ? meta.a : meta.h, home ? 1 : 0, home ? meta.hs : meta.as, home ? meta.as : meta.hs,
             l.s.min || 0, l.s.pts || 0, l.s.ast || 0, l.s.trb || 0, l.s.stl || 0, l.s.blk || 0, l.s.tov || 0, l.s.pf || 0, l.s.fg || 0, l.s.fga || 0, l.s.ft || 0, l.s.fta || 0]);
@@ -110,6 +127,8 @@
     save.lg.players.forEach(function (p) {
       if (p.status !== 'active') return;
       var before = p.ratings.ovr, age = p.age || 26;
+      p.prev = JSON.parse(JSON.stringify(p.ratings)); p.prevPot = p.pot;
+      (p.ovrHist || (p.ovrHist = [])).push({ y: save.year, o: before, a: age });
       p.age = age + 1;
       var d = ageDelta(age + 1) + (age + 1 <= 25 ? (p.pot - before) * 0.2 : 0) + gauss() * 1.3;
       var dr = d / 0.6;
@@ -461,6 +480,95 @@
   function pickId(k) { return 'pk-' + k.y + '-' + k.r + '-' + k.o; }
   function pickLabel(k, teams) { return k.y + ' round ' + k.r + ' pick' + (k.o !== k.t ? ' (from ' + cityOf(teams, k.o) + ')' : ''); }
 
+
+  /* ---------- records: game highs, season highs, champions ---------- */
+  var GAME_KEYS = ['pts', 'ast', 'trb', 'fg', 'ft', 'stl', 'blk'];
+  function recs(save) {
+    var r = save.lg.rec || (save.lg.rec = {});
+    r.game = r.game || {}; r.season = r.season || {}; r.team = r.team || {};
+    return r;
+  }
+  function pushTop(list, e, n) {
+    list.push(e);
+    list.sort(function (a, b) { return b.v - a.v; });
+    if (list.length > n) list.length = n;
+  }
+  function noteHigh(save, l, tid, oid, day) {
+    var r = recs(save);
+    GAME_KEYS.forEach(function (k) {
+      var v = l.s[k] || 0;
+      if (v <= 0) return;
+      var list = r.game[k] || (r.game[k] = []);
+      if (list.length >= 10 && v <= list[list.length - 1].v) return;
+      pushTop(list, { v: v, id: l.id, name: l.name, t: tid, o: oid, y: save.year, d: day || 0 }, 10);
+    });
+  }
+  function noteTeamGame(save, hId, aId, hs, as) {
+    var r = recs(save);
+    [[hId, aId, hs, as], [aId, hId, as, hs]].forEach(function (g) {
+      pushTop(r.team.score || (r.team.score = []), { v: g[2], t: g[0], o: g[1], y: save.year, d: save.day || 0 }, 10);
+    });
+    var w = hs > as ? [hId, aId] : [aId, hId];
+    pushTop(r.team.margin || (r.team.margin = []), { v: Math.abs(hs - as), t: w[0], o: w[1], y: save.year, d: save.day || 0, sc: Math.max(hs, as) + '-' + Math.min(hs, as) }, 10);
+  }
+  function noteSeason(save) {
+    var r = recs(save), need = Math.round(save.days.length * 0.3);
+    Object.keys(save.lg.stats).forEach(function (id) {
+      var x = save.lg.stats[id], p = byId(save, id);
+      if (!p || !x.g) return;
+      var base = { id: id, name: p.name, t: p.team, y: save.year };
+      if (x.g >= need) {
+        pushTop(r.season.ppg || (r.season.ppg = []), Object.assign({ v: +(x.pts / x.g).toFixed(1) }, base), 10);
+        pushTop(r.season.apg || (r.season.apg = []), Object.assign({ v: +(x.ast / x.g).toFixed(1) }, base), 10);
+      }
+      pushTop(r.season.pts || (r.season.pts = []), Object.assign({ v: x.pts }, base), 10);
+      pushTop(r.season.ast || (r.season.ast = []), Object.assign({ v: x.ast }, base), 10);
+    });
+  }
+  /* Everything the records screen needs, computed from the save. */
+  function recordsView(save) {
+    var r = recs(save), champs = {}, byYear = [];
+    (save.lg.history || []).forEach(function (h) {
+      if (!h.champion) return;
+      (champs[h.champion] || (champs[h.champion] = [])).push(h.year);
+      byYear.push(h);
+    });
+    var teamTitles = Object.keys(champs).map(function (id) { return { id: id, n: champs[id].length, years: champs[id].sort() }; })
+      .sort(function (a, b) { return b.n - a.n || a.years[a.years.length - 1] - b.years[b.years.length - 1]; });
+    var career = {};
+    save.lg.players.forEach(function (p) {
+      var t = { g: 0, pts: 0, ast: 0, fg: 0, fga: 0, ft: 0, fta: 0 };
+      (p.career || []).forEach(function (c) { Object.keys(t).forEach(function (k) { t[k] += c[k] || 0; }); });
+      var cur = save.lg.stats[p.id];
+      if (cur && cur.g) Object.keys(t).forEach(function (k) { t[k] += cur[k] || 0; });
+      if (t.g) career[p.id] = { p: p, t: t };
+    });
+    var rows = Object.keys(career).map(function (id) { return career[id]; });
+    function top(f, n, min) {
+      return rows.filter(function (x) { return !min || x.t.g >= min; }).map(function (x) { return { p: x.p, v: f(x.t) }; }).sort(function (a, b) { return b.v - a.v; }).slice(0, n || 10);
+    }
+    var playerTitles = save.lg.players.map(function (p) {
+      var yrs = (p.awards || []).filter(function (a) { return a.a === 'League champion'; }).map(function (a) { return a.y; });
+      return { p: p, n: yrs.length, years: yrs };
+    }).filter(function (x) { return x.n; }).sort(function (a, b) { return b.n - a.n; }).slice(0, 10);
+    var honours = {};
+    save.lg.players.forEach(function (p) {
+      (p.awards || []).forEach(function (a) {
+        if (a.a !== 'Most Valuable Player' && a.a !== 'Scoring champion' && a.a !== 'Assists leader') return;
+        var h = honours[a.a] || (honours[a.a] = []);
+        h.push({ y: a.y, p: p });
+      });
+    });
+    Object.keys(honours).forEach(function (k) { honours[k].sort(function (a, b) { return b.y - a.y; }); });
+    return {
+      rec: r, teamTitles: teamTitles, byYear: byYear.sort(function (a, b) { return b.year - a.year; }), playerTitles: playerTitles, honours: honours,
+      career: {
+        pts: top(function (t) { return t.pts; }), ast: top(function (t) { return t.ast; }), g: top(function (t) { return t.g; }),
+        ppg: top(function (t) { return t.g ? t.pts / t.g : 0; }, 10, 20), fg: top(function (t) { return t.fga ? 100 * t.fg / t.fga : 0; }, 10, 100), ft: top(function (t) { return t.fta ? 100 * t.ft / t.fta : 0; }, 10, 100)
+      }
+    };
+  }
+
   /* ---------- AI clubs: trades, signings, offers ---------- */
   function wire(save, text) {
     var w = save.lg.wire || (save.lg.wire = []);
@@ -574,6 +682,7 @@
 
   root.League = {
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
+    noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,

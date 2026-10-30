@@ -336,3 +336,4 @@ body[data-era-filter="off"]{--court:#B8763C;--court-line:#F6E7CF}
 .br-t{display:flex;justify-content:space-between;gap:8px;padding:4px 2px;font-size:15px}
 .br-t.win{font-weight:800}.br-t.out{opacity:.5}.br-t.me span{box-shadow:inset 3px 0 0 var(--accent);padding-left:6px}
 .br-s small{color:var(--muted);font-size:12px}
+.bar-row .up{color:#2E7D32;font-weight:700}.bar-row .down{color:#A33A2E;font-weight:700}
