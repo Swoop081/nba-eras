@@ -10,7 +10,7 @@ from PIL import Image
 from rembg import remove, new_session
 
 FACE_W = 0.56   # face width as a share of the frame (the existing portraits average 0.56)
-FACE_TOP = 0.26  # top of the face box, as a share of the frame height
+HEAD_GAP = 0.06  # gap above the top of the hair, as a share of the frame height
 SIZE = 600
 
 def face_box(im):
@@ -35,7 +35,10 @@ def main(src, pid):
         x, y, w, h = [int(v) for v in box]
         side = w / FACE_W
         left = x + w / 2 - side / 2
-        top = y - FACE_TOP * side
+        alpha = np.array(cut)[:, :, 3]
+        rows = np.where((alpha > 128).sum(1) > 3)[0]
+        hair = rows[0] if len(rows) else y
+        top = hair - HEAD_GAP * side
         canvas = Image.new('RGBA', (int(side), int(side)), (0, 0, 0, 0))
         canvas.paste(cut, (int(-left), int(-top)))
         crop = canvas
