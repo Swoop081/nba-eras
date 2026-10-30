@@ -366,7 +366,7 @@
     wrap.setAttribute('aria-hidden', 'true');
     wrap.appendChild(el('span', null, playerInitials(p.name)));
     var exts = [];
-    ['players', 'photos'].forEach(function (d) { ['jpg', 'png', 'webp'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
+    ['players', 'photos'].forEach(function (d) { ['webp', 'png', 'jpg'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
     var i = 0;
     var img = new Image();
     img.onload = function () { wrap.textContent = ''; wrap.appendChild(img); };
@@ -755,7 +755,7 @@
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
     var squad = League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     var pay = League.payroll(save, team.id);
-    document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap';
+    document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
     squad.forEach(function (p) {
       var holder = el('div', 'player');
       var card = el('button', 'card');
@@ -937,6 +937,15 @@
     var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
     return r.length ? Math.round(r.reduce(function (a, b) { return a + b; }, 0) / r.length) : 0;
   }
+  function sideRating(id, w) {
+    var top = rosterOf(id).slice().sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(0, 8);
+    if (!top.length) return 0;
+    var tot = 0;
+    top.forEach(function (p) { var v = 0; Object.keys(w).forEach(function (k) { v += (p.ratings[k] || 0) * w[k]; }); tot += v; });
+    return Math.round(tot / top.length);
+  }
+  function offRating(id) { return sideRating(id, { sco: 0.4, sht: 0.25, ft: 0.1, ply: 0.15, orb: 0.1 }); }
+  function defRating(id) { return sideRating(id, { drb: 0.35, stl: 0.25, blk: 0.25, fou: 0.15 }); }
   function rosterFor(id) {
     var h = League.healthy(save, id);
     return id === save.myId ? Events.moraleRoster(save, h) : h;
@@ -1041,6 +1050,19 @@
   var OPP_SPOTS = [[50, 12], [29, 27], [71, 27], [36, 59], [64, 59]];
   var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
 
+  /* Puts the opponent's portrait inside the little circle when we have one. */
+  function attachFace(node, p) {
+    var exts = ['webp', 'png', 'jpg'], k = 0, img = new Image();
+    node.classList.remove('face');
+    node.textContent = lastName(p.name).slice(0, 3).toUpperCase();
+    node.dataset.pid = p.id;
+    var lab = el('span', 'opn', lastName(p.name));
+    node.appendChild(lab);
+    img.onload = function () { if (node.dataset.pid !== p.id) return; node.textContent = ''; node.classList.add('face'); node.appendChild(img); node.appendChild(lab); };
+    img.onerror = function () { if (k < exts.length) img.src = 'assets/players/' + p.id + '.' + exts[k++]; };
+    img.onerror();
+  }
+
   function lastName(n) { var p = n.split(' '); return p[p.length - 1]; }
   function periodLabel(g) { return g.q < 4 ? 'Q' + (g.q + 1) : (g.q === 4 ? 'OT' : 'OT' + (g.q - 3)); }
   function clockText(g) {
@@ -1079,7 +1101,8 @@
     COURT_SPOTS.forEach(function (sp, i) {
       var p = g.onH[i].p, o = g.onA[i].p;
       lv.ids.push(p.id + '|' + o.id);
-      var d = el('div', 'op', lastName(o.name).slice(0, 3).toUpperCase());
+      var d = el('div', 'op');
+      attachFace(d, o);
       d.style.left = OPP_SPOTS[i][0] + '%';
       d.style.top = OPP_SPOTS[i][1] + '%';
       court.appendChild(d); lv.op.push(d);
@@ -1144,7 +1167,7 @@
         slot.el.appendChild(slot.pp);
         slot.el.classList.remove('flash'); void slot.el.offsetWidth; slot.el.classList.add('flash');
       }
-      if (old[1] !== o.id) lv.op[i].textContent = lastName(o.name).slice(0, 3).toUpperCase();
+      if (old[1] !== o.id) attachFace(lv.op[i], o);
     }
   }
 
@@ -1477,6 +1500,88 @@
     return wrap;
   }
 
+  /* ---------- owner ---------- */
+  function ensureOwner() {
+    if (save.ownerTrust === undefined) save.ownerTrust = 60;
+    if (save.owner) return;
+    var ids = save.ids.slice().sort(function (x, y) { return teamRating(y) - teamRating(x); });
+    var rank = ids.indexOf(save.myId) + 1, n = ids.length, g = gamesFor(save.myId);
+    if (rank <= 2) save.owner = { k: 'title', lvl: 3, text: 'Win the championship' };
+    else if (rank <= Math.ceil(n * 0.6)) save.owner = { k: 'playoffs', lvl: 2, text: 'Make the playoffs' };
+    else save.owner = { k: 'wins', lvl: 1, n: Math.round(g * 0.4), text: 'Win ' + Math.round(g * 0.4) + ' games and show some pride' };
+  }
+  function madePlayoffs() {
+    var po = save.playoffs;
+    if (!po) return false;
+    return po.rounds.some(function (round) { return round.some(function (s) { return s.a === save.myId || s.b === save.myId; }); }) || po.semiWinner === save.myId;
+  }
+  function judgeOwner() {
+    ensureOwner();
+    var rec = save.rec[save.myId], champ = save.champion === save.myId, made = madePlayoffs();
+    var got = champ ? 3 : made ? 2 : (save.owner.k === 'wins' && rec.w >= save.owner.n ? 1.5 : 1);
+    var want = save.owner.lvl, d;
+    if (got > want) d = 12 + 8 * (got - want);
+    else if (got === want) d = 10;
+    else d = -(14 + 7 * (want - got));
+    var before = save.ownerTrust;
+    save.ownerTrust = Math.max(0, Math.min(100, before + d));
+    var fired = save.ownerTrust <= 0 || (save.ownerTrust <= 15 && d < 0 && before <= 30);
+    var msg = got > want ? 'The owner is delighted. You beat his goal.' : got === want ? 'The owner is satisfied. You met his goal.' : 'The owner is unhappy. You missed his goal.';
+    if (fired) msg = 'The owner has lost patience. You are dismissed.';
+    return { goal: save.owner.text, delta: d, trust: save.ownerTrust, fired: fired, msg: msg };
+  }
+
+  /* ---------- season recap ---------- */
+  function buildRecap() {
+    var me = save.myId, rows = Season.standings(save)[save.division[me]], pos = 0;
+    rows.forEach(function (r, i) { if (r.id === me) pos = i + 1; });
+    var best = null, worst = null;
+    save.results.forEach(function (r) {
+      if (r.h !== me && r.a !== me) return;
+      var us = r.h === me ? r.hs : r.as, them = r.h === me ? r.as : r.hs, m = us - them;
+      var opp = r.h === me ? r.a : r.h;
+      if (!best || m > best.m) best = { m: m, us: us, them: them, opp: opp };
+      if (!worst || m < worst.m) worst = { m: m, us: us, them: them, opp: opp };
+    });
+    var star = null;
+    rosterOf(me).forEach(function (p) {
+      var x = save.lg.stats[p.id];
+      (x && x.log || []).forEach(function (g, i) { if (!star || g[6] > star.pts) star = { name: p.name, pts: g[6], opp: g[1], n: i + 1 }; });
+    });
+    var lead = function (k) {
+      var b = null;
+      rosterOf(me).forEach(function (p) { var x = save.lg.stats[p.id]; if (x && x.g >= 10 && (!b || x[k] / x.g > b.v)) b = { name: p.name, v: x[k] / x.g }; });
+      return b;
+    };
+    var po = save.champion === me ? 'Champions' : madePlayoffs() ? 'Reached the playoffs' : 'Missed the playoffs';
+    return {
+      pos: pos, div: save.division[me], po: po,
+      best: best && { us: best.us, them: best.them, opp: best.opp }, worst: worst && { us: worst.us, them: worst.them, opp: worst.opp },
+      star: star, pts: lead('pts'), ast: lead('ast')
+    };
+  }
+
+  function bracketView() {
+    var wrap = el('div', 'bracket');
+    save.playoffs.rounds.forEach(function (round, ri) {
+      var col = el('div', 'br-col');
+      col.appendChild(el('div', 'group-title', Season.roundInfo(save, ri).name));
+      round.forEach(function (s) {
+        var card = el('div', 'br-s');
+        [s.a, s.b].forEach(function (id, k) {
+          var row = el('div', 'br-t' + (s.winner === id ? ' win' : '') + (s.winner && s.winner !== id ? ' out' : '') + (id === save.myId ? ' me' : ''));
+          row.appendChild(el('span', null, teamById(id).city));
+          row.appendChild(el('b', null, String(s.w[k])));
+          card.appendChild(row);
+        });
+        card.appendChild(el('small', null, 'Best of ' + (s.best || Season.roundInfo(save, ri).best) + (s.label ? ' \u00B7 ' + s.label : '')));
+        col.appendChild(card);
+      });
+      wrap.appendChild(col);
+    });
+    return wrap;
+  }
+
   function renderSeason() {
     var me = teamById(save.myId);
     var rec = save.rec[me.id];
@@ -1519,6 +1624,7 @@
       tx.appendChild(el('strong', null, (next.home === me.id ? 'vs ' : 'at ') + opp.city + ' ' + opp.name));
       var oprec = save.rec[oppId];
       tx.appendChild(el('span', 'meta', oprec.w + '-' + oprec.l + ' · team rating ' + teamRating(oppId) + ' vs your ' + teamRating(me.id)));
+      tx.appendChild(el('span', 'meta', 'Offence ' + offRating(oppId) + ' vs ' + offRating(me.id) + ' · defence ' + defRating(oppId) + ' vs ' + defRating(me.id)));
       row.appendChild(tx);
       card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Next game · ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name));
       card.appendChild(row);
@@ -1529,21 +1635,16 @@
     bodyEl.appendChild(card);
 
     if (save.playoffs) {
-      bodyEl.appendChild(el('h3', 'box-title', 'Playoffs'));
-      var pc = el('div', 'stat-card');
-      save.playoffs.rounds.forEach(function (round, ri) {
-        pc.appendChild(el('div', 'group-title', Season.roundInfo(save, ri).name));
-        round.forEach(function (s) {
-          var line = el('div', 'series');
-          var an = teamById(s.a).city, bn = teamById(s.b).city;
-          line.appendChild(el('span', null, an + ' v ' + bn + ' \u00B7 best of ' + (s.best || Season.roundInfo(save, ri).best) + (s.label ? ' \u00B7 ' + s.label : '')));
-          line.appendChild(el('b', null, s.w[0] + '-' + s.w[1] + (s.winner ? ' · ' + teamById(s.winner).city : '')));
-          pc.appendChild(line);
-        });
-      });
-      bodyEl.appendChild(pc);
+      bodyEl.appendChild(el('h3', 'box-title', 'Playoff bracket'));
+      bodyEl.appendChild(bracketView());
     }
 
+    ensureOwner();
+    var oc = el('div', 'stat-card');
+    oc.appendChild(el('div', 'group-title', 'The owner wants'));
+    oc.appendChild(el('p', 'sub', save.owner.text + '.'));
+    oc.appendChild(ratingRow('Owner trust', save.ownerTrust));
+    bodyEl.appendChild(oc);
     var st = Season.standings(save);
     var divs = Object.keys(st).sort(function (x, y) {
       var mx = st[x].some(function (r) { return r.id === me.id; }), my = st[y].some(function (r) { return r.id === me.id; });
@@ -1671,7 +1772,7 @@
     var cap = el('figcaption', 'pp-cap');
     var tryNext = function (i) {
       if (i >= ev.photos.length) return;
-      var c = ev.photos[i], exts = ['png', 'jpg', 'webp'], k = 0, img = new Image();
+      var c = ev.photos[i], exts = ['webp', 'png', 'jpg'], k = 0, img = new Image();
       img.onload = function () {
         fig.textContent = '';
         fig.appendChild(img);
@@ -1962,7 +2063,7 @@
       pts: League.leaders(save, 'pts', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       ast: League.leaders(save, 'ast', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       mvp: best ? { id: best.p.id, name: best.p.name } : null,
-      title: titleLeader(), allLeague: allLeague()
+      title: titleLeader(), allLeague: allLeague(), recap: buildRecap(), owner: judgeOwner()
     };
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null });
     (function () {
@@ -2045,6 +2146,8 @@
     return offReady(body, me);
   }
 
+  function ordinalN(n) { return n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th'); }
+
   function offReview(body, me) {
     var r = save.off.review, champ = teamById(r.champion);
     offHeader(seasonLabel(save.year) + ' review', 'Off-season · step 1 of 5');
@@ -2056,6 +2159,32 @@
     card.appendChild(row);
     card.appendChild(el('p', 'sub', 'Your record: ' + r.rec + (r.champion === me.id ? ' · you won the title' : '')));
     body.appendChild(card);
+    if (r.recap) {
+      var rc = r.recap, sc = el('div', 'stat-card');
+      sc.appendChild(el('div', 'group-title', 'Your season'));
+      sc.appendChild(el('p', 'sub', ordinalN(rc.pos) + ' in the ' + rc.div + ' Division \u00B7 ' + rc.po));
+      if (rc.best) sc.appendChild(el('p', 'sub', 'Best win: ' + rc.best.us + '-' + rc.best.them + ' over ' + teamById(rc.best.opp).city));
+      if (rc.worst && rc.worst.us < rc.worst.them) sc.appendChild(el('p', 'sub', 'Worst loss: ' + rc.worst.us + '-' + rc.worst.them + ' to ' + teamById(rc.worst.opp).city));
+      if (rc.star) sc.appendChild(el('p', 'sub', 'Big night: ' + rc.star.name + ' scored ' + rc.star.pts + ' against ' + teamById(rc.star.opp).city));
+      if (rc.pts) sc.appendChild(el('p', 'sub', 'Team leaders: ' + rc.pts.name + ' ' + rc.pts.v.toFixed(1) + ' pts' + (rc.ast ? ' \u00B7 ' + rc.ast.name + ' ' + rc.ast.v.toFixed(1) + ' ast' : '')));
+      body.appendChild(sc);
+    }
+    if (r.owner) {
+      var ow = el('div', 'stat-card');
+      ow.appendChild(el('div', 'group-title', 'The owner'));
+      ow.appendChild(el('p', 'sub', 'His goal: ' + r.owner.goal + '.'));
+      ow.appendChild(el('p', 'sub', r.owner.msg + ' (trust ' + (r.owner.delta > 0 ? '+' : '') + r.owner.delta + ')'));
+      ow.appendChild(ratingRow('Owner trust', r.owner.trust));
+      body.appendChild(ow);
+      if (r.owner.fired) {
+        offDock('Return to the menu', function () {
+          store.set('save', null);
+          continueBtn.disabled = true;
+          show('screen-title');
+        });
+        return;
+      }
+    }
     function board(title, rows, unit) {
       if (!rows.length) return;
       body.appendChild(el('h3', 'box-title', title));
@@ -2430,6 +2559,7 @@
     next.lg.stats = {}; next.lg.draft = null; next.lg.year = next.year; next.lg.cap = League.capFor(next.year);
     if (next.mood) { next.mood.streak = 0; next.mood.news = next.mood.news.slice(-3); }
     next.pending = [];
+    next.ownerTrust = save.ownerTrust;
     save = next;
     League.ensurePicks(save, save.ids.map(teamById));
     rosterCache = {};

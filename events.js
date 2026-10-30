@@ -71,6 +71,56 @@
   /* Little scenes from the 1940s road: rail travel, exhibitions, the war's aftermath. */
   var PERIOD = [
     function (ctx) {
+      return { kind: 'talk', who: null, text: 'A local department store offers to put the club\'s picture in its window and pay $300 toward the travel fund, if the boys sign autographs on Saturday afternoon.', choices: [
+        { label: 'Take the money and sign autographs', fx: { team: { m: -1 }, fans: 5 }, say: 'The treasury is a little fuller' },
+        { label: 'Politely decline', fx: { team: { m: 1 } }, say: 'The boys rest instead' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A snowstorm has closed the roads. The train is stuck outside town and the game starts in four hours. The league office says a forfeit is possible if you are late.', choices: [
+        { label: 'Hire a fleet of taxis and race in', fx: { team: { m: -3 }, coach: 2, fans: 2 }, say: 'They arrive frozen but in time' },
+        { label: 'Wait for the train, trust the league', fx: { team: { m: 1 }, coach: -1 }, say: 'They make it with minutes to spare' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A newspaper columnist is writing that your club is "all show and no defence." He wants a quote before his deadline.', choices: [
+        { label: 'Say the boys will answer on the floor', fx: { team: { m: 2 }, fans: 1 }, say: 'Printed word for word' },
+        { label: 'Call him a bum in print', fx: { team: { m: 1 }, fans: -3, coach: -1 }, say: 'The column gets nastier' },
+        { label: 'No comment', fx: {}, say: 'He writes it anyway' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A charity in town asks the club to play a benefit game for orphans on an off night. The gate goes to the cause. The papers will be there.', choices: [
+        { label: 'Play the benefit game', fx: { team: { m: -2 }, fans: 6, coach: 1 }, say: 'A warm night for a good cause' },
+        { label: 'Send a cheque instead', fx: { fans: 2 }, say: 'Quiet generosity' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, coach: true, text: 'Coach: "Skipper, the referee tonight let them mug us. The league has a form for complaints. Do we file one?"', choices: [
+        { label: 'File the complaint', fx: { coach: 3, fans: 1 }, say: 'The league office notes it' },
+        { label: 'Swallow it and move on', fx: { team: { m: 1 }, coach: -1 }, say: 'Water under the bridge' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'The radio station is offering to carry the road games for a fee of $200 a night. It would put the club in every kitchen in town. Some owners fear it will keep fans home.', choices: [
+        { label: 'Sign the radio deal', fx: { fans: 6, team: { m: 1 } }, say: 'The boys are on the air' },
+        { label: 'Keep the gate, refuse', fx: { fans: -1, coach: 1 }, say: 'The turnstiles will have to do' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A rookie missed the team bus and arrived at the hotel at dawn, smelling of cigar smoke. The veterans are waiting to see what you do.', choices: [
+        { label: 'Fine him a week\'s pay', fx: { team: { m: 2 }, coach: 3 }, say: 'The vets nod' },
+        { label: 'Give him a quiet talking-to', fx: { team: { m: 0 }, coach: -1 }, say: 'He promises to behave' },
+        { label: 'Laugh it off', fx: { team: { m: -2 }, coach: -3 }, say: 'The coach is not amused' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'The arena manager says the hot-water boiler is broken. The visiting club has agreed to play, but the showers will be cold for both sides.', choices: [
+        { label: 'Play on, cold showers', fx: { team: { m: -2 } }, say: 'Grumbling in the locker room' },
+        { label: 'Pay for a repair crew', fx: { team: { m: 2 }, coach: 1 }, say: 'Money well spent, they say' }
+      ] };
+    },
+    function (ctx) {
       return { kind: 'talk', who: null, coach: true, text: 'Coach: "Skipper, the next road swing is an overnight Pullman. We can book sleeper berths for the whole club, or ride coach and keep the money in the treasury."', choices: [
         { label: 'Sleeper berths for everyone', fx: { team: { m: 3 }, fans: 0 }, say: 'The boys sleep soundly' },
         { label: 'Coach seats, save the fare', fx: { team: { m: -3 }, coach: 2 }, say: 'A stiff, grumpy ride' }
