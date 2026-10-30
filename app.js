@@ -144,7 +144,7 @@
 
   /* ---------- era select ---------- */
   var ERAS = [
-    { id: '1949', years: '1949-50', title: 'The NBA Is Born', blurb: 'The BAA and NBL merge. 17 teams in three divisions, 62 to 68 games, no shot clock, no salary cap.', open: true, teams: 'data/teams-1949.json', players: 'data/players-1949.json' },
+    { id: '1946', years: '1946-47', title: 'The Founding Season', blurb: 'The Basketball Association of America, the league the NBA counts as its first. 11 teams, 60 games, no shot clock, no salary cap.', open: true, teams: 'data/teams-1946.json', players: 'data/players-1946.json' },
     { years: '1950s-60s', title: 'The Shot Clock Era', blurb: 'Locked for now' },
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
