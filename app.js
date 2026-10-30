@@ -686,7 +686,7 @@
 
   function startLive(me, opp, mine, label) {
     var g = Engine.start(rosterFor(me.id), rosterOf(opp.id), save.year);
-    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], done: {}, lastDec: -99, timer: null, skip: false };
+    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
     var top = document.getElementById('live-top');
     top.textContent = '';
     [[me, 'a', false], [opp, 'b', true]].forEach(function (t, i) {
@@ -820,36 +820,135 @@
     for (var i = 0; i < 5; i++) lv.pl[i].pp.textContent = g.onH[i].s.pts;
   }
 
+  /* ---------- timeout decisions: situational, each with its own trade-off ---------- */
+  function sumFeed(n, key) { var t = 0; lv.feed.slice(-n).forEach(function (f) { t += f[key]; }); return t; }
+  function feedBy(n, who, side) {
+    var t = 0;
+    lv.feed.slice(-n).forEach(function (f) { if (side === 'm' ? f.mw === who : f.ow === who) t += side === 'm' ? f.mp : f.op; });
+    return t;
+  }
+
   function decisionDue() {
-    var g = lv.g, key;
+    var g = lv.g, diff = g.hs - g.as, d;
     if (g.over) return null;
-    var diff = g.hs - g.as;
     if (g.q >= 3 && g.k === g.limit - 1 && Math.abs(diff) <= 5) {
-      key = 'clutch' + g.q;
-      if (!lv.done[key]) { lv.done[key] = 1; return 'clutch'; }
+      var key = 'clutch' + g.q;
+      if (!lv.done[key]) { lv.done[key] = 1; return { kind: 'clutch' }; }
     }
-    if (g.q < 4 && g.k === Math.floor(g.limit / 2)) {
-      key = 'mid' + g.q;
-      if (!lv.done[key]) { lv.done[key] = 1; lv.lastDec = g.n; return 'mid'; }
+    if (g.q === 2 && g.k === 0 && !lv.done.half) { lv.done.half = 1; lv.lastDec = g.n; lv.count++; return { kind: 'half' }; }
+    if (g.q > 3 || lv.count >= 6 || g.n - lv.lastDec < 9 || g.k < 2 || g.k > g.limit - 3) return null;
+    var tries = [];
+    g.onH.forEach(function (x) {
+      var pf = x.s.pf;
+      if (pf >= 4 && !lv.fq[x.p.id + pf]) tries.push({ kind: 'foul', x: x, mark: x.p.id + pf });
+    });
+    var runDiff = -sumFeed(6, 'mp') + sumFeed(6, 'op');
+    if (lv.feed.length >= 6 && runDiff >= 8) tries.push({ kind: 'run', v: runDiff });
+    var oh = null;
+    g.onA.forEach(function (x) { var v = feedBy(10, x.p.name, 'o'); if (v >= 8 && (!oh || v > oh.v)) oh = { x: x, v: v }; });
+    if (oh && !lv.fq['oh' + oh.x.p.id + g.q]) tries.push({ kind: 'oppHot', x: oh.x, v: oh.v, mark: 'oh' + oh.x.p.id + g.q });
+    var mh = null;
+    g.onH.forEach(function (x) { var v = feedBy(10, x.p.name, 'm'); if (v >= 8 && (!mh || v > mh.v)) mh = { x: x, v: v }; });
+    if (mh && !lv.fq['mh' + mh.x.p.id + g.q]) tries.push({ kind: 'myHot', x: mh.x, v: mh.v, mark: 'mh' + mh.x.p.id + g.q });
+    g.onH.forEach(function (x) {
+      if (x.s.fga >= 7 && x.s.fg / x.s.fga <= 0.22 && x.p.ratings.sco >= 60 && !lv.fq['c' + x.p.id]) tries.push({ kind: 'cold', x: x, mark: 'c' + x.p.id });
+    });
+    var tov = 0; lv.feed.slice(-8).forEach(function (f) { if (f.mt) tov++; });
+    if (tov >= 4) tries.push({ kind: 'sloppy' });
+    if (g.q === 3 && Math.abs(diff) <= 8 && g.k >= Math.floor(g.limit * 0.5) && !lv.done.late) tries.push({ kind: 'late', mark: 'late' });
+    tries = tries.filter(function (t) { return t.kind !== lv.lastKind || tries.length === 1; });
+    if (tries.length) {
+      d = tries[Math.floor(Math.random() * tries.length)];
+      if (d.mark) { lv.fq[d.mark] = 1; if (d.kind === 'late') lv.done.late = 1; }
+      lv.lastDec = g.n; lv.lastKind = d.kind; lv.count++;
+      return d;
     }
-    var run = 0, h = lv.hist.slice(-6);
-    h.forEach(function (d) { run += d; });
-    if (h.length === 6 && run >= 8 && g.n - lv.lastDec >= 10 && g.k < g.limit - 2) {
-      lv.lastDec = g.n; lv.hist = []; return 'run';
+    if ((g.q === 0 || g.q === 1 || g.q === 3) && g.k === Math.floor(g.limit / 2) && !lv.done['mid' + g.q] && g.n - lv.lastDec >= 14) {
+      lv.done['mid' + g.q] = 1; lv.lastDec = g.n; lv.lastKind = 'tempo'; lv.count++;
+      return { kind: 'tempo' };
     }
     return null;
   }
 
   function hotLine(x) { return x.s.pts + ' pts, ' + x.s.fg + '-' + x.s.fga; }
+  function bestOn(list, f) { return list.slice().sort(function (a, b) { return f(b) - f(a); })[0]; }
 
-  function showDecision(kind) {
+  function buildOptions(spec) {
+    var g = lv.g, W = 12, me = lv.me.city, opp = lv.opp.city;
+    var top = bestOn(g.onH, function (x) { return x.s.pts + x.p.ratings.sco / 100; });
+    var big = bestOn(g.onH, function (x) { return x.p.hgt || 0; });
+    var guard = bestOn(g.onH, function (x) { return x.p.ratings.ply; });
+    var oppTop = bestOn(g.onA, function (x) { return x.s.pts + x.p.ratings.sco / 100; });
+    var k = spec.kind, x = spec.x, ln = x ? lastName(x.p.name) : '';
+    var out = { title: '', opts: [] };
+    function o(t, s, mods, extra) { out.opts.push({ t: t, s: s, mods: mods || {}, extra: extra || {}, win: W }); }
+    if (k === 'foul') {
+      var left = 6 - x.s.pf;
+      out.title = ln + ' has ' + x.s.pf + ' fouls. ' + (left === 1 ? 'One more and he is out.' : left + ' more and he is out.');
+      o('Keep ' + ln + ' in', hotLine(x) + ' · full strength, but he could foul out', {});
+      o('Sit ' + ln + ' down', 'Bench steps in for a stretch, then he returns', {}, { rest: x.p.id, restN: 12 });
+      o('Tell ' + ln + ' to play it safe', 'Fewer fouls on him, softer defence', { protect: x.p.id, oppFgMul: 1.06 });
+    } else if (k === 'myHot') {
+      out.title = ln + ' has scored ' + spec.v + ' in the last few minutes.';
+      o('Ride ' + ln, hotLine(x) + ' · call his number again', { focus: x.p.id, focusW: 2.8, fgMul: 1.03 });
+      o('Keep it balanced', 'Move the ball, more assists, defence expects ' + ln, { flat: 1, astMul: 1.4, fgMul: 1.02 });
+      o('Run the clock', 'Fewer risks, fewer mistakes, a slower game', { tovAdd: -0.04, fgMul: 0.98 });
+    } else if (k === 'oppHot') {
+      var on = lastName(x.p.name);
+      out.title = on + ' has ' + spec.v + ' on you in a hurry.';
+      o('Double-team ' + on, 'He gets fewer shots, others get open, more fouls', { double: x.p.id, foulAdd: 0.03, oppTovAdd: 0.05, oppFgMul: 0.96 });
+      o('Switch the defence', 'Put your best man on him · tougher all round', { oppFgMul: 0.9 });
+      o('Outscore him', 'Race them: ' + me + ' shoot faster, sloppier', { fgMul: 1.11, tovAdd: 0.02 });
+    } else if (k === 'run') {
+      out.title = opp + ' have outscored you ' + spec.v + ' points in the last six trips.';
+      o('Take the timeout', 'Settle the boys down · tougher defence, safer passes', { oppFgMul: 0.9, tovAdd: -0.02 });
+      o('Press full court', 'Steals and turnovers, but more fouls', { oppTovAdd: 0.08, foulAdd: 0.05 });
+      o('Stay with the plan', 'No changes, trust the club', {});
+    } else if (k === 'cold') {
+      out.title = ln + ' is ' + x.s.fg + ' for ' + x.s.fga + ' tonight.';
+      o('Stay with ' + ln, 'Trust the shooter · he is due', { focus: x.p.id, focusW: 1.6 });
+      o('Run plays for the others', 'Spread the shots and the passes', { flat: 1, astMul: 1.3 });
+      o('Sit ' + ln + ' down', 'A few minutes on the bench to clear his head', {}, { rest: x.p.id, restN: 8 });
+    } else if (k === 'sloppy') {
+      out.title = 'Four turnovers in the last few minutes. The bench is muttering.';
+      o('Slow it down', 'Safe passes, fewer shots, fewer mistakes', { tovAdd: -0.06, fgMul: 0.97 });
+      o('Keep running', 'Fast and loose, mistakes and all', { fgMul: 1.04, tovAdd: 0.02 });
+      o(lastName(guard.p.name) + ' takes charge', 'Your best passer runs the offence', { focus: guard.p.id, focusW: 1.8, tovAdd: -0.03 });
+    } else if (k === 'half') {
+      var lead = g.hs - g.as;
+      out.title = 'Halftime. ' + (lead > 0 ? me + ' lead by ' + lead + '.' : lead < 0 ? me + ' trail by ' + (-lead) + '.' : 'All square.') + ' What do you say to them?';
+      out.win = 16;
+      W = 16;
+      o(lead < 0 ? 'Challenge them' : 'Keep the foot down', 'Fire them up · sharper shooting, but more fouls and mistakes', { fgMul: 1.1, foulAdd: 0.03, tovAdd: 0.012 });
+      o('Adjust the defence', 'Tighten up on ' + lastName(oppTop.p.name) + ' and the rest', { oppFgMul: 0.92 });
+      o('Stay calm', 'Quiet words · cleaner ball, steady shooting', { tovAdd: -0.04, fgMul: 1.01 });
+    } else if (k === 'late') {
+      out.title = 'Four minutes left and it is close. ' + me + ' ' + g.hs + ', ' + opp + ' ' + g.as + '.';
+      o('Ride ' + lastName(top.p.name), hotLine(top) + ' · put the ball in his hands', { focus: top.p.id, focusW: 2.5, fgMul: 1.02 });
+      o('Press for a steal', 'Gamble on turnovers, but more fouls', { oppTovAdd: 0.07, foulAdd: 0.06 });
+      o('Slow it down', 'Work for the good shot, protect the ball', { tovAdd: -0.05, fgMul: 0.98 });
+    } else {
+      var pool = [
+        ['Pound it inside to ' + lastName(big.p.name), 'The tallest man on the floor gets the ball', { focus: big.p.id, focusW: 2.2 }],
+        ['Push the pace', 'Fast breaks, but more turnovers', { fgMul: 1.1, tovAdd: 0.02 }],
+        ['Tighten the defence', 'Tougher on them, a few more fouls', { oppFgMul: 0.93, foulAdd: 0.04 }],
+        ['Slow it down', 'Cleaner ball, fewer shots', { tovAdd: -0.04, fgMul: 0.99 }],
+        ['Let ' + lastName(guard.p.name) + ' run things', 'Your best passer sets up the others', { focus: guard.p.id, focusW: 1.8, astMul: 1.25 }],
+        ['Crash the boards', 'More second chances, a little less defence', { fgMul: 1.02, oppFgMul: 1.03, astMul: 0.9 }]
+      ];
+      for (var i = pool.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+      out.title = 'Timeout. ' + me + ' ' + g.hs + ', ' + opp + ' ' + g.as + '. What is the plan?';
+      pool.slice(0, 3).forEach(function (p) { o(p[0], p[1], p[2]); });
+    }
+    return out;
+  }
+
+  function showDecision(spec) {
     var g = lv.g, dock = document.getElementById('live-dock');
-    syncCourt();
     dock.textContent = '';
-    var mineTop = g.onH.slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
-    var oppTop = g.onA.slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
+    syncCourt();
     var when = periodLabel(g) + ' ' + clockText(g) + ' · ' + lv.me.city + ' ' + g.hs + ', ' + lv.opp.city + ' ' + g.as;
-    if (kind === 'clutch') {
+    if (spec.kind === 'clutch') {
       tickerLine('Final possession. Who takes the shot?', 'sys');
       dock.appendChild(el('p', 'dec-title', when + '. Tap the player you want to take the last shot.'));
       lv.pl.forEach(function (p, i) {
@@ -864,26 +963,50 @@
       });
       return;
     }
-    tickerLine(kind === 'run' ? 'Timeout. ' + lv.opp.city + ' are on a run.' : 'Timeout.', 'sys');
-    dock.appendChild(el('p', 'dec-title', when + (kind === 'run' ? ' · ' + lv.opp.city + ' on a run. Your call.' : ' · What is the plan?')));
-    var opts = [
-      { t: 'Feed ' + lastName(mineTop.p.name), s: hotLine(mineTop) + ' · more shots for him', mods: { focus: mineTop.p.id, focusW: 2.2 } },
-      { t: 'Push the pace', s: 'Fast breaks, but more turnovers', mods: { fgMul: 1.04, tovAdd: 0.03 } },
-      { t: 'Lock down ' + lastName(oppTop.p.name), s: hotLine(oppTop) + ' · tougher defence, more fouls', mods: { oppFgMul: 0.92, foulAdd: 0.05 } }
-    ];
-    opts.forEach(function (o, i) {
+    var built = buildOptions(spec);
+    tickerLine(spec.kind === 'half' ? 'Halftime.' : 'Timeout.', 'sys');
+    dock.appendChild(el('p', 'dec-title', built.title + ' ' + (spec.kind === 'half' || spec.kind === 'tempo' ? '' : '(' + when + ')')));
+    built.opts.forEach(function (o, i) {
       var b = el('button', 'btn opt' + (i === 0 ? ' primary' : ''));
       b.type = 'button';
       b.appendChild(el('span', null, o.t));
       b.appendChild(el('small', null, o.s));
       b.addEventListener('click', function () {
-        var m = o.mods; m.until = g.n + 8;
+        var m = scaleMods(o.mods); m.until = g.n + (built.win || o.win);
         g.mods.H = m;
+        if (o.extra.rest) g.rest.H[o.extra.rest] = g.n + o.extra.restN;
+        lv.plan = { label: o.t, n1: g.n + (built.win || o.win), my0: lv.da, op0: lv.db, tm0: lv.tovM, to0: lv.tovO };
         tickerLine('Plan: ' + o.t + '.', 'sys');
         skipButton();
         lv.timer = setTimeout(liveTick, 500);
       });
       dock.appendChild(b);
+    });
+  }
+
+  /* Plans are short and the sim is noisy, so the levers are scaled up to be felt inside a dozen trips. */
+  function scaleMods(src) {
+    var m = Object.assign({}, src);
+    ['fgMul', 'oppFgMul'].forEach(function (k) { if (m[k]) m[k] = 1 + (m[k] - 1) * 3.4; });
+    ['tovAdd', 'oppTovAdd'].forEach(function (k) { if (m[k]) m[k] = m[k] * 2.5; });
+    if (m.foulAdd) m.foulAdd = m.foulAdd * 1.6;
+    return m;
+  }
+
+  function checkPlan() {
+    var g = lv.g, p = lv.plan;
+    if (!p || g.n < p.n1) return;
+    lv.plan = null;
+    var my = lv.da - p.my0, op = lv.db - p.op0, net = my - op;
+    var verdict = net >= 3 ? 'It worked.' : net <= -3 ? 'It backfired.' : 'A wash.';
+    var tm = lv.tovM - p.tm0, to = lv.tovO - p.to0;
+    tickerLine('"' + p.label + '": ' + lv.me.city + ' ' + my + ', ' + lv.opp.city + ' ' + op + ' since. Giveaways: you ' + tm + ', them ' + to + '. ' + verdict, 'sys');
+  }
+
+  function checkFouledOut() {
+    var g = lv.g;
+    g.H.concat(g.A).forEach(function (x) {
+      if (x.s.pf >= 6 && !lv.fo[x.p.id]) { lv.fo[x.p.id] = 1; tickerLine(x.p.name + ' fouls out.', 'sys'); }
     });
   }
 
@@ -894,10 +1017,16 @@
     var evs = Engine.step(g);
     lv.da += evs[0].pts; lv.db += evs[1].pts;
     lv.hist.push(evs[1].pts - evs[0].pts);
+    lv.feed.push({ mw: evs[0].ev.who, mp: evs[0].pts, mt: evs[0].ev.kind === 'tov', ow: evs[1].ev.who, op: evs[1].pts, ot: evs[1].ev.kind === 'tov' });
+    if (lv.feed.length > 16) lv.feed.shift();
+    if (evs[0].ev.kind === 'tov') lv.tovM++;
+    if (evs[1].ev.kind === 'tov') lv.tovO++;
     showPoss(evs[0], true);
+    checkFouledOut();
     updateLive();
     lv.timer = setTimeout(function () {
       showPoss(evs[1], false);
+      checkPlan();
       updateLive();
       if (g.over) {
         tickerLine('Final buzzer.', 'sys');

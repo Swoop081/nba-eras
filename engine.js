@@ -97,19 +97,19 @@
     }
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco;
-      return x.share * Math.pow(s, pr.use || 2) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1);
+      return x.share * Math.pow(s, mo.flat ? 0.15 : (pr.use || 2)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
     var fouled = r() < pr.foul + (md.foulAdd || 0);
     if (fouled) {
-      pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou); }).s.pf++;
+      pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
     }
     var q = pr.fg * (0.62 + 0.0095 * shooter.p.ratings.sht + 0.0030 * shooter.p.ratings.sco);
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
-    q *= (mo.fgMul || 1) * (md.oppFgMul || 1);
+    q *= (mo.fgMul || 1) * (md.oppFgMul || 1) * (md.double === shooter.p.id ? 0.93 : 1);
     if (st.eo || st.ed) q *= Math.exp((st.eo || 0) - (st.ed || 0));
     var three = pr.threes && r() < 0.15 + shooter.p.ratings.tpt / 500;
     if (three) { q = q * 0.78; }
@@ -133,7 +133,7 @@
       shooter.s.fg++; if (three) shooter.s.tp++;
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
-      if (r() < 0.72 * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
+      if (r() < 0.72 * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
         var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply; });
         passer.s.ast++; ev.ast = passer.p.name;
       }
@@ -161,13 +161,23 @@
     var n = T.length;
     if (n <= 5) return T.map(function (x, i) { return i; });
     var base = [0, 1, 2, 3, 4];
-    if (n < 8) return base;
-    var ph = g.k / g.limit, diff = Math.abs(g.hs - g.as), late = g.q >= 3 && diff <= 8;
-    if (g.q >= 4 || late) return base;
-    if (ph >= 0.35 && ph < 0.65) return [0, 1, 5, 6, 7];
-    if ((g.q === 0 || g.q === 2) && ph >= 0.8) return [5, 6, 2, 3, 4];
-    if ((g.q === 1 || g.q === 3) && ph < 0.2) return [5, 6, 2, 3, 4];
-    return base;
+    if (n >= 8) {
+      var ph = g.k / g.limit, diff = Math.abs(g.hs - g.as), late = g.q >= 3 && diff <= 8;
+      if (g.q < 4 && !late) {
+        if (ph >= 0.35 && ph < 0.65) base = [0, 1, 5, 6, 7];
+        else if ((g.q === 0 || g.q === 2) && ph >= 0.8) base = [5, 6, 2, 3, 4];
+        else if ((g.q === 1 || g.q === 3) && ph < 0.2) base = [5, 6, 2, 3, 4];
+      }
+    }
+    var rest = (g.rest && g.rest[side]) || {};
+    function out(i) { return T[i].s.pf >= 6 || (rest[T[i].p.id] || 0) > g.n; }
+    var res = [];
+    base.forEach(function (i) {
+      if (!out(i)) { res.push(i); return; }
+      for (var j = 0; j < n; j++) if (!out(j) && base.indexOf(j) < 0 && res.indexOf(j) < 0) { res.push(j); return; }
+      res.push(i);
+    });
+    return res;
   }
   function setLineups(g) {
     g.onHi = lineupIdx(g, g.H, 'H'); g.onAi = lineupIdx(g, g.A, 'A');
@@ -183,7 +193,7 @@
     var g = {
       pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep0H, A: prep0A, year: year,
       perQ: perQ, limit: perQ, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
-      mods: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
+      mods: { H: {}, A: {} }, rest: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
     };
     setLineups(g);
     return g;
