@@ -197,7 +197,33 @@
     badge.style.background = team.colors[0];
     badge.style.color = luminance(team.colors[0]) > 0.6 ? '#111111' : '#FFFFFF';
     badge.setAttribute('aria-hidden', 'true');
+    applyLogo(badge, team);
     return badge;
+  }
+
+  /* Looks for assets/logos/<team-id>-<era>.png or .svg first (for example
+     chicago-stags-1946.png), then assets/logos/<team-id>.png or .svg.
+     If none exists the coloured initials badge stays. */
+  function applyLogo(badge, team) {
+    var base = 'assets/logos/' + team.id;
+    var era = currentEra ? currentEra.id : '';
+    var urls = [];
+    if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
+    urls.push(base + '.png', base + '.svg');
+    var i = 0;
+    var img = new Image();
+    img.alt = '';
+    img.onload = function () {
+      badge.textContent = '';
+      badge.style.background = 'transparent';
+      badge.style.borderColor = 'transparent';
+      badge.appendChild(img);
+    };
+    img.onerror = function () { next(); };
+    function next() {
+      if (i < urls.length) img.src = urls[i++];
+    }
+    next();
   }
 
   function renderTeams(data) {
@@ -261,6 +287,8 @@
     holder.textContent = initials(selected);
     holder.style.background = selected.colors[0];
     holder.style.color = luminance(selected.colors[0]) > 0.6 ? '#111111' : '#FFFFFF';
+    holder.style.borderColor = '';
+    applyLogo(holder, selected);
     document.getElementById('ready-name').textContent = selected.city + ' ' + selected.name;
     document.getElementById('ready-line').textContent =
       'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
