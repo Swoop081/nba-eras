@@ -38,7 +38,8 @@
     "tov": 55,
     "fou": 15
    },
-   "hgt": 77
+   "hgt": 77,
+   "imp": 0.018
   },
   {
    "id": "bob-feerick",
@@ -77,7 +78,8 @@
     "fou": 29
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "ed-sadowski",
@@ -121,7 +123,8 @@
     "fou": 15
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "ernie-calverley",
@@ -160,7 +163,8 @@
     "fou": 15
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "max-zaslofsky",
@@ -198,7 +202,8 @@
     "tov": 71,
     "fou": 50
    },
-   "hgt": 74
+   "hgt": 74,
+   "imp": 0.038
   },
   {
    "id": "leo-mogus",
@@ -242,7 +247,8 @@
     "fou": 15
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "stan-miasek",
@@ -281,7 +287,8 @@
     "fou": 15
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "frankie-baumholtz",
@@ -320,7 +327,8 @@
     "fou": 47
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "fred-scolari",
@@ -358,7 +366,8 @@
     "tov": 74,
     "fou": 18
    },
-   "hgt": 70
+   "hgt": 70,
+   "imp": 0.042
   },
   {
    "id": "john-logan",
@@ -397,7 +406,8 @@
     "fou": 37
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "bones-mckinney",
@@ -435,7 +445,8 @@
     "tov": 74,
     "fou": 15
    },
-   "hgt": 78
+   "hgt": 78,
+   "imp": 0.042
   },
   {
    "id": "connie-simmons",
@@ -474,7 +485,8 @@
     "fou": 36
    },
    "hgt": 80,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "coulby-gunther",
@@ -513,7 +525,8 @@
     "fou": 34
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "chick-halbert",
@@ -552,7 +565,8 @@
     "fou": 23
    },
    "hgt": 81,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "dino-martin",
@@ -591,7 +605,8 @@
     "fou": 64
    },
    "hgt": 68,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "mel-riebe",
@@ -630,7 +645,8 @@
     "fou": 15
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "john-janisch",
@@ -669,7 +685,8 @@
     "fou": 36
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "hank-beenders",
@@ -708,7 +725,8 @@
     "fou": 15
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "johnny-norlander",
@@ -747,7 +765,8 @@
     "fou": 50
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "earl-shannon",
@@ -786,7 +805,8 @@
     "fou": 15
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "john-mahnken",
@@ -824,7 +844,8 @@
     "tov": 67,
     "fou": 15
    },
-   "hgt": 80
+   "hgt": 80,
+   "imp": 0.042
   },
   {
    "id": "mike-mccarron",
@@ -863,7 +884,8 @@
     "fou": 15
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "kenny-sailors",
@@ -902,7 +924,8 @@
     "fou": 15
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "howie-dallmar",
@@ -941,7 +964,8 @@
     "fou": 32
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "don-carlson",
@@ -980,7 +1004,8 @@
     "fou": 15
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "john-abramovic",
@@ -1019,7 +1044,8 @@
     "fou": 15
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "bud-palmer",
@@ -1058,7 +1084,8 @@
     "fou": 29
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "al-brightman",
@@ -1097,7 +1124,8 @@
     "fou": 47
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "ariel-maughan",
@@ -1136,7 +1164,8 @@
     "fou": 15
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "stan-noszka",
@@ -1175,7 +1204,8 @@
     "fou": 18
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "angelo-musi",
@@ -1214,7 +1244,8 @@
     "fou": 53
    },
    "hgt": 69,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "sonny-hertzberg",
@@ -1253,7 +1284,8 @@
     "fou": 55
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "stan-stutz",
@@ -1292,7 +1324,8 @@
     "fou": 49
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "tony-jaros",
@@ -1331,7 +1364,8 @@
     "fou": 24
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "ossie-schectman",
@@ -1370,7 +1404,8 @@
     "fou": 41
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "irv-torgoff",
@@ -1409,7 +1444,8 @@
     "fou": 15
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "harry-zeller",
@@ -1448,7 +1484,8 @@
     "fou": 15
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "tommy-byrnes",
@@ -1487,7 +1524,8 @@
     "fou": 76
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "belus-smawley",
@@ -1525,7 +1563,8 @@
     "tov": 59,
     "fou": 56
    },
-   "hgt": 73
+   "hgt": 73,
+   "imp": 0.086
   },
   {
    "id": "art-hillhouse",
@@ -1564,7 +1603,8 @@
     "fou": 31
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "red-wallace",
@@ -1608,7 +1648,8 @@
     "fou": 17
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "jim-seminoff",
@@ -1647,7 +1688,8 @@
     "fou": 28
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "mickey-rottner",
@@ -1686,7 +1728,8 @@
     "fou": 57
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "ralph-kaplowitz",
@@ -1730,7 +1773,8 @@
     "fou": 40
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "kleggie-hermsen",
@@ -1774,7 +1818,8 @@
     "fou": 17
    },
    "hgt": 80,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "bob-doll",
@@ -1813,7 +1858,8 @@
     "fou": 20
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "george-mearns",
@@ -1852,7 +1898,8 @@
     "fou": 34
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "dick-schulz",
@@ -1896,7 +1943,8 @@
     "fou": 44
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "george-nostrand",
@@ -1940,7 +1988,8 @@
     "fou": 32
    },
    "hgt": 80,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "hank-rosenstein",
@@ -1984,7 +2033,8 @@
     "fou": 15
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "wyndol-gray",
@@ -2023,7 +2073,8 @@
     "fou": 55
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "bob-mullens",
@@ -2067,7 +2118,8 @@
     "fou": 59
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "george-senesky",
@@ -2105,7 +2157,8 @@
     "tov": 69,
     "fou": 76
    },
-   "hgt": 74
+   "hgt": 74,
+   "imp": 0.018
   },
   {
    "id": "bob-faught",
@@ -2144,7 +2197,8 @@
     "fou": 56
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "tony-kappen",
@@ -2188,7 +2242,8 @@
     "fou": 79
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "leo-gottlieb",
@@ -2227,7 +2282,8 @@
     "fou": 79
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "lee-knorek",
@@ -2266,7 +2322,8 @@
     "fou": 20
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "george-munroe",
@@ -2305,7 +2362,8 @@
     "fou": 73
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "john-barr",
@@ -2344,7 +2402,8 @@
     "fou": 16
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "don-putman",
@@ -2383,7 +2442,8 @@
     "fou": 57
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "art-spector",
@@ -2422,7 +2482,8 @@
     "fou": 35
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "charlie-hoefer",
@@ -2466,7 +2527,8 @@
     "fou": 27
    },
    "hgt": 69,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "jerry-kelly",
@@ -2505,7 +2567,8 @@
     "fou": 15
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "giff-roux",
@@ -2544,7 +2607,8 @@
     "fou": 71
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "johnny-simmons",
@@ -2583,7 +2647,8 @@
     "fou": 80
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "bob-dille",
@@ -2622,7 +2687,8 @@
     "fou": 64
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "pop-goodwin",
@@ -2661,7 +2727,8 @@
     "fou": 60
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "dick-fitzgerald",
@@ -2700,7 +2767,8 @@
     "fou": 74
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "cecil-hankins",
@@ -2739,7 +2807,8 @@
     "fou": 90
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "ed-melvin",
@@ -2778,7 +2847,8 @@
     "fou": 27
    },
    "hgt": 69,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "nick-shaback",
@@ -2817,7 +2887,8 @@
     "fou": 77
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "grady-lewis",
@@ -2856,7 +2927,8 @@
     "fou": 19
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "aubrey-davis",
@@ -2895,7 +2967,8 @@
     "fou": 36
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "tom-king",
@@ -2934,7 +3007,8 @@
     "fou": 62
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "harold-brown",
@@ -2973,7 +3047,8 @@
     "fou": 36
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "chet-carlisle",
@@ -3012,7 +3087,8 @@
     "fou": 21
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "nat-militzok",
@@ -3056,7 +3132,8 @@
     "fou": 45
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "roy-hurley",
@@ -3095,7 +3172,8 @@
     "fou": 57
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "doyle-parrack",
@@ -3134,7 +3212,8 @@
     "fou": 79
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "jack-garfinkel",
@@ -3173,7 +3252,8 @@
     "fou": 70
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "wilbert-kautz",
@@ -3212,7 +3292,8 @@
     "fou": 31
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "chuck-connors",
@@ -3251,7 +3332,8 @@
     "fou": 27
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "jerry-fleishman",
@@ -3289,7 +3371,8 @@
     "tov": 76,
     "fou": 66
    },
-   "hgt": 74
+   "hgt": 74,
+   "imp": 0.018
   },
   {
    "id": "bob-cluggish",
@@ -3328,7 +3411,8 @@
     "fou": 43
    },
    "hgt": 80,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "bob-fitzgerald",
@@ -3372,7 +3456,8 @@
     "fou": 30
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "jake-weber",
@@ -3416,7 +3501,8 @@
     "fou": 42
    },
    "hgt": 78,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "john-mills",
@@ -3455,7 +3541,8 @@
     "fou": 46
    },
    "hgt": 80,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "art-stolkey",
@@ -3494,7 +3581,8 @@
     "fou": 15
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "ray-wertis",
@@ -3538,7 +3626,8 @@
     "fou": 79
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "harold-kottman",
@@ -3577,7 +3666,8 @@
     "fou": 84
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "chuck-gilmur",
@@ -3616,7 +3706,8 @@
     "fou": 18
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "michael-bytzura",
@@ -3655,7 +3746,8 @@
     "fou": 61
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "don-martin",
@@ -3694,7 +3786,8 @@
     "fou": 78
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "frank-fucarino",
@@ -3733,7 +3826,8 @@
     "fou": 74
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "harry-miller",
@@ -3772,7 +3866,8 @@
     "fou": 37
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "buddy-ogrady",
@@ -3811,7 +3906,8 @@
     "fou": 90
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "press-maravich",
@@ -3850,7 +3946,8 @@
     "fou": 46
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "moe-becker",
@@ -3899,7 +3996,8 @@
     "fou": 32
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "petey-rosenberg",
@@ -3938,7 +4036,8 @@
     "fou": 80
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "frido-frey",
@@ -3977,7 +4076,8 @@
     "fou": 64
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "jerry-rullo",
@@ -4016,7 +4116,8 @@
     "fou": 84
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "george-pearcy",
@@ -4055,7 +4156,8 @@
     "fou": 56
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "irv-rothenberg",
@@ -4094,7 +4196,8 @@
     "fou": 41
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "george-pastushok",
@@ -4133,7 +4236,8 @@
     "fou": 86
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "bob-gantt",
@@ -4172,7 +4276,8 @@
     "fou": 51
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "herschel-baltimore",
@@ -4211,7 +4316,8 @@
     "fou": 66
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "marty-passaglia",
@@ -4250,7 +4356,8 @@
     "fou": 89
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "ben-scharnus",
@@ -4289,7 +4396,8 @@
     "fou": 68
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "milt-schoon",
@@ -4328,7 +4436,8 @@
     "fou": 55
    },
    "hgt": 79,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "noble-jorgensen",
@@ -4366,7 +4475,8 @@
     "tov": 44,
     "fou": 31
    },
-   "hgt": 81
+   "hgt": 81,
+   "imp": -0.098
   },
   {
    "id": "chet-aubuchon",
@@ -4405,7 +4515,8 @@
     "fou": 69
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "henry-pearcy",
@@ -4444,7 +4555,8 @@
     "fou": 95
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "matt-guokas",
@@ -4483,7 +4595,8 @@
     "fou": 70
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "woody-grimshaw",
@@ -4522,7 +4635,8 @@
     "fou": 73
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "bob-shea",
@@ -4561,7 +4675,8 @@
     "fou": 89
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "warren-fenley",
@@ -4600,7 +4715,8 @@
     "fou": 61
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "deb-smith",
@@ -4639,7 +4755,8 @@
     "fou": 91
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "roger-jorgensen",
@@ -4678,7 +4795,8 @@
     "fou": 80
    },
    "hgt": 77,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "fred-sheffield",
@@ -4717,7 +4835,8 @@
     "fou": 59
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.018
   },
   {
    "id": "aud-brindley",
@@ -4756,7 +4875,8 @@
     "fou": 57
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "harold-johnson",
@@ -4795,7 +4915,8 @@
     "fou": 91
    },
    "hgt": 78,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "bill-davis",
@@ -4834,7 +4955,8 @@
     "fou": 51
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "joe-fabel",
@@ -4873,7 +4995,8 @@
     "fou": 43
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "fred-jacobs",
@@ -4912,7 +5035,8 @@
     "fou": 64
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "walt-miller",
@@ -4951,7 +5075,8 @@
     "fou": 54
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "virgil-vaughn",
@@ -4990,7 +5115,8 @@
     "fou": 69
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "john-murphy",
@@ -5034,7 +5160,8 @@
     "fou": 80
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "ken-keller",
@@ -5078,7 +5205,8 @@
     "fou": 95
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "hank-lefkowitz",
@@ -5117,7 +5245,8 @@
     "fou": 67
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "al-negratti",
@@ -5156,7 +5285,8 @@
     "fou": 48
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "butch-van-breda-kolff",
@@ -5195,7 +5325,8 @@
     "fou": 69
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "mel-hirsch",
@@ -5234,7 +5365,8 @@
     "fou": 56
    },
    "hgt": 66,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "dick-murphy",
@@ -5278,7 +5410,8 @@
     "fou": 99
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "elmore-morgenthaler",
@@ -5317,7 +5450,8 @@
     "fou": 61
    },
    "hgt": 81,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "ralph-siewert",
@@ -5361,7 +5495,8 @@
     "fou": 80
    },
    "hgt": 85,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.086
   },
   {
    "id": "red-dehnert",
@@ -5400,7 +5535,8 @@
     "fou": 58
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "ed-kasid",
@@ -5439,7 +5575,8 @@
     "fou": 54
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "gino-sovran",
@@ -5478,7 +5615,8 @@
     "fou": 51
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "bob-duffy",
@@ -5522,7 +5660,8 @@
     "fou": 69
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "nat-frankel",
@@ -5561,7 +5700,8 @@
     "fou": 50
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "gorham-getchell",
@@ -5600,7 +5740,8 @@
     "fou": 71
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "hal-crisler",
@@ -5639,7 +5780,8 @@
     "fou": 44
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "armand-cure",
@@ -5678,7 +5820,8 @@
     "fou": 64
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "red-mihalik",
@@ -5717,7 +5860,8 @@
     "fou": 49
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.098
   },
   {
    "id": "tom-callahan",
@@ -5756,7 +5900,8 @@
     "fou": 63
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "ned-endress",
@@ -5795,7 +5940,8 @@
     "fou": 69
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "gene-gallette",
@@ -5834,7 +5980,8 @@
     "fou": 64
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "hank-biasatti",
@@ -5873,7 +6020,8 @@
     "fou": 50
    },
    "hgt": 71,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.014
   },
   {
    "id": "buck-sydnor",
@@ -5912,7 +6060,8 @@
     "fou": 68
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "ken-corley",
@@ -5951,7 +6100,8 @@
     "fou": 46
    },
    "hgt": 76,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "howie-mccarty",
@@ -5990,7 +6140,8 @@
     "fou": 71
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.009
   },
   {
    "id": "norm-baker",
@@ -6029,7 +6180,8 @@
     "fou": 47
    },
    "hgt": 72,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "garland-oshields",
@@ -6068,7 +6220,8 @@
     "fou": 56
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   },
   {
    "id": "ben-goldfaden",
@@ -6107,7 +6260,8 @@
     "fou": 42
    },
    "hgt": 73,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "leon-brown",
@@ -6146,7 +6300,8 @@
     "fou": 50
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "don-eliason",
@@ -6185,7 +6340,8 @@
     "fou": 42
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.004
   },
   {
    "id": "pete-lalich",
@@ -6224,7 +6380,8 @@
     "fou": 42
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.053
   },
   {
    "id": "frank-mangiapane",
@@ -6263,7 +6420,8 @@
     "fou": 50
    },
    "hgt": 70,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.013
   },
   {
    "id": "al-lujack",
@@ -6302,7 +6460,8 @@
     "fou": 48
    },
    "hgt": 75,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.042
   },
   {
    "id": "lou-spicer",
@@ -6341,7 +6500,8 @@
     "fou": 48
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": -0.042
   },
   {
    "id": "bob-rensberger",
@@ -6380,7 +6540,8 @@
     "fou": 44
    },
    "hgt": 74,
-   "posSrc": "roster"
+   "posSrc": "roster",
+   "imp": 0.038
   }
  ]
 }

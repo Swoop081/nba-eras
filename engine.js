@@ -57,6 +57,13 @@
     });
   }
 
+  /* Hidden impact (defence, leadership) the box score cannot show; a club plays to the average of its rotation. */
+  function teamImp(T) {
+    var t = 0, w = 0;
+    T.forEach(function (x) { t += (x.p.imp || 0) * x.share; w += x.share; });
+    return w ? t / w : 0;
+  }
+
   function pick(r, list, weight) {
     var tot = 0, i, w = [];
     for (i = 0; i < list.length; i++) { w[i] = Math.max(0.01, weight(list[i])); tot += w[i]; }
@@ -153,10 +160,11 @@
   function start(home, away, year, seed, edges) {
     var pr = params(year);
     var perQ = Math.round(pr.poss / 4);
+    var prep0H = prep(home), prep0A = prep(away);
     return {
-      pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep(home), A: prep(away), year: year,
+      pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep0H, A: prep0A, year: year,
       perQ: perQ, limit: perQ, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
-      mods: { H: {}, A: {} }, st: {}, edge: edges || {}
+      mods: { H: {}, A: {} }, st: {}, edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
     };
   }
 

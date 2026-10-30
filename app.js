@@ -600,10 +600,8 @@
   function rosterFor(id) {
     return id === save.myId ? Events.moraleRoster(save, rosterOf(id)) : rosterOf(id);
   }
-  /* Club strength the player ratings cannot show (defence, coaching, chemistry). Fades by half each season. */
-  function edgeOf(id) { var t = teamById(id); return (t && t.edge) || 0; }
   function simGame(g) {
-    var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year, undefined, { H: edgeOf(g.home), A: edgeOf(g.away) });
+    var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year);
     if (save.phase === 'regular') League.accumulate(save, r.homeLines.concat(r.awayLines));
     return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series };
   }
@@ -687,7 +685,7 @@
   }
 
   function startLive(me, opp, mine, label) {
-    var g = Engine.start(rosterFor(me.id), rosterOf(opp.id), save.year, undefined, { H: edgeOf(me.id), A: edgeOf(opp.id) });
+    var g = Engine.start(rosterFor(me.id), rosterOf(opp.id), save.year);
     lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], done: {}, lastDec: -99, timer: null, skip: false };
     var top = document.getElementById('live-top');
     top.textContent = '';
@@ -1713,7 +1711,7 @@
     var teams = save.ids.map(teamById), me = teamById(save.myId);
     League.aiRosterPass(save, teams, me.id);
     var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1));
-    Object.keys(save.tm).forEach(function (k) { if (save.tm[k].edge) save.tm[k].edge = Math.round(save.tm[k].edge * 500) / 1000; });
+    save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
     next.tm = save.tm; next.ids = save.ids.slice();
     next.lg = save.lg; next.mood = save.mood;
     next.lg.stats = {}; next.lg.draft = null; next.lg.year = next.year; next.lg.cap = League.capFor(next.year);

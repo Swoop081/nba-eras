@@ -313,6 +313,7 @@
     var v = Math.pow(Math.max(0, o - 38), 2) / 12;
     if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3;
     if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * 0.1);
+    v *= 1 + (p.imp || 0) * 1.5;
     v += (salaryFor(o) - p.salary) / 250;
     return Math.max(1, v);
   }
