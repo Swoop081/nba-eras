@@ -307,7 +307,67 @@
     return makePick(save, scored[0].p);
   }
 
+  /* ---------- trades ---------- */
+  function tradeValue(p) {
+    var o = p.ratings.ovr, age = p.age || 26;
+    var v = Math.pow(Math.max(0, o - 38), 2) / 12;
+    if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3;
+    if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * 0.1);
+    v += (salaryFor(o) - p.salary) / 250;
+    return Math.max(1, v);
+  }
+
+  function sum(list, f) { return list.reduce(function (a, p) { return a + f(p); }, 0); }
+
+  /* me gives `give` players to `them` and gets `get`. Returns { ok, reason, ratio }. */
+  function evaluateTrade(save, meId, themId, give, get, maxRoster) {
+    if (!give.length && !get.length) return { ok: false, reason: 'Pick at least one player.', ratio: 0 };
+    var cap = save.lg.cap;
+    var meN = rosterOf(save, meId).length - give.length + get.length;
+    var themN = rosterOf(save, themId).length + give.length - get.length;
+    if (meN < 8) return { ok: false, reason: 'You would have only ' + meN + ' players. You need at least 8.', ratio: 0 };
+    if (meN > maxRoster && give.length < get.length) return { ok: false, reason: 'You would have ' + meN + ' players. The limit is ' + maxRoster + '.', ratio: 0 };
+    if (themN < 8) return { ok: false, reason: 'They would be left with ' + themN + ' players.', ratio: 0 };
+    if (themN > maxRoster && give.length > get.length) return { ok: false, reason: 'They have no room for that many players.', ratio: 0 };
+    var inMe = sum(get, function (p) { return p.salary; }), outMe = sum(give, function (p) { return p.salary; });
+    var mePay = payroll(save, meId) - outMe + inMe, themPay = payroll(save, themId) + outMe - inMe;
+    if (mePay > cap && inMe > outMe) return { ok: false, reason: 'That would put you $' + (mePay - cap).toLocaleString('en-US') + ' over the $' + cap.toLocaleString('en-US') + ' cap. Send out more salary.', ratio: 0 };
+    if (themPay > cap && outMe > inMe) return { ok: false, reason: 'They would be $' + (themPay - cap).toLocaleString('en-US') + ' over the cap. Take back more salary.', ratio: 0 };
+    var gain = sum(give, tradeValue), loss = sum(get, tradeValue);
+    var ratio = loss > 0 ? gain / loss : 9;
+    if (ratio < 1.1) return { ok: false, reason: ratio >= 0.9 ? 'Close, but they want a little more.' : 'They do not think that is fair.', ratio: ratio, close: ratio >= 0.9 };
+    return { ok: true, reason: 'They accept.', ratio: ratio };
+  }
+
+  function executeTrade(save, meId, themId, give, get) {
+    give.forEach(function (p) { p.team = themId; });
+    get.forEach(function (p) { p.team = meId; });
+    bump(save);
+  }
+
+  /* The cheapest extra player (or pair) from my roster that would make the deal work. */
+  function suggestAdd(save, meId, themId, give, get, maxRoster) {
+    var chosen = give.map(function (p) { return p.id; });
+    var pool = rosterOf(save, meId).filter(function (p) { return chosen.indexOf(p.id) < 0; })
+      .sort(function (a, b) { return tradeValue(a) - tradeValue(b); });
+    var i, j, r;
+    for (i = 0; i < pool.length; i++) {
+      r = evaluateTrade(save, meId, themId, give.concat([pool[i]]), get, maxRoster);
+      if (r.ok) return [pool[i]];
+    }
+    var best = null, bestV = 1e9;
+    for (i = 0; i < pool.length; i++) {
+      for (j = i + 1; j < pool.length; j++) {
+        r = evaluateTrade(save, meId, themId, give.concat([pool[i], pool[j]]), get, maxRoster);
+        var v = tradeValue(pool[i]) + tradeValue(pool[j]);
+        if (r.ok && v < bestV) { best = [pool[i], pool[j]]; bestV = v; }
+      }
+    }
+    return best;
+  }
+
   root.League = {
+    tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, active: active, rosterOf: rosterOf, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,

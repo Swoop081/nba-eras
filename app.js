@@ -1072,6 +1072,10 @@
       show('screen-roster');
     });
     bodyEl.appendChild(rb);
+    var tb = el('button', 'btn wide', 'Trades');
+    tb.type = 'button';
+    tb.addEventListener('click', function () { openTrade('season'); });
+    bodyEl.appendChild(tb);
   }
 
 
@@ -1158,6 +1162,120 @@
     }
   }
 
+
+
+  /* ---------- trades ---------- */
+  var trade = null;
+
+  function tradeWindow() {
+    if (save.phase === 'playoffs' || save.phase === 'done' && !save.off) return 'The league is closed to trades during the playoffs.';
+    if (save.phase === 'regular' && save.day > save.days.length * 0.75) return 'The trade deadline has passed.';
+    return '';
+  }
+
+  function openTrade(returnTo) {
+    var closed = tradeWindow();
+    trade = { back: returnTo, partner: null, give: {}, get: {}, msg: '' };
+    document.getElementById('trade-back').onclick = function () {
+      if (trade.partner) { trade.partner = null; renderTrade(); return; }
+      if (trade.back === 'off') { renderOff(); show('screen-off'); } else { renderSeason(); show('screen-season'); }
+    };
+    if (closed) trade.closed = closed;
+    renderTrade();
+    show('screen-trade');
+  }
+
+  function tradeRow(p, selected, onTap) {
+    var row = personRow(p, [(p.pos || '') + ' · age ' + p.age + ' · ' + money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + ' yr' + (p.yrs === 1 ? '' : 's')), 'Potential ' + p.pot], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
+    row.classList.add('pickable');
+    row.style.cursor = 'pointer';
+    if (selected) row.classList.add('selected');
+    row.addEventListener('click', onTap);
+    return row;
+  }
+
+  function tradeMax() { return save.phase === 'done' ? 18 : 15; }
+
+  function renderTrade() {
+    var body = document.getElementById('trade-body'), dock = document.getElementById('trade-dock');
+    body.textContent = '';
+    dock.textContent = '';
+    var me = teamById(save.myId);
+    document.getElementById('trade-title').textContent = trade.partner ? 'Trade with ' + teamById(trade.partner).city : 'Trades';
+    document.getElementById('trade-sub').textContent = 'Your payroll ' + money(League.payroll(save, me.id)) + ' of ' + money(save.lg.cap);
+    if (trade.closed) {
+      body.appendChild(el('p', 'note', trade.closed));
+      return;
+    }
+    if (!trade.partner) {
+      body.appendChild(el('p', 'sub', 'Pick a club to trade with.'));
+      save.ids.filter(function (id) { return id !== me.id; }).forEach(function (id) {
+        var t = teamById(id), pl = League.rosterOf(save, id);
+        var top = pl.map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
+        var avg = top.length ? Math.round(top.reduce(function (a, b) { return a + b; }, 0) / top.length) : 0;
+        var c = el('button', 'card');
+        c.type = 'button';
+        c.appendChild(teamBadge(t));
+        var tx = el('span');
+        tx.appendChild(el('strong', null, t.city + ' ' + t.name));
+        tx.appendChild(el('span', 'meta', pl.length + ' players · rating ' + avg + ' · payroll ' + money(League.payroll(save, id))));
+        c.appendChild(tx);
+        c.addEventListener('click', function () { trade.partner = id; trade.give = {}; trade.get = {}; trade.msg = ''; renderTrade(); });
+        body.appendChild(c);
+      });
+      return;
+    }
+    var mine = League.rosterOf(save, me.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var theirs = League.rosterOf(save, trade.partner).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    function chosen(list, map) { return list.filter(function (p) { return map[p.id]; }); }
+    var give = chosen(mine, trade.give), get = chosen(theirs, trade.get);
+    var res = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax());
+    var meter = el('div', 'stat-card');
+    meter.appendChild(el('div', 'group-title', 'Their view'));
+    var pct = Math.max(0, Math.min(100, Math.round((give.length || get.length ? res.ratio / 1.1 : 0) * 100)));
+    meter.appendChild(ratingRow('Interest', Math.min(100, pct)));
+    body.appendChild(meter);
+    dock.appendChild(el('p', res.ok && !trade.msg ? 'dec-title' : 'note', trade.msg || (give.length || get.length ? res.reason : 'Tap players on both sides to build a deal.')));
+    body.appendChild(el('h3', 'box-title', 'You send'));
+    mine.forEach(function (p) {
+      body.appendChild(tradeRow(p, !!trade.give[p.id], function () { if (trade.give[p.id]) delete trade.give[p.id]; else trade.give[p.id] = 1; trade.msg = ''; renderTrade(); }));
+    });
+    body.appendChild(el('h3', 'box-title', 'You get'));
+    theirs.forEach(function (p) {
+      body.appendChild(tradeRow(p, !!trade.get[p.id], function () { if (trade.get[p.id]) delete trade.get[p.id]; else trade.get[p.id] = 1; trade.msg = ''; renderTrade(); }));
+    });
+    var send = el('button', 'btn primary wide', 'Propose trade');
+    send.type = 'button';
+    send.disabled = !give.length && !get.length;
+    send.addEventListener('click', function () {
+      var r = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax());
+      if (!r.ok) { trade.msg = r.reason; renderTrade(); return; }
+      var them = teamById(trade.partner);
+      League.executeTrade(save, me.id, trade.partner, give, get);
+      give.concat(get).forEach(function (p) { var x = Events.pm(save, p.id); x.m = 55; x.t = 45; });
+      var line = 'Trade: ' + me.city + ' send ' + (give.map(function (p) { return lastName(p.name); }).join(', ') || 'nobody') + ' to ' + them.city + ' for ' + (get.map(function (p) { return lastName(p.name); }).join(', ') || 'nothing');
+      var mo = Events.mood(save);
+      mo.news.push({ text: line, date: Events.dateFor(save) });
+      if (mo.news.length > 12) mo.news.shift();
+      rosterCache = {};
+      persist();
+      trade.give = {}; trade.get = {};
+      trade.msg = 'Deal done. ' + line.replace('Trade: ', '');
+      renderTrade();
+    });
+    dock.appendChild(send);
+    var ask = el('button', 'btn ghost wide', 'What would it take?');
+    ask.type = 'button';
+    ask.addEventListener('click', function () {
+      if (!give.length && !get.length) return;
+      if (res.ok) { trade.msg = 'The deal already works for them.'; renderTrade(); return; }
+      var add = League.suggestAdd(save, me.id, trade.partner, give, get, tradeMax());
+      if (add) { trade.msg = 'They would do it if you add ' + add.map(function (p) { return p.name + ' (' + p.ratings.ovr + ' overall, ' + money(p.salary) + ')'; }).join(' and ') + '.'; }
+      else { trade.msg = 'Nothing on your roster would make this work. Ask for less.'; }
+      renderTrade();
+    });
+    dock.appendChild(ask);
+  }
 
   /* ---------- off-season ---------- */
   var offSel = null;
@@ -1481,6 +1599,10 @@
       body.appendChild(personRow(p, [(p.pos || '') + ' · ' + hgtText(p) + ' · age ' + p.age + ' · potential ' + p.pot, 'Overall ' + p.ratings.ovr], right));
     });
     if (!fa.length) body.appendChild(el('p', 'sub', 'Nobody is available.'));
+    var tb = el('button', 'btn wide', 'Trades');
+    tb.type = 'button';
+    tb.addEventListener('click', function () { openTrade('off'); });
+    body.appendChild(tb);
     offDock('Finish the off-season', function () { offStep('ready'); });
   }
 

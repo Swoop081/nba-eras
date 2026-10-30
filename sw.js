@@ -1,5 +1,5 @@
 /* Offline support: serve from cache, refresh in the background. */
-var CACHE = 'nba-eras-v20';
+var CACHE = 'nba-eras-v21';
 var SHELL = [
   './',
   'index.html',
