@@ -1,13 +1,12 @@
 /* Offline support: serve from cache, refresh in the background. */
-var CACHE = 'nba-eras-v2';
+var CACHE = 'nba-eras-v3';
 var SHELL = [
   './',
   'index.html',
   'styles.css',
   'app.js',
   'manifest.webmanifest',
-  'data/teams-1946.json',
-  'data/players-1946.json'
+  'data/teams-1949.json'
 ];
 
 self.addEventListener('install', function (event) {

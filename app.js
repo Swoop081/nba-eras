@@ -144,7 +144,7 @@
 
   /* ---------- era select ---------- */
   var ERAS = [
-    { id: '1946', years: '1946-47', title: 'The Founding Season', blurb: 'Basketball Association of America. 11 teams, 60 games, no shot clock, no salary cap.', open: true },
+    { id: '1949', years: '1949-50', title: 'The NBA Is Born', blurb: 'The BAA and NBL merge. 17 teams in three divisions, 62 to 68 games, no shot clock, no salary cap.', open: true, teams: 'data/teams-1949.json', players: 'data/players-1949.json' },
     { years: '1950s-60s', title: 'The Shot Clock Era', blurb: 'Locked for now' },
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
@@ -175,7 +175,8 @@
   var dock = document.getElementById('team-dock');
   var takeBtn = document.getElementById('btn-take');
   var selected = null;
-  var seasonData = null;
+  var currentEra = null;
+  var seasons = {};
 
   function ordinal(n) {
     return n === 1 ? '1st' : n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th';
@@ -231,15 +232,24 @@
   }
 
   function openTeams(era) {
+    currentEra = era;
     selected = null;
     dock.hidden = true;
-    teamSub.textContent = era.years + ' · 11 teams';
+    teamSub.textContent = era.years;
     show('screen-team');
-    if (seasonData) { renderTeams(seasonData); return; }
+    if (seasons[era.id]) {
+      teamSub.textContent = era.years + ' · ' + seasons[era.id].teams.length + ' teams';
+      renderTeams(seasons[era.id]);
+      return;
+    }
     teamList.textContent = 'Loading teams...';
-    fetch('data/teams-1946.json')
+    fetch(era.teams)
       .then(function (r) { return r.json(); })
-      .then(function (data) { seasonData = data; renderTeams(data); })
+      .then(function (data) {
+        seasons[era.id] = data;
+        teamSub.textContent = era.years + ' · ' + data.teams.length + ' teams';
+        renderTeams(data);
+      })
       .catch(function () {
         teamList.textContent = 'Could not load the team data. Open the game from its web address, not as a local file.';
       });
@@ -259,12 +269,16 @@
   });
 
   /* ---------- roster ---------- */
-  var playersData = null;
+  var playersByEra = {};
   function loadPlayers(cb) {
-    if (playersData) { cb(playersData); return; }
-    fetch('data/players-1946.json')
-      .then(function (r) { return r.json(); })
-      .then(function (d) { playersData = d; cb(d); })
+    var era = currentEra;
+    if (playersByEra[era.id]) { cb(playersByEra[era.id]); return; }
+    fetch(era.players)
+      .then(function (r) {
+        if (!r.ok) throw new Error('missing');
+        return r.json();
+      })
+      .then(function (d) { playersByEra[era.id] = d; cb(d); })
       .catch(function () { cb(null); });
   }
 
@@ -309,9 +323,10 @@
     list.textContent = '';
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
     var squad = data ? data.players.filter(function (p) { return p.teamId === team.id; }) : [];
-    document.getElementById('roster-sub').textContent = squad.length + ' players · 1946-47';
+    document.getElementById('roster-sub').textContent = squad.length + ' players · ' + currentEra.years;
     if (!data) {
-      list.textContent = 'Could not load the player data. Open the game from its web address, not as a local file.';
+      document.getElementById('roster-sub').textContent = currentEra.years;
+      list.textContent = 'Player data for this season has not been added yet.';
       return;
     }
     squad.forEach(function (p) {
@@ -342,7 +357,7 @@
       list.appendChild(holder);
     });
     if (squad.length) {
-      list.appendChild(el('p', 'sub', 'Ratings are derived from each player’s 1946-47 stats. Rosters show where players started the season.'));
+      list.appendChild(el('p', 'sub', 'Ratings are derived from each player’s ' + currentEra.years + ' stats. Rosters show where players started the season.'));
     }
   }
 

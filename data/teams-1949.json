@@ -1,0 +1,27 @@
+{
+  "season": "1949-50",
+  "league": "National Basketball Association",
+  "source": "Wikipedia, 1949-50 NBA season. Colours are placeholders.",
+  "champion": "minneapolis-lakers",
+  "runnerUp": "syracuse-nationals",
+  "divisions": ["Eastern", "Central", "Western"],
+  "teams": [
+    {"id": "syracuse-nationals", "city": "Syracuse", "name": "Nationals", "division": "Eastern", "w": 51, "l": 13, "colors": ["#1F6E43", "#FFFFFF"]},
+    {"id": "new-york-knicks", "city": "New York", "name": "Knickerbockers", "division": "Eastern", "w": 40, "l": 28, "colors": ["#F58426", "#006BB6"]},
+    {"id": "washington-capitols", "city": "Washington", "name": "Capitols", "division": "Eastern", "w": 32, "l": 36, "colors": ["#B22234", "#FFFFFF"]},
+    {"id": "philadelphia-warriors", "city": "Philadelphia", "name": "Warriors", "division": "Eastern", "w": 26, "l": 42, "colors": ["#1D428A", "#FDB927"]},
+    {"id": "baltimore-bullets", "city": "Baltimore", "name": "Bullets", "division": "Eastern", "w": 25, "l": 43, "colors": ["#7A1F2B", "#E5C07B"]},
+    {"id": "boston-celtics", "city": "Boston", "name": "Celtics", "division": "Eastern", "w": 22, "l": 46, "colors": ["#007A33", "#FFFFFF"]},
+    {"id": "minneapolis-lakers", "city": "Minneapolis", "name": "Lakers", "division": "Central", "w": 51, "l": 17, "colors": ["#552583", "#FDB927"]},
+    {"id": "rochester-royals", "city": "Rochester", "name": "Royals", "division": "Central", "w": 51, "l": 17, "colors": ["#0057B8", "#FFFFFF"]},
+    {"id": "fort-wayne-pistons", "city": "Fort Wayne", "name": "Pistons", "division": "Central", "w": 40, "l": 28, "colors": ["#C8102E", "#1D428A"]},
+    {"id": "chicago-stags", "city": "Chicago", "name": "Stags", "division": "Central", "w": 40, "l": 28, "colors": ["#8B1E3F", "#F2E6D0"]},
+    {"id": "st-louis-bombers", "city": "St. Louis", "name": "Bombers", "division": "Central", "w": 26, "l": 42, "colors": ["#0A6EBD", "#FFFFFF"]},
+    {"id": "indianapolis-olympians", "city": "Indianapolis", "name": "Olympians", "division": "Western", "w": 39, "l": 25, "colors": ["#D4A017", "#1D428A"]},
+    {"id": "anderson-packers", "city": "Anderson", "name": "Packers", "division": "Western", "w": 37, "l": 27, "colors": ["#2E7D32", "#F5C518"]},
+    {"id": "tri-cities-blackhawks", "city": "Tri-Cities", "name": "Blackhawks", "division": "Western", "w": 29, "l": 35, "colors": ["#222222", "#E03C31"]},
+    {"id": "sheboygan-red-skins", "city": "Sheboygan", "name": "Red Skins", "division": "Western", "w": 22, "l": 40, "colors": ["#B22222", "#F2F2F2"]},
+    {"id": "waterloo-hawks", "city": "Waterloo", "name": "Hawks", "division": "Western", "w": 19, "l": 43, "colors": ["#4B5563", "#F5C518"]},
+    {"id": "denver-nuggets", "city": "Denver", "name": "Nuggets", "division": "Western", "w": 11, "l": 51, "colors": ["#0B3D91", "#FFC72C"]}
+  ]
+}
