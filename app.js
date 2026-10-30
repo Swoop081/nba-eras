@@ -953,6 +953,15 @@
       rows[homeWon ? 0 : 1].row.classList.add('win');
       bodyEl.appendChild(el('p', 'sub', (homeWon ? 'Win' : 'Loss') + ' for ' + me.city + ', ' + res.home + '-' + res.away + '.'));
       var cols = Engine.columnsFor(year);
+      if (res.calls && res.calls.length) {
+        var cb = el('div', 'box');
+        cb.appendChild(el('h3', 'box-title', 'Your calls'));
+        res.calls.forEach(function (c) {
+          var r = el('p', 'sub', '“' + c.label + '”: ' + me.city + ' ' + c.my + ', ' + opp.city + ' ' + c.op + ' over the stretch. ' + c.verdict);
+          cb.appendChild(r);
+        });
+        bodyEl.appendChild(cb);
+      }
       bodyEl.appendChild(boxTable(me, res.homeLines, cols));
       bodyEl.appendChild(boxTable(opp, res.awayLines, cols));
       bodyEl.appendChild(el('p', 'sub', 'This box score only shows what the league recorded in ' + seasonLabel(save.year) + '. Later eras add rebounds, steals, blocks and more.'));
@@ -1167,7 +1176,7 @@
 
   function startLive(me, opp, mine, label) {
     var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year);
-    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
+    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
     var top = document.getElementById('live-top');
     top.textContent = '';
     [[me, 'a', false], [opp, 'b', true]].forEach(function (t, i) {
@@ -1481,6 +1490,7 @@
     lv.plan = null;
     var my = lv.da - p.my0, op = lv.db - p.op0, net = my - op;
     var verdict = net >= 3 ? 'It worked.' : net <= -3 ? 'It backfired.' : 'A wash.';
+    lv.calls.push({ label: p.label, my: my, op: op, net: net, verdict: verdict });
     var tm = lv.tovM - p.tm0, to = lv.tovO - p.to0;
     tickerLine('"' + p.label + '": ' + lv.me.city + ' ' + my + ', ' + lv.opp.city + ' ' + op + ' since. Giveaways: you ' + tm + ', them ' + to + '. ' + verdict, 'sys');
   }
@@ -1522,6 +1532,8 @@
   function finishLive() {
     clearTimeout(lv.timer);
     var res = Engine.finalize(lv.g);
+    checkPlan();
+    res.calls = lv.calls;
     completeGame(res, lv.mine, lv.me, lv.opp, lv.label);
   }
 
@@ -1913,25 +1925,28 @@
     pg.appendChild(mast);
     pg.appendChild(el('h2', 'pp-head', ev.head));
     pg.appendChild(el('p', 'pp-deck', ev.deck));
-    var fig = el('figure', 'pp-photo');
-    fig.hidden = true;
-    var cap = el('figcaption', 'pp-cap');
-    var tryNext = function (i) {
-      if (i >= ev.photos.length) return;
-      var c = ev.photos[i], exts = ['webp', 'png', 'jpg'], k = 0, img = new Image();
-      img.onload = function () {
-        fig.textContent = '';
-        fig.appendChild(img);
-        cap.textContent = c.name + ' of ' + c.team + ', ' + c.pts + ' points.';
-        fig.appendChild(cap);
-        fig.hidden = false;
+    function photoFig(list, text) {
+      var fig = el('figure', 'pp-photo');
+      fig.hidden = true;
+      var cap = el('figcaption', 'pp-cap');
+      var tryNext = function (i) {
+        if (i >= list.length) return;
+        var c = list[i], exts = ['webp', 'png', 'jpg'], k = 0, img = new Image();
+        img.onload = function () {
+          fig.textContent = '';
+          fig.appendChild(img);
+          cap.textContent = text(c);
+          fig.appendChild(cap);
+          fig.hidden = false;
+        };
+        img.onerror = function () { k++; if (k < exts.length) img.src = 'assets/players/' + c.id + '.' + exts[k]; else tryNext(i + 1); };
+        img.alt = c.name;
+        img.src = 'assets/players/' + c.id + '.' + exts[0];
       };
-      img.onerror = function () { k++; if (k < exts.length) img.src = 'assets/players/' + c.id + '.' + exts[k]; else tryNext(i + 1); };
-      img.alt = c.name;
-      img.src = 'assets/players/' + c.id + '.' + exts[0];
-    };
-    tryNext(0);
-    pg.appendChild(fig);
+      tryNext(0);
+      return fig;
+    }
+    pg.appendChild(photoFig(ev.photos || [], function (c) { return c.name + ' of ' + c.team + ', ' + c.pts + ' points.'; }));
     ev.story.forEach(function (t) { pg.appendChild(el('p', 'pp-p', t)); });
     function section(title, nodes) {
       if (!nodes.length) return;
@@ -1940,7 +1955,12 @@
       nodes.forEach(function (n) { s.appendChild(n); });
       pg.appendChild(s);
     }
-    if (ev.feat) section('Feat of the day', [el('p', 'pp-p', ev.feat)]);
+    if (ev.feat) {
+      var featNodes = [];
+      if (ev.featPhoto) featNodes.push(photoFig([ev.featPhoto], function (c) { return c.name + ' of ' + c.team + '.'; }));
+      featNodes.push(el('p', 'pp-p', ev.feat));
+      section('Feat of the day', featNodes);
+    }
     section('Around the circuit', ev.scores.map(function (g) {
       var r = el('div', 'pp-score');
       r.appendChild(el('span', null, g.w + ' ' + g.ws + ', ' + g.l + ' ' + g.ls));

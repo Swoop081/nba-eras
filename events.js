@@ -203,8 +203,15 @@
     out.deck = ctx.seriesLine || (won ? 'Another step forward for the club.' : 'The club will try to bounce back.');
 
     // photo candidates: the day's best performers, whoever they play for
-    out.photos = all.slice(0, 8).map(function (x) { return { id: x.id, name: x.name, team: names(x.team), pts: x.pts, fg: x.fg, fga: x.fga }; });
-    if (myLines[0] && !out.photos.some(function (p) { return p.id === myLines[0].id; })) out.photos.push({ id: myLines[0].id, name: myLines[0].name, team: ctx.me.city, pts: myLines[0].s.pts, fg: myLines[0].s.fg, fga: myLines[0].s.fga });
+    // The photo sits under the lead story, so it must come from that game: our top scorer, then theirs.
+    // The day's best performer from other games is shown beside the "Feat of the day" item instead.
+    var fromLine = function (l, city) { return { id: l.id, name: l.name, team: city, pts: l.s.pts, fg: l.s.fg, fga: l.s.fga }; };
+    out.photos = [];
+    if (myLines[0]) out.photos.push(fromLine(myLines[0], ctx.me.city));
+    if (oppLines[0]) out.photos.push(fromLine(oppLines[0], ctx.opp.city));
+    myLines.slice(1, 3).forEach(function (l) { out.photos.push(fromLine(l, ctx.me.city)); });
+    oppLines.slice(1, 3).forEach(function (l) { out.photos.push(fromLine(l, ctx.opp.city)); });
+    out.featPhoto = feat ? { id: feat.id, name: feat.name, team: names(feat.team), pts: feat.pts } : null;
 
     // feat of the day
     if (feat) {
