@@ -48,6 +48,7 @@
       shuffle(base, r);
       days = days.concat(base);
     }
+    if (ids.length % 2 === 0 && days.length > gamesPerTeam) days = days.slice(0, gamesPerTeam);
     var division = {}, rec = {};
     teams.forEach(function (t) { division[t.id] = t.division; rec[t.id] = { w: 0, l: 0 }; });
     return {

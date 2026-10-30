@@ -1306,7 +1306,7 @@
     var hist = History.get(save.year);
     if (hist) {
       var foldIds = save.fates === 'history' ? hist.fold.filter(function (id) { return save.ids.indexOf(id) >= 0; }) : [];
-      save.off.fate = { fold: foldIds, join: hist.join, news: hist.news, myFolded: foldIds.indexOf(me.id) >= 0 };
+      save.off.fate = { fold: foldIds, join: hist.join, move: save.fates === 'history' ? (hist.move || {}) : {}, news: hist.news, myFolded: foldIds.indexOf(me.id) >= 0 };
     }
     rosterCache = {};
     persist();
@@ -1449,6 +1449,7 @@
       save.rec[t.id] = { w: 0, l: 0 };
       League.makeVeterans(save, t.id, 10, 52, 66);
     });
+    Object.keys(f.move || {}).forEach(function (id) { if (save.tm[id]) save.tm[id].division = f.move[id]; });
     f.fold.forEach(function (id) { save.ids.splice(save.ids.indexOf(id), 1); });
     if (f.fold.length) {
       var teams = save.ids.map(teamById);
