@@ -359,18 +359,19 @@
 
   function level(v) { return v >= 75 ? 'hi' : v >= 55 ? 'mid' : 'lo'; }
 
-  /* Uses assets/photos/<player-id>.jpg (or .png / .webp) when present. */
+  /* Uses assets/players/<player-id>.jpg (or .png / .webp) when present; assets/photos works too. */
   function makeAvatar(p) {
     var wrap = el('span', 'avatar');
     wrap.setAttribute('aria-hidden', 'true');
     wrap.appendChild(el('span', null, playerInitials(p.name)));
-    var exts = ['jpg', 'png', 'webp'];
+    var exts = [];
+    ['players', 'photos'].forEach(function (d) { ['jpg', 'png', 'webp'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
     var i = 0;
     var img = new Image();
     img.onload = function () { wrap.textContent = ''; wrap.appendChild(img); };
     img.onerror = function () { next(); };
     function next() {
-      if (i < exts.length) img.src = 'assets/photos/' + p.id + '.' + exts[i++];
+      if (i < exts.length) img.src = 'assets/' + exts[i++];
     }
     next();
     return wrap;
