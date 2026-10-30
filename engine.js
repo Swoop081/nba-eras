@@ -71,35 +71,50 @@
     return t / w;
   }
 
-  function possession(r, O, D, pr, st) {
+  function none() { return {}; }
+
+  function possession(r, O, D, pr, st, mo, md) {
+    mo = mo || none(); md = md || none();
+    var ev = st.ev = { who: null, kind: 'miss', pts: 0 };
     var tovAdj = (50 - avg(O, function (x) { return x.p.ratings.tov; })) / 400 + (avg(D, function (x) { return x.p.ratings.stl; }) - 50) / 500;
+    tovAdj += (mo.tovAdd || 0) + (md.oppTovAdd || 0);
     if (r() < pr.tov + tovAdj) {
       var loser = pick(r, O, function (x) { return x.share * (110 - x.p.ratings.tov); });
       loser.s.tov++;
-      if (r() < 0.55) pick(r, D, function (x) { return x.share * x.p.ratings.stl * x.p.ratings.stl; }).s.stl++;
+      ev.who = loser.p.name; ev.kind = 'tov';
+      if (r() < 0.55) {
+        var thief = pick(r, D, function (x) { return x.share * x.p.ratings.stl * x.p.ratings.stl; });
+        thief.s.stl++; ev.stl = thief.p.name;
+      }
       return 0;
     }
-    var shooter = pick(r, O, function (x) { var s = x.p.ratings.sco; return x.share * s * s; });
-    var defender = pick(r, D, function (x) { return x.share; });
+    var shooter = pick(r, O, function (x) {
+      var s = x.p.ratings.sco;
+      return x.share * s * s * (mo.focus === x.p.id ? (mo.focusW || 6) : 1);
+    });
+    ev.who = shooter.p.name;
     var pts = 0;
-    var fouled = r() < pr.foul;
+    var fouled = r() < pr.foul + (md.foulAdd || 0);
     if (fouled) {
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou); }).s.pf++;
     }
     var q = pr.fg * (0.62 + 0.0095 * shooter.p.ratings.sht + 0.0030 * shooter.p.ratings.sco);
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
+    q *= (mo.fgMul || 1) * (md.oppFgMul || 1);
     var three = pr.threes && r() < 0.15 + shooter.p.ratings.tpt / 500;
     if (three) { q = q * 0.78; }
     var made = r() < q;
     if (fouled) {
       var n = made ? 1 : (three ? 3 : 2);
       shooter.s.fga += made ? 1 : 0;
+      ev.kind = 'foul'; ev.fta = 0; ev.ftm = 0;
       for (var i = 0; i < n; i++) {
-        shooter.s.fta++;
-        if (r() < 0.38 + 0.4 * shooter.p.ratings.ft / 100) { shooter.s.ft++; shooter.s.pts++; pts++; }
+        shooter.s.fta++; ev.fta++;
+        if (r() < 0.38 + 0.4 * shooter.p.ratings.ft / 100) { shooter.s.ft++; shooter.s.pts++; pts++; ev.ftm++; }
       }
-      if (made) { shooter.s.fg++; shooter.s.pts += three ? 3 : 2; pts += three ? 3 : 2; }
+      if (made) { shooter.s.fg++; shooter.s.pts += three ? 3 : 2; pts += three ? 3 : 2; ev.and1 = true; }
+      ev.pts = pts;
       return pts;
     }
     shooter.s.fga++;
@@ -108,57 +123,84 @@
       var v = three ? 3 : 2;
       shooter.s.fg++; if (three) shooter.s.tp++;
       shooter.s.pts += v; pts += v;
+      ev.kind = 'made'; ev.pts = v; ev.three = three;
       if (r() < 0.2 + 0.4 * shooter.p.ratings.ply / 100) {
         var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply; });
-        passer.s.ast++;
+        passer.s.ast++; ev.ast = passer.p.name;
       }
       return pts;
     }
     if (r() < 0.07 + avg(D, function (x) { return x.p.ratings.blk; }) / 900) {
-      pick(r, D, function (x) { return x.share * x.p.ratings.blk * x.p.ratings.blk; }).s.blk++;
+      var blocker = pick(r, D, function (x) { return x.share * x.p.ratings.blk * x.p.ratings.blk; });
+      blocker.s.blk++; ev.blk = blocker.p.name;
     }
     var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250);
     if (r() < offRebP) {
-      pick(r, O, function (x) { return x.share * x.p.ratings.orb * x.p.ratings.orb; }).s.orb++;
-      return pts + possession(r, O, D, pr, st);
+      var reb = pick(r, O, function (x) { return x.share * x.p.ratings.orb * x.p.ratings.orb; });
+      reb.s.orb++;
+      var first = ev;
+      var more = possession(r, O, D, pr, st, mo, md);
+      st.ev.second = true;
+      return pts + more;
     }
     pick(r, D, function (x) { return x.share * x.p.ratings.drb * x.p.ratings.drb; }).s.drb++;
     return pts;
   }
 
-  function simulate(home, away, year, seed) {
-    var r = rng(seed || Math.floor(Math.random() * 1e9));
+  /* ---------- stepwise game, so the match screen can pause for decisions ---------- */
+  function start(home, away, year, seed) {
     var pr = params(year);
-    var H = prep(home), A = prep(away);
-    var q = [], hs = 0, as = 0;
     var perQ = Math.round(pr.poss / 4);
-    for (var i = 0; i < 4; i++) {
-      var qh = 0, qa = 0;
-      for (var k = 0; k < perQ; k++) {
-        qh += possession(r, H, A, pr);
-        qa += possession(r, A, H, pr);
+    return {
+      pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep(home), A: prep(away), year: year,
+      perQ: perQ, limit: perQ, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
+      mods: { H: {}, A: {} }, st: {}
+    };
+  }
+
+  function live(g, side) { var m = g.mods[side]; return m && m.until > g.n ? m : none(); }
+
+  /* One exchange: home possession then away possession. Returns both events. */
+  function step(g) {
+    var mH = live(g, 'H'), mA = live(g, 'A');
+    var a = possession(g.r, g.H, g.A, g.pr, g.st, mH, mA);
+    var evA = { side: 'home', pts: a, ev: g.st.ev };
+    var b = possession(g.r, g.A, g.H, g.pr, g.st, mA, mH);
+    var evB = { side: 'away', pts: b, ev: g.st.ev };
+    g.qh += a; g.qa += b; g.hs += a; g.as += b; g.k++; g.n++;
+    if (g.k >= g.limit) {
+      g.quarters.push([g.qh, g.qa]);
+      g.qh = 0; g.qa = 0; g.k = 0; g.q++;
+      if (g.q >= 4) {
+        if (g.hs === g.as && g.ot < 6) { g.ot++; g.limit = Math.round(g.perQ / 2); }
+        else g.over = true;
       }
-      hs += qh; as += qa;
-      q.push([qh, qa]);
     }
-    var ot = 0;
-    while (hs === as && ot < 6) {
-      var oh = 0, oa = 0;
-      for (var m = 0; m < Math.round(perQ / 2); m++) { oh += possession(r, H, A, pr); oa += possession(r, A, H, pr); }
-      hs += oh; as += oa; q.push([oh, oa]); ot++;
+    return [evA, evB];
+  }
+
+  function finalize(g) {
+    if (g.hs === g.as) {
+      g.hs++; g.H[0].s.pts++; g.H[0].s.ft++; g.H[0].s.fta++;
+      if (g.quarters.length) g.quarters[g.quarters.length - 1][0]++;
     }
-    if (hs === as) { hs++; H[0].s.pts++; H[0].s.ft++; H[0].s.fta++; q[q.length - 1][0]++; }
-    var weights = function (T) { var t = 0; T.forEach(function (x) { t += x.share; }); return t; };
-    [H, A].forEach(function (T) {
-      var tw = weights(T);
+    [g.H, g.A].forEach(function (T) {
+      var tw = 0;
+      T.forEach(function (x) { tw += x.share; });
       T.forEach(function (x) {
         x.s.trb = x.s.orb + x.s.drb;
         x.s.min = Math.round(240 * x.share / tw);
       });
     });
     function lines(T) { return T.map(function (x) { return { id: x.p.id, name: x.p.name, pos: x.p.pos, s: x.s }; }); }
-    return { quarters: q, home: hs, away: as, homeLines: lines(H), awayLines: lines(A) };
+    return { quarters: g.quarters, home: g.hs, away: g.as, homeLines: lines(g.H), awayLines: lines(g.A) };
   }
 
-  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params };
+  function simulate(home, away, year, seed) {
+    var g = start(home, away, year, seed);
+    while (!g.over) step(g);
+    return finalize(g);
+  }
+
+  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params, start: start, step: step, finalize: finalize };
 })(window);

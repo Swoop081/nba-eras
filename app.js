@@ -482,7 +482,7 @@
     return wrap;
   }
 
-  function renderMatch(me, opp, res, year, label) {
+  function renderMatch(me, opp, res, year, label, instant) {
     clearTimeout(matchTimer);
     var bodyEl = document.getElementById('match-body');
     var dockEl = document.getElementById('match-dock');
@@ -539,6 +539,7 @@
       matchTimer = setTimeout(step, reduceMotion ? 0 : 1100);
     }
     board.addEventListener('click', function () { clearTimeout(matchTimer); qi = nq; rows.forEach(function (r, i) { res.quarters.forEach(function (q, k) { r.cells[k].textContent = q[r.idx]; }); }); finish(); }, { once: true });
+    if (instant) { qi = nq; rows.forEach(function (r) { res.quarters.forEach(function (q, k) { r.cells[k].textContent = q[r.idx]; }); }); finish(); return; }
     matchTimer = setTimeout(step, reduceMotion ? 0 : 600);
   }
 
@@ -599,7 +600,14 @@
     if (!mine) { simDay(); persist(); renderSeason(); return; }
     var oppId = mine.home === save.myId ? mine.away : mine.home;
     var me = teamById(save.myId), opp = teamById(oppId);
-    var res = Engine.simulate(rosterFor(me.id), rosterOf(oppId), save.year);
+    var label = save.phase === 'regular'
+      ? 'Game ' + (save.rec[me.id].w + save.rec[me.id].l + 1) + ' · ' + (mine.home === me.id ? 'home' : 'away')
+      : Season.ROUNDS[mine.round].name;
+    startLive(me, opp, mine, label);
+  }
+
+  /* Records the finished game, plays the rest of the day, and builds the event stack. */
+  function completeGame(res, mine, me, opp, label) {
     var mineResult = {
       home: mine.home, away: mine.away, series: mine.series,
       hs: mine.home === me.id ? res.home : res.away,
@@ -608,9 +616,6 @@
     var others = Season.today(save).filter(function (g) {
       return g.home !== me.id && g.away !== me.id;
     }).map(simGame);
-    var label = save.phase === 'regular'
-      ? 'Game ' + (save.rec[me.id].w + save.rec[me.id].l + 1) + ' · ' + (mine.home === me.id ? 'home' : 'away')
-      : Season.ROUNDS[mine.round].name;
     Season.record(save, others.concat([mineResult]));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     var us = res.home, them = res.away, won = us > them;
@@ -625,9 +630,226 @@
     var others2 = save.ids.map(teamById).filter(function (t) { return t.id !== me.id && t.id !== opp.id; });
     save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), label: label, seriesLine: seriesLine, others: others2 });
     persist();
-    pendingAfterMatch = true;
-    renderMatch(me, opp, res, save.year, label);
+    renderMatch(me, opp, res, save.year, label, true);
     show('screen-match');
+  }
+
+  /* ---------- live match ---------- */
+  var lv = null;
+  var COURT_SPOTS = [[50, 36], [20, 50], [80, 50], [34, 74], [66, 74]];
+  var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
+
+  function lastName(n) { var p = n.split(' '); return p[p.length - 1]; }
+  function periodLabel(g) { return g.q < 4 ? 'Q' + (g.q + 1) : (g.q === 4 ? 'OT' : 'OT' + (g.q - 3)); }
+  function clockText(g) {
+    var total = g.q < 4 ? 12 : 5, secs = Math.round((1 - g.k / g.limit) * total * 60);
+    return Math.floor(secs / 60) + ':' + ('0' + (secs % 60)).slice(-2);
+  }
+
+  function startLive(me, opp, mine, label) {
+    var g = Engine.start(rosterFor(me.id), rosterOf(opp.id), save.year);
+    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], done: {}, lastDec: -99, timer: null, skip: false };
+    var top = document.getElementById('live-top');
+    top.textContent = '';
+    [[me, 'a', false], [opp, 'b', true]].forEach(function (t, i) {
+      var box = el('div', 'lt-team' + (t[2] ? ' r' : ''));
+      box.appendChild(teamBadge(t[0]));
+      var tx = el('span');
+      tx.appendChild(el('strong', null, t[0].name));
+      var sc = el('span', 'sc', '0');
+      sc.id = 'lv-' + t[1];
+      tx.appendChild(sc);
+      box.appendChild(tx);
+      top.appendChild(box);
+      if (i === 0) {
+        var mid = el('div', 'lt-mid');
+        var cl = el('b', null, '12:00'); cl.id = 'lv-clock';
+        var pr = el('small', null, 'Q1'); pr.id = 'lv-period';
+        mid.appendChild(cl); mid.appendChild(pr);
+        top.appendChild(mid);
+      }
+    });
+    var court = document.getElementById('court');
+    court.textContent = '';
+    court.innerHTML = COURT_SVG;
+    lv.pl = []; lv.op = [];
+    COURT_SPOTS.forEach(function (sp, i) {
+      var p = g.H[i].p, o = g.A[i].p;
+      var d = el('div', 'op', lastName(o.name).slice(0, 3).toUpperCase());
+      d.style.left = (sp[0] + (50 - sp[0]) * 0.45) + '%';
+      d.style.top = (sp[1] - 17) + '%';
+      court.appendChild(d); lv.op.push(d);
+      var b = el('button', 'pl');
+      b.type = 'button';
+      b.style.left = sp[0] + '%'; b.style.top = sp[1] + '%';
+      b.appendChild(makeAvatar(p));
+      b.appendChild(el('span', 'nm', lastName(p.name)));
+      var pp = el('span', 'pp', '0'); b.appendChild(pp);
+      court.appendChild(b); lv.pl.push({ el: b, pp: pp });
+    });
+    document.getElementById('ticker').textContent = '';
+    tickerLine('Tip-off. ' + me.city + ' v ' + opp.city + '.', 'sys');
+    document.getElementById('live-dock').textContent = '';
+    skipButton();
+    show('screen-live');
+    lv.timer = setTimeout(liveTick, 900);
+  }
+
+  function skipButton() {
+    var dock = document.getElementById('live-dock');
+    dock.textContent = '';
+    var b = el('button', 'btn ghost wide', 'Skip to the final buzzer');
+    b.type = 'button';
+    b.addEventListener('click', function () {
+      clearTimeout(lv.timer);
+      lv.skip = true;
+      while (!lv.g.over) Engine.step(lv.g);
+      finishLive();
+    });
+    dock.appendChild(b);
+  }
+
+  function tickerLine(text, cls) {
+    var t = document.getElementById('ticker');
+    var line = el('div', 'tk' + (cls ? ' ' + cls : ''), text);
+    t.insertBefore(line, t.firstChild);
+    while (t.children.length > 4) t.removeChild(t.lastChild);
+  }
+
+  function evText(ev, mine) {
+    var who = lastName(ev.who || '');
+    if (ev.kind === 'made') return who + ' scores ' + ev.pts + (ev.ast ? ', assist ' + lastName(ev.ast) : '');
+    if (ev.kind === 'tov') return who + ' turns it over' + (ev.stl ? ', stolen by ' + lastName(ev.stl) : '');
+    if (ev.kind === 'foul') return who + ' is fouled, ' + ev.ftm + ' of ' + ev.fta + ' at the line' + (ev.and1 ? ' and the bucket' : '');
+    return who + ' misses' + (ev.blk ? ', blocked by ' + lastName(ev.blk) : '');
+  }
+
+  function showPoss(evObj, mineSide) {
+    var g = lv.g, ev = evObj.ev;
+    var list = mineSide ? g.H : g.A;
+    var idx = -1;
+    for (var i = 0; i < 5; i++) if (list[i].p.name === ev.who) idx = i;
+    lv.pl.forEach(function (p) { p.el.classList.remove('ball'); });
+    lv.op.forEach(function (o) { o.classList.remove('ball'); });
+    if (idx >= 0) (mineSide ? lv.pl[idx].el : lv.op[idx]).classList.add('ball');
+    if (mineSide && idx >= 0) {
+      var node = lv.pl[idx].el;
+      node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash');
+      if (evObj.pts > 0) {
+        var pop = el('span', 'pop', '+' + evObj.pts);
+        node.appendChild(pop);
+        setTimeout(function () { if (pop.parentNode) pop.parentNode.removeChild(pop); }, 950);
+      } else if (ev.kind === 'tov') {
+        var bad = el('span', 'pop bad', 'TO');
+        node.appendChild(bad);
+        setTimeout(function () { if (bad.parentNode) bad.parentNode.removeChild(bad); }, 950);
+      }
+    }
+    if (evObj.pts > 0 || ev.kind === 'tov' || ev.kind === 'foul' || ev.blk) {
+      tickerLine((mineSide ? '' : lv.opp.city + ': ') + evText(ev, mineSide), mineSide ? 'me' : '');
+    }
+  }
+
+  function updateLive() {
+    var g = lv.g;
+    document.getElementById('lv-a').textContent = lv.da;
+    document.getElementById('lv-b').textContent = lv.db;
+    document.getElementById('lv-clock').textContent = clockText(g);
+    document.getElementById('lv-period').textContent = periodLabel(g);
+    for (var i = 0; i < 5; i++) lv.pl[i].pp.textContent = g.H[i].s.pts;
+  }
+
+  function decisionDue() {
+    var g = lv.g, key;
+    if (g.over) return null;
+    var diff = g.hs - g.as;
+    if (g.q >= 3 && g.k === g.limit - 1 && Math.abs(diff) <= 5) {
+      key = 'clutch' + g.q;
+      if (!lv.done[key]) { lv.done[key] = 1; return 'clutch'; }
+    }
+    if (g.q < 4 && g.k === Math.floor(g.limit / 2)) {
+      key = 'mid' + g.q;
+      if (!lv.done[key]) { lv.done[key] = 1; lv.lastDec = g.n; return 'mid'; }
+    }
+    var run = 0, h = lv.hist.slice(-6);
+    h.forEach(function (d) { run += d; });
+    if (h.length === 6 && run >= 8 && g.n - lv.lastDec >= 10 && g.k < g.limit - 2) {
+      lv.lastDec = g.n; lv.hist = []; return 'run';
+    }
+    return null;
+  }
+
+  function hotLine(x) { return x.s.pts + ' pts, ' + x.s.fg + '-' + x.s.fga; }
+
+  function showDecision(kind) {
+    var g = lv.g, dock = document.getElementById('live-dock');
+    dock.textContent = '';
+    var mineTop = g.H.slice(0, 5).slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
+    var oppTop = g.A.slice(0, 5).slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
+    var when = periodLabel(g) + ' ' + clockText(g) + ' · ' + lv.me.city + ' ' + g.hs + ', ' + lv.opp.city + ' ' + g.as;
+    if (kind === 'clutch') {
+      tickerLine('Final possession. Who takes the shot?', 'sys');
+      dock.appendChild(el('p', 'dec-title', when + '. Tap the player you want to take the last shot.'));
+      lv.pl.forEach(function (p, i) {
+        p.el.classList.add('pick');
+        p.el.onclick = function () {
+          lv.pl.forEach(function (q) { q.el.classList.remove('pick'); q.el.onclick = null; });
+          g.mods.H = { focus: g.H[i].p.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
+          tickerLine('Ball to ' + lastName(g.H[i].p.name) + '...', 'sys');
+          skipButton();
+          lv.timer = setTimeout(liveTick, 700);
+        };
+      });
+      return;
+    }
+    tickerLine(kind === 'run' ? 'Timeout. ' + lv.opp.city + ' are on a run.' : 'Timeout.', 'sys');
+    dock.appendChild(el('p', 'dec-title', when + (kind === 'run' ? ' · ' + lv.opp.city + ' on a run. Your call.' : ' · What is the plan?')));
+    var opts = [
+      { t: 'Feed ' + lastName(mineTop.p.name), s: hotLine(mineTop) + ' · more shots for him', mods: { focus: mineTop.p.id, focusW: 5 } },
+      { t: 'Push the pace', s: 'Fast breaks, but more turnovers', mods: { fgMul: 1.04, tovAdd: 0.03 } },
+      { t: 'Lock down ' + lastName(oppTop.p.name), s: hotLine(oppTop) + ' · tougher defence, more fouls', mods: { oppFgMul: 0.92, foulAdd: 0.05 } }
+    ];
+    opts.forEach(function (o, i) {
+      var b = el('button', 'btn opt' + (i === 0 ? ' primary' : ''));
+      b.type = 'button';
+      b.appendChild(el('span', null, o.t));
+      b.appendChild(el('small', null, o.s));
+      b.addEventListener('click', function () {
+        var m = o.mods; m.until = g.n + 8;
+        g.mods.H = m;
+        tickerLine('Plan: ' + o.t + '.', 'sys');
+        skipButton();
+        lv.timer = setTimeout(liveTick, 500);
+      });
+      dock.appendChild(b);
+    });
+  }
+
+  function liveTick() {
+    var g = lv.g;
+    var due = decisionDue();
+    if (due) { updateLive(); showDecision(due); return; }
+    var evs = Engine.step(g);
+    lv.da += evs[0].pts; lv.db += evs[1].pts;
+    lv.hist.push(evs[1].pts - evs[0].pts);
+    showPoss(evs[0], true);
+    updateLive();
+    lv.timer = setTimeout(function () {
+      showPoss(evs[1], false);
+      updateLive();
+      if (g.over) {
+        tickerLine('Final buzzer.', 'sys');
+        lv.timer = setTimeout(finishLive, 1100);
+      } else {
+        lv.timer = setTimeout(liveTick, reduceMotion ? 60 : 200);
+      }
+    }, reduceMotion ? 40 : 170);
+  }
+
+  function finishLive() {
+    clearTimeout(lv.timer);
+    var res = Engine.finalize(lv.g);
+    completeGame(res, lv.mine, lv.me, lv.opp, lv.label);
   }
 
   function simDays(n) {
