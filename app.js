@@ -1805,6 +1805,7 @@
 
   function openTrade(returnTo) {
     var closed = tradeWindow();
+    if (!save.lg.picks) League.ensurePicks(save, save.ids.map(teamById));
     trade = { back: returnTo, partner: null, give: {}, get: {}, msg: '' };
     document.getElementById('trade-back').onclick = function () {
       if (trade.partner) { trade.partner = null; renderTrade(); return; }
@@ -1820,6 +1821,17 @@
     row.classList.add('pickable');
     row.style.cursor = 'pointer';
     if (selected) row.classList.add('selected');
+    row.addEventListener('click', onTap);
+    return row;
+  }
+
+  function pickRow(k, teams, selected, onTap) {
+    var row = el('button', 'card pickable' + (selected ? ' selected' : ''));
+    row.type = 'button';
+    var tx = el('span');
+    tx.appendChild(el('strong', null, League.pickLabel(k, teams)));
+    tx.appendChild(el('span', 'meta', 'Draft pick \u00B7 ' + (k.r === 1 ? 'first round' : 'second round') + ' \u00B7 worth about ' + Math.round(League.pickValue(save, k))));
+    row.appendChild(tx);
     row.addEventListener('click', onTap);
     return row;
   }
@@ -1859,31 +1871,37 @@
     var theirs = League.rosterOf(save, trade.partner).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     function chosen(list, map) { return list.filter(function (p) { return map[p.id]; }); }
     var give = chosen(mine, trade.give), get = chosen(theirs, trade.get);
-    var res = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax());
+    var allT = save.ids.map(teamById);
+    var myK = League.picksOf(save, me.id), theirK = League.picksOf(save, trade.partner);
+    var giveK = myK.filter(function (k) { return trade.give[League.pickId(k)]; }), getK = theirK.filter(function (k) { return trade.get[League.pickId(k)]; });
+    var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), n: giveK.length + getK.length };
+    var res = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax(), ex);
     var meter = el('div', 'stat-card');
     meter.appendChild(el('div', 'group-title', 'Their view'));
-    var pct = Math.max(0, Math.min(100, Math.round((give.length || get.length ? res.ratio / 1.1 : 0) * 100)));
+    var pct = Math.max(0, Math.min(100, Math.round((give.length || get.length || ex.n ? res.ratio / 1.1 : 0) * 100)));
     meter.appendChild(ratingRow('Interest', Math.min(100, pct)));
     body.appendChild(meter);
-    dock.appendChild(el('p', res.ok && !trade.msg ? 'dec-title' : 'note', trade.msg || (give.length || get.length ? res.reason : 'Tap players on both sides to build a deal.')));
+    dock.appendChild(el('p', res.ok && !trade.msg ? 'dec-title' : 'note', trade.msg || (give.length || get.length || ex.n ? res.reason : 'Tap players on both sides to build a deal.')));
     body.appendChild(el('h3', 'box-title', 'You send'));
     mine.forEach(function (p) {
       body.appendChild(tradeRow(p, !!trade.give[p.id], function () { if (trade.give[p.id]) delete trade.give[p.id]; else trade.give[p.id] = 1; trade.msg = ''; renderTrade(); }));
     });
+    myK.forEach(function (k) { body.appendChild(pickRow(k, allT, !!trade.give[League.pickId(k)], function () { var id = League.pickId(k); if (trade.give[id]) delete trade.give[id]; else trade.give[id] = 1; trade.msg = ''; renderTrade(); })); });
     body.appendChild(el('h3', 'box-title', 'You get'));
+    theirK.forEach(function (k) { body.appendChild(pickRow(k, allT, !!trade.get[League.pickId(k)], function () { var id = League.pickId(k); if (trade.get[id]) delete trade.get[id]; else trade.get[id] = 1; trade.msg = ''; renderTrade(); })); });
     theirs.forEach(function (p) {
       body.appendChild(tradeRow(p, !!trade.get[p.id], function () { if (trade.get[p.id]) delete trade.get[p.id]; else trade.get[p.id] = 1; trade.msg = ''; renderTrade(); }));
     });
     var send = el('button', 'btn primary wide', 'Propose trade');
     send.type = 'button';
-    send.disabled = !give.length && !get.length;
+    send.disabled = !give.length && !get.length && !ex.n;
     send.addEventListener('click', function () {
-      var r = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax());
+      var r = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax(), ex);
       if (!r.ok) { trade.msg = r.reason; renderTrade(); return; }
       var them = teamById(trade.partner);
-      League.executeTrade(save, me.id, trade.partner, give, get);
+      League.executeTrade(save, me.id, trade.partner, give, get, giveK, getK);
       give.concat(get).forEach(function (p) { var x = Events.pm(save, p.id); x.m = 55; x.t = 45; });
-      var line = 'Trade: ' + me.city + ' send ' + (give.map(function (p) { return lastName(p.name); }).join(', ') || 'nobody') + ' to ' + them.city + ' for ' + (get.map(function (p) { return lastName(p.name); }).join(', ') || 'nothing');
+      var line = 'Trade: ' + me.city + ' send ' + (give.map(function (p) { return lastName(p.name); }).concat(giveK.map(function (k) { return k.y + ' R' + k.r + ' pick'; })).join(', ') || 'nobody') + ' to ' + them.city + ' for ' + (get.map(function (p) { return lastName(p.name); }).concat(getK.map(function (k) { return k.y + ' R' + k.r + ' pick'; })).join(', ') || 'nothing');
       var mo = Events.mood(save);
       mo.news.push({ text: line, date: Events.dateFor(save) });
       if (mo.news.length > 12) mo.news.shift();
@@ -1897,9 +1915,9 @@
     var ask = el('button', 'btn ghost wide', 'What would it take?');
     ask.type = 'button';
     ask.addEventListener('click', function () {
-      if (!give.length && !get.length) return;
+      if (!give.length && !get.length && !ex.n) return;
       if (res.ok) { trade.msg = 'The deal already works for them.'; renderTrade(); return; }
-      var add = League.suggestAdd(save, me.id, trade.partner, give, get, tradeMax());
+      var add = League.suggestAdd(save, me.id, trade.partner, give, get, tradeMax(), ex);
       if (add) { trade.msg = 'They would do it if you add ' + add.map(function (p) { return p.name + ' (' + p.ratings.ovr + ' overall, ' + money(p.salary) + ')'; }).join(' and ') + '.'; }
       else { trade.msg = 'Nothing on your roster would make this work. Ask for less.'; }
       renderTrade();
@@ -2286,7 +2304,7 @@
       return;
     }
     var slot = d.picks[d.at];
-    offHeader(isDisp ? 'Dispersal draft' : d.year + ' draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length);
+    offHeader(isDisp ? 'Dispersal draft' : d.year + ' draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length + (slot.orig ? ' · via ' + teamById(slot.orig).city : ''));
     var clock = el('div', 'stat-card');
     clock.appendChild(el('div', 'group-title', 'You are on the clock'));
     var recent = d.picks.slice(Math.max(0, d.at - 4), d.at).reverse();
@@ -2413,6 +2431,7 @@
     if (next.mood) { next.mood.streak = 0; next.mood.news = next.mood.news.slice(-3); }
     next.pending = [];
     save = next;
+    League.ensurePicks(save, save.ids.map(teamById));
     rosterCache = {};
     offSel = null;
     persist();

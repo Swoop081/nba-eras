@@ -58,6 +58,7 @@
         .slice(MAX_ROSTER).forEach(function (p) { p.team = null; });
     });
     save.lg = lg;
+    ensurePicks(save, teams);
   }
 
   function active(save) { return save.lg.players.filter(function (p) { return p.status === 'active'; }); }
@@ -275,7 +276,12 @@
 
   function startDraft(save, teams, real, rounds) {
     var pool = makeClass(save.year + 1, real, teams.length * rounds + 12);
-    save.lg.draft = { year: save.year + 1, rounds: rounds, pool: pool, picks: draftOrder(save, teams, rounds), at: 0 };
+    var dp = draftOrder(save, teams, rounds);
+    dp.forEach(function (sl) {
+      var k = (save.lg.picks || []).filter(function (x) { return x.y === save.year + 1 && x.r === sl.round && x.o === sl.team; })[0];
+      if (k && k.t !== sl.team) { sl.orig = sl.team; sl.team = k.t; }
+    });
+    save.lg.draft = { year: save.year + 1, rounds: rounds, pool: pool, picks: dp, at: 0 };
   }
 
   /* Players from folded clubs go into a pool that the surviving and new clubs pick from. */
@@ -348,8 +354,9 @@
   function sum(list, f) { return list.reduce(function (a, p) { return a + f(p); }, 0); }
 
   /* me gives `give` players to `them` and gets `get`. Returns { ok, reason, ratio }. */
-  function evaluateTrade(save, meId, themId, give, get, maxRoster) {
-    if (!give.length && !get.length) return { ok: false, reason: 'Pick at least one player.', ratio: 0 };
+  function evaluateTrade(save, meId, themId, give, get, maxRoster, ex) {
+    ex = ex || { gain: 0, loss: 0, n: 0 };
+    if (!give.length && !get.length && !ex.n) return { ok: false, reason: 'Pick at least one player.', ratio: 0 };
     var cap = save.lg.cap;
     var meN = rosterOf(save, meId).length - give.length + get.length;
     var themN = rosterOf(save, themId).length + give.length - get.length;
@@ -361,32 +368,34 @@
     var mePay = payroll(save, meId) - outMe + inMe, themPay = payroll(save, themId) + outMe - inMe;
     if (mePay > cap && inMe > outMe) return { ok: false, reason: 'That would put you $' + (mePay - cap).toLocaleString('en-US') + ' over the $' + cap.toLocaleString('en-US') + ' cap. Send out more salary.', ratio: 0 };
     if (themPay > cap && outMe > inMe) return { ok: false, reason: 'They would be $' + (themPay - cap).toLocaleString('en-US') + ' over the cap. Take back more salary.', ratio: 0 };
-    var gain = sum(give, tradeValue), loss = sum(get, tradeValue);
+    var gain = sum(give, tradeValue) + ex.gain, loss = sum(get, tradeValue) + ex.loss;
     var ratio = loss > 0 ? gain / loss : 9;
     if (ratio < 1.1) return { ok: false, reason: ratio >= 0.9 ? 'Close, but they want a little more.' : 'They do not think that is fair.', ratio: ratio, close: ratio >= 0.9 };
     return { ok: true, reason: 'They accept.', ratio: ratio };
   }
 
-  function executeTrade(save, meId, themId, give, get) {
+  function executeTrade(save, meId, themId, give, get, giveK, getK) {
+    (giveK || []).forEach(function (k) { k.t = themId; });
+    (getK || []).forEach(function (k) { k.t = meId; });
     give.forEach(function (p) { p.team = themId; logDeal(save, p, 'Traded', themId); });
     get.forEach(function (p) { p.team = meId; logDeal(save, p, 'Traded', meId); });
     bump(save);
   }
 
   /* The cheapest extra player (or pair) from my roster that would make the deal work. */
-  function suggestAdd(save, meId, themId, give, get, maxRoster) {
+  function suggestAdd(save, meId, themId, give, get, maxRoster, ex) {
     var chosen = give.map(function (p) { return p.id; });
     var pool = rosterOf(save, meId).filter(function (p) { return chosen.indexOf(p.id) < 0; })
       .sort(function (a, b) { return tradeValue(a) - tradeValue(b); });
     var i, j, r;
     for (i = 0; i < pool.length; i++) {
-      r = evaluateTrade(save, meId, themId, give.concat([pool[i]]), get, maxRoster);
+      r = evaluateTrade(save, meId, themId, give.concat([pool[i]]), get, maxRoster, ex);
       if (r.ok) return [pool[i]];
     }
     var best = null, bestV = 1e9;
     for (i = 0; i < pool.length; i++) {
       for (j = i + 1; j < pool.length; j++) {
-        r = evaluateTrade(save, meId, themId, give.concat([pool[i], pool[j]]), get, maxRoster);
+        r = evaluateTrade(save, meId, themId, give.concat([pool[i], pool[j]]), get, maxRoster, ex);
         var v = tradeValue(pool[i]) + tradeValue(pool[j]);
         if (r.ok && v < bestV) { best = [pool[i], pool[j]]; bestV = v; }
       }
@@ -424,6 +433,33 @@
     if (any) bump(save);
   }
 
+
+
+  /* ---------- draft picks as assets (rounds 1 and 2 are tradeable) ---------- */
+  function ensurePicks(save, teams) {
+    var L = save.lg;
+    L.picks = (L.picks || []).filter(function (k) { return k.y > save.year; });
+    for (var y = save.year + 1; y <= save.year + 2; y++) {
+      for (var r = 1; r <= 2; r++) {
+        teams.forEach(function (t) {
+          if (!L.picks.some(function (k) { return k.y === y && k.r === r && k.o === t.id; })) L.picks.push({ y: y, r: r, o: t.id, t: t.id });
+        });
+      }
+    }
+  }
+  function picksOf(save, id) {
+    return (save.lg.picks || []).filter(function (k) { return k.t === id; }).sort(function (a, b) { return a.y - b.y || a.r - b.r; });
+  }
+  function pickValue(save, k) {
+    var r = save.rec[k.o] || { w: 0, l: 0 }, g = r.w + r.l;
+    var wp = g ? r.w / g : 0.5;
+    var soon = k.y === save.year + 1;
+    if (!soon) wp = 0.5 + (wp - 0.5) * 0.4;
+    var base = k.r === 1 ? 55 : 14;
+    return base * (1.5 - wp) * (soon ? 1 : 0.8);
+  }
+  function pickId(k) { return 'pk-' + k.y + '-' + k.r + '-' + k.o; }
+  function pickLabel(k, teams) { return k.y + ' round ' + k.r + ' pick' + (k.o !== k.t ? ' (from ' + cityOf(teams, k.o) + ')' : ''); }
 
   /* ---------- AI clubs: trades, signings, offers ---------- */
   function wire(save, text) {
@@ -537,6 +573,7 @@
   }
 
   root.League = {
+    ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
