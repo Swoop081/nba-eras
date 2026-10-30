@@ -45,14 +45,14 @@
     };
   }
 
-  var SHARE = [1, 1, 1, 1, 1, 0.7, 0.5, 0.35];
+  var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7];
 
   function prep(players) {
     var top = players.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, SHARE.length);
     return top.map(function (p, i) {
       return {
         p: p, share: SHARE[i],
-        s: { pts: 0, fg: 0, fga: 0, ft: 0, fta: 0, tp: 0, tpa: 0, ast: 0, pf: 0, orb: 0, drb: 0, trb: 0, stl: 0, blk: 0, tov: 0, min: 0 }
+        s: { pos: 0, pts: 0, fg: 0, fga: 0, ft: 0, fta: 0, tp: 0, tpa: 0, ast: 0, pf: 0, orb: 0, drb: 0, trb: 0, stl: 0, blk: 0, tov: 0, min: 0 }
       };
     });
   }
@@ -156,16 +156,37 @@
     return pts;
   }
 
+  /* Who is on the floor: the best five start; the bench spells them in a window each quarter. */
+  function lineupIdx(g, T, side) {
+    var n = T.length;
+    if (n <= 5) return T.map(function (x, i) { return i; });
+    var base = [0, 1, 2, 3, 4];
+    if (n < 8) return base;
+    var ph = g.k / g.limit, diff = Math.abs(g.hs - g.as), late = g.q >= 3 && diff <= 8;
+    if (g.q >= 4 || late) return base;
+    if (ph >= 0.35 && ph < 0.65) return [0, 1, 5, 6, 7];
+    if ((g.q === 0 || g.q === 2) && ph >= 0.8) return [5, 6, 2, 3, 4];
+    if ((g.q === 1 || g.q === 3) && ph < 0.2) return [5, 6, 2, 3, 4];
+    return base;
+  }
+  function setLineups(g) {
+    g.onHi = lineupIdx(g, g.H, 'H'); g.onAi = lineupIdx(g, g.A, 'A');
+    g.onH = g.onHi.map(function (i) { return g.H[i]; });
+    g.onA = g.onAi.map(function (i) { return g.A[i]; });
+  }
+
   /* ---------- stepwise game, so the match screen can pause for decisions ---------- */
   function start(home, away, year, seed, edges) {
     var pr = params(year);
     var perQ = Math.round(pr.poss / 4);
     var prep0H = prep(home), prep0A = prep(away);
-    return {
+    var g = {
       pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep0H, A: prep0A, year: year,
       perQ: perQ, limit: perQ, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
-      mods: { H: {}, A: {} }, st: {}, edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
+      mods: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
     };
+    setLineups(g);
+    return g;
   }
 
   function live(g, side) { var m = g.mods[side]; return m && m.until > g.n ? m : none(); }
@@ -173,11 +194,13 @@
   /* One exchange: home possession then away possession. Returns both events. */
   function step(g) {
     var mH = live(g, 'H'), mA = live(g, 'A');
+    setLineups(g);
+    g.onH.forEach(function (x) { x.s.pos++; }); g.onA.forEach(function (x) { x.s.pos++; });
     g.st.eo = g.edge.H || 0; g.st.ed = g.edge.A || 0;
-    var a = possession(g.r, g.H, g.A, g.pr, g.st, mH, mA);
+    var a = possession(g.r, g.onH, g.onA, g.pr, g.st, mH, mA);
     var evA = { side: 'home', pts: a, ev: g.st.ev };
     g.st.eo = g.edge.A || 0; g.st.ed = g.edge.H || 0;
-    var b = possession(g.r, g.A, g.H, g.pr, g.st, mA, mH);
+    var b = possession(g.r, g.onA, g.onH, g.pr, g.st, mA, mH);
     var evB = { side: 'away', pts: b, ev: g.st.ev };
     g.qh += a; g.qa += b; g.hs += a; g.as += b; g.k++; g.n++;
     if (g.k >= g.limit) {
@@ -198,10 +221,10 @@
     }
     [g.H, g.A].forEach(function (T) {
       var tw = 0;
-      T.forEach(function (x) { tw += x.share; });
+      T.forEach(function (x) { tw += x.s.pos; });
       T.forEach(function (x) {
         x.s.trb = x.s.orb + x.s.drb;
-        x.s.min = Math.round(240 * x.share / tw);
+        x.s.min = tw ? Math.round(240 * x.s.pos / tw) : 0;
       });
     });
     function lines(T) { return T.map(function (x) { return { id: x.p.id, name: x.p.name, pos: x.p.pos, s: x.s }; }); }

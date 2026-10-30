@@ -711,8 +711,10 @@
     court.textContent = '';
     court.innerHTML = COURT_SVG;
     lv.pl = []; lv.op = [];
+    lv.ids = [];
     COURT_SPOTS.forEach(function (sp, i) {
-      var p = g.H[i].p, o = g.A[i].p;
+      var p = g.onH[i].p, o = g.onA[i].p;
+      lv.ids.push(p.id + '|' + o.id);
       var d = el('div', 'op', lastName(o.name).slice(0, 3).toUpperCase());
       d.style.left = (sp[0] + (50 - sp[0]) * 0.45) + '%';
       d.style.top = (sp[1] - 17) + '%';
@@ -762,9 +764,30 @@
     return who + ' misses' + (ev.blk ? ', blocked by ' + lastName(ev.blk) : '');
   }
 
+  /* Keeps the court dots in step with whoever the sim has on the floor. */
+  function syncCourt() {
+    var g = lv.g;
+    for (var i = 0; i < 5; i++) {
+      var p = g.onH[i].p, o = g.onA[i].p, key = p.id + '|' + o.id;
+      if (lv.ids[i] === key) continue;
+      var slot = lv.pl[i], old = lv.ids[i].split('|');
+      lv.ids[i] = key;
+      if (old[0] !== p.id) {
+        slot.el.textContent = '';
+        slot.el.appendChild(makeAvatar(p));
+        slot.el.appendChild(el('span', 'nm', lastName(p.name)));
+        slot.pp = el('span', 'pp', String(g.onH[i].s.pts));
+        slot.el.appendChild(slot.pp);
+        slot.el.classList.remove('flash'); void slot.el.offsetWidth; slot.el.classList.add('flash');
+      }
+      if (old[1] !== o.id) lv.op[i].textContent = lastName(o.name).slice(0, 3).toUpperCase();
+    }
+  }
+
   function showPoss(evObj, mineSide) {
     var g = lv.g, ev = evObj.ev;
-    var list = mineSide ? g.H : g.A;
+    syncCourt();
+    var list = mineSide ? g.onH : g.onA;
     var idx = -1;
     for (var i = 0; i < 5; i++) if (list[i].p.name === ev.who) idx = i;
     lv.pl.forEach(function (p) { p.el.classList.remove('ball'); });
@@ -794,7 +817,7 @@
     document.getElementById('lv-b').textContent = lv.db;
     document.getElementById('lv-clock').textContent = clockText(g);
     document.getElementById('lv-period').textContent = periodLabel(g);
-    for (var i = 0; i < 5; i++) lv.pl[i].pp.textContent = g.H[i].s.pts;
+    for (var i = 0; i < 5; i++) lv.pl[i].pp.textContent = g.onH[i].s.pts;
   }
 
   function decisionDue() {
@@ -821,9 +844,10 @@
 
   function showDecision(kind) {
     var g = lv.g, dock = document.getElementById('live-dock');
+    syncCourt();
     dock.textContent = '';
-    var mineTop = g.H.slice(0, 5).slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
-    var oppTop = g.A.slice(0, 5).slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
+    var mineTop = g.onH.slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
+    var oppTop = g.onA.slice().sort(function (a, b) { return b.s.pts - a.s.pts || b.p.ratings.sco - a.p.ratings.sco; })[0];
     var when = periodLabel(g) + ' ' + clockText(g) + ' · ' + lv.me.city + ' ' + g.hs + ', ' + lv.opp.city + ' ' + g.as;
     if (kind === 'clutch') {
       tickerLine('Final possession. Who takes the shot?', 'sys');
@@ -832,8 +856,8 @@
         p.el.classList.add('pick');
         p.el.onclick = function () {
           lv.pl.forEach(function (q) { q.el.classList.remove('pick'); q.el.onclick = null; });
-          g.mods.H = { focus: g.H[i].p.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
-          tickerLine('Ball to ' + lastName(g.H[i].p.name) + '...', 'sys');
+          g.mods.H = { focus: g.onH[i].p.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
+          tickerLine('Ball to ' + lastName(g.onH[i].p.name) + '...', 'sys');
           skipButton();
           lv.timer = setTimeout(liveTick, 700);
         };
@@ -843,7 +867,7 @@
     tickerLine(kind === 'run' ? 'Timeout. ' + lv.opp.city + ' are on a run.' : 'Timeout.', 'sys');
     dock.appendChild(el('p', 'dec-title', when + (kind === 'run' ? ' · ' + lv.opp.city + ' on a run. Your call.' : ' · What is the plan?')));
     var opts = [
-      { t: 'Feed ' + lastName(mineTop.p.name), s: hotLine(mineTop) + ' · more shots for him', mods: { focus: mineTop.p.id, focusW: 5 } },
+      { t: 'Feed ' + lastName(mineTop.p.name), s: hotLine(mineTop) + ' · more shots for him', mods: { focus: mineTop.p.id, focusW: 2.2 } },
       { t: 'Push the pace', s: 'Fast breaks, but more turnovers', mods: { fgMul: 1.04, tovAdd: 0.03 } },
       { t: 'Lock down ' + lastName(oppTop.p.name), s: hotLine(oppTop) + ' · tougher defence, more fouls', mods: { oppFgMul: 0.92, foulAdd: 0.05 } }
     ];

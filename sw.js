@@ -1,5 +1,5 @@
-/* Offline support: serve from cache, refresh in the background. */
-var CACHE = 'nba-eras-v26';
+/* Offline support: always try the network first, fall back to the cache. */
+var CACHE = 'nba-eras-v27';
 var SHELL = [
   './',
   'index.html',
@@ -30,18 +30,16 @@ self.addEventListener('activate', function (event) {
   self.clients.claim();
 });
 
+/* Network first, so a new build reaches the phone on the next open; the cache is only the offline fallback. */
 self.addEventListener('fetch', function (event) {
   var req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
   event.respondWith(
-    caches.open(CACHE).then(function (cache) {
-      return cache.match(req).then(function (hit) {
-        var fresh = fetch(req).then(function (res) {
-          if (res && res.ok) cache.put(req, res.clone());
-          return res;
-        }).catch(function () { return hit; });
-        return hit || fresh;
-      });
+    fetch(req, { cache: 'no-cache' }).then(function (res) {
+      if (res && res.ok) { var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req, copy); }); }
+      return res;
+    }).catch(function () {
+      return caches.match(req).then(function (hit) { return hit || caches.match('index.html'); });
     })
   );
 });
