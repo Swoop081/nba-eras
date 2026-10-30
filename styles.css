@@ -258,3 +258,7 @@ body[data-era-filter="off"]{--court:#B8763C;--court-line:#F6E7CF}
 .btn.small{height:40px;font-size:14px;padding:0 14px;border-width:2px}
 .card.pickable{display:flex}
 #off-dock{display:grid;gap:10px}
+
+.fates{display:grid;gap:8px;width:100%;text-align:left;padding:12px;border:2px solid var(--line);border-radius:14px;background:var(--card)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg .btn{height:44px}

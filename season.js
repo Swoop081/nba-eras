@@ -84,17 +84,28 @@
     7: [0, 0, 1, 1, 0, 1, 0]
   };
 
+  /* Name and length of a playoff round. Older saves have no stored plan and use the three-round default. */
+  function roundInfo(state, r) {
+    var po = state.playoffs;
+    if (po && po.names) return { name: po.names[r], best: po.best[r] };
+    return ROUNDS[r];
+  }
+
+  /* Top 8 of 10+ teams, or top 4 of a small league, seeded by record. */
   function startPlayoffs(state) {
-    var st = standings(state);
-    var round = [];
-    Object.keys(st).forEach(function (d) {
-      var q = st[d].slice(0, 4);
-      if (q.length < 4) return;
-      [[0, 3], [1, 2]].forEach(function (p) {
-        round.push({ div: d, a: q[p[0]].id, b: q[p[1]].id, sa: p[0] + 1, sb: p[1] + 1, w: [0, 0], winner: null });
-      });
+    var ranked = state.ids.slice().sort(function (a, b) {
+      return pct(state.rec[b]) - pct(state.rec[a]) || state.rec[b].w - state.rec[a].w;
     });
-    state.playoffs = { round: 0, rounds: [round] };
+    var q = state.ids.length >= 10 ? 8 : 4;
+    var order = q === 8 ? [[1, 8], [4, 5], [2, 7], [3, 6]] : [[1, 4], [2, 3]];
+    var round = order.map(function (p) {
+      return { a: ranked[p[0] - 1], b: ranked[p[1] - 1], sa: p[0], sb: p[1], w: [0, 0], winner: null };
+    });
+    state.playoffs = {
+      round: 0, rounds: [round],
+      names: q === 8 ? ['Quarterfinals', 'Semifinals', 'Finals'] : ['Semifinals', 'Finals'],
+      best: q === 8 ? [3, 5, 7] : [5, 7]
+    };
     state.phase = 'playoffs';
   }
 
@@ -103,7 +114,7 @@
       return (state.days[state.day] || []).map(function (g) { return { home: g[0], away: g[1] }; });
     }
     if (state.phase !== 'playoffs') return [];
-    var po = state.playoffs, best = ROUNDS[po.round].best, list = [];
+    var po = state.playoffs, best = roundInfo(state, po.round).best, list = [];
     po.rounds[po.round].forEach(function (s, i) {
       if (s.winner) return;
       var n = s.w[0] + s.w[1];
@@ -113,24 +124,17 @@
     return list;
   }
 
-  function higher(state, x, y) { return pct(state.rec[x]) >= pct(state.rec[y]) ? [x, y] : [y, x]; }
-
+  /* Winners of neighbouring series meet in the next round; the better seed is series side a. */
   function advance(state) {
     var po = state.playoffs, cur = po.rounds[po.round];
     if (cur.some(function (s) { return !s.winner; })) return;
-    if (po.round === 2) { state.champion = cur[0].winner; state.phase = 'done'; return; }
+    if (cur.length === 1) { state.champion = cur[0].winner; state.phase = 'done'; return; }
     var next = [];
-    if (po.round === 0) {
-      for (var i = 0; i < cur.length; i += 2) {
-        var x = cur[i], y = cur[i + 1];
-        var wa = x.winner, wb = y.winner;
-        var sa = wa === x.a ? x.sa : x.sb, sb = wb === y.a ? y.sa : y.sb;
-        var first = sa <= sb;
-        next.push({ div: x.div, a: first ? wa : wb, b: first ? wb : wa, sa: Math.min(sa, sb), sb: Math.max(sa, sb), w: [0, 0], winner: null });
-      }
-    } else {
-      var hi = higher(state, cur[0].winner, cur[1].winner);
-      next.push({ div: 'Finals', a: hi[0], b: hi[1], sa: 1, sb: 2, w: [0, 0], winner: null });
+    for (var i = 0; i < cur.length; i += 2) {
+      var x = cur[i], y = cur[i + 1];
+      var sx = x.winner === x.a ? x.sa : x.sb, sy = y.winner === y.a ? y.sa : y.sb;
+      var first = sx <= sy;
+      next.push({ div: x.div, a: first ? x.winner : y.winner, b: first ? y.winner : x.winner, sa: Math.min(sx, sy), sb: Math.max(sx, sy), w: [0, 0], winner: null });
     }
     po.rounds.push(next);
     po.round++;
@@ -148,7 +152,7 @@
       if (state.day >= state.days.length) startPlayoffs(state);
       return;
     }
-    var po = state.playoffs, need = Math.ceil(ROUNDS[po.round].best / 2);
+    var po = state.playoffs, need = Math.ceil(roundInfo(state, po.round).best / 2);
     results.forEach(function (g) {
       var s = po.rounds[po.round][g.series];
       var win = g.hs > g.as ? g.home : g.away;
@@ -172,6 +176,6 @@
 
   root.Season = {
     create: create, today: today, record: record, standings: standings, myNext: myNext,
-    inPlayoffs: inPlayoffs, ROUNDS: ROUNDS, pct: pct
+    inPlayoffs: inPlayoffs, ROUNDS: ROUNDS, roundInfo: roundInfo, pct: pct
   };
 })(window);

@@ -230,12 +230,16 @@
   }
 
   /* Reverse order of record, champions last. */
-  function draftOrder(save, teams, rounds) {
-    var rec = save.rec;
+  function draftOrder(save, teams, rounds, first) {
+    var rec = save.rec, firstIds = first || [];
+    var zero = { w: 0, l: 0 };
     var order = teams.map(function (t) { return t.id; }).sort(function (a, b) {
+      var fa = firstIds.indexOf(a) >= 0 ? 0 : 1, fb = firstIds.indexOf(b) >= 0 ? 0 : 1;
+      if (fa !== fb) return fa - fb;
       var ca = a === save.champion ? 1 : 0, cb = b === save.champion ? 1 : 0;
       if (ca !== cb) return ca - cb;
-      var pa = (rec[a].w) / Math.max(1, rec[a].w + rec[a].l), pb = (rec[b].w) / Math.max(1, rec[b].w + rec[b].l);
+      var ra = rec[a] || zero, rb = rec[b] || zero;
+      var pa = ra.w / Math.max(1, ra.w + ra.l), pb = rb.w / Math.max(1, rb.w + rb.l);
       return pa - pb;
     });
     var picks = [];
@@ -248,6 +252,37 @@
     save.lg.draft = { year: save.year + 1, rounds: rounds, pool: pool, picks: draftOrder(save, teams, rounds), at: 0 };
   }
 
+  /* Players from folded clubs go into a pool that the surviving and new clubs pick from. */
+  function startDispersal(save, teams, foldedIds, newIds, rounds) {
+    var pool = save.lg.players.filter(function (p) { return p.status === 'active' && p.team && foldedIds.indexOf(p.team) >= 0; });
+    pool.forEach(function (p) {
+      p.formerTeam = p.team; p.team = null; p.status = 'prospect';
+      p.scout = { ovr: p.ratings.ovr, pot: p.pot };
+      p.board = p.ratings.ovr * 0.5 + p.pot * 0.5;
+    });
+    var r = Math.max(1, Math.min(rounds, Math.ceil(pool.length / teams.length)));
+    save.lg.draft = { kind: 'dispersal', year: save.year + 1, rounds: r, pool: pool, picks: draftOrder(save, teams, r, newIds), at: 0 };
+    bump(save);
+  }
+
+  /* A new club's roster: experienced players from elsewhere. */
+  function makeVeterans(save, teamId, n, lo, hi) {
+    var used = {};
+    save.lg.players.forEach(function (p) { used[p.id] = 1; });
+    var made = 0, guard = 0;
+    while (made < n && guard++ < 400) {
+      var name = pick(FIRST) + ' ' + pick(LAST), id = name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ +/g, '-');
+      if (used[id]) continue;
+      used[id] = 1;
+      var target = clamp(Math.round(rnd(lo, hi)), 40, 80);
+      var p = makePlayer({ id: id, name: name, pos: pick(['G', 'G', 'F', 'F', 'F/C', 'C', 'G/F']), college: 'Pro' }, target, Math.round(rnd(24, 31)), target + Math.round(rnd(0, 4)));
+      p.status = 'active'; p.team = teamId; p.salary = salaryFor(target); p.yrs = 2; p.rookie = false; delete p.realPick;
+      save.lg.players.push(p);
+      made++;
+    }
+    bump(save);
+  }
+
   function draftAvailable(save) {
     var d = save.lg.draft;
     return d.pool.filter(function (p) { return p.status === 'prospect'; }).sort(function (a, b) { return b.board - a.board; });
@@ -255,8 +290,9 @@
 
   function makePick(save, p) {
     var d = save.lg.draft, slot = d.picks[d.at];
-    p.status = 'active'; p.team = slot.team; p.salary = Math.max(1000, salaryFor(p.ratings.ovr) - 500); p.yrs = 2;
-    p.draftedYear = d.year; p.draftPick = slot.pick;
+    p.status = 'active'; p.team = slot.team;
+    if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
+    else { p.salary = Math.max(1000, salaryFor(p.ratings.ovr) - 500); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     slot.player = p.id;
     if (!byId(save, p.id)) save.lg.players.push(p);
     d.at++;
@@ -275,6 +311,6 @@
     init: init, active: active, rosterOf: rosterOf, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
-    makePick: makePick, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
+    makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);
