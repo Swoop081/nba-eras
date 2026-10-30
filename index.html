@@ -72,8 +72,9 @@
     <div id="ready-badge" class="badge big"></div>
     <h3 id="ready-name"></h3>
     <p id="ready-line"></p>
-    <button class="btn primary wide" id="btn-roster" type="button">View roster</button>
-    <p class="sub">The match engine and the daily event stack come next.</p>
+    <button class="btn primary wide" id="btn-play" type="button">Play a game</button>
+    <button class="btn wide" id="btn-roster" type="button">View roster</button>
+    <p class="sub">The season calendar and the daily event stack come next.</p>
   </div>
 </section>
 
@@ -86,6 +87,20 @@
     </div>
   </header>
   <div id="roster-list" class="list"></div>
+</section>
+
+<section id="screen-match" class="screen" aria-label="Game">
+  <header class="bar">
+    <button class="back" data-back="screen-ready" type="button" aria-label="Back">&larr;</button>
+    <div>
+      <h2 id="match-title">Game</h2>
+      <p class="sub" id="match-sub"></p>
+    </div>
+  </header>
+  <div id="match-body" class="list"></div>
+  <div class="dock" id="match-dock" hidden>
+    <button class="btn primary wide" id="btn-again" type="button">Play another game</button>
+  </div>
 </section>
 
 <section id="screen-settings" class="screen" aria-label="Settings">
@@ -113,6 +128,7 @@
 
 </main>
 
+<script src="engine.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
