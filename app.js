@@ -409,6 +409,7 @@
       text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' · ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" · ' : '') + 'Age ' + (p.age || '?')));
       text.appendChild(el('span', 'meta', money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' yr' : ' yrs') + ' left')));
       text.appendChild(el('span', 'meta', line));
+      if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
       var detail = el('div', 'detail');
@@ -598,12 +599,15 @@
     return r.length ? Math.round(r.reduce(function (a, b) { return a + b; }, 0) / r.length) : 0;
   }
   function rosterFor(id) {
-    return id === save.myId ? Events.moraleRoster(save, rosterOf(id)) : rosterOf(id);
+    var h = League.healthy(save, id);
+    return id === save.myId ? Events.moraleRoster(save, h) : h;
   }
   function simGame(g) {
     var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year);
     if (save.phase === 'regular') League.accumulate(save, r.homeLines.concat(r.awayLines));
-    return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series };
+    var inj = League.rollInjuries(save, r.homeLines, g.home).concat(League.rollInjuries(save, r.awayLines, g.away));
+    League.tickInjuries(save, g.home); League.tickInjuries(save, g.away);
+    return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series, lines: { h: r.homeLines, a: r.awayLines }, inj: inj };
   }
   function simDay() {
     var results = Season.today(save).map(simGame);
@@ -654,6 +658,10 @@
     var others = Season.today(save).filter(function (g) {
       return g.home !== me.id && g.away !== me.id;
     }).map(simGame);
+    var myInj = League.rollInjuries(save, res.homeLines, me.id).concat(League.rollInjuries(save, res.awayLines, opp.id));
+    League.tickInjuries(save, me.id); League.tickInjuries(save, opp.id);
+    var before = {}, stb = Season.standings(save);
+    Object.keys(stb).forEach(function (d) { before[d] = stb[d][0].id; });
     Season.record(save, others.concat([mineResult]));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     var us = res.home, them = res.away, won = us > them;
@@ -666,10 +674,22 @@
     }
     Events.afterGame(save, me, mineResult, rosterOf(me.id), won);
     var others2 = save.ids.map(teamById).filter(function (t) { return t.id !== me.id && t.id !== opp.id; });
-    save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), label: label, seriesLine: seriesLine, others: others2 });
+    var dayGames = others.map(function (g) { return { home: g.home, away: g.away, hs: g.hs, as: g.as, lines: g.lines }; });
+    dayGames.unshift({ home: mine.home, away: mine.away, hs: mineResult.hs, as: mineResult.as, mine: true, lines: mine.home === me.id ? { h: res.homeLines, a: res.awayLines } : { h: res.awayLines, a: res.homeLines } });
+    var dayInj = myInj.concat(others.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
+    save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
     persist();
     renderMatch(me, opp, res, save.year, label, true);
     show('screen-match');
+  }
+
+  /* One sentence on where the club sits after the game. */
+  function standingLine(id) {
+    var d = save.division[id], rows = Season.standings(save)[d], i = 0;
+    rows.forEach(function (r, k) { if (r.id === id) i = k; });
+    var me = rows[i], city = teamById(id).city;
+    if (i === 0) return rows.length > 1 && rows[1].gb ? 'The result leaves ' + city + ' alone in first place in the ' + d + ' Division, ' + (rows[1].gb === 1 ? 'a game' : rows[1].gb + ' games') + ' clear.' : 'The result leaves ' + city + ' tied for first in the ' + d + ' Division.';
+    return 'The result leaves ' + city + ' ' + (me.gb === 1 ? 'a game' : me.gb + ' games') + ' behind ' + teamById(rows[0].id).city + ' in the ' + d + ' Division.';
   }
 
   /* ---------- live match ---------- */
@@ -685,7 +705,7 @@
   }
 
   function startLive(me, opp, mine, label) {
-    var g = Engine.start(rosterFor(me.id), rosterOf(opp.id), save.year);
+    var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year);
     lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
     var top = document.getElementById('live-top');
     top.textContent = '';
@@ -1227,6 +1247,70 @@
     openEvents();
   }
 
+  /* A full front page. The photo is the day's best performer who has a portrait, from any club. */
+  function renderPaper(ev) {
+    var pg = el('article', 'paper');
+    var mast = el('header', 'pp-mast');
+    mast.appendChild(el('div', 'pp-name', ev.paper));
+    mast.appendChild(el('div', 'pp-meta', ev.date + ' \u00B7 ' + ev.edition + ' EDITION \u00B7 TWO CENTS'));
+    pg.appendChild(mast);
+    pg.appendChild(el('h2', 'pp-head', ev.head));
+    pg.appendChild(el('p', 'pp-deck', ev.deck));
+    var fig = el('figure', 'pp-photo');
+    fig.hidden = true;
+    var cap = el('figcaption', 'pp-cap');
+    var tryNext = function (i) {
+      if (i >= ev.photos.length) return;
+      var c = ev.photos[i], exts = ['png', 'jpg', 'webp'], k = 0, img = new Image();
+      img.onload = function () {
+        fig.textContent = '';
+        fig.appendChild(img);
+        cap.textContent = c.name + ' of ' + c.team + ', ' + c.pts + ' points.';
+        fig.appendChild(cap);
+        fig.hidden = false;
+      };
+      img.onerror = function () { k++; if (k < exts.length) img.src = 'assets/players/' + c.id + '.' + exts[k]; else tryNext(i + 1); };
+      img.alt = c.name;
+      img.src = 'assets/players/' + c.id + '.' + exts[0];
+    };
+    tryNext(0);
+    pg.appendChild(fig);
+    ev.story.forEach(function (t) { pg.appendChild(el('p', 'pp-p', t)); });
+    function section(title, nodes) {
+      if (!nodes.length) return;
+      var s = el('section', 'pp-sec');
+      s.appendChild(el('h3', null, title));
+      nodes.forEach(function (n) { s.appendChild(n); });
+      pg.appendChild(s);
+    }
+    if (ev.feat) section('Feat of the day', [el('p', 'pp-p', ev.feat)]);
+    section('Around the circuit', ev.scores.map(function (g) {
+      var r = el('div', 'pp-score');
+      r.appendChild(el('span', null, g.w + ' ' + g.ws + ', ' + g.l + ' ' + g.ls));
+      r.appendChild(el('small', null, g.top));
+      return r;
+    }));
+    section('On the wire', ev.briefs.map(function (b) {
+      var p = el('p', 'pp-p');
+      p.appendChild(el('b', null, b.h + '. '));
+      p.appendChild(document.createTextNode(b.t));
+      return p;
+    }));
+    section('Injury list', (ev.injuries || []).map(function (t) { return el('p', 'pp-p', t); }));
+    section('The standing', ev.table.map(function (d) {
+      var box = el('div', 'pp-tab');
+      box.appendChild(el('b', null, d.div));
+      d.rows.forEach(function (r) {
+        var row = el('div', 'pp-row' + (r.me ? ' me' : ''));
+        row.appendChild(el('span', null, r.city));
+        row.appendChild(el('span', null, r.w + '-' + r.l));
+        box.appendChild(row);
+      });
+      return box;
+    }));
+    return pg;
+  }
+
   function renderEvent(ev) {
     var bodyEl = document.getElementById('ev-body');
     var dock = document.getElementById('ev-dock');
@@ -1235,7 +1319,9 @@
     document.getElementById('ev-title').textContent = 'Today';
     document.getElementById('ev-sub').textContent = Events.dateFor(save) + ' · ' + save.pending.length + (save.pending.length === 1 ? ' item' : ' items') + ' left';
     var card = el('div', 'ev ev-' + ev.kind);
-    if (ev.kind === 'news') {
+    if (ev.kind === 'paper') {
+      card = renderPaper(ev);
+    } else if (ev.kind === 'news') {
       card.appendChild(el('div', 'kicker', ev.source));
       card.appendChild(el('h3', 'head', ev.head));
       card.appendChild(el('p', 'dateline', ev.dateline + ' \u2014 ' + ev.sub));

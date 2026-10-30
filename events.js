@@ -94,6 +94,140 @@
     }
   ];
 
+
+  /* ---------- the front page: every game of the day, not just ours ---------- */
+  function fullDate(save) {
+    var off = save.phase === 'regular' ? Math.round(save.day * 2.2) : 145 + (save.pd || 0) * 2;
+    var d = new Date(Date.UTC(save.year, 10, 1 + off));
+    return MONTHS[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
+  }
+  function ordinal(n) { return ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] || String(n); }
+  function streakOf(save, id) {
+    var n = 0, kind = null;
+    for (var i = save.results.length - 1; i >= 0; i--) {
+      var g = save.results[i];
+      if (g.h !== id && g.a !== id) continue;
+      var win = (g.h === id) === (g.hs > g.as);
+      if (kind === null) kind = win;
+      if (win !== kind) break;
+      n++;
+    }
+    return { n: n, win: kind };
+  }
+  function commas(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  function paper(save, ctx, headline, v) {
+    var T = ctx.teamOf, day = ctx.day.games, regular = save.phase === 'regular';
+    var recOf = function (id) { var r = save.rec[id]; return r.w + '-' + r.l; };
+    var names = function (id) { return T(id).city; };
+    var all = [];
+    day.forEach(function (g) {
+      [['h', g.home], ['a', g.away]].forEach(function (s) {
+        g.lines[s[0]].forEach(function (ln) {
+          if (ln.s.pts > 0 || ln.s.fga > 0) all.push({ id: ln.id, name: ln.name, team: s[1], pts: ln.s.pts, fg: ln.s.fg, fga: ln.s.fga, ft: ln.s.ft, fta: ln.s.fta, ast: ln.s.ast, pf: ln.s.pf, game: g });
+        });
+      });
+    });
+    all.sort(function (a, b) { return b.pts - a.pts || b.ast - a.ast; });
+    var feat = all[0];
+    var out = { kind: 'paper', paper: v.paper, date: fullDate(save), edition: ctx.me.city.toUpperCase(), head: headline, label: ctx.label };
+
+    // lead story about our game
+    var mine = day.filter(function (g) { return g.mine; })[0];
+    var myLines = ctx.res.homeLines.slice().sort(function (a, b) { return b.s.pts - a.s.pts; });
+    var oppLines = ctx.res.awayLines.slice().sort(function (a, b) { return b.s.pts - a.s.pts; });
+    var won = ctx.us > ctx.them, margin = Math.abs(ctx.us - ctx.them), star = myLines[0];
+    var s1 = ctx.me.city + ' (' + recOf(ctx.me.id) + ') ' + (won ? 'defeated' : 'fell to') + ' ' + ctx.opp.city + ' (' + recOf(ctx.opp.id) + '), ' + Math.max(ctx.us, ctx.them) + '-' + Math.min(ctx.us, ctx.them) + ', in front of a ' + (margin <= 4 ? 'roaring' : 'good-sized') + ' crowd at ' + (v.hall || 'the arena') + '.';
+    var body = [s1];
+    var q = ctx.res.quarters;
+    if (q && q.length >= 2) {
+      var h1 = q[0][0] + q[1][0], h2 = q[0][1] + q[1][1];
+      body.push(h1 === h2 ? 'The clubs were level at the half, ' + h1 + ' apiece.' : (h1 > h2 ? ctx.me.city + ' led at the half, ' + h1 + '-' + h2 : ctx.opp.city + ' led at the half, ' + h2 + '-' + h1) + (won === (h1 > h2) ? ' and never let go.' : ', but the second half changed the story.'));
+    }
+    body.push(star.name + ' paced ' + ctx.me.city + ' with ' + star.s.pts + ' points, hitting ' + star.s.fg + ' of ' + star.s.fga + ' from the floor' + (star.s.fta ? ' and ' + star.s.ft + ' of ' + star.s.fta + ' at the line' : '') + '.' + (oppLines[0].s.pts >= 15 ? ' For ' + ctx.opp.city + ', ' + oppLines[0].name + ' scored ' + oppLines[0].s.pts + '.' : ''));
+    if (regular && ctx.standing) body.push(ctx.standing);
+    else if (ctx.seriesLine) body.push(ctx.seriesLine + '.');
+    out.story = body;
+    out.deck = ctx.seriesLine || (won ? 'Another step forward for the club.' : 'The club will try to bounce back.');
+
+    // photo candidates: the day's best performers, whoever they play for
+    out.photos = all.slice(0, 8).map(function (x) { return { id: x.id, name: x.name, team: names(x.team), pts: x.pts, fg: x.fg, fga: x.fga }; });
+    if (myLines[0] && !out.photos.some(function (p) { return p.id === myLines[0].id; })) out.photos.push({ id: myLines[0].id, name: myLines[0].name, team: ctx.me.city, pts: myLines[0].s.pts, fg: myLines[0].s.fg, fga: myLines[0].s.fga });
+
+    // feat of the day
+    if (feat) {
+      var hi = save.lg.high || { pts: 0 };
+      var fr = feat.name + ' of ' + names(feat.team) + ' scored ' + feat.pts + ' points, ' + feat.fg + ' of ' + feat.fga + ' from the floor' + (feat.fta ? ' and ' + feat.ft + ' of ' + feat.fta + ' from the line' : '') + '.';
+      if (regular && feat.pts > hi.pts) { fr += hi.pts ? ' It is the best single night of the season, topping ' + hi.name + '’s ' + hi.pts + '.' : ''; save.lg.high = { pts: feat.pts, name: feat.name }; }
+      else if (regular && hi.pts) fr += ' The season high remains ' + hi.pts + ', by ' + hi.name + '.';
+      out.feat = fr;
+    }
+
+    // scores from around the circuit
+    out.scores = day.filter(function (g) { return !g.mine; }).map(function (g) {
+      var all2 = g.lines.h.map(function (x) { return [x, g.home]; }).concat(g.lines.a.map(function (x) { return [x, g.away]; })).sort(function (a, b) { return b[0].s.pts - a[0].s.pts; });
+      var top = all2[0] ? last(all2[0][0].name) + ' ' + all2[0][0].s.pts : '';
+      var win = g.hs > g.as;
+      return { w: names(win ? g.home : g.away), ws: win ? g.hs : g.as, l: names(win ? g.away : g.home), ls: win ? g.as : g.hs, top: top, at: names(g.home) };
+    });
+
+    // wire briefs: close games, blowouts, rivalry, streaks, milestones, first place
+    var briefs = [];
+    day.forEach(function (g) {
+      var m = Math.abs(g.hs - g.as), w = g.hs > g.as ? g.home : g.away, l2 = w === g.home ? g.away : g.home;
+      if (g.mine) return;
+      if (m <= 3) briefs.push({ h: 'Down to the wire', t: names(w) + ' held off ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + ', in a game decided in the closing seconds.' });
+      else if (m >= 18) briefs.push({ h: 'Rout', t: names(w) + ' ran ' + names(l2) + ' off the floor, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + ', a margin of ' + m + '.' });
+    });
+    if (margin <= 3) briefs.unshift({ h: 'Down to the wire', t: 'Our own game was decided by ' + (margin === 1 ? 'a single point' : ordinal(margin) + ' points') + '.' });
+    else if (margin >= 18) briefs.unshift({ h: 'Rout', t: (won ? ctx.me.city : ctx.opp.city) + ' won by ' + margin + '.' });
+    if (regular) {
+      var riv = null;
+      day.forEach(function (g) {
+        if (riv && !g.mine) return;
+        if (save.division[g.home] !== save.division[g.away]) return;
+        var meet = save.results.filter(function (r) { return (r.h === g.home && r.a === g.away) || (r.h === g.away && r.a === g.home); });
+        if (meet.length < 2) return;
+        var wh = meet.filter(function (r) { return (r.h === g.home) === (r.hs > r.as); }).length;
+        riv = { h: 'Division rivals', t: names(g.home) + ' and ' + names(g.away) + ' have now met ' + ordinal(meet.length) + ' times this season. ' + (wh * 2 === meet.length ? 'The series is level.' : (wh * 2 > meet.length ? names(g.home) : names(g.away)) + ' lead it ' + Math.max(wh, meet.length - wh) + '-' + Math.min(wh, meet.length - wh) + '.') };
+      });
+      if (riv) briefs.push(riv);
+      var seen = {};
+      day.forEach(function (g) {
+        [g.home, g.away].forEach(function (id) {
+          if (seen[id]) return; seen[id] = 1;
+          var s = streakOf(save, id);
+          if (s.win && s.n >= 4) briefs.push({ h: 'Hot streak', t: names(id) + ' have won ' + ordinal(s.n) + ' in a row.' });
+          else if (s.win === false && s.n >= 5) briefs.push({ h: 'Slump', t: names(id) + ' have lost ' + ordinal(s.n) + ' straight.' });
+        });
+      });
+      var st2 = Season.standings(save);
+      Object.keys(st2).forEach(function (d) {
+        var lead = st2[d][0].id, was = ctx.before && ctx.before[d];
+        if (was && was !== lead) briefs.push({ h: 'New leader', t: names(lead) + ' move into first place in the ' + d + ' Division, replacing ' + names(was) + '.' });
+      });
+      all.forEach(function (x) {
+        var tot = save.lg.stats[x.id] ? save.lg.stats[x.id].pts : 0;
+        [250, 500, 750, 1000, 1250, 1500].forEach(function (M) { if (tot - x.pts < M && tot >= M) briefs.push({ h: 'Milestone', t: x.name + ' of ' + names(x.team) + ' passed ' + commas(M) + ' points for the season.' }); });
+      });
+    }
+    out.briefs = briefs.slice(0, 5);
+
+    // injuries
+    var inj = (ctx.day.inj || []).map(function (i) { return i.name + ' (' + names(i.team) + ') was hurt and is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + '.'; });
+    ctx.rosterAll.filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) {
+      inj.push(p.name + ' (' + ctx.me.city + ') remains on the injured list, ' + p.inj + ' more ' + (p.inj === 1 ? 'game' : 'games') + '.');
+    });
+    out.injuries = inj.slice(0, 5);
+
+    // standings box
+    var stand = Season.standings(save);
+    out.table = Object.keys(stand).map(function (d) {
+      return { div: d, rows: stand[d].slice(0, 4).map(function (r) { return { city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === ctx.me.id }; }) };
+    });
+    return out;
+  }
+
   /* ---------- generation ---------- */
   function generate(save, ctx) {
     // ctx: me, opp (team objects), res (engine result, me first), us, them, rosterMe, rosterOpp, label, seriesLine
@@ -107,7 +241,8 @@
     var headline = fill(rnd(pool), d);
     var date = dateFor(save);
     var sub = ctx.seriesLine ? ctx.seriesLine : (won ? 'Another step forward for the club.' : 'The club will try to bounce back.');
-    out.push({ kind: 'news', head: headline, dateline: ctx.me.city.toUpperCase() + ', ' + date, sub: sub, source: v.paper });
+    if (ctx.day && ctx.teamOf) out.push(paper(save, ctx, headline, v));
+    else out.push({ kind: 'news', head: headline, dateline: ctx.me.city.toUpperCase() + ', ' + date, sub: sub, source: v.paper });
     m.news.push({ text: headline, date: date });
     if (m.news.length > 12) m.news.shift();
 

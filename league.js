@@ -367,7 +367,37 @@
     return best;
   }
 
+  /* ---------- injuries ---------- */
+  function healthy(save, id) {
+    var all = rosterOf(save, id), ok = all.filter(function (p) { return !(p.inj > 0); });
+    return ok.length >= 5 ? ok : all;
+  }
+  /* Each player who took the floor has a small chance of getting hurt; sturdier players less so. */
+  function rollInjuries(save, lines, teamId) {
+    var hurt = [];
+    lines.forEach(function (ln) {
+      if (!(ln.s.pos > 0)) return;
+      var p = byId(save, ln.id);
+      if (!p || p.inj > 0) return;
+      var dur = p.ratings.dur || 60;
+      if (Math.random() < 0.0055 * (1.6 - dur / 100)) {
+        var r = Math.random();
+        var n = r < 0.55 ? 2 + Math.floor(Math.random() * 4) : r < 0.85 ? 6 + Math.floor(Math.random() * 7) : r < 0.97 ? 13 + Math.floor(Math.random() * 13) : 30 + Math.floor(Math.random() * 30);
+        p.inj = n;
+        hurt.push({ id: p.id, name: p.name, team: teamId, games: n });
+      }
+    });
+    if (hurt.length) bump(save);
+    return hurt;
+  }
+  function tickInjuries(save, teamId) {
+    var any = false;
+    rosterOf(save, teamId).forEach(function (p) { if (p.inj > 0) { p.inj--; any = true; } });
+    if (any) bump(save);
+  }
+
   root.League = {
+    healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, active: active, rosterOf: rosterOf, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
