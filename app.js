@@ -192,12 +192,79 @@
     var bl = parseInt(hex.slice(5, 7), 16) / 255;
     return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
   }
+  /* An original placeholder crest in the team's colours (a roundel with a
+     monogram), shown until a real logo file is added. */
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs, text) {
+    var n = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (text) n.textContent = text;
+    return n;
+  }
+  function crest(team, big) {
+    var main = team.colors[0];
+    var trim = team.colors[1];
+    var svg = svgEl('svg', { viewBox: '0 0 100 100', 'aria-hidden': 'true' });
+    svg.appendChild(svgEl('circle', { cx: 50, cy: 50, r: 48, fill: main, stroke: trim, 'stroke-width': 4 }));
+    svg.appendChild(svgEl('circle', { cx: 50, cy: 50, r: 39, fill: 'none', stroke: trim, 'stroke-width': 1.6 }));
+    var letters = svgEl('text', {
+      x: 50, y: big ? 60 : 62, 'text-anchor': 'middle', fill: trim,
+      'font-family': 'Georgia, "Times New Roman", serif', 'font-weight': 700,
+      'font-size': big ? 28 : 34
+    }, initials(team));
+    svg.appendChild(letters);
+    if (big) {
+      var pathId = 'arc-' + team.id;
+      var defs = svgEl('defs', {});
+      defs.appendChild(svgEl('path', { id: pathId, d: 'M 17 50 A 33 33 0 0 1 83 50', fill: 'none' }));
+      svg.appendChild(defs);
+      var arc = svgEl('text', {
+        fill: trim, 'font-family': 'Georgia, "Times New Roman", serif', 'font-weight': 700,
+        'font-size': 8.5, 'letter-spacing': 1.2, 'text-anchor': 'middle'
+      });
+      var tp = svgEl('textPath', { href: '#' + pathId, startOffset: '50%' }, team.city.toUpperCase());
+      arc.appendChild(tp);
+      svg.appendChild(arc);
+      svg.appendChild(svgEl('text', {
+        x: 50, y: 78, 'text-anchor': 'middle', fill: trim,
+        'font-family': 'Georgia, "Times New Roman", serif', 'font-size': 8, 'letter-spacing': 1.5
+      }, team.name.toUpperCase().slice(0, 12)));
+    }
+    return svg;
+  }
   function makeBadge(team, big) {
-    var badge = el('span', 'badge' + (big ? ' big' : ''), initials(team));
-    badge.style.background = team.colors[0];
-    badge.style.color = luminance(team.colors[0]) > 0.6 ? '#111111' : '#FFFFFF';
+    var badge = el('span', 'badge' + (big ? ' big' : ''));
+    badge.style.background = 'transparent';
+    badge.style.borderColor = 'transparent';
     badge.setAttribute('aria-hidden', 'true');
+    badge.appendChild(crest(team, big));
+    applyLogo(badge, team);
     return badge;
+  }
+
+  /* Looks for assets/logos/<team-id>-<era>.png or .svg first (for example
+     chicago-stags-1946.png), then assets/logos/<team-id>.png or .svg.
+     If none exists the coloured initials badge stays. */
+  function applyLogo(badge, team) {
+    var base = 'assets/logos/' + team.id;
+    var era = currentEra ? currentEra.id : '';
+    var urls = [];
+    if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
+    urls.push(base + '.png', base + '.svg');
+    var i = 0;
+    var img = new Image();
+    img.alt = '';
+    img.onload = function () {
+      badge.textContent = '';
+      badge.style.background = 'transparent';
+      badge.style.borderColor = 'transparent';
+      badge.appendChild(img);
+    };
+    img.onerror = function () { next(); };
+    function next() {
+      if (i < urls.length) img.src = urls[i++];
+    }
+    next();
   }
 
   function renderTeams(data) {
@@ -258,9 +325,11 @@
   takeBtn.addEventListener('click', function () {
     if (!selected) return;
     var holder = document.getElementById('ready-badge');
-    holder.textContent = initials(selected);
-    holder.style.background = selected.colors[0];
-    holder.style.color = luminance(selected.colors[0]) > 0.6 ? '#111111' : '#FFFFFF';
+    holder.textContent = '';
+    holder.style.background = 'transparent';
+    holder.style.borderColor = 'transparent';
+    holder.appendChild(crest(selected, true));
+    applyLogo(holder, selected);
     document.getElementById('ready-name').textContent = selected.city + ' ' + selected.name;
     document.getElementById('ready-line').textContent =
       'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
