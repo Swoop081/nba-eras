@@ -564,27 +564,9 @@
     var box = el('div', 'fates');
     box.id = 'fates-box';
     box.appendChild(el('div', 'group-title', 'Franchise history'));
-    var seg = el('div', 'seg');
-    var note = el('p', 'sub');
-    var cur = store.get('fates', 'history');
-    function paint() {
-      seg.textContent = '';
-      [['history', 'Keep history'], ['alt', 'Change history']].forEach(function (o) {
-        var b = el('button', 'btn small' + (cur === o[0] ? ' primary' : ''), o[1]);
-        b.type = 'button';
-        b.addEventListener('click', function () { cur = o[0]; store.set('fates', cur); paint(); });
-        seg.appendChild(b);
-      });
-      var doomed = selected && DOOMED[selected.id];
-      note.textContent = cur === 'history'
-        ? 'After 1946-47 Cleveland, Detroit, Pittsburgh and Toronto fold, Baltimore joins, and the league has 8 clubs.' + (doomed ? ' Your franchise is one of the four. You would take over another club after the season.' : '')
-        : 'Nobody folds. Baltimore joins as the 12th club.';
-    }
-    paint();
-    box.appendChild(seg);
-    box.appendChild(note);
-    var anchor = document.getElementById('btn-play');
-    card.insertBefore(box, anchor);
+    var doomed = selected && DOOMED[selected.id];
+    box.appendChild(el('p', 'sub', 'At the end of each season with real league changes you choose to keep history or change it.' + (doomed ? ' In real history your franchise folds after 1946-47.' : '')));
+    card.insertBefore(box, document.getElementById('btn-play'));
   }
 
   /* ---------- season ---------- */
@@ -600,7 +582,6 @@
     if (save.tm) return;
     save.tm = {};
     seasons[currentEra.id].teams.forEach(function (t) { save.tm[t.id] = t; });
-    if (!save.fates) save.fates = 'alt';
   }
   function rosterOf(id) {
     if (rosterCache.rev !== save.lg.rev) rosterCache = { rev: save.lg.rev };
@@ -643,7 +624,6 @@
       rosterCache = {};
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60);
       League.init(save, pl.players, data.teams);
-      save.fates = store.get('fates', 'history');
       ensureTm();
       persist();
       renderSeason();
@@ -997,8 +977,8 @@
       card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Next game · ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name));
       card.appendChild(row);
     } else {
-      card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Rest day' : 'Out of the playoffs'));
-      card.appendChild(el('p', 'sub', save.phase === 'regular' ? 'No game for your team today.' : 'Your season is over. Sim the rest of the playoffs to crown a champion.'));
+      card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Rest day' : Season.inPlayoffs(save, me.id) ? 'Waiting' : 'Out of the playoffs'));
+      card.appendChild(el('p', 'sub', save.phase === 'regular' ? 'No game for your team today.' : Season.inPlayoffs(save, me.id) ? 'Your club is resting while the other series finish.' : 'Your season is over. Sim the rest of the playoffs to crown a champion.'));
     }
     bodyEl.appendChild(card);
 
@@ -1006,11 +986,11 @@
       bodyEl.appendChild(el('h3', 'box-title', 'Playoffs'));
       var pc = el('div', 'stat-card');
       save.playoffs.rounds.forEach(function (round, ri) {
-        pc.appendChild(el('div', 'group-title', Season.roundInfo(save, ri).name + ' · best of ' + Season.roundInfo(save, ri).best));
+        pc.appendChild(el('div', 'group-title', Season.roundInfo(save, ri).name));
         round.forEach(function (s) {
           var line = el('div', 'series');
           var an = teamById(s.a).city, bn = teamById(s.b).city;
-          line.appendChild(el('span', null, an + ' v ' + bn));
+          line.appendChild(el('span', null, an + ' v ' + bn + ' \u00B7 best of ' + (s.best || Season.roundInfo(save, ri).best) + (s.label ? ' \u00B7 ' + s.label : '')));
           line.appendChild(el('b', null, s.w[0] + '-' + s.w[1] + (s.winner ? ' · ' + teamById(s.winner).city : '')));
           pc.appendChild(line);
         });
@@ -1280,6 +1260,26 @@
   /* ---------- off-season ---------- */
   var offSel = null;
 
+  function valueOf(p) {
+    var st = save.lg.stats[p.id], rc = p.team ? save.rec[p.team] : null;
+    var wp = rc ? rc.w / Math.max(1, rc.w + rc.l) : 0.4;
+    return (st.pts + 1.5 * st.ast + 0.7 * st.trb) / st.g * (0.7 + 0.6 * wp);
+  }
+  function titleLeader() {
+    var best = null;
+    Object.keys(save.lg.stats).forEach(function (id) {
+      var p = League.byId(save, id), x = save.lg.stats[id];
+      if (p && (!best || x.pts > best.pts)) best = { name: p.name, pts: x.pts };
+    });
+    return best;
+  }
+  function allLeague() {
+    var list = League.leaders(save, 'pts', 60, Math.round(save.days.length * 0.4)).map(function (r) { return { p: r.p, v: valueOf(r.p) }; });
+    list.sort(function (a, b) { return b.v - a.v; });
+    list = list.slice(0, 10).map(function (x) { return { id: x.p.id, name: x.p.name, team: x.p.team }; });
+    return { first: list.slice(0, 5), second: list.slice(5, 10) };
+  }
+
   function startOffseason() {
     var me = teamById(save.myId);
     var best = null;
@@ -1293,7 +1293,8 @@
       champion: save.champion, rec: save.rec[me.id].w + '-' + save.rec[me.id].l,
       pts: League.leaders(save, 'pts', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       ast: League.leaders(save, 'ast', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
-      mvp: best ? { id: best.p.id, name: best.p.name } : null
+      mvp: best ? { id: best.p.id, name: best.p.name } : null,
+      title: titleLeader(), allLeague: allLeague()
     };
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null });
     var rep = League.progress(save, me.id);
@@ -1304,10 +1305,7 @@
       retired: rep.retired.map(function (x) { return { id: x.p.id, name: x.p.name, ovr: x.ovr }; })
     };
     var hist = History.get(save.year);
-    if (hist) {
-      var foldIds = save.fates === 'history' ? hist.fold.filter(function (id) { return save.ids.indexOf(id) >= 0; }) : [];
-      save.off.fate = { fold: foldIds, join: hist.join, move: save.fates === 'history' ? (hist.move || {}) : {}, news: hist.news, myFolded: foldIds.indexOf(me.id) >= 0 };
-    }
+    if (hist.length) save.off.fates = hist.map(function (d) { return { id: d.id, choice: 'history', res: {}, applied: false }; });
     rosterCache = {};
     persist();
     openOff();
@@ -1380,6 +1378,21 @@
     }
     board('Scoring leaders', r.pts, ' per game');
     board('Assist leaders', r.ast, ' per game');
+    if (r.title) {
+      body.appendChild(el('h3', 'box-title', 'Scoring title'));
+      var tc = el('div', 'stat-card headlines');
+      tc.appendChild(el('div', null, r.title.name + ' \u00B7 ' + r.title.pts + ' points (the title goes to total points)'));
+      body.appendChild(tc);
+    }
+    if (r.allLeague && r.allLeague.first.length) {
+      [['First team', r.allLeague.first], ['Second team', r.allLeague.second]].forEach(function (g) {
+        if (!g[1].length) return;
+        body.appendChild(el('h3', 'box-title', (save.year < 1950 ? 'All-BAA ' : 'All-League ') + g[0]));
+        var ac = el('div', 'stat-card headlines');
+        g[1].forEach(function (x) { ac.appendChild(el('div', null, x.name + (x.team && teamById(x.team) ? ' \u00B7 ' + teamById(x.team).city : ''))); });
+        body.appendChild(ac);
+      });
+    }
     if (r.mvp) {
       body.appendChild(el('h3', 'box-title', 'Player of the year'));
       var c = el('div', 'stat-card headlines');
@@ -1405,58 +1418,115 @@
       body.appendChild(personRow(p, ['Age ' + p.age + ' · ' + x.from + ' → ' + x.to + ' overall', 'Potential ' + p.pot], tag));
     });
     body.appendChild(el('p', 'sub', d.leagueRetired + ' players on other clubs retired.'));
-    offDock(save.off.fate ? 'League news' : 'Contracts', function () { offStep(save.off.fate ? 'fates' : 'contracts'); });
+    offDock(save.off.fates ? 'League news' : 'Contracts', function () { offStep(save.off.fates ? 'fates' : 'contracts'); });
   }
 
 
+  function fateDef(f) { return History.get(save.year).filter(function (d) { return d.id === f.id; })[0]; }
+  function fateDerive(f) {
+    var d = fateDef(f), hist = f.choice === 'history';
+    var foldIds = hist ? d.fold.filter(function (id) { return save.ids.indexOf(id) >= 0; }) : [];
+    var staying = save.ids.filter(function (id) { return foldIds.indexOf(id) < 0; }).map(teamById);
+    var conflicts = [];
+    d.join.forEach(function (t) {
+      var ex = staying.filter(function (x) { return x.id === t.id || x.city === t.city; })[0];
+      if (ex) conflicts.push({ team: t, existing: ex });
+    });
+    var move = {}, ok = hist && Object.keys(d.move || {}).length > 0;
+    if (ok) Object.keys(d.move).forEach(function (id) { var t = save.tm[id]; if (!t || save.ids.indexOf(id) < 0 || t.division !== d.move[id].from) ok = false; });
+    if (ok) move = d.move;
+    return { def: d, fold: foldIds, move: move, conflicts: conflicts };
+  }
+
   function offFates(body, me) {
-    var f = save.off.fate;
-    offHeader('League news', 'Off-season');
-    var card = el('div', 'stat-card');
-    card.appendChild(el('div', 'group-title', 'Franchise changes'));
-    if (f.fold.length) {
-      card.appendChild(el('p', 'sub', f.news));
-      f.fold.forEach(function (id) {
+    offHeader('League news', 'Off-season · ' + seasonLabel(save.year) + ' to ' + seasonLabel(save.year + 1));
+    var blocked = false;
+    save.off.fates.forEach(function (f) {
+      var x = fateDerive(f), d = x.def;
+      var card = el('div', 'stat-card');
+      card.appendChild(el('div', 'group-title', d.title));
+      var seg = el('div', 'seg');
+      [['history', 'Keep history'], ['alt', 'Change history']].forEach(function (o) {
+        var b = el('button', 'btn small' + (f.choice === o[0] ? ' primary' : ''), o[1]);
+        b.type = 'button';
+        b.addEventListener('click', function () { f.choice = o[0]; f.res = {}; persist(); offStep('fates'); });
+        seg.appendChild(b);
+      });
+      card.appendChild(seg);
+      card.appendChild(el('p', 'sub', f.choice === 'history' ? d.news : d.alt));
+      x.fold.forEach(function (id) {
         var t = teamById(id), row = el('div', 'row');
         row.appendChild(teamBadge(t));
         row.appendChild(el('strong', null, t.city + ' ' + t.name + ' fold' + (id === me.id ? ' (your club)' : '')));
         card.appendChild(row);
       });
-    } else {
-      card.appendChild(el('p', 'sub', 'The Baltimore Bullets join the league as its next club. Every other franchise survives.'));
-    }
-    f.join.forEach(function (t0) {
-      var t = save.tm[t0.id] || t0, row = el('div', 'row');
-      row.appendChild(teamBadge(t));
-      row.appendChild(el('strong', null, t.city + ' ' + t.name + ' join'));
-      card.appendChild(row);
+      d.join.forEach(function (t0) {
+        var t = save.tm[t0.id] || t0, row = el('div', 'row');
+        row.appendChild(teamBadge(t));
+        row.appendChild(el('strong', null, t.city + ' ' + t.name + ' join'));
+        card.appendChild(row);
+      });
+      x.conflicts.forEach(function (c) {
+        var t = c.team, ex = c.existing, key = t.id;
+        var box = el('div', 'fates');
+        box.appendChild(el('p', 'sub', 'Contradiction: history gives ' + t.city + ' the ' + t.name + ', but in your league the ' + ex.city + ' ' + ex.name + ' still play there.'));
+        [['rebrand', 'Rename the ' + ex.name + ' the ' + t.name], ['skip', 'No new club in ' + t.city]].forEach(function (o) {
+          var b = el('button', 'btn small' + (f.res[key] === o[0] ? ' primary' : ''), o[1]);
+          b.type = 'button';
+          b.addEventListener('click', function () { f.res[key] = o[0]; persist(); offStep('fates'); });
+          box.appendChild(b);
+        });
+        card.appendChild(box);
+        if (!f.res[key]) blocked = true;
+      });
+      body.appendChild(card);
     });
-    body.appendChild(card);
-    if (f.myFolded) body.appendChild(el('p', 'note', 'Your franchise has folded. You will take over one of the remaining clubs.'));
     offDock('Continue', function () {
-      applyFates();
-      offStep(f.myFolded ? 'newclub' : (f.fold.length ? 'dispersal' : 'contracts'));
-    });
+      var myFolded = false;
+      save.off.fates.forEach(function (f) { if (fateDerive(f).fold.indexOf(me.id) >= 0) myFolded = true; });
+      var hadFold = applyFates();
+      save.off.myFolded = myFolded;
+      offStep(myFolded ? 'newclub' : (hadFold ? 'dispersal' : 'contracts'));
+    }, blocked);
   }
 
   function applyFates() {
-    var f = save.off.fate;
-    if (f.applied) return;
-    f.applied = true;
-    f.join.forEach(function (t) {
-      save.tm[t.id] = t;
-      if (save.ids.indexOf(t.id) < 0) save.ids.push(t.id);
-      save.rec[t.id] = { w: 0, l: 0 };
-      League.makeVeterans(save, t.id, 10, 52, 66);
+    var foldAll = [], newIds = [];
+    save.off.fates.forEach(function (f) {
+      if (f.applied) return;
+      f.applied = true;
+      var x = fateDerive(f);
+      x.fold.forEach(function (id) { save.ids.splice(save.ids.indexOf(id), 1); foldAll.push(id); });
+      Object.keys(x.move).forEach(function (id) { save.tm[id].division = x.move[id].to; });
+      x.def.join.forEach(function (t0) {
+        var c = x.conflicts.filter(function (k) { return k.team.id === t0.id; })[0];
+        var res = c && f.res[t0.id];
+        if (res === 'skip') return;
+        if (res === 'rebrand') {
+          var ex = save.tm[c.existing.id];
+          ex.was = (ex.was || []).concat([ex.name]);
+          ex.name = t0.name; ex.colors = t0.colors.slice();
+          return;
+        }
+        var t = JSON.parse(JSON.stringify(t0));
+        var count = { Eastern: 0, Western: 0 };
+        save.ids.forEach(function (id) { var dv = save.tm[id].division; count[dv] = (count[dv] || 0) + 1; });
+        var divs = Object.keys(count);
+        t.division = divs.length === 2 && count[divs[0]] !== count[divs[1]] ? (count[divs[0]] < count[divs[1]] ? divs[0] : divs[1]) : t0.division;
+        save.tm[t.id] = t;
+        save.ids.push(t.id);
+        save.rec[t.id] = { w: 0, l: 0 };
+        League.makeVeterans(save, t.id, 10, 52, 66);
+        newIds.push(t.id);
+      });
     });
-    Object.keys(f.move || {}).forEach(function (id) { if (save.tm[id]) save.tm[id].division = f.move[id]; });
-    f.fold.forEach(function (id) { save.ids.splice(save.ids.indexOf(id), 1); });
-    if (f.fold.length) {
+    if (foldAll.length) {
       var teams = save.ids.map(teamById);
-      League.startDispersal(save, teams, f.fold, f.join.map(function (t) { return t.id; }), 5);
+      League.startDispersal(save, teams, foldAll, newIds, 5);
     }
     rosterCache = {};
     persist();
+    return foldAll.length > 0;
   }
 
   function offNewClub(body, me) {
@@ -1477,7 +1547,7 @@
       c.addEventListener('click', function () {
         save.myId = id;
         selected = t;
-        save.off.fate.myFolded = false;
+        save.off.myFolded = false;
         rosterCache = {};
         persist();
         offStep('dispersal');
@@ -1640,8 +1710,8 @@
   function startNextSeason() {
     var teams = save.ids.map(teamById), me = teamById(save.myId);
     League.aiRosterPass(save, teams, me.id);
-    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, teams.length <= 8 ? 48 : 60);
-    next.tm = save.tm; next.fates = save.fates; next.ids = save.ids.slice();
+    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1));
+    next.tm = save.tm; next.ids = save.ids.slice();
     next.lg = save.lg; next.mood = save.mood;
     next.lg.stats = {}; next.lg.draft = null; next.lg.year = next.year; next.lg.cap = League.capFor(next.year);
     if (next.mood) { next.mood.streak = 0; next.mood.news = next.mood.news.slice(-3); }

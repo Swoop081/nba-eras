@@ -62,7 +62,37 @@
     });
     m.cool.conv = Math.max(0, m.cool.conv - 1);
     m.cool.rumour = Math.max(0, m.cool.rumour - 1);
+    m.cool.period = Math.max(0, (m.cool.period || 0) - 1);
   }
+
+
+  /* Little scenes from the 1940s road: rail travel, exhibitions, the war's aftermath. */
+  var PERIOD = [
+    function (ctx) {
+      return { kind: 'talk', who: null, coach: true, text: 'Coach: "Skipper, the next road swing is an overnight Pullman. We can book sleeper berths for the whole club, or ride coach and keep the money in the treasury."', choices: [
+        { label: 'Sleeper berths for everyone', fx: { team: { m: 3 }, fans: 0 }, say: 'The boys sleep soundly' },
+        { label: 'Coach seats, save the fare', fx: { team: { m: -3 }, coach: 2 }, say: 'A stiff, grumpy ride' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A promoter in a nearby town offers the club a purse to play an exhibition against a local semi-pro five on the off night. The crowd would be big and the pay is cash.', choices: [
+        { label: 'Take the exhibition', fx: { team: { m: -2 }, fans: 4 }, say: 'Tired legs, happy fans' },
+        { label: 'Rest the boys', fx: { team: { m: 2 }, fans: -1 }, say: 'A quiet night in the hotel' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A returned serviceman, still wearing his Army-issue jacket, asks the doorman for a tryout. He played ball in a camp league overseas. The reporters at the gate are watching.', choices: [
+        { label: 'Give him a tryout', fx: { team: { m: 1 }, fans: 3 }, say: 'The papers love the story' },
+        { label: 'Send him away politely', fx: { fans: -1 }, say: 'He tips his cap and leaves' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'The arena has sold out for a college doubleheader before your game. The late tip will mean a rushed warm-up. The house manager asks whether you want the floor for a half hour first.', choices: [
+        { label: 'Ask for the half hour', fx: { team: { m: 1 }, coach: 1 }, say: 'The boys are loose and ready' },
+        { label: 'Take what we get', fx: { fans: 1 }, say: 'The crowd is warm and early' }
+      ] };
+    }
+  ];
 
   /* ---------- generation ---------- */
   function generate(save, ctx) {
@@ -116,6 +146,11 @@
       } else {
         out.push({ kind: 'rumour', text: fill('OWNERS MEETING IN {OC} STOP TALK OF SCHEDULE CHANGES AND NEW ARENAS STOP NOTHING CONFIRMED STOP', { OC: other.city.toUpperCase() }), choices: [{ label: 'Noted', fx: {}, say: 'Noted' }] });
       }
+    }
+
+    if (save.phase === 'regular' && !(m.cool.period > 0) && Math.random() < 0.06) {
+      m.cool.period = 14;
+      out.push(rnd(PERIOD)(ctx));
     }
 
     var conv = pickConversation(save, ctx, lines, won);

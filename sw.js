@@ -1,12 +1,12 @@
 /* Offline support: serve from cache, refresh in the background. */
-var CACHE = 'nba-eras-v22';
+var CACHE = 'nba-eras-v23';
 var SHELL = [
   './',
   'index.html',
   'styles.css',
   'app.js',
   'engine.js',
-  'season.js',
+  'rules.js', 'season.js',
   'events.js',
   'league.js',
   'history.js',
