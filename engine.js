@@ -20,7 +20,7 @@
 
   // Tuned so 1946-47 lands near a 28% FG league scoring about 68 a night.
   var PARAMS = {
-    1946: { use: 1.1, poss: 86, fg: 0.19, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 }
+    1946: { use: 0.9, poss: 86, fg: 0.2, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 }
   };
 
   function params(year) {
@@ -97,11 +97,13 @@
     var fouled = r() < pr.foul + (md.foulAdd || 0);
     if (fouled) {
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou); }).s.pf++;
+      if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
     }
     var q = pr.fg * (0.62 + 0.0095 * shooter.p.ratings.sht + 0.0030 * shooter.p.ratings.sco);
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
     q *= (mo.fgMul || 1) * (md.oppFgMul || 1);
+    if (st.eo || st.ed) q *= Math.exp((st.eo || 0) - (st.ed || 0));
     var three = pr.threes && r() < 0.15 + shooter.p.ratings.tpt / 500;
     if (three) { q = q * 0.78; }
     var made = r() < q;
@@ -124,7 +126,7 @@
       shooter.s.fg++; if (three) shooter.s.tp++;
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
-      if (r() < 0.2 + 0.4 * shooter.p.ratings.ply / 100) {
+      if (r() < 0.72 * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
         var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply; });
         passer.s.ast++; ev.ast = passer.p.name;
       }
@@ -148,13 +150,13 @@
   }
 
   /* ---------- stepwise game, so the match screen can pause for decisions ---------- */
-  function start(home, away, year, seed) {
+  function start(home, away, year, seed, edges) {
     var pr = params(year);
     var perQ = Math.round(pr.poss / 4);
     return {
       pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep(home), A: prep(away), year: year,
       perQ: perQ, limit: perQ, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
-      mods: { H: {}, A: {} }, st: {}
+      mods: { H: {}, A: {} }, st: {}, edge: edges || {}
     };
   }
 
@@ -163,8 +165,10 @@
   /* One exchange: home possession then away possession. Returns both events. */
   function step(g) {
     var mH = live(g, 'H'), mA = live(g, 'A');
+    g.st.eo = g.edge.H || 0; g.st.ed = g.edge.A || 0;
     var a = possession(g.r, g.H, g.A, g.pr, g.st, mH, mA);
     var evA = { side: 'home', pts: a, ev: g.st.ev };
+    g.st.eo = g.edge.A || 0; g.st.ed = g.edge.H || 0;
     var b = possession(g.r, g.A, g.H, g.pr, g.st, mA, mH);
     var evB = { side: 'away', pts: b, ev: g.st.ev };
     g.qh += a; g.qa += b; g.hs += a; g.as += b; g.k++; g.n++;
@@ -196,8 +200,8 @@
     return { quarters: g.quarters, home: g.hs, away: g.as, homeLines: lines(g.H), awayLines: lines(g.A) };
   }
 
-  function simulate(home, away, year, seed) {
-    var g = start(home, away, year, seed);
+  function simulate(home, away, year, seed, edges) {
+    var g = start(home, away, year, seed, edges);
     while (!g.over) step(g);
     return finalize(g);
   }
