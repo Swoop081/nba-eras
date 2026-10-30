@@ -133,9 +133,4 @@ body.flicker #sweep{animation:sweepmove .7s ease-in}
 }
 
 /* Logos with dark artwork stay readable on the dark modern theme */
-body[data-era-filter="off"] .badge.has-logo img{background:#E6DCC6;border-radius:8px;padding:2px}
-
-/* Real logos: no circle, nothing cropped, full shape shown */
-.badge.has-logo{width:64px;height:64px;border:0;border-radius:0;overflow:visible}
-.badge.big.has-logo{width:150px;height:150px}
-.badge.has-logo img{object-fit:contain}
+body[data-era-filter="off"] .badge img{background:#E6DCC6;border-radius:50%}
