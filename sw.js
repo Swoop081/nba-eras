@@ -1,5 +1,5 @@
 /* Offline support: serve from cache, refresh in the background. */
-var CACHE = 'nba-eras-v16';
+var CACHE = 'nba-eras-v17';
 var SHELL = [
   './',
   'index.html',
@@ -7,6 +7,7 @@ var SHELL = [
   'app.js',
   'engine.js',
   'season.js',
+  'events.js',
   'manifest.webmanifest',
   'data/teams-1946.json',
   'data/players-1946.json'

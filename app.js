@@ -546,6 +546,7 @@
 
   /* ---------- season ---------- */
   var save = null;
+  var pendingAfterMatch = false;
   var rosterCache = {};
   function persist() { store.set('save', save); }
   function teamById(id) {
@@ -561,13 +562,22 @@
     var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
     return r.length ? Math.round(r.reduce(function (a, b) { return a + b; }, 0) / r.length) : 0;
   }
+  function rosterFor(id) {
+    return id === save.myId ? Events.moraleRoster(save, rosterOf(id)) : rosterOf(id);
+  }
   function simGame(g) {
-    var r = Engine.simulate(rosterOf(g.home), rosterOf(g.away), save.year);
+    var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year);
     return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series };
   }
   function simDay() {
     var results = Season.today(save).map(simGame);
+    results.forEach(function (g) {
+      if (g.home !== save.myId && g.away !== save.myId) return;
+      var us = g.home === save.myId ? g.hs : g.as, them = g.home === save.myId ? g.as : g.hs;
+      Events.afterGame(save, teamById(save.myId), null, rosterOf(save.myId), us > them);
+    });
     Season.record(save, results);
+    if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
   }
   function eraStart(id) { return ERAS.filter(function (e) { return e.id === id; })[0]; }
 
@@ -584,11 +594,12 @@
   }
 
   function playNext() {
+    if (save.pending && save.pending.length) { openEvents(); return; }
     var mine = Season.myNext(save);
     if (!mine) { simDay(); persist(); renderSeason(); return; }
     var oppId = mine.home === save.myId ? mine.away : mine.home;
     var me = teamById(save.myId), opp = teamById(oppId);
-    var res = Engine.simulate(rosterOf(me.id), rosterOf(oppId), save.year);
+    var res = Engine.simulate(rosterFor(me.id), rosterOf(oppId), save.year);
     var mineResult = {
       home: mine.home, away: mine.away, series: mine.series,
       hs: mine.home === me.id ? res.home : res.away,
@@ -601,13 +612,27 @@
       ? 'Game ' + (save.rec[me.id].w + save.rec[me.id].l + 1) + ' · ' + (mine.home === me.id ? 'home' : 'away')
       : Season.ROUNDS[mine.round].name;
     Season.record(save, others.concat([mineResult]));
+    if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
+    var us = res.home, them = res.away, won = us > them;
+    var seriesLine = '';
+    if (mine.series !== undefined) {
+      var sr = save.playoffs.rounds[mine.round][mine.series];
+      var mi = sr.a === me.id ? 0 : 1, mw = sr.w[mi], ow = sr.w[1 - mi];
+      seriesLine = sr.winner ? (sr.winner === me.id ? me.city + ' win the series ' + mw + '-' + ow : me.city + ' are eliminated, ' + ow + '-' + mw)
+        : mw > ow ? me.city + ' lead the series ' + mw + '-' + ow : mw < ow ? opp.city + ' lead the series ' + ow + '-' + mw : 'Series tied ' + mw + '-' + ow;
+    }
+    Events.afterGame(save, me, mineResult, rosterOf(me.id), won);
+    var others2 = save.ids.map(teamById).filter(function (t) { return t.id !== me.id && t.id !== opp.id; });
+    save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), label: label, seriesLine: seriesLine, others: others2 });
     persist();
+    pendingAfterMatch = true;
     renderMatch(me, opp, res, save.year, label);
     show('screen-match');
   }
 
   function simDays(n) {
     var guard = 0;
+    save.pending = [];
     while (save.phase === 'regular' && n-- > 0 && guard++ < 200) simDay();
     persist();
     renderSeason();
@@ -615,6 +640,7 @@
 
   function simPlayoffs() {
     var guard = 0;
+    save.pending = [];
     while (save.phase === 'playoffs' && guard++ < 100) simDay();
     persist();
     renderSeason();
@@ -712,6 +738,24 @@
     var st = Season.standings(save);
     Object.keys(st).forEach(function (d) { bodyEl.appendChild(standingsTable(d, st[d])); });
 
+    var mo = Events.mood(save), sm = Events.summary(save, rosterOf(me.id));
+    bodyEl.appendChild(el('h3', 'box-title', 'Clubhouse'));
+    var cc = el('div', 'stat-card meter');
+    cc.appendChild(ratingRow('Team morale', sm.morale));
+    cc.appendChild(ratingRow('Fan interest', sm.fans));
+    cc.appendChild(ratingRow('Coach trust', sm.coach));
+    bodyEl.appendChild(cc);
+    if (mo.news.length) {
+      bodyEl.appendChild(el('h3', 'box-title', 'From the papers'));
+      var hc = el('div', 'stat-card headlines');
+      mo.news.slice(-3).reverse().forEach(function (n) {
+        var d = el('div', null, n.text);
+        d.appendChild(el('small', null, n.date));
+        hc.appendChild(d);
+      });
+      bodyEl.appendChild(hc);
+    }
+
     var mine = save.results.filter(function (r) { return r.h === me.id || r.a === me.id; }).slice(-5).reverse();
     if (mine.length) {
       bodyEl.appendChild(el('h3', 'box-title', 'Recent games'));
@@ -736,8 +780,92 @@
     bodyEl.appendChild(rb);
   }
 
+
+  /* ---------- daily events ---------- */
+  var RADIO_SVG = '<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="8" y="26" width="64" height="40" rx="6"/><circle cx="28" cy="46" r="11"/><circle cx="28" cy="46" r="4"/><path d="M46 38h18M46 46h18M46 54h18"/><path d="M30 26l-8-14M50 26l8-14"/><path d="M62 8c4 3 6 7 6 11M68 4c6 4 9 10 9 16" opacity=".6"/></svg>';
+
+  function openEvents() {
+    if (!save.pending || !save.pending.length) { renderSeason(); show('screen-season'); return; }
+    renderEvent(save.pending[0]);
+    show('screen-events');
+  }
+
+  function nextEvent() {
+    save.pending.shift();
+    persist();
+    openEvents();
+  }
+
+  function renderEvent(ev) {
+    var bodyEl = document.getElementById('ev-body');
+    var dock = document.getElementById('ev-dock');
+    bodyEl.textContent = '';
+    dock.textContent = '';
+    document.getElementById('ev-title').textContent = 'Today';
+    document.getElementById('ev-sub').textContent = Events.dateFor(save) + ' · ' + save.pending.length + (save.pending.length === 1 ? ' item' : ' items') + ' left';
+    var card = el('div', 'ev ev-' + ev.kind);
+    if (ev.kind === 'news') {
+      card.appendChild(el('div', 'kicker', ev.source));
+      card.appendChild(el('h3', 'head', ev.head));
+      card.appendChild(el('p', 'dateline', ev.dateline + ' \u2014 ' + ev.sub));
+    } else if (ev.kind === 'radio') {
+      card.appendChild(el('div', 'kicker', 'On the radio'));
+      var row = el('div', 'radio');
+      var icon = el('span'); icon.innerHTML = RADIO_SVG;
+      row.appendChild(icon.firstChild);
+      var bubble = el('div', 'bubble');
+      bubble.appendChild(el('span', 'buzz', '\u201C' + ev.text + '\u201D'));
+      row.appendChild(bubble);
+      card.appendChild(row);
+      card.appendChild(el('p', 'sig', '\u2014 ' + ev.source));
+    } else if (ev.kind === 'fans') {
+      card.appendChild(el('div', 'kicker', 'Letters to the editor'));
+      card.appendChild(el('p', 'letter', '\u201C' + ev.text + '\u201D'));
+      card.appendChild(el('p', 'sig', '\u2014 ' + ev.name));
+    } else if (ev.kind === 'rumour') {
+      card.appendChild(el('div', 'kicker', 'Telegram'));
+      card.appendChild(el('p', 'telegram', ev.text));
+    } else if (ev.kind === 'talk') {
+      card.appendChild(el('div', 'kicker', ev.pid ? 'A word, boss?' : ev.coach ? 'The coach' : 'The clubhouse'));
+      if (ev.pid) {
+        var who = el('div', 'talk');
+        var pl = rosterOf(save.myId).filter(function (p) { return p.id === ev.pid; })[0];
+        who.appendChild(makeAvatar(pl));
+        var nm = el('span'); nm.appendChild(el('strong', null, ev.who));
+        nm.appendChild(el('span', 'meta', (pl.pos ? pl.pos + ' \u00B7 ' : '') + 'ovr ' + pl.ratings.ovr));
+        who.appendChild(nm);
+        card.appendChild(who);
+      }
+      card.appendChild(el('p', 'quote', ev.text));
+    }
+    bodyEl.appendChild(card);
+    var mine = rosterOf(save.myId);
+    if (ev.choices) {
+      ev.choices.forEach(function (c, i) {
+        var b = el('button', 'btn wide' + (i === 0 ? ' primary' : ''), c.label);
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          var note = Events.apply(save, ev, i, mine);
+          persist();
+          dock.textContent = '';
+          bodyEl.appendChild(el('p', 'note', note));
+          var nb = el('button', 'btn primary wide', 'Continue');
+          nb.type = 'button';
+          nb.addEventListener('click', nextEvent);
+          dock.appendChild(nb);
+        });
+        dock.appendChild(b);
+      });
+    } else {
+      var nb = el('button', 'btn primary wide', save.pending.length > 1 ? 'Next' : 'Back to the season');
+      nb.type = 'button';
+      nb.addEventListener('click', nextEvent);
+      dock.appendChild(nb);
+    }
+  }
+
   document.getElementById('btn-play').addEventListener('click', startSeason);
-  document.getElementById('btn-again').addEventListener('click', function () { renderSeason(); show('screen-season'); });
+  document.getElementById('btn-again').addEventListener('click', function () { openEvents(); });
   document.getElementById('btn-simweek').addEventListener('click', function () { simDays(7); });
   document.getElementById('btn-simrest').addEventListener('click', function () { simDays(500); });
 
@@ -758,8 +886,8 @@
         save = data;
         selected = teamById(save.myId);
         continueBtn.disabled = false;
-        renderSeason();
-        show('screen-season');
+        if (save.pending && save.pending.length) openEvents();
+        else { renderSeason(); show('screen-season'); }
       })
       .catch(function () { continueBtn.disabled = false; });
   });
