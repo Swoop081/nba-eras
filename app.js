@@ -694,7 +694,8 @@
 
   /* ---------- live match ---------- */
   var lv = null;
-  var COURT_SPOTS = [[50, 36], [20, 50], [80, 50], [34, 74], [66, 74]];
+  var COURT_SPOTS = [[50, 41], [15, 52], [85, 52], [30, 80], [70, 80]];
+  var OPP_SPOTS = [[50, 12], [29, 27], [71, 27], [36, 59], [64, 59]];
   var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
 
   function lastName(n) { var p = n.split(' '); return p[p.length - 1]; }
@@ -736,8 +737,8 @@
       var p = g.onH[i].p, o = g.onA[i].p;
       lv.ids.push(p.id + '|' + o.id);
       var d = el('div', 'op', lastName(o.name).slice(0, 3).toUpperCase());
-      d.style.left = (sp[0] + (50 - sp[0]) * 0.45) + '%';
-      d.style.top = (sp[1] - 17) + '%';
+      d.style.left = OPP_SPOTS[i][0] + '%';
+      d.style.top = OPP_SPOTS[i][1] + '%';
       court.appendChild(d); lv.op.push(d);
       var b = el('button', 'pl');
       b.type = 'button';
