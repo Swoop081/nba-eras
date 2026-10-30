@@ -164,3 +164,19 @@ body[data-era-filter="off"] .badge.has-logo img{background:#E6DCC6;border-radius
 .board-row strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .board-row{grid-template-columns:40px 1fr repeat(var(--qs,4),26px) 40px;gap:4px}
 .board-row strong{font-size:14px}
+
+.dock-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.dock-row .btn{height:46px;font-size:15px}
+.stat-card{display:grid;gap:10px;padding:14px;border:2px solid var(--line);border-radius:14px;background:var(--card)}
+.stat-card .row{display:flex;align-items:center;gap:12px}
+.stat-card .big{font-size:34px;font-weight:800;line-height:1}
+.stat-card .vs{margin-left:auto;text-align:right}
+.box tr.me td{font-weight:800}
+.box tr.me td:first-child{box-shadow:inset 4px 0 0 var(--accent)}
+.champ{text-align:center;padding:18px 14px}
+.champ h3{margin:8px 0 0;font-size:24px}
+.series{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.series:first-of-type{border-top:0}
+.series b{font-variant-numeric:tabular-nums}
+.stat-card .row strong{display:block;font-size:18px;line-height:1.2}
+.stat-card .meta{display:block;margin-top:2px;font-size:14px;color:var(--muted)}

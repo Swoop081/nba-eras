@@ -72,15 +72,32 @@
     <div id="ready-badge" class="badge big"></div>
     <h3 id="ready-name"></h3>
     <p id="ready-line"></p>
-    <button class="btn primary wide" id="btn-play" type="button">Play a game</button>
-    <button class="btn wide" id="btn-roster" type="button">View roster</button>
-    <p class="sub">The season calendar and the daily event stack come next.</p>
+    <button class="btn primary wide" id="btn-play" type="button">Start the season</button>
+    <p class="sub">A new game replaces any saved season.</p>
+  </div>
+</section>
+
+<section id="screen-season" class="screen" aria-label="Season">
+  <header class="bar">
+    <button class="back" data-back="screen-title" type="button" aria-label="Menu">&larr;</button>
+    <div>
+      <h2 id="season-title">Season</h2>
+      <p class="sub" id="season-sub"></p>
+    </div>
+  </header>
+  <div id="season-body" class="list"></div>
+  <div class="dock" id="season-dock">
+    <button class="btn primary wide" id="btn-next" type="button">Play game</button>
+    <div class="dock-row">
+      <button class="btn" id="btn-simweek" type="button">Sim a week</button>
+      <button class="btn" id="btn-simrest" type="button">Sim to playoffs</button>
+    </div>
   </div>
 </section>
 
 <section id="screen-roster" class="screen" aria-label="Roster">
   <header class="bar">
-    <button class="back" data-back="screen-ready" type="button" aria-label="Back">&larr;</button>
+    <button class="back" data-back="screen-season" type="button" aria-label="Back">&larr;</button>
     <div>
       <h2 id="roster-title">Roster</h2>
       <p class="sub" id="roster-sub"></p>
@@ -91,7 +108,7 @@
 
 <section id="screen-match" class="screen" aria-label="Game">
   <header class="bar">
-    <button class="back" data-back="screen-ready" type="button" aria-label="Back">&larr;</button>
+    <button class="back" data-back="screen-season" type="button" aria-label="Back">&larr;</button>
     <div>
       <h2 id="match-title">Game</h2>
       <p class="sub" id="match-sub"></p>
@@ -99,7 +116,7 @@
   </header>
   <div id="match-body" class="list"></div>
   <div class="dock" id="match-dock" hidden>
-    <button class="btn primary wide" id="btn-again" type="button">Play another game</button>
+    <button class="btn primary wide" id="btn-again" type="button">Back to the season</button>
   </div>
 </section>
 
@@ -129,6 +146,7 @@
 </main>
 
 <script src="engine.js"></script>
+<script src="season.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

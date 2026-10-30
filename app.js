@@ -440,20 +440,6 @@
 
   /* ---------- match ---------- */
   var matchTimer = null;
-  function playGame() {
-    if (!selected || !currentEra) return;
-    loadPlayers(function (data) {
-      var teams = seasons[currentEra.id].teams.filter(function (t) { return t.id !== selected.id; });
-      var opp = teams[Math.floor(Math.random() * teams.length)];
-      var year = parseInt(currentEra.years, 10);
-      var mine = data.players.filter(function (p) { return p.teamId === selected.id; });
-      var theirs = data.players.filter(function (p) { return p.teamId === opp.id; });
-      var res = Engine.simulate(mine, theirs, year);
-      renderMatch(selected, opp, res, year);
-      show('screen-match');
-    });
-  }
-
   function teamBadge(team) {
     var b = makeBadge(team, false);
     applyLogo(b, team);
@@ -496,14 +482,14 @@
     return wrap;
   }
 
-  function renderMatch(me, opp, res, year) {
+  function renderMatch(me, opp, res, year, label) {
     clearTimeout(matchTimer);
     var bodyEl = document.getElementById('match-body');
     var dockEl = document.getElementById('match-dock');
     bodyEl.textContent = '';
     dockEl.hidden = true;
     document.getElementById('match-title').textContent = me.city + ' vs ' + opp.city;
-    document.getElementById('match-sub').textContent = currentEra.years + ' · exhibition';
+    document.getElementById('match-sub').textContent = label || currentEra.years;
     var nq = res.quarters.length;
     var board = el('div', 'board');
     board.style.setProperty('--qs', nq);
@@ -556,15 +542,226 @@
     matchTimer = setTimeout(step, reduceMotion ? 0 : 600);
   }
 
-  document.getElementById('btn-play').addEventListener('click', playGame);
-  document.getElementById('btn-again').addEventListener('click', playGame);
 
-  document.getElementById('btn-roster').addEventListener('click', function () {
-    if (!selected) return;
-    loadPlayers(function (data) {
-      renderRoster(selected, data);
+
+  /* ---------- season ---------- */
+  var save = null;
+  var rosterCache = {};
+  function persist() { store.set('save', save); }
+  function teamById(id) {
+    return seasons[currentEra.id].teams.filter(function (t) { return t.id === id; })[0];
+  }
+  function rosterOf(id) {
+    if (!rosterCache[id]) {
+      rosterCache[id] = playersByEra[currentEra.id].players.filter(function (p) { return p.teamId === id; });
+    }
+    return rosterCache[id];
+  }
+  function teamRating(id) {
+    var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
+    return r.length ? Math.round(r.reduce(function (a, b) { return a + b; }, 0) / r.length) : 0;
+  }
+  function simGame(g) {
+    var r = Engine.simulate(rosterOf(g.home), rosterOf(g.away), save.year);
+    return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series };
+  }
+  function simDay() {
+    var results = Season.today(save).map(simGame);
+    Season.record(save, results);
+  }
+  function eraStart(id) { return ERAS.filter(function (e) { return e.id === id; })[0]; }
+
+  function startSeason() {
+    var data = seasons[currentEra.id];
+    loadPlayers(function (pl) {
+      if (!pl) return;
+      rosterCache = {};
+      save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60);
+      persist();
+      renderSeason();
+      show('screen-season');
+    });
+  }
+
+  function playNext() {
+    var mine = Season.myNext(save);
+    if (!mine) { simDay(); persist(); renderSeason(); return; }
+    var oppId = mine.home === save.myId ? mine.away : mine.home;
+    var me = teamById(save.myId), opp = teamById(oppId);
+    var res = Engine.simulate(rosterOf(me.id), rosterOf(oppId), save.year);
+    var mineResult = {
+      home: mine.home, away: mine.away, series: mine.series,
+      hs: mine.home === me.id ? res.home : res.away,
+      as: mine.home === me.id ? res.away : res.home
+    };
+    var others = Season.today(save).filter(function (g) {
+      return g.home !== me.id && g.away !== me.id;
+    }).map(simGame);
+    var label = save.phase === 'regular'
+      ? 'Game ' + (save.rec[me.id].w + save.rec[me.id].l + 1) + ' · ' + (mine.home === me.id ? 'home' : 'away')
+      : Season.ROUNDS[mine.round].name;
+    Season.record(save, others.concat([mineResult]));
+    persist();
+    renderMatch(me, opp, res, save.year, label);
+    show('screen-match');
+  }
+
+  function simDays(n) {
+    var guard = 0;
+    while (save.phase === 'regular' && n-- > 0 && guard++ < 200) simDay();
+    persist();
+    renderSeason();
+  }
+
+  function simPlayoffs() {
+    var guard = 0;
+    while (save.phase === 'playoffs' && guard++ < 100) simDay();
+    persist();
+    renderSeason();
+  }
+
+  function standingsTable(div, rows) {
+    var wrap = el('div');
+    wrap.appendChild(el('h3', 'box-title', div + ' Division'));
+    var scroll = el('div', 'boxwrap');
+    var table = el('table', 'box');
+    var thead = el('thead'), hr = el('tr');
+    ['Team', 'W', 'L', 'GB'].forEach(function (h) { hr.appendChild(el('th', null, h)); });
+    thead.appendChild(hr);
+    table.appendChild(thead);
+    var tb = el('tbody');
+    rows.forEach(function (r, i) {
+      var tr = el('tr', r.id === save.myId ? 'me' : null);
+      var t = teamById(r.id);
+      tr.appendChild(el('td', null, (i + 1) + '. ' + t.city));
+      tr.appendChild(el('td', null, String(r.w)));
+      tr.appendChild(el('td', null, String(r.l)));
+      tr.appendChild(el('td', null, r.gb ? String(r.gb) : '-'));
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    scroll.appendChild(table);
+    wrap.appendChild(scroll);
+    return wrap;
+  }
+
+  function renderSeason() {
+    var me = teamById(save.myId);
+    var rec = save.rec[me.id];
+    var bodyEl = document.getElementById('season-body');
+    bodyEl.textContent = '';
+    document.getElementById('season-title').textContent = me.city + ' ' + me.name;
+    var sub = currentEra.years + ' · ' + rec.w + '-' + rec.l;
+    document.getElementById('season-sub').textContent = sub;
+
+    var next = Season.myNext(save);
+    var nextBtn = document.getElementById('btn-next');
+    var weekBtn = document.getElementById('btn-simweek');
+    var restBtn = document.getElementById('btn-simrest');
+    var reg = save.phase === 'regular';
+    document.getElementById('season-dock').hidden = save.phase === 'done';
+    weekBtn.hidden = !reg;
+    restBtn.hidden = !reg;
+    restBtn.parentNode.hidden = !reg;
+    nextBtn.textContent = next ? 'Play game' : (reg ? 'Sim today' : 'Sim the playoffs');
+    nextBtn.onclick = function () { if (!next && !reg) simPlayoffs(); else playNext(); };
+
+    var card = el('div', 'stat-card');
+    if (save.phase === 'done') {
+      var champ = teamById(save.champion);
+      card.className = 'stat-card champ';
+      var cb = teamBadge(champ); cb.className += ' big'; cb.style.margin = '0 auto';
+      card.appendChild(cb);
+      card.appendChild(el('h3', null, champ.city + ' ' + champ.name));
+      card.appendChild(el('p', 'sub', champ.id === me.id ? 'You won the title. The new league champions.' : 'Champions of ' + currentEra.years + '. Your season is over.'));
+      card.appendChild(el('p', 'sub', 'The next season, with player development and the draft, comes later.'));
+    } else if (next) {
+      var oppId = next.home === me.id ? next.away : next.home;
+      var opp = teamById(oppId);
+      var row = el('div', 'row');
+      row.appendChild(teamBadge(opp));
+      var tx = el('span');
+      tx.appendChild(el('strong', null, (next.home === me.id ? 'vs ' : 'at ') + opp.city + ' ' + opp.name));
+      var oprec = save.rec[oppId];
+      tx.appendChild(el('span', 'meta', oprec.w + '-' + oprec.l + ' · team rating ' + teamRating(oppId) + ' vs your ' + teamRating(me.id)));
+      row.appendChild(tx);
+      card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Next game · ' + (rec.w + rec.l + 1) + ' of ' + (save.days.length - 6 > 0 ? 60 : save.days.length) : Season.ROUNDS[next.round].name));
+      card.appendChild(row);
+    } else {
+      card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Rest day' : 'Out of the playoffs'));
+      card.appendChild(el('p', 'sub', save.phase === 'regular' ? 'No game for your team today.' : 'Your season is over. Sim the rest of the playoffs to crown a champion.'));
+    }
+    bodyEl.appendChild(card);
+
+    if (save.playoffs) {
+      bodyEl.appendChild(el('h3', 'box-title', 'Playoffs'));
+      var pc = el('div', 'stat-card');
+      save.playoffs.rounds.forEach(function (round, ri) {
+        pc.appendChild(el('div', 'group-title', Season.ROUNDS[ri].name + ' · best of ' + Season.ROUNDS[ri].best));
+        round.forEach(function (s) {
+          var line = el('div', 'series');
+          var an = teamById(s.a).city, bn = teamById(s.b).city;
+          line.appendChild(el('span', null, an + ' v ' + bn));
+          line.appendChild(el('b', null, s.w[0] + '-' + s.w[1] + (s.winner ? ' · ' + teamById(s.winner).city : '')));
+          pc.appendChild(line);
+        });
+      });
+      bodyEl.appendChild(pc);
+    }
+
+    var st = Season.standings(save);
+    Object.keys(st).forEach(function (d) { bodyEl.appendChild(standingsTable(d, st[d])); });
+
+    var mine = save.results.filter(function (r) { return r.h === me.id || r.a === me.id; }).slice(-5).reverse();
+    if (mine.length) {
+      bodyEl.appendChild(el('h3', 'box-title', 'Recent games'));
+      var rc = el('div', 'stat-card');
+      mine.forEach(function (r) {
+        var home = r.h === me.id, us = home ? r.hs : r.as, them = home ? r.as : r.hs;
+        var o = teamById(home ? r.a : r.h);
+        var line = el('div', 'series');
+        line.appendChild(el('span', null, (home ? 'vs ' : 'at ') + o.city));
+        line.appendChild(el('b', null, (us > them ? 'W ' : 'L ') + us + '-' + them));
+        rc.appendChild(line);
+      });
+      bodyEl.appendChild(rc);
+    }
+
+    var rb = el('button', 'btn wide', 'View roster');
+    rb.type = 'button';
+    rb.addEventListener('click', function () {
+      renderRoster(me, playersByEra[currentEra.id]);
       show('screen-roster');
     });
+    bodyEl.appendChild(rb);
+  }
+
+  document.getElementById('btn-play').addEventListener('click', startSeason);
+  document.getElementById('btn-again').addEventListener('click', function () { renderSeason(); show('screen-season'); });
+  document.getElementById('btn-simweek').addEventListener('click', function () { simDays(7); });
+  document.getElementById('btn-simrest').addEventListener('click', function () { simDays(500); });
+
+  var continueBtn = document.getElementById('btn-continue');
+  var saved = store.get('save', null);
+  if (saved && saved.v === 1 && eraStart(saved.eraId)) continueBtn.disabled = false;
+  continueBtn.addEventListener('click', function () {
+    var data = store.get('save', null);
+    if (!data) return;
+    var era = eraStart(data.eraId);
+    currentEra = era;
+    continueBtn.disabled = true;
+    Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), fetch(era.players).then(function (r) { return r.json(); })])
+      .then(function (res) {
+        seasons[era.id] = res[0];
+        playersByEra[era.id] = res[1];
+        rosterCache = {};
+        save = data;
+        selected = teamById(save.myId);
+        continueBtn.disabled = false;
+        renderSeason();
+        show('screen-season');
+      })
+      .catch(function () { continueBtn.disabled = false; });
   });
 
   /* ---------- start ---------- */
