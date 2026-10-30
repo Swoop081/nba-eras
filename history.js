@@ -25,19 +25,6 @@
         club('rochester-royals', 'Rochester', 'Royals', '#1D428A', '#C8102E')
       ],
       move: { 'washington-capitols': { from: 'Western', to: 'Eastern' }, 'baltimore-bullets': { from: 'Western', to: 'Eastern' } }
-    }],
-    1994: [{
-      id: 'canada-expansion-1995',
-      title: 'Expansion into Canada',
-      news: 'Toronto and Vancouver are awarded expansion clubs, the Raptors and the Grizzlies.',
-      alt: 'No expansion this year.',
-      fold: [],
-      optional: true,
-      join: [
-        { id: 'toronto-raptors', city: 'Toronto', name: 'Raptors', division: 'Eastern', colors: ['#CE1141', '#000000'], w: 0, l: 0 },
-        { id: 'vancouver-grizzlies', city: 'Vancouver', name: 'Grizzlies', division: 'Western', colors: ['#00B2A9', '#6F263D'], w: 0, l: 0 }
-      ],
-      move: {}
     }]
   };
   root.History = { get: function (year) { return HISTORY[year] || []; } };

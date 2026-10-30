@@ -20,7 +20,7 @@
 
   // Tuned so 1946-47 lands near a 28% FG league scoring about 68 a night.
   var PARAMS = {
-    1946: { poss: 86, fg: 0.185, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 }
+    1946: { use: 1.1, poss: 86, fg: 0.19, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 }
   };
 
   function params(year) {
@@ -90,7 +90,7 @@
     }
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco;
-      return x.share * s * s * (mo.focus === x.p.id ? (mo.focusW || 6) : 1);
+      return x.share * Math.pow(s, pr.use || 2) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
