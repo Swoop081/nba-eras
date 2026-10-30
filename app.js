@@ -408,19 +408,21 @@
       text.appendChild(el('strong', null, p.name));
       var ppg = p.g ? (p.pts / p.g).toFixed(1) : '0.0';
       var apg = p.g ? (p.ast / p.g).toFixed(1) : '0.0';
-      text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' · ' : '') + 'Age ' + (p.age || '?') + ' · ' + p.g + ' G'));
+      text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' · ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" · ' : '') + 'Age ' + (p.age || '?') + ' · ' + p.g + ' G'));
       text.appendChild(el('span', 'meta', ppg + ' pts · ' + apg + ' ast per game'));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
       var detail = el('div', 'detail');
       detail.hidden = true;
-      detail.appendChild(ratingRow('Scoring', p.ratings.sco));
-      detail.appendChild(ratingRow('Shooting', p.ratings.sht));
-      detail.appendChild(ratingRow('Playmaking', p.ratings.ply));
-      detail.appendChild(ratingRow('Rebounding', p.ratings.reb));
-      detail.appendChild(ratingRow('Steals', p.ratings.stl));
-      detail.appendChild(ratingRow('Blocks', p.ratings.blk));
-      detail.appendChild(ratingRow('Durability', p.ratings.dur));
+      var groups = [
+        ['Offence', [['Scoring', 'sco'], ['Shooting', 'sht'], ['Free throws', 'ft'], ['Three-pointers', 'tpt'], ['Playmaking', 'ply'], ['Ball security', 'tov'], ['Off. rebounding', 'orb']]],
+        ['Defence', [['Def. rebounding', 'drb'], ['Steals', 'stl'], ['Blocks', 'blk'], ['Discipline', 'fou']]],
+        ['Physical', [['Durability', 'dur']]]
+      ];
+      groups.forEach(function (g) {
+        detail.appendChild(el('div', 'group-title', g[0]));
+        g[1].forEach(function (r) { detail.appendChild(ratingRow(r[0], p.ratings[r[1]])); });
+      });
       card.addEventListener('click', function () {
         detail.hidden = !detail.hidden;
         holder.classList.toggle('open', !detail.hidden);
@@ -430,7 +432,7 @@
       list.appendChild(holder);
     });
     if (squad.length) {
-      list.appendChild(el('p', 'sub', 'Ratings are built from each player’s ' + currentEra.years + ' stats, with rebounding, steals and blocks modelled for the match engine. Rosters show where players started the season.'));
+      list.appendChild(el('p', 'sub', 'Ratings are built from each player’s ' + currentEra.years + ' stats, with three-pointers, rebounds, steals, blocks and turnovers modelled for the match engine. Rosters show where players started the season.'));
     }
   }
 
