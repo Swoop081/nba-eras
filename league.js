@@ -51,6 +51,11 @@
         list.forEach(function (p) { if (!p.known) p.salary = Math.max(1000, round100(p.salary * f)); });
       }
     });
+    teams.forEach(function (t) {
+      lg.players.filter(function (p) { return p.team === t.id; })
+        .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })
+        .slice(MAX_ROSTER).forEach(function (p) { p.team = null; });
+    });
     save.lg = lg;
   }
 
