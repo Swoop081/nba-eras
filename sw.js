@@ -1,5 +1,5 @@
 /* Offline support: serve from cache, refresh in the background. */
-var CACHE = 'nba-eras-v18';
+var CACHE = 'nba-eras-v19';
 var SHELL = [
   './',
   'index.html',
@@ -8,9 +8,11 @@ var SHELL = [
   'engine.js',
   'season.js',
   'events.js',
+  'league.js',
   'manifest.webmanifest',
   'data/teams-1946.json',
-  'data/players-1946.json'
+  'data/players-1946.json',
+  'data/draft-1947.json'
 ];
 
 self.addEventListener('install', function (event) {

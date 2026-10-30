@@ -1,0 +1,302 @@
+{
+ "year": 1947,
+ "note": "Real 1947 BAA draft picks (37 of 80 listed on Wikipedia). Ratings are generated; potential for some players reflects their later careers.",
+ "prospects": [
+  {
+   "id": "clifton-mcneely",
+   "name": "Clifton McNeely",
+   "pos": "F",
+   "college": "Texas Wesleyan",
+   "realPick": 1,
+   "round": 1,
+   "pot": 58
+  },
+  {
+   "id": "glen-selbo",
+   "name": "Glen Selbo",
+   "pos": "G/F",
+   "college": "Wisconsin",
+   "realPick": 2,
+   "round": 1,
+   "pot": 66
+  },
+  {
+   "id": "bulbs-ehlers",
+   "name": "Bulbs Ehlers",
+   "pos": "G/F",
+   "college": "Purdue",
+   "realPick": 3,
+   "round": 1,
+   "pot": 68
+  },
+  {
+   "id": "walt-dropo",
+   "name": "Walt Dropo",
+   "pos": "F/C",
+   "college": "Connecticut",
+   "realPick": 4,
+   "round": 1,
+   "pot": 72
+  },
+  {
+   "id": "dick-holub",
+   "name": "Dick Holub",
+   "pos": "C",
+   "college": "Long Island",
+   "realPick": 5,
+   "round": 1,
+   "pot": 70
+  },
+  {
+   "id": "chink-crossin",
+   "name": "Chink Crossin",
+   "pos": "G",
+   "college": "Pennsylvania",
+   "realPick": 6,
+   "round": 1,
+   "pot": 64
+  },
+  {
+   "id": "jack-underman",
+   "name": "Jack Underman",
+   "pos": "F",
+   "college": "Ohio State",
+   "realPick": 7,
+   "round": 1
+  },
+  {
+   "id": "paul-huston",
+   "name": "Paul Huston",
+   "pos": "F",
+   "college": "Ohio State",
+   "realPick": 8,
+   "round": 1,
+   "pot": 62
+  },
+  {
+   "id": "dick-okeefe",
+   "name": "Dick O'Keefe",
+   "pos": "G/F",
+   "college": "Santa Clara",
+   "realPick": 9,
+   "round": 1
+  },
+  {
+   "id": "larry-killick",
+   "name": "Larry Killick",
+   "pos": "F",
+   "college": "Vermont",
+   "realPick": 10,
+   "round": 1
+  },
+  {
+   "id": "fritz-nagy",
+   "name": "Fritz Nagy",
+   "pos": "G/F",
+   "college": "Akron",
+   "realPick": 11,
+   "round": 2,
+   "pot": 60
+  },
+  {
+   "id": "red-rocha",
+   "name": "Red Rocha",
+   "pos": "F/C",
+   "college": "Oregon State",
+   "realPick": 12,
+   "round": 2,
+   "pot": 74
+  },
+  {
+   "id": "bob-hubbard",
+   "name": "Bob Hubbard",
+   "pos": "F/C",
+   "college": "Springfield",
+   "realPick": 14,
+   "round": 2,
+   "pot": 62
+  },
+  {
+   "id": "ben-schadler",
+   "name": "Ben Schadler",
+   "pos": "F",
+   "college": "Northwestern",
+   "realPick": 18,
+   "round": 2
+  },
+  {
+   "id": "jack-tingle",
+   "name": "Jack Tingle",
+   "pos": "F",
+   "college": "Kentucky",
+   "realPick": 19,
+   "round": 2
+  },
+  {
+   "id": "gene-stump",
+   "name": "Gene Stump",
+   "pos": "G/F",
+   "college": "DePaul",
+   "realPick": 23,
+   "round": 3
+  },
+  {
+   "id": "jimmy-darden",
+   "name": "Jimmy Darden",
+   "pos": "G",
+   "college": "Denver",
+   "realPick": 28,
+   "round": 3
+  },
+  {
+   "id": "johnny-ezersky",
+   "name": "Johnny Ezersky",
+   "pos": "G/F",
+   "college": "Brooklyn Gothams",
+   "realPick": 33,
+   "round": 4
+  },
+  {
+   "id": "gene-vance",
+   "name": "Gene Vance",
+   "pos": "G/F",
+   "college": "Illinois",
+   "realPick": 38,
+   "round": 4
+  },
+  {
+   "id": "harry-gallatin",
+   "name": "Harry Gallatin",
+   "pos": "F/C",
+   "college": "Northeast Missouri",
+   "realPick": 40,
+   "round": 4,
+   "pot": 86
+  },
+  {
+   "id": "paul-hoffman",
+   "name": "Paul Hoffman",
+   "pos": "G/F",
+   "college": "Purdue",
+   "realPick": 42,
+   "round": 5
+  },
+  {
+   "id": "jack-hewson",
+   "name": "Jack Hewson",
+   "pos": "F/C",
+   "college": "Philadelphia Sphas",
+   "realPick": 43,
+   "round": 5
+  },
+  {
+   "id": "ron-livingstone",
+   "name": "Ron Livingstone",
+   "pos": "C",
+   "college": "Wyoming",
+   "realPick": 45,
+   "round": 5,
+   "pot": 64
+  },
+  {
+   "id": "andy-phillip",
+   "name": "Andy Phillip",
+   "pos": "G/F",
+   "college": "Illinois",
+   "realPick": 47,
+   "round": 5,
+   "pot": 86
+  },
+  {
+   "id": "matt-zunic",
+   "name": "Matt Zunic",
+   "pos": "G/F",
+   "college": "George Washington",
+   "realPick": 48,
+   "round": 5,
+   "pot": 70
+  },
+  {
+   "id": "andy-duncan",
+   "name": "Andy Duncan",
+   "pos": "F/C",
+   "college": "William & Mary",
+   "realPick": 53,
+   "round": 6
+  },
+  {
+   "id": "paul-napolitano",
+   "name": "Paul Napolitano",
+   "pos": "G/F",
+   "college": "San Francisco",
+   "realPick": 54,
+   "round": 6
+  },
+  {
+   "id": "wataru-misaka",
+   "name": "Wataru Misaka",
+   "pos": "G",
+   "college": "Utah",
+   "realPick": 61,
+   "round": 7,
+   "pot": 56
+  },
+  {
+   "id": "jim-pollard",
+   "name": "Jim Pollard",
+   "pos": "F/C",
+   "college": "Stanford",
+   "realPick": 62,
+   "round": 7,
+   "pot": 88
+  },
+  {
+   "id": "saul-mariaschin",
+   "name": "Saul Mariaschin",
+   "pos": "G",
+   "college": "Harvard",
+   "realPick": 63,
+   "round": 7
+  },
+  {
+   "id": "don-smith",
+   "name": "Don Smith",
+   "pos": "G/F",
+   "college": "Indianapolis Kautskys",
+   "realPick": 68,
+   "round": 8
+  },
+  {
+   "id": "paul-cloyd",
+   "name": "Paul Cloyd",
+   "pos": "G/F",
+   "college": "Wisconsin",
+   "realPick": 69,
+   "round": 8
+  },
+  {
+   "id": "elmer-gainer",
+   "name": "Elmer Gainer",
+   "pos": "F/C",
+   "college": "Anderson Packers",
+   "realPick": 70,
+   "round": 8
+  },
+  {
+   "id": "john-mandic",
+   "name": "John Mandic",
+   "pos": "F/C",
+   "college": "Portland Indians",
+   "realPick": 74,
+   "round": 9
+  },
+  {
+   "id": "chick-reiser",
+   "name": "Chick Reiser",
+   "pos": "G/F",
+   "college": "Fort Wayne Pistons",
+   "realPick": 75,
+   "round": 9
+  }
+ ]
+}
