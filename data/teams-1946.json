@@ -1,0 +1,22 @@
+{
+  "season": "1946-47",
+  "league": "Basketball Association of America",
+  "games": 60,
+  "source": "Wikipedia, 1946-47 BAA season. Colours are placeholders.",
+  "champion": "philadelphia-warriors",
+  "runnerUp": "chicago-stags",
+  "divisions": ["Eastern", "Western"],
+  "teams": [
+    {"id": "washington-capitols", "city": "Washington", "name": "Capitols", "division": "Eastern", "w": 49, "l": 11, "colors": ["#B22234", "#FFFFFF"]},
+    {"id": "philadelphia-warriors", "city": "Philadelphia", "name": "Warriors", "division": "Eastern", "w": 35, "l": 25, "colors": ["#1D428A", "#FDB927"]},
+    {"id": "new-york-knicks", "city": "New York", "name": "Knickerbockers", "division": "Eastern", "w": 33, "l": 27, "colors": ["#F58426", "#006BB6"]},
+    {"id": "providence-steamrollers", "city": "Providence", "name": "Steamrollers", "division": "Eastern", "w": 28, "l": 32, "colors": ["#2E7D32", "#F2F2F2"]},
+    {"id": "boston-celtics", "city": "Boston", "name": "Celtics", "division": "Eastern", "w": 22, "l": 38, "colors": ["#007A33", "#FFFFFF"]},
+    {"id": "toronto-huskies", "city": "Toronto", "name": "Huskies", "division": "Eastern", "w": 22, "l": 38, "colors": ["#5B2C83", "#D9D9D9"]},
+    {"id": "chicago-stags", "city": "Chicago", "name": "Stags", "division": "Western", "w": 39, "l": 22, "colors": ["#8B1E3F", "#F2E6D0"]},
+    {"id": "st-louis-bombers", "city": "St. Louis", "name": "Bombers", "division": "Western", "w": 38, "l": 23, "colors": ["#0A6EBD", "#FFFFFF"]},
+    {"id": "cleveland-rebels", "city": "Cleveland", "name": "Rebels", "division": "Western", "w": 30, "l": 30, "colors": ["#D4A017", "#222222"]},
+    {"id": "detroit-falcons", "city": "Detroit", "name": "Falcons", "division": "Western", "w": 20, "l": 40, "colors": ["#4B5563", "#F5C518"]},
+    {"id": "pittsburgh-ironmen", "city": "Pittsburgh", "name": "Ironmen", "division": "Western", "w": 15, "l": 45, "colors": ["#222222", "#FDB927"]}
+  ]
+}

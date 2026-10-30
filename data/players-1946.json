@@ -1,0 +1,4785 @@
+{
+ "season": "1946-47",
+ "source": "Basketball Reference player totals export. Ratings are derived from these stats.",
+ "players": [
+  {
+   "id": "joe-fulks",
+   "name": "Joe Fulks",
+   "age": 25,
+   "pos": "PF",
+   "teamId": "philadelphia-warriors",
+   "g": 60,
+   "pts": 1389,
+   "ast": 25,
+   "fg": 475,
+   "fga": 1557,
+   "ft": 439,
+   "fta": 601,
+   "pf": 199,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 60,
+     "pts": 1389
+    }
+   ],
+   "ratings": {
+    "ovr": 90,
+    "sco": 100,
+    "sht": 88,
+    "ply": 37,
+    "dur": 100
+   }
+  },
+  {
+   "id": "bob-feerick",
+   "name": "Bob Feerick",
+   "age": 27,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 55,
+   "pts": 926,
+   "ast": 69,
+   "fg": 364,
+   "fga": 908,
+   "ft": 198,
+   "fta": 260,
+   "pf": 142,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 55,
+     "pts": 926
+    }
+   ],
+   "ratings": {
+    "ovr": 89,
+    "sco": 86,
+    "sht": 98,
+    "ply": 91,
+    "dur": 92
+   }
+  },
+  {
+   "id": "ed-sadowski",
+   "name": "Ed Sadowski",
+   "age": 31,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 53,
+   "pts": 877,
+   "ast": 46,
+   "fg": 329,
+   "fga": 891,
+   "ft": 219,
+   "fta": 328,
+   "pf": 194,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 10,
+     "pts": 191
+    },
+    {
+     "team": "cleveland-rebels",
+     "g": 43,
+     "pts": 686
+    }
+   ],
+   "ratings": {
+    "ovr": 86,
+    "sco": 84,
+    "sht": 89,
+    "ply": 78,
+    "dur": 88
+   }
+  },
+  {
+   "id": "max-zaslofsky",
+   "name": "Max Zaslofsky",
+   "age": 21,
+   "pos": "SG",
+   "teamId": "chicago-stags",
+   "g": 61,
+   "pts": 877,
+   "ast": 40,
+   "fg": 336,
+   "fga": 1020,
+   "ft": 205,
+   "fta": 278,
+   "pf": 121,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 61,
+     "pts": 877
+    }
+   ],
+   "ratings": {
+    "ovr": 85,
+    "sco": 79,
+    "sht": 95,
+    "ply": 60,
+    "dur": 100
+   }
+  },
+  {
+   "id": "ernie-calverley",
+   "name": "Ernie Calverley",
+   "age": 23,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 59,
+   "pts": 845,
+   "ast": 202,
+   "fg": 323,
+   "fga": 1102,
+   "ft": 199,
+   "fta": 283,
+   "pf": 191,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 59,
+     "pts": 845
+    }
+   ],
+   "ratings": {
+    "ovr": 85,
+    "sco": 79,
+    "sht": 79,
+    "ply": 100,
+    "dur": 98
+   }
+  },
+  {
+   "id": "stan-miasek",
+   "name": "Stan Miasek",
+   "age": 23,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 60,
+   "pts": 895,
+   "ast": 93,
+   "fg": 331,
+   "fga": 1154,
+   "ft": 233,
+   "fta": 385,
+   "pf": 208,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 60,
+     "pts": 895
+    }
+   ],
+   "ratings": {
+    "ovr": 84,
+    "sco": 81,
+    "sht": 56,
+    "ply": 96,
+    "dur": 100
+   }
+  },
+  {
+   "id": "leo-mogus",
+   "name": "Leo Mogus",
+   "age": 25,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 58,
+   "pts": 753,
+   "ast": 84,
+   "fg": 259,
+   "fga": 879,
+   "ft": 235,
+   "fta": 325,
+   "pf": 176,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 17,
+     "pts": 209
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 41,
+     "pts": 544
+    }
+   ],
+   "ratings": {
+    "ovr": 84,
+    "sco": 75,
+    "sht": 82,
+    "ply": 94,
+    "dur": 97
+   }
+  },
+  {
+   "id": "fred-scolari",
+   "name": "Fred Scolari",
+   "age": 24,
+   "pos": "PG",
+   "teamId": "washington-capitols",
+   "g": 58,
+   "pts": 728,
+   "ast": 58,
+   "fg": 291,
+   "fga": 989,
+   "ft": 146,
+   "fta": 180,
+   "pf": 159,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 58,
+     "pts": 728
+    }
+   ],
+   "ratings": {
+    "ovr": 83,
+    "sco": 73,
+    "sht": 86,
+    "ply": 85,
+    "dur": 97
+   }
+  },
+  {
+   "id": "frankie-baumholtz",
+   "name": "Frankie Baumholtz",
+   "age": 28,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 45,
+   "pts": 631,
+   "ast": 54,
+   "fg": 255,
+   "fga": 856,
+   "ft": 121,
+   "fta": 156,
+   "pf": 93,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 45,
+     "pts": 631
+    }
+   ],
+   "ratings": {
+    "ovr": 83,
+    "sco": 77,
+    "sht": 87,
+    "ply": 89,
+    "dur": 75
+   }
+  },
+  {
+   "id": "john-logan",
+   "name": "John Logan",
+   "age": 26,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 61,
+   "pts": 770,
+   "ast": 78,
+   "fg": 290,
+   "fga": 1043,
+   "ft": 190,
+   "fta": 254,
+   "pf": 136,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 61,
+     "pts": 770
+    }
+   ],
+   "ratings": {
+    "ovr": 82,
+    "sco": 73,
+    "sht": 71,
+    "ply": 92,
+    "dur": 100
+   }
+  },
+  {
+   "id": "coulby-gunther",
+   "name": "Coulby Gunther",
+   "age": 23,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 52,
+   "pts": 734,
+   "ast": 32,
+   "fg": 254,
+   "fga": 756,
+   "ft": 226,
+   "fta": 351,
+   "pf": 117,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 52,
+     "pts": 734
+    }
+   ],
+   "ratings": {
+    "ovr": 82,
+    "sco": 78,
+    "sht": 82,
+    "ply": 54,
+    "dur": 87
+   }
+  },
+  {
+   "id": "dino-martin",
+   "name": "Dino Martin",
+   "age": 26,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 60,
+   "pts": 733,
+   "ast": 59,
+   "fg": 311,
+   "fga": 1022,
+   "ft": 111,
+   "fta": 168,
+   "pf": 98,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 60,
+     "pts": 733
+    }
+   ],
+   "ratings": {
+    "ovr": 82,
+    "sco": 71,
+    "sht": 78,
+    "ply": 83,
+    "dur": 100
+   }
+  },
+  {
+   "id": "chick-halbert",
+   "name": "Chick Halbert",
+   "age": 27,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 61,
+   "pts": 773,
+   "ast": 46,
+   "fg": 280,
+   "fga": 915,
+   "ft": 213,
+   "fta": 356,
+   "pf": 161,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 61,
+     "pts": 773
+    }
+   ],
+   "ratings": {
+    "ovr": 81,
+    "sco": 74,
+    "sht": 67,
+    "ply": 71,
+    "dur": 100
+   }
+  },
+  {
+   "id": "earl-shannon",
+   "name": "Earl Shannon",
+   "age": 25,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 57,
+   "pts": 687,
+   "ast": 84,
+   "fg": 245,
+   "fga": 722,
+   "ft": 197,
+   "fta": 348,
+   "pf": 169,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 57,
+     "pts": 687
+    }
+   ],
+   "ratings": {
+    "ovr": 81,
+    "sco": 71,
+    "sht": 68,
+    "ply": 94,
+    "dur": 95
+   }
+  },
+  {
+   "id": "mel-riebe",
+   "name": "Mel Riebe",
+   "age": 30,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 55,
+   "pts": 663,
+   "ast": 67,
+   "fg": 276,
+   "fga": 898,
+   "ft": 111,
+   "fta": 173,
+   "pf": 169,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 55,
+     "pts": 663
+    }
+   ],
+   "ratings": {
+    "ovr": 81,
+    "sco": 70,
+    "sht": 76,
+    "ply": 91,
+    "dur": 92
+   }
+  },
+  {
+   "id": "bones-mckinney",
+   "name": "Bones McKinney",
+   "age": 28,
+   "pos": "SF",
+   "teamId": "washington-capitols",
+   "g": 58,
+   "pts": 695,
+   "ast": 69,
+   "fg": 275,
+   "fga": 987,
+   "ft": 145,
+   "fta": 210,
+   "pf": 162,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 58,
+     "pts": 695
+    }
+   ],
+   "ratings": {
+    "ovr": 80,
+    "sco": 70,
+    "sht": 66,
+    "ply": 90,
+    "dur": 97
+   }
+  },
+  {
+   "id": "connie-simmons",
+   "name": "Connie Simmons",
+   "age": 21,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 60,
+   "pts": 620,
+   "ast": 62,
+   "fg": 246,
+   "fga": 768,
+   "ft": 128,
+   "fta": 189,
+   "pf": 130,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 60,
+     "pts": 620
+    }
+   ],
+   "ratings": {
+    "ovr": 80,
+    "sco": 64,
+    "sht": 87,
+    "ply": 88,
+    "dur": 100
+   }
+  },
+  {
+   "id": "john-janisch",
+   "name": "John Janisch",
+   "age": 26,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 60,
+   "pts": 697,
+   "ast": 49,
+   "fg": 283,
+   "fga": 983,
+   "ft": 131,
+   "fta": 198,
+   "pf": 132,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 60,
+     "pts": 697
+    }
+   ],
+   "ratings": {
+    "ovr": 79,
+    "sco": 69,
+    "sht": 68,
+    "ply": 74,
+    "dur": 100
+   }
+  },
+  {
+   "id": "johnny-norlander",
+   "name": "Johnny Norlander",
+   "age": 25,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 60,
+   "pts": 626,
+   "ast": 50,
+   "fg": 223,
+   "fga": 698,
+   "ft": 180,
+   "fta": 276,
+   "pf": 122,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 60,
+     "pts": 626
+    }
+   ],
+   "ratings": {
+    "ovr": 79,
+    "sco": 64,
+    "sht": 82,
+    "ply": 76,
+    "dur": 100
+   }
+  },
+  {
+   "id": "hank-beenders",
+   "name": "Hank Beenders",
+   "age": 30,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 58,
+   "pts": 713,
+   "ast": 37,
+   "fg": 266,
+   "fga": 1016,
+   "ft": 181,
+   "fta": 257,
+   "pf": 196,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 58,
+     "pts": 713
+    }
+   ],
+   "ratings": {
+    "ovr": 78,
+    "sco": 72,
+    "sht": 55,
+    "ply": 57,
+    "dur": 97
+   }
+  },
+  {
+   "id": "mike-mccarron",
+   "name": "Mike McCarron",
+   "age": 24,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 60,
+   "pts": 649,
+   "ast": 59,
+   "fg": 236,
+   "fga": 838,
+   "ft": 177,
+   "fta": 288,
+   "pf": 184,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 60,
+     "pts": 649
+    }
+   ],
+   "ratings": {
+    "ovr": 78,
+    "sco": 66,
+    "sht": 55,
+    "ply": 83,
+    "dur": 100
+   }
+  },
+  {
+   "id": "don-carlson",
+   "name": "Don Carlson",
+   "age": 27,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 59,
+   "pts": 630,
+   "ast": 59,
+   "fg": 272,
+   "fga": 845,
+   "ft": 86,
+   "fta": 159,
+   "pf": 182,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 59,
+     "pts": 630
+    }
+   ],
+   "ratings": {
+    "ovr": 78,
+    "sco": 65,
+    "sht": 63,
+    "ply": 86,
+    "dur": 98
+   }
+  },
+  {
+   "id": "kenny-sailors",
+   "name": "Kenny Sailors",
+   "age": 26,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 58,
+   "pts": 577,
+   "ast": 134,
+   "fg": 229,
+   "fga": 741,
+   "ft": 119,
+   "fta": 200,
+   "pf": 177,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 58,
+     "pts": 577
+    }
+   ],
+   "ratings": {
+    "ovr": 78,
+    "sco": 62,
+    "sht": 69,
+    "ply": 99,
+    "dur": 97
+   }
+  },
+  {
+   "id": "howie-dallmar",
+   "name": "Howie Dallmar",
+   "age": 24,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 60,
+   "pts": 528,
+   "ast": 104,
+   "fg": 199,
+   "fga": 710,
+   "ft": 130,
+   "fta": 203,
+   "pf": 141,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 60,
+     "pts": 528
+    }
+   ],
+   "ratings": {
+    "ovr": 76,
+    "sco": 57,
+    "sht": 58,
+    "ply": 97,
+    "dur": 100
+   }
+  },
+  {
+   "id": "al-brightman",
+   "name": "Al Brightman",
+   "age": 23,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 58,
+   "pts": 567,
+   "ast": 60,
+   "fg": 223,
+   "fga": 870,
+   "ft": 121,
+   "fta": 193,
+   "pf": 115,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 58,
+     "pts": 567
+    }
+   ],
+   "ratings": {
+    "ovr": 75,
+    "sco": 62,
+    "sht": 41,
+    "ply": 87,
+    "dur": 97
+   }
+  },
+  {
+   "id": "angelo-musi",
+   "name": "Angelo Musi",
+   "age": 28,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 60,
+   "pts": 562,
+   "ast": 26,
+   "fg": 230,
+   "fga": 818,
+   "ft": 102,
+   "fta": 123,
+   "pf": 120,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 60,
+     "pts": 562
+    }
+   ],
+   "ratings": {
+    "ovr": 75,
+    "sco": 60,
+    "sht": 77,
+    "ply": 38,
+    "dur": 100
+   }
+  },
+  {
+   "id": "john-mahnken",
+   "name": "John Mahnken",
+   "age": 24,
+   "pos": "C",
+   "teamId": "washington-capitols",
+   "g": 60,
+   "pts": 557,
+   "ast": 60,
+   "fg": 223,
+   "fga": 876,
+   "ft": 111,
+   "fta": 163,
+   "pf": 181,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 60,
+     "pts": 557
+    }
+   ],
+   "ratings": {
+    "ovr": 75,
+    "sco": 60,
+    "sht": 50,
+    "ply": 86,
+    "dur": 100
+   }
+  },
+  {
+   "id": "stan-noszka",
+   "name": "Stan Noszka",
+   "age": 26,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 58,
+   "pts": 507,
+   "ast": 39,
+   "fg": 199,
+   "fga": 693,
+   "ft": 109,
+   "fta": 157,
+   "pf": 163,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 58,
+     "pts": 507
+    }
+   ],
+   "ratings": {
+    "ovr": 75,
+    "sco": 57,
+    "sht": 72,
+    "ply": 63,
+    "dur": 97
+   }
+  },
+  {
+   "id": "red-wallace",
+   "name": "Red Wallace",
+   "age": 28,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 61,
+   "pts": 556,
+   "ast": 58,
+   "fg": 225,
+   "fga": 809,
+   "ft": 106,
+   "fta": 196,
+   "pf": 167,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 24,
+     "pts": 131
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 37,
+     "pts": 425
+    }
+   ],
+   "ratings": {
+    "ovr": 74,
+    "sco": 59,
+    "sht": 39,
+    "ply": 80,
+    "dur": 100
+   }
+  },
+  {
+   "id": "ariel-maughan",
+   "name": "Ariel Maughan",
+   "age": 23,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 59,
+   "pts": 532,
+   "ast": 57,
+   "fg": 224,
+   "fga": 929,
+   "ft": 84,
+   "fta": 114,
+   "pf": 180,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 59,
+     "pts": 532
+    }
+   ],
+   "ratings": {
+    "ovr": 74,
+    "sco": 58,
+    "sht": 49,
+    "ply": 81,
+    "dur": 98
+   }
+  },
+  {
+   "id": "john-abramovic",
+   "name": "John Abramovic",
+   "age": 27,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 47,
+   "pts": 527,
+   "ast": 35,
+   "fg": 202,
+   "fga": 834,
+   "ft": 123,
+   "fta": 178,
+   "pf": 161,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 47,
+     "pts": 527
+    }
+   ],
+   "ratings": {
+    "ovr": 74,
+    "sco": 67,
+    "sht": 45,
+    "ply": 69,
+    "dur": 78
+   }
+  },
+  {
+   "id": "sonny-hertzberg",
+   "name": "Sonny Hertzberg",
+   "age": 24,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 59,
+   "pts": 515,
+   "ast": 37,
+   "fg": 201,
+   "fga": 695,
+   "ft": 113,
+   "fta": 149,
+   "pf": 109,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 59,
+     "pts": 515
+    }
+   ],
+   "ratings": {
+    "ovr": 74,
+    "sco": 56,
+    "sht": 79,
+    "ply": 56,
+    "dur": 98
+   }
+  },
+  {
+   "id": "stan-stutz",
+   "name": "Stan Stutz",
+   "age": 26,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 60,
+   "pts": 477,
+   "ast": 49,
+   "fg": 172,
+   "fga": 641,
+   "ft": 133,
+   "fta": 170,
+   "pf": 127,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 60,
+     "pts": 477
+    }
+   ],
+   "ratings": {
+    "ovr": 74,
+    "sco": 53,
+    "sht": 68,
+    "ply": 74,
+    "dur": 100
+   }
+  },
+  {
+   "id": "bud-palmer",
+   "name": "Bud Palmer",
+   "age": 25,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 42,
+   "pts": 401,
+   "ast": 34,
+   "fg": 160,
+   "fga": 521,
+   "ft": 81,
+   "fta": 121,
+   "pf": 110,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 42,
+     "pts": 401
+    }
+   ],
+   "ratings": {
+    "ovr": 74,
+    "sco": 59,
+    "sht": 82,
+    "ply": 71,
+    "dur": 70
+   }
+  },
+  {
+   "id": "jim-seminoff",
+   "name": "Jim Seminoff",
+   "age": 24,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 60,
+   "pts": 439,
+   "ast": 63,
+   "fg": 184,
+   "fga": 586,
+   "ft": 71,
+   "fta": 130,
+   "pf": 155,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 60,
+     "pts": 439
+    }
+   ],
+   "ratings": {
+    "ovr": 73,
+    "sco": 49,
+    "sht": 63,
+    "ply": 89,
+    "dur": 100
+   }
+  },
+  {
+   "id": "ossie-schectman",
+   "name": "Ossie Schectman",
+   "age": 27,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 54,
+   "pts": 435,
+   "ast": 109,
+   "fg": 162,
+   "fga": 588,
+   "ft": 111,
+   "fta": 179,
+   "pf": 115,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 54,
+     "pts": 435
+    }
+   ],
+   "ratings": {
+    "ovr": 73,
+    "sco": 53,
+    "sht": 51,
+    "ply": 98,
+    "dur": 90
+   }
+  },
+  {
+   "id": "irv-torgoff",
+   "name": "Irv Torgoff",
+   "age": 29,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 58,
+   "pts": 490,
+   "ast": 30,
+   "fg": 187,
+   "fga": 684,
+   "ft": 116,
+   "fta": 159,
+   "pf": 173,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 58,
+     "pts": 490
+    }
+   ],
+   "ratings": {
+    "ovr": 72,
+    "sco": 55,
+    "sht": 67,
+    "ply": 45,
+    "dur": 97
+   }
+  },
+  {
+   "id": "tony-jaros",
+   "name": "Tony Jaros",
+   "age": 26,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 59,
+   "pts": 482,
+   "ast": 28,
+   "fg": 177,
+   "fga": 613,
+   "ft": 128,
+   "fta": 181,
+   "pf": 156,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 59,
+     "pts": 482
+    }
+   ],
+   "ratings": {
+    "ovr": 72,
+    "sco": 54,
+    "sht": 75,
+    "ply": 40,
+    "dur": 98
+   }
+  },
+  {
+   "id": "tommy-byrnes",
+   "name": "Tommy Byrnes",
+   "age": 23,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 60,
+   "pts": 453,
+   "ast": 35,
+   "fg": 175,
+   "fga": 583,
+   "ft": 103,
+   "fta": 160,
+   "pf": 90,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 60,
+     "pts": 453
+    }
+   ],
+   "ratings": {
+    "ovr": 72,
+    "sco": 51,
+    "sht": 73,
+    "ply": 51,
+    "dur": 100
+   }
+  },
+  {
+   "id": "mickey-rottner",
+   "name": "Mickey Rottner",
+   "age": 27,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 56,
+   "pts": 423,
+   "ast": 93,
+   "fg": 190,
+   "fga": 655,
+   "ft": 43,
+   "fta": 79,
+   "pf": 109,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 56,
+     "pts": 423
+    }
+   ],
+   "ratings": {
+    "ovr": 72,
+    "sco": 50,
+    "sht": 51,
+    "ply": 97,
+    "dur": 93
+   }
+  },
+  {
+   "id": "belus-smawley",
+   "name": "Belus Smawley",
+   "age": 28,
+   "pos": "SG",
+   "teamId": "st-louis-bombers",
+   "g": 22,
+   "pts": 262,
+   "ast": 10,
+   "fg": 113,
+   "fga": 352,
+   "ft": 36,
+   "fta": 47,
+   "pf": 37,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 22,
+     "pts": 262
+    }
+   ],
+   "ratings": {
+    "ovr": 72,
+    "sco": 65,
+    "sht": 93,
+    "ply": 34,
+    "dur": 37
+   }
+  },
+  {
+   "id": "ralph-kaplowitz",
+   "name": "Ralph Kaplowitz",
+   "age": 27,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 57,
+   "pts": 403,
+   "ast": 38,
+   "fg": 146,
+   "fga": 532,
+   "ft": 111,
+   "fta": 151,
+   "pf": 122,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 27,
+     "pts": 194
+    },
+    {
+     "team": "philadelphia-warriors",
+     "g": 30,
+     "pts": 209
+    }
+   ],
+   "ratings": {
+    "ovr": 71,
+    "sco": 48,
+    "sht": 68,
+    "ply": 61,
+    "dur": 95
+   }
+  },
+  {
+   "id": "harry-zeller",
+   "name": "Harry Zeller",
+   "age": 27,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 48,
+   "pts": 362,
+   "ast": 31,
+   "fg": 120,
+   "fga": 382,
+   "ft": 122,
+   "fta": 177,
+   "pf": 177,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 48,
+     "pts": 362
+    }
+   ],
+   "ratings": {
+    "ovr": 71,
+    "sco": 50,
+    "sht": 86,
+    "ply": 57,
+    "dur": 80
+   }
+  },
+  {
+   "id": "bob-doll",
+   "name": "Bob Doll",
+   "age": 27,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 60,
+   "pts": 522,
+   "ast": 22,
+   "fg": 194,
+   "fga": 768,
+   "ft": 134,
+   "fta": 206,
+   "pf": 167,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 60,
+     "pts": 522
+    }
+   ],
+   "ratings": {
+    "ovr": 70,
+    "sco": 56,
+    "sht": 43,
+    "ply": 31,
+    "dur": 100
+   }
+  },
+  {
+   "id": "george-nostrand",
+   "name": "George Nostrand",
+   "age": 23,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 61,
+   "pts": 482,
+   "ast": 31,
+   "fg": 192,
+   "fga": 656,
+   "ft": 98,
+   "fta": 210,
+   "pf": 145,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 13,
+     "pts": 116
+    },
+    {
+     "team": "cleveland-rebels",
+     "g": 48,
+     "pts": 366
+    }
+   ],
+   "ratings": {
+    "ovr": 70,
+    "sco": 52,
+    "sht": 47,
+    "ply": 44,
+    "dur": 100
+   }
+  },
+  {
+   "id": "hank-rosenstein",
+   "name": "Hank Rosenstein",
+   "age": 26,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 60,
+   "pts": 382,
+   "ast": 36,
+   "fg": 119,
+   "fga": 390,
+   "ft": 144,
+   "fta": 225,
+   "pf": 172,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 31,
+     "pts": 133
+    },
+    {
+     "team": "providence-steamrollers",
+     "g": 29,
+     "pts": 249
+    }
+   ],
+   "ratings": {
+    "ovr": 70,
+    "sco": 44,
+    "sht": 73,
+    "ply": 53,
+    "dur": 100
+   }
+  },
+  {
+   "id": "art-hillhouse",
+   "name": "Art Hillhouse",
+   "age": 30,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 60,
+   "pts": 360,
+   "ast": 41,
+   "fg": 120,
+   "fga": 412,
+   "ft": 120,
+   "fta": 166,
+   "pf": 139,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 60,
+     "pts": 360
+    }
+   ],
+   "ratings": {
+    "ovr": 70,
+    "sco": 42,
+    "sht": 78,
+    "ply": 65,
+    "dur": 100
+   }
+  },
+  {
+   "id": "kleggie-hermsen",
+   "name": "Kleggie Hermsen",
+   "age": 23,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 32,
+   "pts": 297,
+   "ast": 25,
+   "fg": 113,
+   "fga": 394,
+   "ft": 71,
+   "fta": 112,
+   "pf": 86,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 11,
+     "pts": 43
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 21,
+     "pts": 254
+    }
+   ],
+   "ratings": {
+    "ovr": 70,
+    "sco": 56,
+    "sht": 61,
+    "ply": 69,
+    "dur": 53
+   }
+  },
+  {
+   "id": "george-mearns",
+   "name": "George Mearns",
+   "age": 24,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 57,
+   "pts": 382,
+   "ast": 35,
+   "fg": 128,
+   "fga": 478,
+   "ft": 126,
+   "fta": 175,
+   "pf": 137,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 57,
+     "pts": 382
+    }
+   ],
+   "ratings": {
+    "ovr": 69,
+    "sco": 46,
+    "sht": 63,
+    "ply": 54,
+    "dur": 95
+   }
+  },
+  {
+   "id": "wyndol-gray",
+   "name": "Wyndol Gray",
+   "age": 24,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 55,
+   "pts": 350,
+   "ast": 47,
+   "fg": 139,
+   "fga": 476,
+   "ft": 72,
+   "fta": 124,
+   "pf": 105,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 55,
+     "pts": 350
+    }
+   ],
+   "ratings": {
+    "ovr": 69,
+    "sco": 44,
+    "sht": 56,
+    "ply": 77,
+    "dur": 92
+   }
+  },
+  {
+   "id": "dick-schulz",
+   "name": "Dick Schulz",
+   "age": 30,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 57,
+   "pts": 354,
+   "ast": 56,
+   "fg": 130,
+   "fga": 548,
+   "ft": 94,
+   "fta": 138,
+   "pf": 123,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 16,
+     "pts": 106
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 41,
+     "pts": 248
+    }
+   ],
+   "ratings": {
+    "ovr": 68,
+    "sco": 43,
+    "sht": 42,
+    "ply": 82,
+    "dur": 95
+   }
+  },
+  {
+   "id": "bob-faught",
+   "name": "Bob Faught",
+   "age": 25,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 51,
+   "pts": 343,
+   "ast": 33,
+   "fg": 141,
+   "fga": 478,
+   "ft": 61,
+   "fta": 106,
+   "pf": 97,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 51,
+     "pts": 343
+    }
+   ],
+   "ratings": {
+    "ovr": 68,
+    "sco": 46,
+    "sht": 58,
+    "ply": 58,
+    "dur": 85
+   }
+  },
+  {
+   "id": "george-munroe",
+   "name": "George Munroe",
+   "age": 25,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 59,
+   "pts": 414,
+   "ast": 17,
+   "fg": 164,
+   "fga": 623,
+   "ft": 86,
+   "fta": 133,
+   "pf": 91,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 59,
+     "pts": 414
+    }
+   ],
+   "ratings": {
+    "ovr": 67,
+    "sco": 48,
+    "sht": 47,
+    "ply": 26,
+    "dur": 98
+   }
+  },
+  {
+   "id": "tony-kappen",
+   "name": "Tony Kappen",
+   "age": 27,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 59,
+   "pts": 384,
+   "ast": 28,
+   "fg": 128,
+   "fga": 537,
+   "ft": 128,
+   "fta": 161,
+   "pf": 78,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 41,
+     "pts": 310
+    },
+    {
+     "team": "boston-celtics",
+     "g": 18,
+     "pts": 74
+    }
+   ],
+   "ratings": {
+    "ovr": 67,
+    "sco": 45,
+    "sht": 51,
+    "ply": 40,
+    "dur": 98
+   }
+  },
+  {
+   "id": "george-senesky",
+   "name": "George Senesky",
+   "age": 24,
+   "pos": "PG",
+   "teamId": "philadelphia-warriors",
+   "g": 58,
+   "pts": 366,
+   "ast": 34,
+   "fg": 142,
+   "fga": 531,
+   "ft": 82,
+   "fta": 124,
+   "pf": 83,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 58,
+     "pts": 366
+    }
+   ],
+   "ratings": {
+    "ovr": 67,
+    "sco": 43,
+    "sht": 54,
+    "ply": 52,
+    "dur": 97
+   }
+  },
+  {
+   "id": "leo-gottlieb",
+   "name": "Leo Gottlieb",
+   "age": 26,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 57,
+   "pts": 334,
+   "ast": 24,
+   "fg": 149,
+   "fga": 494,
+   "ft": 36,
+   "fta": 55,
+   "pf": 71,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 57,
+     "pts": 334
+    }
+   ],
+   "ratings": {
+    "ovr": 67,
+    "sco": 40,
+    "sht": 76,
+    "ply": 37,
+    "dur": 95
+   }
+  },
+  {
+   "id": "bob-mullens",
+   "name": "Bob Mullens",
+   "age": 24,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 54,
+   "pts": 314,
+   "ast": 54,
+   "fg": 125,
+   "fga": 445,
+   "ft": 64,
+   "fta": 102,
+   "pf": 94,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 26,
+     "pts": 76
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 28,
+     "pts": 238
+    }
+   ],
+   "ratings": {
+    "ovr": 67,
+    "sco": 39,
+    "sht": 56,
+    "ply": 84,
+    "dur": 90
+   }
+  },
+  {
+   "id": "don-putman",
+   "name": "Don Putman",
+   "age": 24,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 58,
+   "pts": 380,
+   "ast": 30,
+   "fg": 156,
+   "fga": 635,
+   "ft": 68,
+   "fta": 105,
+   "pf": 106,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 58,
+     "pts": 380
+    }
+   ],
+   "ratings": {
+    "ovr": 66,
+    "sco": 45,
+    "sht": 39,
+    "ply": 45,
+    "dur": 97
+   }
+  },
+  {
+   "id": "charlie-hoefer",
+   "name": "Charlie Hoefer",
+   "age": 25,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 58,
+   "pts": 351,
+   "ast": 33,
+   "fg": 130,
+   "fga": 514,
+   "ft": 91,
+   "fta": 139,
+   "pf": 142,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 23,
+     "pts": 140
+    },
+    {
+     "team": "boston-celtics",
+     "g": 35,
+     "pts": 211
+    }
+   ],
+   "ratings": {
+    "ovr": 66,
+    "sco": 42,
+    "sht": 45,
+    "ply": 50,
+    "dur": 97
+   }
+  },
+  {
+   "id": "art-spector",
+   "name": "Art Spector",
+   "age": 28,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 55,
+   "pts": 329,
+   "ast": 46,
+   "fg": 123,
+   "fga": 460,
+   "ft": 83,
+   "fta": 150,
+   "pf": 130,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 55,
+     "pts": 329
+    }
+   ],
+   "ratings": {
+    "ovr": 66,
+    "sco": 41,
+    "sht": 36,
+    "ply": 75,
+    "dur": 92
+   }
+  },
+  {
+   "id": "john-barr",
+   "name": "John Barr",
+   "age": 28,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 58,
+   "pts": 295,
+   "ast": 54,
+   "fg": 124,
+   "fga": 438,
+   "ft": 47,
+   "fta": 79,
+   "pf": 164,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 58,
+     "pts": 295
+    }
+   ],
+   "ratings": {
+    "ovr": 66,
+    "sco": 36,
+    "sht": 54,
+    "ply": 80,
+    "dur": 97
+   }
+  },
+  {
+   "id": "lee-knorek",
+   "name": "Lee Knorek",
+   "age": 25,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 22,
+   "pts": 171,
+   "ast": 21,
+   "fg": 62,
+   "fga": 219,
+   "ft": 47,
+   "fta": 72,
+   "pf": 64,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 22,
+     "pts": 171
+    }
+   ],
+   "ratings": {
+    "ovr": 66,
+    "sco": 47,
+    "sht": 63,
+    "ply": 77,
+    "dur": 37
+   }
+  },
+  {
+   "id": "giff-roux",
+   "name": "Giff Roux",
+   "age": 23,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 60,
+   "pts": 354,
+   "ast": 17,
+   "fg": 142,
+   "fga": 478,
+   "ft": 70,
+   "fta": 160,
+   "pf": 95,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 60,
+     "pts": 354
+    }
+   ],
+   "ratings": {
+    "ovr": 65,
+    "sco": 41,
+    "sht": 49,
+    "ply": 25,
+    "dur": 100
+   }
+  },
+  {
+   "id": "cecil-hankins",
+   "name": "Cecil Hankins",
+   "age": 25,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 55,
+   "pts": 324,
+   "ast": 14,
+   "fg": 117,
+   "fga": 391,
+   "ft": 90,
+   "fta": 150,
+   "pf": 49,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 55,
+     "pts": 324
+    }
+   ],
+   "ratings": {
+    "ovr": 65,
+    "sco": 40,
+    "sht": 65,
+    "ply": 21,
+    "dur": 92
+   }
+  },
+  {
+   "id": "johnny-simmons",
+   "name": "Johnny Simmons",
+   "age": 22,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 60,
+   "pts": 318,
+   "ast": 29,
+   "fg": 120,
+   "fga": 429,
+   "ft": 78,
+   "fta": 127,
+   "pf": 78,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 60,
+     "pts": 318
+    }
+   ],
+   "ratings": {
+    "ovr": 65,
+    "sco": 38,
+    "sht": 53,
+    "ply": 43,
+    "dur": 100
+   }
+  },
+  {
+   "id": "bob-dille",
+   "name": "Bob Dille",
+   "age": 29,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 57,
+   "pts": 296,
+   "ast": 40,
+   "fg": 111,
+   "fga": 563,
+   "ft": 74,
+   "fta": 111,
+   "pf": 92,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 57,
+     "pts": 296
+    }
+   ],
+   "ratings": {
+    "ovr": 64,
+    "sco": 37,
+    "sht": 30,
+    "ply": 66,
+    "dur": 95
+   }
+  },
+  {
+   "id": "ed-melvin",
+   "name": "Ed Melvin",
+   "age": 30,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 57,
+   "pts": 281,
+   "ast": 37,
+   "fg": 99,
+   "fga": 376,
+   "ft": 83,
+   "fta": 127,
+   "pf": 150,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 57,
+     "pts": 281
+    }
+   ],
+   "ratings": {
+    "ovr": 64,
+    "sco": 34,
+    "sht": 50,
+    "ply": 60,
+    "dur": 95
+   }
+  },
+  {
+   "id": "jerry-kelly",
+   "name": "Jerry Kelly",
+   "age": 28,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 43,
+   "pts": 256,
+   "ast": 21,
+   "fg": 91,
+   "fga": 313,
+   "ft": 74,
+   "fta": 111,
+   "pf": 128,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 43,
+     "pts": 256
+    }
+   ],
+   "ratings": {
+    "ovr": 64,
+    "sco": 39,
+    "sht": 70,
+    "ply": 40,
+    "dur": 72
+   }
+  },
+  {
+   "id": "tom-king",
+   "name": "Tom King",
+   "age": 22,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 58,
+   "pts": 295,
+   "ast": 32,
+   "fg": 97,
+   "fga": 410,
+   "ft": 101,
+   "fta": 160,
+   "pf": 102,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 58,
+     "pts": 295
+    }
+   ],
+   "ratings": {
+    "ovr": 63,
+    "sco": 36,
+    "sht": 32,
+    "ply": 49,
+    "dur": 97
+   }
+  },
+  {
+   "id": "dick-fitzgerald",
+   "name": "Dick Fitzgerald",
+   "age": 26,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 60,
+   "pts": 277,
+   "ast": 40,
+   "fg": 118,
+   "fga": 495,
+   "ft": 41,
+   "fta": 60,
+   "pf": 89,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 60,
+     "pts": 277
+    }
+   ],
+   "ratings": {
+    "ovr": 63,
+    "sco": 31,
+    "sht": 42,
+    "ply": 62,
+    "dur": 100
+   }
+  },
+  {
+   "id": "pop-goodwin",
+   "name": "Pop Goodwin",
+   "age": 26,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 55,
+   "pts": 256,
+   "ast": 15,
+   "fg": 98,
+   "fga": 348,
+   "ft": 60,
+   "fta": 75,
+   "pf": 94,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 55,
+     "pts": 256
+    }
+   ],
+   "ratings": {
+    "ovr": 63,
+    "sco": 32,
+    "sht": 76,
+    "ply": 23,
+    "dur": 92
+   }
+  },
+  {
+   "id": "aubrey-davis",
+   "name": "Aubrey Davis",
+   "age": 25,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 59,
+   "pts": 287,
+   "ast": 14,
+   "fg": 107,
+   "fga": 381,
+   "ft": 73,
+   "fta": 115,
+   "pf": 136,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 59,
+     "pts": 287
+    }
+   ],
+   "ratings": {
+    "ovr": 62,
+    "sco": 34,
+    "sht": 57,
+    "ply": 20,
+    "dur": 98
+   }
+  },
+  {
+   "id": "harold-brown",
+   "name": "Harold Brown",
+   "age": 23,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 54,
+   "pts": 264,
+   "ast": 39,
+   "fg": 95,
+   "fga": 383,
+   "ft": 74,
+   "fta": 117,
+   "pf": 122,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 54,
+     "pts": 264
+    }
+   ],
+   "ratings": {
+    "ovr": 62,
+    "sco": 33,
+    "sht": 39,
+    "ply": 66,
+    "dur": 90
+   }
+  },
+  {
+   "id": "wilbert-kautz",
+   "name": "Wilbert Kautz",
+   "age": 31,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 50,
+   "pts": 253,
+   "ast": 37,
+   "fg": 107,
+   "fga": 420,
+   "ft": 39,
+   "fta": 73,
+   "pf": 114,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 50,
+     "pts": 253
+    }
+   ],
+   "ratings": {
+    "ovr": 62,
+    "sco": 35,
+    "sht": 28,
+    "ply": 68,
+    "dur": 83
+   }
+  },
+  {
+   "id": "nick-shaback",
+   "name": "Nick Shaback",
+   "age": 28,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 53,
+   "pts": 242,
+   "ast": 29,
+   "fg": 102,
+   "fga": 385,
+   "ft": 38,
+   "fta": 53,
+   "pf": 75,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 53,
+     "pts": 242
+    }
+   ],
+   "ratings": {
+    "ovr": 62,
+    "sco": 30,
+    "sht": 58,
+    "ply": 48,
+    "dur": 88
+   }
+  },
+  {
+   "id": "grady-lewis",
+   "name": "Grady Lewis",
+   "age": 29,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 60,
+   "pts": 287,
+   "ast": 54,
+   "fg": 106,
+   "fga": 520,
+   "ft": 75,
+   "fta": 138,
+   "pf": 166,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 60,
+     "pts": 287
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 33,
+    "sht": 9,
+    "ply": 79,
+    "dur": 100
+   }
+  },
+  {
+   "id": "doyle-parrack",
+   "name": "Doyle Parrack",
+   "age": 25,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 58,
+   "pts": 272,
+   "ast": 20,
+   "fg": 110,
+   "fga": 413,
+   "ft": 52,
+   "fta": 80,
+   "pf": 77,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 58,
+     "pts": 272
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 32,
+    "sht": 50,
+    "ply": 29,
+    "dur": 97
+   }
+  },
+  {
+   "id": "jerry-fleishman",
+   "name": "Jerry Fleishman",
+   "age": 24,
+   "pos": "SG",
+   "teamId": "philadelphia-warriors",
+   "g": 59,
+   "pts": 263,
+   "ast": 40,
+   "fg": 97,
+   "fga": 372,
+   "ft": 69,
+   "fta": 127,
+   "pf": 101,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 59,
+     "pts": 263
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 29,
+    "sht": 29,
+    "ply": 64,
+    "dur": 98
+   }
+  },
+  {
+   "id": "chet-carlisle",
+   "name": "Chet Carlisle",
+   "age": 30,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 51,
+   "pts": 256,
+   "ast": 17,
+   "fg": 100,
+   "fga": 373,
+   "ft": 56,
+   "fta": 92,
+   "pf": 136,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 51,
+     "pts": 256
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 35,
+    "sht": 46,
+    "ply": 28,
+    "dur": 85
+   }
+  },
+  {
+   "id": "nat-militzok",
+   "name": "Nat Militzok",
+   "age": 23,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 57,
+   "pts": 244,
+   "ast": 42,
+   "fg": 90,
+   "fga": 343,
+   "ft": 64,
+   "fta": 112,
+   "pf": 120,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 36,
+     "pts": 144
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 21,
+     "pts": 100
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 28,
+    "sht": 35,
+    "ply": 70,
+    "dur": 95
+   }
+  },
+  {
+   "id": "roy-hurley",
+   "name": "Roy Hurley",
+   "age": 24,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 46,
+   "pts": 239,
+   "ast": 34,
+   "fg": 100,
+   "fga": 447,
+   "ft": 39,
+   "fta": 64,
+   "pf": 85,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 46,
+     "pts": 239
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 36,
+    "sht": 24,
+    "ply": 67,
+    "dur": 77
+   }
+  },
+  {
+   "id": "jack-garfinkel",
+   "name": "Jack Garfinkel",
+   "age": 28,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 40,
+   "pts": 179,
+   "ast": 58,
+   "fg": 81,
+   "fga": 304,
+   "ft": 17,
+   "fta": 28,
+   "pf": 62,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 40,
+     "pts": 179
+    }
+   ],
+   "ratings": {
+    "ovr": 61,
+    "sco": 28,
+    "sht": 45,
+    "ply": 93,
+    "dur": 67
+   }
+  },
+  {
+   "id": "bob-cluggish",
+   "name": "Bob Cluggish",
+   "age": 29,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 54,
+   "pts": 238,
+   "ast": 22,
+   "fg": 93,
+   "fga": 356,
+   "ft": 52,
+   "fta": 91,
+   "pf": 113,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 54,
+     "pts": 238
+    }
+   ],
+   "ratings": {
+    "ovr": 59,
+    "sco": 29,
+    "sht": 35,
+    "ply": 35,
+    "dur": 90
+   }
+  },
+  {
+   "id": "chuck-connors",
+   "name": "Chuck Connors",
+   "age": 25,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 49,
+   "pts": 227,
+   "ast": 40,
+   "fg": 94,
+   "fga": 380,
+   "ft": 39,
+   "fta": 84,
+   "pf": 129,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 49,
+     "pts": 227
+    }
+   ],
+   "ratings": {
+    "ovr": 59,
+    "sco": 30,
+    "sht": 20,
+    "ply": 73,
+    "dur": 82
+   }
+  },
+  {
+   "id": "bob-fitzgerald",
+   "name": "Bob Fitzgerald",
+   "age": 23,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 60,
+   "pts": 221,
+   "ast": 35,
+   "fg": 70,
+   "fga": 362,
+   "ft": 81,
+   "fta": 130,
+   "pf": 153,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 31,
+     "pts": 139
+    },
+    {
+     "team": "new-york-knicks",
+     "g": 29,
+     "pts": 82
+    }
+   ],
+   "ratings": {
+    "ovr": 58,
+    "sco": 25,
+    "sht": 20,
+    "ply": 51,
+    "dur": 100
+   }
+  },
+  {
+   "id": "ray-wertis",
+   "name": "Ray Wertis",
+   "age": 23,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 61,
+   "pts": 214,
+   "ast": 39,
+   "fg": 79,
+   "fga": 366,
+   "ft": 56,
+   "fta": 91,
+   "pf": 82,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 18,
+     "pts": 99
+    },
+    {
+     "team": "cleveland-rebels",
+     "g": 43,
+     "pts": 115
+    }
+   ],
+   "ratings": {
+    "ovr": 58,
+    "sco": 24,
+    "sht": 23,
+    "ply": 59,
+    "dur": 100
+   }
+  },
+  {
+   "id": "press-maravich",
+   "name": "Press Maravich",
+   "age": 31,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 51,
+   "pts": 234,
+   "ast": 6,
+   "fg": 102,
+   "fga": 375,
+   "ft": 30,
+   "fta": 58,
+   "pf": 102,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 51,
+     "pts": 234
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 30,
+    "sht": 36,
+    "ply": 8,
+    "dur": 85
+   }
+  },
+  {
+   "id": "michael-bytzura",
+   "name": "Michael Bytzura",
+   "age": 24,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 60,
+   "pts": 210,
+   "ast": 31,
+   "fg": 87,
+   "fga": 356,
+   "ft": 36,
+   "fta": 72,
+   "pf": 108,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 60,
+     "pts": 210
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 23,
+    "sht": 19,
+    "ply": 46,
+    "dur": 100
+   }
+  },
+  {
+   "id": "john-mills",
+   "name": "John Mills",
+   "age": 27,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 47,
+   "pts": 181,
+   "ast": 9,
+   "fg": 55,
+   "fga": 187,
+   "ft": 71,
+   "fta": 129,
+   "pf": 94,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 47,
+     "pts": 181
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 26,
+    "sht": 53,
+    "ply": 13,
+    "dur": 78
+   }
+  },
+  {
+   "id": "chuck-gilmur",
+   "name": "Chuck Gilmur",
+   "age": 24,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 51,
+   "pts": 178,
+   "ast": 21,
+   "fg": 76,
+   "fga": 253,
+   "ft": 26,
+   "fta": 66,
+   "pf": 139,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 51,
+     "pts": 178
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 22,
+    "sht": 49,
+    "ply": 36,
+    "dur": 85
+   }
+  },
+  {
+   "id": "jake-weber",
+   "name": "Jake Weber",
+   "age": 28,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 50,
+   "pts": 173,
+   "ast": 4,
+   "fg": 59,
+   "fga": 202,
+   "ft": 55,
+   "fta": 79,
+   "pf": 111,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 11,
+     "pts": 20
+    },
+    {
+     "team": "providence-steamrollers",
+     "g": 39,
+     "pts": 153
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 22,
+    "sht": 74,
+    "ply": 6,
+    "dur": 83
+   }
+  },
+  {
+   "id": "harold-kottman",
+   "name": "Harold Kottman",
+   "age": 24,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 53,
+   "pts": 165,
+   "ast": 17,
+   "fg": 59,
+   "fga": 188,
+   "ft": 47,
+   "fta": 101,
+   "pf": 58,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 53,
+     "pts": 165
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 20,
+    "sht": 56,
+    "ply": 27,
+    "dur": 88
+   }
+  },
+  {
+   "id": "art-stolkey",
+   "name": "Art Stolkey",
+   "age": 26,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 23,
+   "pts": 102,
+   "ast": 38,
+   "fg": 36,
+   "fga": 164,
+   "ft": 30,
+   "fta": 44,
+   "pf": 72,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 23,
+     "pts": 102
+    }
+   ],
+   "ratings": {
+    "ovr": 57,
+    "sco": 26,
+    "sht": 38,
+    "ply": 95,
+    "dur": 38
+   }
+  },
+  {
+   "id": "don-martin",
+   "name": "Don Martin",
+   "age": 26,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 54,
+   "pts": 191,
+   "ast": 9,
+   "fg": 89,
+   "fga": 304,
+   "ft": 13,
+   "fta": 31,
+   "pf": 75,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 54,
+     "pts": 191
+    }
+   ],
+   "ratings": {
+    "ovr": 56,
+    "sco": 23,
+    "sht": 47,
+    "ply": 11,
+    "dur": 90
+   }
+  },
+  {
+   "id": "moe-becker",
+   "name": "Moe Becker",
+   "age": 29,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 43,
+   "pts": 162,
+   "ast": 30,
+   "fg": 70,
+   "fga": 358,
+   "ft": 22,
+   "fta": 44,
+   "pf": 98,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 17,
+     "pts": 108
+    },
+    {
+     "team": "boston-celtics",
+     "g": 6,
+     "pts": 13
+    },
+    {
+     "team": "detroit-falcons",
+     "g": 20,
+     "pts": 41
+    }
+   ],
+   "ratings": {
+    "ovr": 55,
+    "sco": 25,
+    "sht": 6,
+    "ply": 64,
+    "dur": 72
+   }
+  },
+  {
+   "id": "harry-miller",
+   "name": "Harry Miller",
+   "age": 23,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 53,
+   "pts": 152,
+   "ast": 42,
+   "fg": 58,
+   "fga": 260,
+   "ft": 36,
+   "fta": 82,
+   "pf": 119,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 53,
+     "pts": 152
+    }
+   ],
+   "ratings": {
+    "ovr": 55,
+    "sco": 18,
+    "sht": 10,
+    "ply": 72,
+    "dur": 88
+   }
+  },
+  {
+   "id": "buddy-ogrady",
+   "name": "Buddy O'Grady",
+   "age": 27,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 55,
+   "pts": 148,
+   "ast": 20,
+   "fg": 55,
+   "fga": 231,
+   "ft": 38,
+   "fta": 53,
+   "pf": 60,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 55,
+     "pts": 148
+    }
+   ],
+   "ratings": {
+    "ovr": 55,
+    "sco": 16,
+    "sht": 47,
+    "ply": 30,
+    "dur": 92
+   }
+  },
+  {
+   "id": "frank-fucarino",
+   "name": "Frank Fucarino",
+   "age": 26,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 28,
+   "pts": 140,
+   "ast": 8,
+   "fg": 53,
+   "fga": 198,
+   "ft": 34,
+   "fta": 60,
+   "pf": 38,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 28,
+     "pts": 140
+    }
+   ],
+   "ratings": {
+    "ovr": 55,
+    "sco": 31,
+    "sht": 42,
+    "ply": 22,
+    "dur": 47
+   }
+  },
+  {
+   "id": "jerry-rullo",
+   "name": "Jerry Rullo",
+   "age": 23,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 50,
+   "pts": 127,
+   "ast": 20,
+   "fg": 52,
+   "fga": 174,
+   "ft": 23,
+   "fta": 47,
+   "pf": 61,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 50,
+     "pts": 127
+    }
+   ],
+   "ratings": {
+    "ovr": 55,
+    "sco": 15,
+    "sht": 52,
+    "ply": 34,
+    "dur": 83
+   }
+  },
+  {
+   "id": "petey-rosenberg",
+   "name": "Petey Rosenberg",
+   "age": 28,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 51,
+   "pts": 150,
+   "ast": 27,
+   "fg": 60,
+   "fga": 287,
+   "ft": 30,
+   "fta": 49,
+   "pf": 64,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 51,
+     "pts": 150
+    }
+   ],
+   "ratings": {
+    "ovr": 54,
+    "sco": 19,
+    "sht": 23,
+    "ply": 47,
+    "dur": 85
+   }
+  },
+  {
+   "id": "frido-frey",
+   "name": "Frido Frey",
+   "age": 25,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 23,
+   "pts": 88,
+   "ast": 14,
+   "fg": 28,
+   "fga": 97,
+   "ft": 32,
+   "fta": 56,
+   "pf": 37,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 23,
+     "pts": 88
+    }
+   ],
+   "ratings": {
+    "ovr": 54,
+    "sco": 22,
+    "sht": 52,
+    "ply": 48,
+    "dur": 38
+   }
+  },
+  {
+   "id": "george-pastushok",
+   "name": "George Pastushok",
+   "age": 24,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 39,
+   "pts": 121,
+   "ast": 15,
+   "fg": 48,
+   "fga": 183,
+   "ft": 25,
+   "fta": 46,
+   "pf": 42,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 39,
+     "pts": 121
+    }
+   ],
+   "ratings": {
+    "ovr": 53,
+    "sco": 20,
+    "sht": 34,
+    "ply": 32,
+    "dur": 65
+   }
+  },
+  {
+   "id": "george-pearcy",
+   "name": "George Pearcy",
+   "age": 27,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 37,
+   "pts": 94,
+   "ast": 13,
+   "fg": 31,
+   "fga": 130,
+   "ft": 32,
+   "fta": 44,
+   "pf": 68,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 37,
+     "pts": 94
+    }
+   ],
+   "ratings": {
+    "ovr": 52,
+    "sco": 15,
+    "sht": 50,
+    "ply": 29,
+    "dur": 62
+   }
+  },
+  {
+   "id": "herschel-baltimore",
+   "name": "Herschel Baltimore",
+   "age": 25,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 58,
+   "pts": 138,
+   "ast": 16,
+   "fg": 53,
+   "fga": 263,
+   "ft": 32,
+   "fta": 69,
+   "pf": 98,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 58,
+     "pts": 138
+    }
+   ],
+   "ratings": {
+    "ovr": 51,
+    "sco": 14,
+    "sht": 6,
+    "ply": 23,
+    "dur": 97
+   }
+  },
+  {
+   "id": "marty-passaglia",
+   "name": "Marty Passaglia",
+   "age": 27,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 43,
+   "pts": 120,
+   "ast": 9,
+   "fg": 51,
+   "fga": 221,
+   "ft": 18,
+   "fta": 32,
+   "pf": 44,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 43,
+     "pts": 120
+    }
+   ],
+   "ratings": {
+    "ovr": 51,
+    "sco": 17,
+    "sht": 23,
+    "ply": 15,
+    "dur": 72
+   }
+  },
+  {
+   "id": "ben-scharnus",
+   "name": "Ben Scharnus",
+   "age": 29,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 51,
+   "pts": 103,
+   "ast": 19,
+   "fg": 33,
+   "fga": 165,
+   "ft": 37,
+   "fta": 59,
+   "pf": 83,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 51,
+     "pts": 103
+    }
+   ],
+   "ratings": {
+    "ovr": 51,
+    "sco": 11,
+    "sht": 24,
+    "ply": 31,
+    "dur": 85
+   }
+  },
+  {
+   "id": "irv-rothenberg",
+   "name": "Irv Rothenberg",
+   "age": 25,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 29,
+   "pts": 102,
+   "ast": 15,
+   "fg": 36,
+   "fga": 167,
+   "ft": 30,
+   "fta": 54,
+   "pf": 62,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 29,
+     "pts": 102
+    }
+   ],
+   "ratings": {
+    "ovr": 51,
+    "sco": 21,
+    "sht": 17,
+    "ply": 42,
+    "dur": 48
+   }
+  },
+  {
+   "id": "bob-gantt",
+   "name": "Bob Gantt",
+   "age": 24,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 23,
+   "pts": 71,
+   "ast": 5,
+   "fg": 29,
+   "fga": 89,
+   "ft": 13,
+   "fta": 28,
+   "pf": 45,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 23,
+     "pts": 71
+    }
+   ],
+   "ratings": {
+    "ovr": 51,
+    "sco": 17,
+    "sht": 59,
+    "ply": 14,
+    "dur": 38
+   }
+  },
+  {
+   "id": "milt-schoon",
+   "name": "Milt Schoon",
+   "age": 24,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 41,
+   "pts": 120,
+   "ast": 12,
+   "fg": 43,
+   "fga": 199,
+   "ft": 34,
+   "fta": 80,
+   "pf": 75,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 41,
+     "pts": 120
+    }
+   ],
+   "ratings": {
+    "ovr": 50,
+    "sco": 18,
+    "sht": 8,
+    "ply": 24,
+    "dur": 68
+   }
+  },
+  {
+   "id": "matt-guokas",
+   "name": "Matt Guokas",
+   "age": 31,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 47,
+   "pts": 82,
+   "ast": 9,
+   "fg": 28,
+   "fga": 104,
+   "ft": 26,
+   "fta": 47,
+   "pf": 70,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 47,
+     "pts": 82
+    }
+   ],
+   "ratings": {
+    "ovr": 50,
+    "sco": 9,
+    "sht": 41,
+    "ply": 13,
+    "dur": 78
+   }
+  },
+  {
+   "id": "noble-jorgensen",
+   "name": "Noble Jorgensen",
+   "age": 21,
+   "pos": "C",
+   "teamId": "pittsburgh-ironmen",
+   "g": 15,
+   "pts": 66,
+   "ast": 4,
+   "fg": 25,
+   "fga": 112,
+   "ft": 16,
+   "fta": 25,
+   "pf": 40,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 15,
+     "pts": 66
+    }
+   ],
+   "ratings": {
+    "ovr": 50,
+    "sco": 24,
+    "sht": 33,
+    "ply": 17,
+    "dur": 25
+   }
+  },
+  {
+   "id": "chet-aubuchon",
+   "name": "Chet Aubuchon",
+   "age": 30,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 30,
+   "pts": 65,
+   "ast": 20,
+   "fg": 23,
+   "fga": 91,
+   "ft": 19,
+   "fta": 35,
+   "pf": 46,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 30,
+     "pts": 65
+    }
+   ],
+   "ratings": {
+    "ovr": 50,
+    "sco": 11,
+    "sht": 31,
+    "ply": 55,
+    "dur": 50
+   }
+  },
+  {
+   "id": "woody-grimshaw",
+   "name": "Woody Grimshaw",
+   "age": 27,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 21,
+   "pts": 61,
+   "ast": 1,
+   "fg": 20,
+   "fga": 56,
+   "ft": 21,
+   "fta": 44,
+   "pf": 25,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 21,
+     "pts": 61
+    }
+   ],
+   "ratings": {
+    "ovr": 50,
+    "sco": 16,
+    "sht": 61,
+    "ply": 5,
+    "dur": 35
+   }
+  },
+  {
+   "id": "bob-shea",
+   "name": "Bob Shea",
+   "age": 22,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 43,
+   "pts": 93,
+   "ast": 6,
+   "fg": 37,
+   "fga": 153,
+   "ft": 19,
+   "fta": 33,
+   "pf": 42,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 43,
+     "pts": 93
+    }
+   ],
+   "ratings": {
+    "ovr": 49,
+    "sco": 12,
+    "sht": 32,
+    "ply": 9,
+    "dur": 72
+   }
+  },
+  {
+   "id": "warren-fenley",
+   "name": "Warren Fenley",
+   "age": 24,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 33,
+   "pts": 85,
+   "ast": 16,
+   "fg": 31,
+   "fga": 138,
+   "ft": 23,
+   "fta": 45,
+   "pf": 59,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 33,
+     "pts": 85
+    }
+   ],
+   "ratings": {
+    "ovr": 49,
+    "sco": 14,
+    "sht": 15,
+    "ply": 39,
+    "dur": 55
+   }
+  },
+  {
+   "id": "henry-pearcy",
+   "name": "Henry Pearcy",
+   "age": 24,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 29,
+   "pts": 73,
+   "ast": 7,
+   "fg": 24,
+   "fga": 108,
+   "ft": 25,
+   "fta": 34,
+   "pf": 20,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 29,
+     "pts": 73
+    }
+   ],
+   "ratings": {
+    "ovr": 49,
+    "sco": 13,
+    "sht": 44,
+    "ply": 17,
+    "dur": 48
+   }
+  },
+  {
+   "id": "deb-smith",
+   "name": "Deb Smith",
+   "age": 27,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 48,
+   "pts": 73,
+   "ast": 6,
+   "fg": 32,
+   "fga": 119,
+   "ft": 9,
+   "fta": 21,
+   "pf": 47,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 48,
+     "pts": 73
+    }
+   ],
+   "ratings": {
+    "ovr": 49,
+    "sco": 8,
+    "sht": 34,
+    "ply": 9,
+    "dur": 80
+   }
+  },
+  {
+   "id": "bill-davis",
+   "name": "Bill Davis",
+   "age": 26,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 47,
+   "pts": 84,
+   "ast": 11,
+   "fg": 35,
+   "fga": 146,
+   "ft": 14,
+   "fta": 41,
+   "pf": 92,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 47,
+     "pts": 84
+    }
+   ],
+   "ratings": {
+    "ovr": 48,
+    "sco": 9,
+    "sht": 17,
+    "ply": 18,
+    "dur": 78
+   }
+  },
+  {
+   "id": "fred-sheffield",
+   "name": "Fred Sheffield",
+   "age": 23,
+   "pos": null,
+   "teamId": "philadelphia-warriors",
+   "g": 22,
+   "pts": 74,
+   "ast": 4,
+   "fg": 29,
+   "fga": 146,
+   "ft": 16,
+   "fta": 26,
+   "pf": 34,
+   "stints": [
+    {
+     "team": "philadelphia-warriors",
+     "g": 22,
+     "pts": 74
+    }
+   ],
+   "ratings": {
+    "ovr": 48,
+    "sco": 19,
+    "sht": 23,
+    "ply": 11,
+    "dur": 37
+   }
+  },
+  {
+   "id": "aud-brindley",
+   "name": "Aud Brindley",
+   "age": 23,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 12,
+   "pts": 34,
+   "ast": 1,
+   "fg": 14,
+   "fga": 49,
+   "ft": 6,
+   "fta": 7,
+   "pf": 16,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 12,
+     "pts": 34
+    }
+   ],
+   "ratings": {
+    "ovr": 48,
+    "sco": 12,
+    "sht": 71,
+    "ply": 6,
+    "dur": 20
+   }
+  },
+  {
+   "id": "fred-jacobs",
+   "name": "Fred Jacobs",
+   "age": 24,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 18,
+   "pts": 50,
+   "ast": 5,
+   "fg": 19,
+   "fga": 69,
+   "ft": 12,
+   "fta": 25,
+   "pf": 25,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 18,
+     "pts": 50
+    }
+   ],
+   "ratings": {
+    "ovr": 47,
+    "sco": 13,
+    "sht": 39,
+    "ply": 19,
+    "dur": 30
+   }
+  },
+  {
+   "id": "roger-jorgensen",
+   "name": "Roger Jorgensen",
+   "age": 26,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 28,
+   "pts": 41,
+   "ast": 1,
+   "fg": 14,
+   "fga": 54,
+   "ft": 13,
+   "fta": 19,
+   "pf": 36,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 28,
+     "pts": 41
+    }
+   ],
+   "ratings": {
+    "ovr": 47,
+    "sco": 7,
+    "sht": 56,
+    "ply": 4,
+    "dur": 47
+   }
+  },
+  {
+   "id": "walt-miller",
+   "name": "Walt Miller",
+   "age": 31,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 12,
+   "pts": 23,
+   "ast": 6,
+   "fg": 7,
+   "fga": 21,
+   "ft": 9,
+   "fta": 18,
+   "pf": 16,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 12,
+     "pts": 23
+    }
+   ],
+   "ratings": {
+    "ovr": 47,
+    "sco": 8,
+    "sht": 57,
+    "ply": 33,
+    "dur": 20
+   }
+  },
+  {
+   "id": "joe-fabel",
+   "name": "Joe Fabel",
+   "age": 29,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 30,
+   "pts": 63,
+   "ast": 2,
+   "fg": 25,
+   "fga": 96,
+   "ft": 13,
+   "fta": 26,
+   "pf": 64,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 30,
+     "pts": 63
+    }
+   ],
+   "ratings": {
+    "ovr": 46,
+    "sco": 10,
+    "sht": 33,
+    "ply": 6,
+    "dur": 50
+   }
+  },
+  {
+   "id": "virgil-vaughn",
+   "name": "Virgil Vaughn",
+   "age": 28,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 17,
+   "pts": 45,
+   "ast": 10,
+   "fg": 15,
+   "fga": 78,
+   "ft": 15,
+   "fta": 28,
+   "pf": 18,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 17,
+     "pts": 45
+    }
+   ],
+   "ratings": {
+    "ovr": 46,
+    "sco": 12,
+    "sht": 17,
+    "ply": 43,
+    "dur": 28
+   }
+  },
+  {
+   "id": "john-murphy",
+   "name": "John Murphy",
+   "age": 22,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 20,
+   "pts": 32,
+   "ast": 0,
+   "fg": 11,
+   "fga": 40,
+   "ft": 10,
+   "fta": 15,
+   "pf": 8,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 9,
+     "pts": 24
+    },
+    {
+     "team": "philadelphia-warriors",
+     "g": 11,
+     "pts": 8
+    }
+   ],
+   "ratings": {
+    "ovr": 46,
+    "sco": 7,
+    "sht": 59,
+    "ply": 1,
+    "dur": 33
+   }
+  },
+  {
+   "id": "ken-keller",
+   "name": "Ken Keller",
+   "age": 24,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 28,
+   "pts": 22,
+   "ast": 1,
+   "fg": 10,
+   "fga": 30,
+   "ft": 2,
+   "fta": 5,
+   "pf": 15,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 3,
+     "pts": 0
+    },
+    {
+     "team": "washington-capitols",
+     "g": 25,
+     "pts": 22
+    }
+   ],
+   "ratings": {
+    "ovr": 46,
+    "sco": 3,
+    "sht": 63,
+    "ply": 4,
+    "dur": 47
+   }
+  },
+  {
+   "id": "hank-lefkowitz",
+   "name": "Hank Lefkowitz",
+   "age": 23,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 24,
+   "pts": 51,
+   "ast": 4,
+   "fg": 22,
+   "fga": 114,
+   "ft": 7,
+   "fta": 13,
+   "pf": 35,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 24,
+     "pts": 51
+    }
+   ],
+   "ratings": {
+    "ovr": 45,
+    "sco": 10,
+    "sht": 20,
+    "ply": 10,
+    "dur": 40
+   }
+  },
+  {
+   "id": "al-negratti",
+   "name": "Al Negratti",
+   "age": 25,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 11,
+   "pts": 31,
+   "ast": 5,
+   "fg": 13,
+   "fga": 69,
+   "ft": 5,
+   "fta": 8,
+   "pf": 20,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 11,
+     "pts": 31
+    }
+   ],
+   "ratings": {
+    "ovr": 45,
+    "sco": 12,
+    "sht": 28,
+    "ply": 29,
+    "dur": 18
+   }
+  },
+  {
+   "id": "butch-van-breda-kolff",
+   "name": "Butch van Breda Kolff",
+   "age": 24,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 16,
+   "pts": 25,
+   "ast": 6,
+   "fg": 7,
+   "fga": 34,
+   "ft": 11,
+   "fta": 17,
+   "pf": 10,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 16,
+     "pts": 25
+    }
+   ],
+   "ratings": {
+    "ovr": 45,
+    "sco": 6,
+    "sht": 39,
+    "ply": 26,
+    "dur": 27
+   }
+  },
+  {
+   "id": "mel-hirsch",
+   "name": "Mel Hirsch",
+   "age": 25,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 13,
+   "pts": 19,
+   "ast": 10,
+   "fg": 9,
+   "fga": 45,
+   "ft": 1,
+   "fta": 2,
+   "pf": 18,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 13,
+     "pts": 19
+    }
+   ],
+   "ratings": {
+    "ovr": 45,
+    "sco": 6,
+    "sht": 32,
+    "ply": 53,
+    "dur": 22
+   }
+  },
+  {
+   "id": "harold-johnson",
+   "name": "Harold Johnson",
+   "age": 27,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 27,
+   "pts": 15,
+   "ast": 11,
+   "fg": 4,
+   "fga": 20,
+   "ft": 7,
+   "fta": 14,
+   "pf": 13,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 27,
+     "pts": 15
+    }
+   ],
+   "ratings": {
+    "ovr": 45,
+    "sco": 2,
+    "sht": 32,
+    "ply": 33,
+    "dur": 45
+   }
+  },
+  {
+   "id": "dick-murphy",
+   "name": "Dick Murphy",
+   "age": 25,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 31,
+   "pts": 34,
+   "ast": 8,
+   "fg": 15,
+   "fga": 75,
+   "ft": 4,
+   "fta": 9,
+   "pf": 15,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 24,
+     "pts": 32
+    },
+    {
+     "team": "boston-celtics",
+     "g": 7,
+     "pts": 2
+    }
+   ],
+   "ratings": {
+    "ovr": 44,
+    "sco": 5,
+    "sht": 19,
+    "ply": 20,
+    "dur": 52
+   }
+  },
+  {
+   "id": "elmore-morgenthaler",
+   "name": "Elmore Morgenthaler",
+   "age": 24,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 11,
+   "pts": 15,
+   "ast": 3,
+   "fg": 4,
+   "fga": 13,
+   "ft": 7,
+   "fta": 12,
+   "pf": 3,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 11,
+     "pts": 15
+    }
+   ],
+   "ratings": {
+    "ovr": 44,
+    "sco": 5,
+    "sht": 56,
+    "ply": 15,
+    "dur": 18
+   }
+  },
+  {
+   "id": "red-dehnert",
+   "name": "Red Dehnert",
+   "age": 23,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 10,
+   "pts": 14,
+   "ast": 0,
+   "fg": 6,
+   "fga": 15,
+   "ft": 2,
+   "fta": 6,
+   "pf": 8,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 10,
+     "pts": 14
+    }
+   ],
+   "ratings": {
+    "ovr": 44,
+    "sco": 5,
+    "sht": 63,
+    "ply": 1,
+    "dur": 17
+   }
+  },
+  {
+   "id": "ed-kasid",
+   "name": "Ed Kasid",
+   "age": 23,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 8,
+   "pts": 12,
+   "ast": 6,
+   "fg": 6,
+   "fga": 21,
+   "ft": 0,
+   "fta": 6,
+   "pf": 8,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 8,
+     "pts": 12
+    }
+   ],
+   "ratings": {
+    "ovr": 44,
+    "sco": 5,
+    "sht": 39,
+    "ply": 44,
+    "dur": 13
+   }
+  },
+  {
+   "id": "gino-sovran",
+   "name": "Gino Sovran",
+   "age": 22,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 6,
+   "pts": 11,
+   "ast": 1,
+   "fg": 5,
+   "fga": 15,
+   "ft": 1,
+   "fta": 2,
+   "pf": 5,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 6,
+     "pts": 11
+    }
+   ],
+   "ratings": {
+    "ovr": 44,
+    "sco": 6,
+    "sht": 64,
+    "ply": 7,
+    "dur": 10
+   }
+  },
+  {
+   "id": "bob-duffy",
+   "name": "Bob Duffy",
+   "age": 24,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 17,
+   "pts": 19,
+   "ast": 0,
+   "fg": 7,
+   "fga": 32,
+   "ft": 5,
+   "fta": 7,
+   "pf": 17,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 11,
+     "pts": 11
+    },
+    {
+     "team": "boston-celtics",
+     "g": 6,
+     "pts": 8
+    }
+   ],
+   "ratings": {
+    "ovr": 43,
+    "sco": 4,
+    "sht": 47,
+    "ply": 1,
+    "dur": 28
+   }
+  },
+  {
+   "id": "nat-frankel",
+   "name": "Nat Frankel",
+   "age": 33,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 6,
+   "pts": 16,
+   "ast": 3,
+   "fg": 4,
+   "fga": 27,
+   "ft": 8,
+   "fta": 12,
+   "pf": 6,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 6,
+     "pts": 16
+    }
+   ],
+   "ratings": {
+    "ovr": 43,
+    "sco": 8,
+    "sht": 34,
+    "ply": 26,
+    "dur": 10
+   }
+  },
+  {
+   "id": "armand-cure",
+   "name": "Armand Cure",
+   "age": 27,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 12,
+   "pts": 10,
+   "ast": 0,
+   "fg": 4,
+   "fga": 15,
+   "ft": 2,
+   "fta": 3,
+   "pf": 5,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 12,
+     "pts": 10
+    }
+   ],
+   "ratings": {
+    "ovr": 43,
+    "sco": 2,
+    "sht": 56,
+    "ply": 1,
+    "dur": 20
+   }
+  },
+  {
+   "id": "hal-crisler",
+   "name": "Hal Crisler",
+   "age": 23,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 4,
+   "pts": 6,
+   "ast": 0,
+   "fg": 2,
+   "fga": 6,
+   "ft": 2,
+   "fta": 2,
+   "pf": 6,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 4,
+     "pts": 6
+    }
+   ],
+   "ratings": {
+    "ovr": 43,
+    "sco": 3,
+    "sht": 69,
+    "ply": 1,
+    "dur": 7
+   }
+  },
+  {
+   "id": "red-mihalik",
+   "name": "Red Mihalik",
+   "age": 30,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 7,
+   "pts": 6,
+   "ast": 0,
+   "fg": 3,
+   "fga": 9,
+   "ft": 0,
+   "fta": 0,
+   "pf": 10,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 7,
+     "pts": 6
+    }
+   ],
+   "ratings": {
+    "ovr": 43,
+    "sco": 2,
+    "sht": 63,
+    "ply": 1,
+    "dur": 12
+   }
+  },
+  {
+   "id": "ralph-siewert",
+   "name": "Ralph Siewert",
+   "age": 23,
+   "pos": null,
+   "teamId": "st-louis-bombers",
+   "g": 21,
+   "pts": 20,
+   "ast": 4,
+   "fg": 6,
+   "fga": 44,
+   "ft": 8,
+   "fta": 15,
+   "pf": 18,
+   "stints": [
+    {
+     "team": "st-louis-bombers",
+     "g": 7,
+     "pts": 4
+    },
+    {
+     "team": "toronto-huskies",
+     "g": 14,
+     "pts": 16
+    }
+   ],
+   "ratings": {
+    "ovr": 42,
+    "sco": 4,
+    "sht": 17,
+    "ply": 12,
+    "dur": 35
+   }
+  },
+  {
+   "id": "tom-callahan",
+   "name": "Tom Callahan",
+   "age": 25,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 13,
+   "pts": 17,
+   "ast": 4,
+   "fg": 6,
+   "fga": 29,
+   "ft": 5,
+   "fta": 12,
+   "pf": 9,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 13,
+     "pts": 17
+    }
+   ],
+   "ratings": {
+    "ovr": 42,
+    "sco": 5,
+    "sht": 25,
+    "ply": 20,
+    "dur": 22
+   }
+  },
+  {
+   "id": "hank-biasatti",
+   "name": "Hank Biasatti",
+   "age": 25,
+   "pos": null,
+   "teamId": "toronto-huskies",
+   "g": 6,
+   "pts": 6,
+   "ast": 0,
+   "fg": 2,
+   "fga": 5,
+   "ft": 2,
+   "fta": 4,
+   "pf": 3,
+   "stints": [
+    {
+     "team": "toronto-huskies",
+     "g": 6,
+     "pts": 6
+    }
+   ],
+   "ratings": {
+    "ovr": 42,
+    "sco": 2,
+    "sht": 61,
+    "ply": 1,
+    "dur": 10
+   }
+  },
+  {
+   "id": "gorham-getchell",
+   "name": "Gorham Getchell",
+   "age": 26,
+   "pos": null,
+   "teamId": "pittsburgh-ironmen",
+   "g": 16,
+   "pts": 5,
+   "ast": 0,
+   "fg": 0,
+   "fga": 8,
+   "ft": 5,
+   "fta": 5,
+   "pf": 5,
+   "stints": [
+    {
+     "team": "pittsburgh-ironmen",
+     "g": 16,
+     "pts": 5
+    }
+   ],
+   "ratings": {
+    "ovr": 42,
+    "sco": 1,
+    "sht": 46,
+    "ply": 1,
+    "dur": 27
+   }
+  },
+  {
+   "id": "buck-sydnor",
+   "name": "Buck Sydnor",
+   "age": 25,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 15,
+   "pts": 15,
+   "ast": 0,
+   "fg": 5,
+   "fga": 26,
+   "ft": 5,
+   "fta": 10,
+   "pf": 6,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 15,
+     "pts": 15
+    }
+   ],
+   "ratings": {
+    "ovr": 41,
+    "sco": 3,
+    "sht": 29,
+    "ply": 1,
+    "dur": 25
+   }
+  },
+  {
+   "id": "ned-endress",
+   "name": "Ned Endress",
+   "age": 28,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 16,
+   "pts": 14,
+   "ast": 4,
+   "fg": 3,
+   "fga": 25,
+   "ft": 8,
+   "fta": 15,
+   "pf": 13,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 16,
+     "pts": 14
+    }
+   ],
+   "ratings": {
+    "ovr": 41,
+    "sco": 3,
+    "sht": 20,
+    "ply": 16,
+    "dur": 27
+   }
+  },
+  {
+   "id": "gene-gallette",
+   "name": "Gene Gallette",
+   "age": 27,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 14,
+   "pts": 8,
+   "ast": 2,
+   "fg": 1,
+   "fga": 11,
+   "ft": 6,
+   "fta": 9,
+   "pf": 13,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 14,
+     "pts": 8
+    }
+   ],
+   "ratings": {
+    "ovr": 41,
+    "sco": 1,
+    "sht": 38,
+    "ply": 7,
+    "dur": 23
+   }
+  },
+  {
+   "id": "norm-baker",
+   "name": "Norm Baker",
+   "age": 23,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 4,
+   "pts": 0,
+   "ast": 0,
+   "fg": 0,
+   "fga": 1,
+   "ft": 0,
+   "fta": 0,
+   "pf": 0,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 4,
+     "pts": 0
+    }
+   ],
+   "ratings": {
+    "ovr": 41,
+    "sco": 0,
+    "sht": 54,
+    "ply": 1,
+    "dur": 7
+   }
+  },
+  {
+   "id": "ken-corley",
+   "name": "Ken Corley",
+   "age": 26,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 3,
+   "pts": 0,
+   "ast": 0,
+   "fg": 0,
+   "fga": 0,
+   "ft": 0,
+   "fta": 0,
+   "pf": 0,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 3,
+     "pts": 0
+    }
+   ],
+   "ratings": {
+    "ovr": 41,
+    "sco": 0,
+    "sht": 57,
+    "ply": 1,
+    "dur": 5
+   }
+  },
+  {
+   "id": "howie-mccarty",
+   "name": "Howie McCarty",
+   "age": 27,
+   "pos": null,
+   "teamId": "detroit-falcons",
+   "g": 19,
+   "pts": 21,
+   "ast": 2,
+   "fg": 10,
+   "fga": 82,
+   "ft": 1,
+   "fta": 10,
+   "pf": 22,
+   "stints": [
+    {
+     "team": "detroit-falcons",
+     "g": 19,
+     "pts": 21
+    }
+   ],
+   "ratings": {
+    "ovr": 40,
+    "sco": 5,
+    "sht": 1,
+    "ply": 7,
+    "dur": 32
+   }
+  },
+  {
+   "id": "garland-oshields",
+   "name": "Garland O'Shields",
+   "age": 25,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 9,
+   "pts": 4,
+   "ast": 1,
+   "fg": 2,
+   "fga": 11,
+   "ft": 0,
+   "fta": 2,
+   "pf": 8,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 9,
+     "pts": 4
+    }
+   ],
+   "ratings": {
+    "ovr": 40,
+    "sco": 1,
+    "sht": 33,
+    "ply": 6,
+    "dur": 15
+   }
+  },
+  {
+   "id": "ben-goldfaden",
+   "name": "Ben Goldfaden",
+   "age": 33,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 2,
+   "pts": 2,
+   "ast": 0,
+   "fg": 0,
+   "fga": 2,
+   "ft": 2,
+   "fta": 4,
+   "pf": 3,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 2,
+     "pts": 2
+    }
+   ],
+   "ratings": {
+    "ovr": 40,
+    "sco": 1,
+    "sht": 44,
+    "ply": 1,
+    "dur": 3
+   }
+  },
+  {
+   "id": "leon-brown",
+   "name": "Leon Brown",
+   "age": 27,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 5,
+   "pts": 0,
+   "ast": 0,
+   "fg": 0,
+   "fga": 3,
+   "ft": 0,
+   "fta": 0,
+   "pf": 2,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 5,
+     "pts": 0
+    }
+   ],
+   "ratings": {
+    "ovr": 40,
+    "sco": 0,
+    "sht": 45,
+    "ply": 1,
+    "dur": 8
+   }
+  },
+  {
+   "id": "don-eliason",
+   "name": "Don Eliason",
+   "age": 28,
+   "pos": null,
+   "teamId": "boston-celtics",
+   "g": 1,
+   "pts": 0,
+   "ast": 0,
+   "fg": 0,
+   "fga": 1,
+   "ft": 0,
+   "fta": 0,
+   "pf": 1,
+   "stints": [
+    {
+     "team": "boston-celtics",
+     "g": 1,
+     "pts": 0
+    }
+   ],
+   "ratings": {
+    "ovr": 40,
+    "sco": 0,
+    "sht": 54,
+    "ply": 1,
+    "dur": 2
+   }
+  },
+  {
+   "id": "pete-lalich",
+   "name": "Pete Lalich",
+   "age": 26,
+   "pos": null,
+   "teamId": "cleveland-rebels",
+   "g": 1,
+   "pts": 0,
+   "ast": 0,
+   "fg": 0,
+   "fga": 1,
+   "ft": 0,
+   "fta": 0,
+   "pf": 1,
+   "stints": [
+    {
+     "team": "cleveland-rebels",
+     "g": 1,
+     "pts": 0
+    }
+   ],
+   "ratings": {
+    "ovr": 40,
+    "sco": 0,
+    "sht": 54,
+    "ply": 1,
+    "dur": 2
+   }
+  },
+  {
+   "id": "frank-mangiapane",
+   "name": "Frank Mangiapane",
+   "age": 21,
+   "pos": null,
+   "teamId": "new-york-knicks",
+   "g": 6,
+   "pts": 5,
+   "ast": 0,
+   "fg": 2,
+   "fga": 13,
+   "ft": 1,
+   "fta": 3,
+   "pf": 6,
+   "stints": [
+    {
+     "team": "new-york-knicks",
+     "g": 6,
+     "pts": 5
+    }
+   ],
+   "ratings": {
+    "ovr": 39,
+    "sco": 1,
+    "sht": 34,
+    "ply": 1,
+    "dur": 10
+   }
+  },
+  {
+   "id": "al-lujack",
+   "name": "Al Lujack",
+   "age": 26,
+   "pos": null,
+   "teamId": "washington-capitols",
+   "g": 5,
+   "pts": 4,
+   "ast": 0,
+   "fg": 1,
+   "fga": 8,
+   "ft": 2,
+   "fta": 5,
+   "pf": 6,
+   "stints": [
+    {
+     "team": "washington-capitols",
+     "g": 5,
+     "pts": 4
+    }
+   ],
+   "ratings": {
+    "ovr": 39,
+    "sco": 1,
+    "sht": 35,
+    "ply": 1,
+    "dur": 8
+   }
+  },
+  {
+   "id": "lou-spicer",
+   "name": "Lou Spicer",
+   "age": 24,
+   "pos": null,
+   "teamId": "providence-steamrollers",
+   "g": 4,
+   "pts": 1,
+   "ast": 0,
+   "fg": 0,
+   "fga": 7,
+   "ft": 1,
+   "fta": 2,
+   "pf": 3,
+   "stints": [
+    {
+     "team": "providence-steamrollers",
+     "g": 4,
+     "pts": 1
+    }
+   ],
+   "ratings": {
+    "ovr": 39,
+    "sco": 0,
+    "sht": 33,
+    "ply": 1,
+    "dur": 7
+   }
+  },
+  {
+   "id": "bob-rensberger",
+   "name": "Bob Rensberger",
+   "age": 25,
+   "pos": null,
+   "teamId": "chicago-stags",
+   "g": 3,
+   "pts": 0,
+   "ast": 0,
+   "fg": 0,
+   "fga": 7,
+   "ft": 0,
+   "fta": 0,
+   "pf": 4,
+   "stints": [
+    {
+     "team": "chicago-stags",
+     "g": 3,
+     "pts": 0
+    }
+   ],
+   "ratings": {
+    "ovr": 39,
+    "sco": 0,
+    "sht": 36,
+    "ply": 1,
+    "dur": 5
+   }
+  }
+ ]
+}

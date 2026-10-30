@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="NBA Eras">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<title>NBA Eras</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-era-filter="on" data-phase="modern">
+
+<canvas id="grain" aria-hidden="true"></canvas>
+<div id="scan" aria-hidden="true"></div>
+<div id="sweep" aria-hidden="true"></div>
+
+<main id="app">
+
+<section id="screen-title" class="screen active" aria-label="Main menu">
+  <div class="title-stack">
+    <div class="logo-wrap">
+      <img id="logo" src="assets/nba-logo.png" alt="NBA logo" width="160" height="320">
+      <div id="wordmark" class="wordmark" hidden>NBA</div>
+    </div>
+    <h1 id="game-title">NBA ERAS</h1>
+    <p id="tagline">What history will you write?</p>
+  </div>
+  <nav id="title-menu" class="menu" aria-label="Menu">
+    <button class="btn primary" id="btn-new" type="button">New game</button>
+    <button class="btn" id="btn-continue" type="button" disabled>Continue</button>
+    <button class="btn" id="btn-settings" type="button">Settings</button>
+  </nav>
+  <p id="skip-hint" class="hint">Tap to skip intro</p>
+</section>
+
+<section id="screen-era" class="screen" aria-label="Choose your era">
+  <header class="bar">
+    <button class="back" data-back="screen-title" type="button" aria-label="Back">&larr;</button>
+    <div>
+      <h2>Choose your era</h2>
+      <p class="sub">You will live through every era after the one you pick.</p>
+    </div>
+  </header>
+  <div id="era-list" class="list"></div>
+</section>
+
+<section id="screen-team" class="screen" aria-label="Choose your franchise">
+  <header class="bar">
+    <button class="back" data-back="screen-era" type="button" aria-label="Back">&larr;</button>
+    <div>
+      <h2>Choose your franchise</h2>
+      <p class="sub" id="team-sub"></p>
+    </div>
+  </header>
+  <div id="team-list" class="list"></div>
+  <div class="dock" id="team-dock" hidden>
+    <button class="btn primary wide" id="btn-take" type="button">Take over</button>
+  </div>
+</section>
+
+<section id="screen-ready" class="screen" aria-label="Franchise confirmed">
+  <header class="bar">
+    <button class="back" data-back="screen-team" type="button" aria-label="Back">&larr;</button>
+    <div><h2>You are the GM</h2></div>
+  </header>
+  <div class="ready-card">
+    <div id="ready-badge" class="badge big"></div>
+    <h3 id="ready-name"></h3>
+    <p id="ready-line"></p>
+    <button class="btn primary wide" id="btn-roster" type="button">View roster</button>
+    <p class="sub">The match engine and the daily event stack come next.</p>
+  </div>
+</section>
+
+<section id="screen-roster" class="screen" aria-label="Roster">
+  <header class="bar">
+    <button class="back" data-back="screen-ready" type="button" aria-label="Back">&larr;</button>
+    <div>
+      <h2 id="roster-title">Roster</h2>
+      <p class="sub" id="roster-sub"></p>
+    </div>
+  </header>
+  <div id="roster-list" class="list"></div>
+</section>
+
+<section id="screen-settings" class="screen" aria-label="Settings">
+  <header class="bar">
+    <button class="back" data-back="screen-title" type="button" aria-label="Back">&larr;</button>
+    <div><h2>Settings</h2></div>
+  </header>
+  <div class="list">
+    <label class="setting">
+      <span>
+        <strong>Era filter</strong>
+        <span class="sub">Reskins the app to match each era. Off keeps the modern look while rules and news stay era-correct.</span>
+      </span>
+      <input id="era-filter" type="checkbox" checked>
+    </label>
+    <label class="setting">
+      <span>
+        <strong>Intro animation</strong>
+        <span class="sub">Plays the flicker and grain transition on the main menu.</span>
+      </span>
+      <input id="intro-anim" type="checkbox" checked>
+    </label>
+  </div>
+</section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
