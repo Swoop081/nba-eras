@@ -139,7 +139,9 @@
     bump(save);
   }
 
-  function release(save, p) { p.team = null; bump(save); }
+  function release(save, p) { p.team = null; if (p.status === 'rights') p.status = 'active'; bump(save); }
+  function rightsOf(save, id) { return save.lg.players.filter(function (p) { return p.status === 'rights' && p.team === id; }); }
+  function signRights(save, p) { p.status = 'active'; bump(save); }
 
   /* AI teams re-sign most players with expiring deals; the rest hit free agency. */
   function aiReSign(save, teams, myId) {
@@ -290,7 +292,7 @@
 
   function makePick(save, p) {
     var d = save.lg.draft, slot = d.picks[d.at];
-    p.status = 'active'; p.team = slot.team;
+    p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
     else { p.salary = Math.max(1000, salaryFor(p.ratings.ovr) - 500); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     slot.player = p.id;
@@ -399,7 +401,7 @@
   root.League = {
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
-    init: init, active: active, rosterOf: rosterOf, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
+    init: init, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf

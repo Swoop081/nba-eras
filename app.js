@@ -1894,11 +1894,35 @@
     dock.appendChild(auto);
   }
 
+  function rightsSection(body, me) {
+    var list = League.rightsOf(save, me.id).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; });
+    if (!list.length) return;
+    var n = League.rosterOf(save, me.id).length, pay = League.payroll(save, me.id);
+    body.appendChild(el('h3', 'box-title', 'Draft rights (' + list.length + ')'));
+    body.appendChild(el('p', 'sub', 'Players you drafted. They only count against your roster and payroll once you sign them. Unsigned rights are released when the season starts.'));
+    var all = el('button', 'btn small', 'Let all go');
+    all.type = 'button';
+    all.addEventListener('click', function () { list.forEach(function (p) { League.release(save, p); }); persist(); renderOff(); });
+    body.appendChild(all);
+    list.forEach(function (p) {
+      var can = pay + p.salary <= save.lg.cap && n < League.MAX_ROSTER;
+      var sg = el('button', 'btn small primary', can ? 'Sign ' + money(p.salary) : (n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap'));
+      sg.type = 'button'; sg.disabled = !can;
+      sg.addEventListener('click', function () { League.signRights(save, p); persist(); renderOff(); });
+      var rl = el('button', 'btn small', 'Let go');
+      rl.type = 'button';
+      rl.addEventListener('click', function () { League.release(save, p); persist(); renderOff(); });
+      var right = el('span'); right.style.marginLeft = 'auto'; right.appendChild(sg); right.appendChild(rl);
+      body.appendChild(personRow(p, [(p.pos || '') + ' \u00B7 age ' + p.age + ' \u00B7 overall ' + p.ratings.ovr, 'Potential ' + p.pot], right));
+    });
+  }
+
   function offFA(body, me) {
     var pay = League.payroll(save, me.id), n = League.rosterOf(save, me.id).length;
     offHeader('Free agency', n + ' players · ' + money(pay) + ' of ' + money(save.lg.cap));
     var fa = League.freeAgents(save).slice(0, 30);
-    body.appendChild(el('p', 'sub', 'Sign anyone you can fit under the cap. Rookies you drafted are already on your roster.'));
+    body.appendChild(el('p', 'sub', 'Sign anyone you can fit under the cap. Your drafted rookies are under draft rights below.'));
+    rightsSection(body, me);
     fa.forEach(function (p) {
       var ask = League.salaryFor(p.ratings.ovr);
       var can = pay + ask <= save.lg.cap && n < League.MAX_ROSTER;
@@ -1926,6 +1950,7 @@
     var problem = n < League.MIN_ROSTER ? 'You need at least ' + League.MIN_ROSTER + ' players. Go back and sign more.' : n > League.MAX_ROSTER ? 'The roster limit is ' + League.MAX_ROSTER + '. Release ' + (n - League.MAX_ROSTER) + ' from the roster screen.' : '';
     if (problem) card.appendChild(el('p', 'note', problem));
     body.appendChild(card);
+    rightsSection(body, me);
     if (n > League.MAX_ROSTER || pay > save.lg.cap) {
       body.appendChild(el('h3', 'box-title', n > League.MAX_ROSTER ? 'Cut down to ' + League.MAX_ROSTER : 'Over the cap'));
       League.rosterOf(save, me.id).sort(function (a, b) { return a.ratings.ovr - b.ratings.ovr; }).slice(0, 12).forEach(function (p) {
@@ -1949,6 +1974,7 @@
 
   function startNextSeason() {
     var teams = save.ids.map(teamById), me = teamById(save.myId);
+    League.rightsOf(save, me.id).forEach(function (p) { League.release(save, p); });
     League.aiRosterPass(save, teams, me.id);
     var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1));
     save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
