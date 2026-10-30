@@ -338,3 +338,27 @@ body[data-era-filter="off"]{--court:#B8763C;--court-line:#F6E7CF}
 .br-t.win{font-weight:800}.br-t.out{opacity:.5}.br-t.me span{box-shadow:inset 3px 0 0 var(--accent);padding-left:6px}
 .br-s small{color:var(--muted);font-size:12px}
 .bar-row .up{color:#2E7D32;font-weight:700}.bar-row .down{color:#A33A2E;font-weight:700}
+
+/* compact trade screen */
+.ttabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:sticky;top:0;z-index:2;background:var(--bg);padding:2px 0 6px}
+.ttabs button{height:42px;border-radius:12px;border:2px solid var(--line);background:transparent;color:var(--ink);font-family:var(--font);font-size:16px;font-weight:700}
+.ttabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tmeter{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin:2px 0 8px}
+.tbar{flex:1;height:8px;border-radius:4px;background:rgba(0,0,0,.14);overflow:hidden}
+.tbar i{display:block;height:100%;background:var(--accent)}
+.tlist{display:grid;gap:6px}
+.tlist .card{min-height:0;padding:5px 10px;gap:10px;border-width:1.5px;border-radius:12px}
+.tlist .card .avatar{width:36px;height:36px;font-size:13px}
+.tlist .card strong{font-size:16px}
+.tlist .card .meta{font-size:12px;margin-top:0}
+.tlist .card .ovr{margin-left:auto;font-size:22px}
+.tlist .card.selected{outline-width:3px;outline-offset:1px}
+.tlist .box-title{margin:8px 0 0;font-size:14px}
+.tpicks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tpicks .card{display:block}
+.tpicks .card strong{font-size:14px}
+#trade-dock{gap:6px}
+#trade-dock .tmsg{margin:0;font-size:13px;line-height:1.25;max-height:2.6em;overflow:hidden}
+#trade-dock .dock-row{margin-top:0}
+#trade-dock .dock-row .btn{height:42px;font-size:14px;padding:0 8px}
+#trade-dock{padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom))}

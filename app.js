@@ -2073,7 +2073,7 @@
   function openTrade(returnTo) {
     var closed = tradeWindow();
     if (!save.lg.picks) League.ensurePicks(save, save.ids.map(teamById));
-    trade = { back: returnTo, partner: null, give: {}, get: {}, msg: '' };
+    trade = { back: returnTo, partner: null, give: {}, get: {}, msg: '', tab: 'send' };
     document.getElementById('trade-back').onclick = function () {
       if (trade.partner) { trade.partner = null; renderTrade(); return; }
       if (trade.back === 'off') { renderOff(); show('screen-off'); } else { renderSeason(); show('screen-season'); }
@@ -2084,7 +2084,7 @@
   }
 
   function tradeRow(p, selected, onTap) {
-    var row = personRow(p, [(p.pos || '') + ' · age ' + p.age + ' · ' + money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + ' yr' + (p.yrs === 1 ? '' : 's')), 'Potential ' + p.pot], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
+    var row = personRow(p, [(p.pos || '') + ' · ' + p.age + ' · ' + money(p.salary) + ' · ' + (p.yrs <= 0 ? 'exp.' : p.yrs + 'y') + ' · pot ' + p.pot], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
     row.classList.add('pickable');
     row.style.cursor = 'pointer';
     if (selected) row.classList.add('selected');
@@ -2093,11 +2093,11 @@
   }
 
   function pickRow(k, teams, selected, onTap) {
-    var row = el('button', 'card pickable' + (selected ? ' selected' : ''));
+    var row = el('button', 'card pickable pickchip' + (selected ? ' selected' : ''));
     row.type = 'button';
     var tx = el('span');
     tx.appendChild(el('strong', null, League.pickLabel(k, teams)));
-    tx.appendChild(el('span', 'meta', 'Draft pick \u00B7 ' + (k.r === 1 ? 'first round' : 'second round') + ' \u00B7 worth about ' + Math.round(League.pickValue(save, k))));
+    tx.appendChild(el('span', 'meta', (k.r === 1 ? '1st round' : '2nd round') + ' \u00B7 worth ~' + Math.round(League.pickValue(save, k))));
     row.appendChild(tx);
     row.addEventListener('click', onTap);
     return row;
@@ -2129,7 +2129,7 @@
         tx.appendChild(el('strong', null, t.city + ' ' + t.name));
         tx.appendChild(el('span', 'meta', pl.length + ' players · rating ' + avg + ' · payroll ' + money(League.payroll(save, id))));
         c.appendChild(tx);
-        c.addEventListener('click', function () { trade.partner = id; trade.give = {}; trade.get = {}; trade.msg = ''; renderTrade(); });
+        c.addEventListener('click', function () { trade.partner = id; trade.give = {}; trade.get = {}; trade.msg = ''; trade.tab = 'send'; renderTrade(); });
         body.appendChild(c);
       });
       return;
@@ -2143,23 +2143,37 @@
     var giveK = myK.filter(function (k) { return trade.give[League.pickId(k)]; }), getK = theirK.filter(function (k) { return trade.get[League.pickId(k)]; });
     var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), n: giveK.length + getK.length };
     var res = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax(), ex);
-    var meter = el('div', 'stat-card');
-    meter.appendChild(el('div', 'group-title', 'Their view'));
     var pct = Math.max(0, Math.min(100, Math.round((give.length || get.length || ex.n ? res.ratio / 1.1 : 0) * 100)));
-    meter.appendChild(ratingRow('Interest', Math.min(100, pct)));
-    body.appendChild(meter);
-    dock.appendChild(el('p', res.ok && !trade.msg ? 'dec-title' : 'note', trade.msg || (give.length || get.length || ex.n ? res.reason : 'Tap players on both sides to build a deal.')));
-    body.appendChild(el('h3', 'box-title', 'You send'));
-    mine.forEach(function (p) {
-      body.appendChild(tradeRow(p, !!trade.give[p.id], function () { if (trade.give[p.id]) delete trade.give[p.id]; else trade.give[p.id] = 1; trade.msg = ''; renderTrade(); }));
+    var sendN = give.length + giveK.length, getN = get.length + getK.length;
+    var tabs = el('div', 'ttabs');
+    [['send', 'You send' + (sendN ? ' (' + sendN + ')' : '')], ['get', 'You get' + (getN ? ' (' + getN + ')' : '')]].forEach(function (t) {
+      var bt = el('button', trade.tab === t[0] ? 'on' : '', t[1]);
+      bt.type = 'button';
+      bt.addEventListener('click', function () { trade.tab = t[0]; renderTrade(); });
+      tabs.appendChild(bt);
     });
-    myK.forEach(function (k) { body.appendChild(pickRow(k, allT, !!trade.give[League.pickId(k)], function () { var id = League.pickId(k); if (trade.give[id]) delete trade.give[id]; else trade.give[id] = 1; trade.msg = ''; renderTrade(); })); });
-    body.appendChild(el('h3', 'box-title', 'You get'));
-    theirK.forEach(function (k) { body.appendChild(pickRow(k, allT, !!trade.get[League.pickId(k)], function () { var id = League.pickId(k); if (trade.get[id]) delete trade.get[id]; else trade.get[id] = 1; trade.msg = ''; renderTrade(); })); });
-    theirs.forEach(function (p) {
-      body.appendChild(tradeRow(p, !!trade.get[p.id], function () { if (trade.get[p.id]) delete trade.get[p.id]; else trade.get[p.id] = 1; trade.msg = ''; renderTrade(); }));
-    });
-    var send = el('button', 'btn primary wide', 'Propose trade');
+    body.appendChild(tabs);
+    var meterRow = el('div', 'tmeter');
+    meterRow.appendChild(el('span', null, 'Their interest'));
+    var bar = el('div', 'tbar'), fill = el('i');
+    fill.style.width = Math.min(100, pct) + '%';
+    bar.appendChild(fill);
+    meterRow.appendChild(bar);
+    body.appendChild(meterRow);
+    dock.appendChild(el('p', res.ok && !trade.msg ? 'dec-title tmsg' : 'note tmsg', trade.msg || (give.length || get.length || ex.n ? res.reason : 'Tap players on both tabs to build a deal.')));
+    var list = el('div', 'tlist');
+    function toggle(map, id) { if (map[id]) delete map[id]; else map[id] = 1; trade.msg = ''; renderTrade(); }
+    var isSend = trade.tab !== 'get', plist = isSend ? mine : theirs, kl = isSend ? myK : theirK, map = isSend ? trade.give : trade.get;
+    plist.forEach(function (p) { list.appendChild(tradeRow(p, !!map[p.id], function () { toggle(map, p.id); })); });
+    if (kl.length) {
+      list.appendChild(el('h3', 'box-title', 'Draft picks'));
+      var chips = el('div', 'tpicks');
+      kl.forEach(function (k) { chips.appendChild(pickRow(k, allT, !!map[League.pickId(k)], function () { toggle(map, League.pickId(k)); })); });
+      list.appendChild(chips);
+    }
+    body.appendChild(list);
+    var btnRow = el('div', 'dock-row');
+    var send = el('button', 'btn primary', 'Propose trade');
     send.type = 'button';
     send.disabled = !give.length && !get.length && !ex.n;
     send.addEventListener('click', function () {
@@ -2178,8 +2192,8 @@
       trade.msg = 'Deal done. ' + line.replace('Trade: ', '');
       renderTrade();
     });
-    dock.appendChild(send);
-    var ask = el('button', 'btn ghost wide', 'What would it take?');
+    btnRow.appendChild(send);
+    var ask = el('button', 'btn', 'What would it take?');
     ask.type = 'button';
     ask.addEventListener('click', function () {
       if (!give.length && !get.length && !ex.n) return;
@@ -2189,7 +2203,8 @@
       else { trade.msg = 'Nothing on your roster would make this work. Ask for less.'; }
       renderTrade();
     });
-    dock.appendChild(ask);
+    btnRow.appendChild(ask);
+    dock.appendChild(btnRow);
   }
 
   /* ---------- off-season ---------- */
