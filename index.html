@@ -129,9 +129,24 @@
   <div class="dock" id="off-dock"></div>
 </section>
 
+<section id="screen-player" class="screen" aria-label="Player profile">
+  <div class="stickyhead">
+  <header class="bar">
+    <button class="back" data-back="screen-roster" type="button" aria-label="Back">&larr;</button>
+    <div>
+      <h2 id="player-title">Player</h2>
+      <p class="sub" id="player-sub"></p>
+    </div>
+  </header>
+  <nav id="player-tabs" class="ptabs"></nav>
+  </div>
+  <div id="player-body" class="list"></div>
+</section>
+
 <section id="screen-roster" class="screen" aria-label="Roster">
   <header class="bar">
     <button class="back" data-back="screen-season" type="button" aria-label="Back">&larr;</button>
+    <span id="roster-badge"></span>
     <div>
       <h2 id="roster-title">Roster</h2>
       <p class="sub" id="roster-sub"></p>

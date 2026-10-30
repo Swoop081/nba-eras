@@ -390,13 +390,331 @@
     return row;
   }
 
+  /* ---------- player profile ---------- */
+  var PV = null;
+  var PTABS = ['Overview', 'Season', 'Game log', 'Shooting', 'Ratings', 'Career'];
+  var RGROUPS = [
+    ['Offence', [['Scoring', 'sco'], ['Shooting', 'sht'], ['Free throws', 'ft'], ['Three-pointers', 'tpt'], ['Playmaking', 'ply'], ['Ball security', 'tov'], ['Off. rebounding', 'orb']]],
+    ['Defence', [['Def. rebounding', 'drb'], ['Steals', 'stl'], ['Blocks', 'blk'], ['Discipline', 'fou']]],
+    ['Physical', [['Durability', 'dur']]]
+  ];
+  function pctS(a, b) { return b ? (100 * a / b).toFixed(1) + '%' : '–'; }
+  function f1(a, g) { return g ? (a / g).toFixed(1) : '–'; }
+  function statsOf(p) {
+    var x = save.lg.stats[p.id];
+    if (x && x.g) return { src: 'season', label: seasonLabel(save.year), x: x };
+    if (p.g) return { src: 'last', label: 'last season', x: { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0, pf: p.pf || 0 } };
+    return null;
+  }
+  function leagueAvg() {
+    var t = { fg: 0, fga: 0, ft: 0, fta: 0, pts: 0 }, st = save.lg.stats;
+    Object.keys(st).forEach(function (id) { ['fg', 'fga', 'ft', 'fta', 'pts'].forEach(function (k) { t[k] += st[id][k] || 0; }); });
+    return t;
+  }
+  function seg(options, cur, pick) {
+    var w = el('div', 'seg');
+    options.forEach(function (o) {
+      var b = el('button', o === cur ? 'on' : '', o);
+      b.type = 'button';
+      b.addEventListener('click', function () { pick(o); });
+      w.appendChild(b);
+    });
+    return w;
+  }
+  function dataTable(heads, rows, meIdx) {
+    var scroll = el('div', 'boxwrap'), table = el('table', 'box');
+    var thead = el('thead'), hr = el('tr');
+    heads.forEach(function (h) { hr.appendChild(el('th', null, h)); });
+    thead.appendChild(hr); table.appendChild(thead);
+    var tb = el('tbody');
+    rows.forEach(function (r, i) {
+      var tr = el('tr', r.cls || (i === meIdx ? 'me' : null));
+      (r.cells || r).forEach(function (c) { tr.appendChild(el('td', null, String(c))); });
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb); scroll.appendChild(table);
+    return scroll;
+  }
+  function boxes(items) {
+    var g = el('div', 'kpis');
+    items.forEach(function (it) {
+      var b = el('div', 'kpi');
+      b.appendChild(el('b', null, it[1]));
+      b.appendChild(el('span', null, it[0]));
+      g.appendChild(b);
+    });
+    return g;
+  }
+  function svgEl(tag, attrs) {
+    var n = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    return n;
+  }
+  function lineChart(vals, avg, fmt) {
+    var W = 340, H = 150, L = 30, R = 8, T = 10, B = 18;
+    var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, class: 'chart', role: 'img' });
+    var hi = Math.max.apply(null, vals.concat(avg || 0)), lo = Math.min.apply(null, vals.concat(avg === undefined ? 0 : avg, 0));
+    if (hi === lo) hi = lo + 1;
+    function X(i) { return L + (vals.length < 2 ? (W - L - R) / 2 : i * (W - L - R) / (vals.length - 1)); }
+    function Y(v) { return T + (H - T - B) * (1 - (v - lo) / (hi - lo)); }
+    [lo, (lo + hi) / 2, hi].forEach(function (v) {
+      svg.appendChild(svgEl('line', { x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: 'grid' }));
+      var t = svgEl('text', { x: L - 4, y: Y(v) + 3, class: 'axis', 'text-anchor': 'end' }); t.textContent = fmt ? fmt(v) : Math.round(v); svg.appendChild(t);
+    });
+    if (avg !== undefined) {
+      svg.appendChild(svgEl('line', { x1: L, x2: W - R, y1: Y(avg), y2: Y(avg), class: 'avg' }));
+    }
+    svg.appendChild(svgEl('polyline', { points: vals.map(function (v, i) { return X(i) + ',' + Y(v); }).join(' '), class: 'ln' }));
+    vals.forEach(function (v, i) { svg.appendChild(svgEl('circle', { cx: X(i), cy: Y(v), r: vals.length > 30 ? 1.8 : 3, class: 'dot' })); });
+    var a = svgEl('text', { x: L, y: H - 4, class: 'axis' }); a.textContent = 'Game 1'; svg.appendChild(a);
+    var z = svgEl('text', { x: W - R, y: H - 4, class: 'axis', 'text-anchor': 'end' }); z.textContent = 'Game ' + vals.length; svg.appendChild(z);
+    return svg;
+  }
+  function pairBars(a, b) {
+    var W = 340, H = 140, L = 24, T = 8, B = 18, n = a.length;
+    var svg = svgEl('svg', { viewBox: '0 0 ' + W + ' ' + H, class: 'chart', role: 'img' });
+    var hi = Math.max.apply(null, a.concat(1)), bw = (W - L - 6) / n;
+    function Y(v) { return T + (H - T - B) * (1 - v / hi); }
+    [0, hi].forEach(function (v) {
+      svg.appendChild(svgEl('line', { x1: L, x2: W - 6, y1: Y(v), y2: Y(v), class: 'grid' }));
+      var t = svgEl('text', { x: L - 4, y: Y(v) + 3, class: 'axis', 'text-anchor': 'end' }); t.textContent = v; svg.appendChild(t);
+    });
+    a.forEach(function (v, i) {
+      var x = L + i * bw + bw * 0.12;
+      svg.appendChild(svgEl('rect', { x: x, y: Y(v), width: bw * 0.76, height: Y(0) - Y(v), class: 'bar-a' }));
+      svg.appendChild(svgEl('rect', { x: x, y: Y(b[i]), width: bw * 0.76, height: Y(0) - Y(b[i]), class: 'bar-b' }));
+    });
+    return svg;
+  }
+  function legend(items) {
+    var l = el('div', 'legend');
+    items.forEach(function (it) { var s = el('span'); s.appendChild(el('i', it[0])); s.appendChild(document.createTextNode(it[1])); l.appendChild(s); });
+    return l;
+  }
+  function oppName(id) { var t = teamById(id); return t ? t.city : '?'; }
+
+  function openPlayer(p, team) {
+    PV = { id: p.id, team: team, tab: 'Overview', sub: {} };
+    renderPlayer();
+    show('screen-player');
+  }
+  function renderPlayer() {
+    var p = League.byId(save, PV.id), team = PV.team;
+    document.getElementById('player-title').textContent = p.name;
+    document.getElementById('player-sub').textContent = (p.pos || '') + (p.hgt ? ' · ' + Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '"' : '') + ' · age ' + (p.age || '?') + (team ? ' · ' + team.city : '');
+    var tabs = document.getElementById('player-tabs');
+    tabs.textContent = '';
+    PTABS.forEach(function (t) {
+      var b = el('button', t === PV.tab ? 'on' : '', t);
+      b.type = 'button';
+      b.addEventListener('click', function () { PV.tab = t; renderPlayer(); document.getElementById('screen-player').scrollTop = 0; });
+      tabs.appendChild(b);
+    });
+    var body = document.getElementById('player-body');
+    body.textContent = '';
+    var head = el('div', 'stat-card phead');
+    head.appendChild(makeAvatar(p));
+    var tx = el('span');
+    tx.appendChild(el('strong', null, money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' yr' : ' yrs') + ' left')));
+    tx.appendChild(el('span', 'meta', 'Potential ' + p.pot + (p.inj > 0 ? ' · injured, out ' + p.inj : '')));
+    head.appendChild(tx);
+    head.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
+    body.appendChild(head);
+    var fn = { 'Overview': pvOverview, 'Season': pvSeason, 'Game log': pvLog, 'Shooting': pvShooting, 'Ratings': pvRatings, 'Career': pvCareer }[PV.tab];
+    fn(body, p, team);
+  }
+  function pvSub(name, def) { return PV.sub[name] || def; }
+  function pvSetSub(name, v) { PV.sub[name] = v; renderPlayer(); }
+
+  function pvOverview(body, p, team) {
+    var s = statsOf(p);
+    body.appendChild(el('div', 'group-title', s ? 'Averages · ' + s.label : 'Averages'));
+    if (s) {
+      var x = s.x;
+      body.appendChild(boxes([['PTS', f1(x.pts, x.g)], ['AST', f1(x.ast, x.g)], ['FG%', pctS(x.fg, x.fga)], ['FT%', pctS(x.ft, x.fta)]]));
+    } else body.appendChild(el('p', 'sub', 'No games on record yet.'));
+    var x2 = save.lg.stats[p.id];
+    if (x2 && x2.log && x2.log.length) {
+      body.appendChild(el('div', 'group-title', 'Last five games'));
+      var rows = x2.log.slice(-5).reverse().map(function (g) { return [(g[2] ? 'vs ' : 'at ') + oppName(g[1]), (g[3] > g[4] ? 'W ' : 'L ') + g[3] + '-' + g[4], g[6] + ' pts', g[7] + ' ast', g[13] + '/' + g[14] + ' FG']; });
+      body.appendChild(dataTable(['Game', 'Result', 'PTS', 'AST', 'FG'], rows));
+    }
+    body.appendChild(el('div', 'group-title', 'Contract'));
+    var cc = el('div', 'stat-card');
+    cc.appendChild(el('p', 'sub', money(p.salary) + ' a year · ' + (p.yrs <= 0 ? 'expires this off-season' : p.yrs + (p.yrs === 1 ? ' year' : ' years') + ' remaining')));
+    cc.appendChild(el('p', 'sub', 'Market value about ' + money(League.salaryFor(p.ratings.ovr)) + (p.draftedYear ? ' · drafted ' + p.draftedYear + (p.draftPick ? ' (pick ' + p.draftPick + ')' : '') : '')));
+    body.appendChild(cc);
+    if (team && team.id === save.myId) {
+      var rel = el('button', 'btn ghost wide', 'Release ' + p.name);
+      rel.type = 'button';
+      var armed = false;
+      rel.addEventListener('click', function () {
+        if (League.rosterOf(save, team.id).length <= 5) { rel.textContent = 'You need at least 5 players'; return; }
+        if (!armed) { armed = true; rel.textContent = 'Tap again to release ' + p.name; return; }
+        League.release(save, p); persist(); renderRoster(team); show('screen-roster');
+      });
+      body.appendChild(rel);
+    }
+  }
+
+  function pvSeason(body, p) {
+    var s = statsOf(p);
+    var mode = pvSub('season', 'Per game');
+    body.appendChild(seg(['Per game', 'Totals', 'Per 48 min'], mode, function (o) { pvSetSub('season', o); }));
+    if (!s) { body.appendChild(el('p', 'sub', 'No games on record yet.')); return; }
+    var x = s.x, g = x.g, hasMin = !!x.min, full = s.src === 'season';
+    function v(k) {
+      var t = x[k] || 0;
+      if (mode === 'Totals') return String(t);
+      if (mode === 'Per game') return f1(t, g);
+      return hasMin ? (t * 48 / x.min).toFixed(1) : '–';
+    }
+    body.appendChild(el('div', 'group-title', s.label + ' · ' + g + ' games'));
+    var rows = [['Games', g]];
+    if (full) rows.push(['Minutes', mode === 'Per game' ? f1(x.min, g) : mode === 'Totals' ? x.min : '48.0']);
+    rows.push(['Points', v('pts')], ['Assists', v('ast')]);
+    if (full) rows.push(['Rebounds', v('trb')], ['Steals', v('stl')], ['Blocks', v('blk')], ['Turnovers', v('tov')]);
+    rows.push(['Fouls', v('pf')], ['FG made', v('fg')], ['FG attempts', v('fga')], ['FG%', pctS(x.fg, x.fga)], ['FT made', v('ft')], ['FT attempts', v('fta')], ['FT%', pctS(x.ft, x.fta)]);
+    body.appendChild(dataTable(['Stat', mode], rows));
+    if (full) {
+      var lead = {};
+      ['pts', 'ast'].forEach(function (k) {
+        var all = League.leaders(save, k, 500, 1), idx = -1;
+        all.forEach(function (r, i) { if (r.p.id === p.id) idx = i; });
+        if (idx >= 0) lead[k] = idx + 1;
+      });
+      var bits = [];
+      if (lead.pts) bits.push('#' + lead.pts + ' in the league in scoring');
+      if (lead.ast) bits.push('#' + lead.ast + ' in assists');
+      if (bits.length) body.appendChild(el('p', 'sub', bits.join(' · ')));
+    } else body.appendChild(el('p', 'sub', 'Last season’s real record only lists these figures. Rebounds, steals, blocks and turnovers are tracked once you play.'));
+  }
+
+  function pvLog(body, p, team) {
+    var x = save.lg.stats[p.id], log = x && x.log ? x.log : [];
+    var mode = pvSub('log', 'All');
+    body.appendChild(seg(['All', 'Last 5', 'Home', 'Away'], mode, function (o) { pvSetSub('log', o); }));
+    if (!log.length) { body.appendChild(el('p', 'sub', team && team.id === save.myId ? 'No games yet. Each game you and the league play is logged here.' : 'Game logs are kept for your own players.')); return; }
+    var list = log.map(function (g, i) { return { g: g, n: i + 1 }; });
+    if (mode === 'Last 5') list = list.slice(-5);
+    if (mode === 'Home') list = list.filter(function (r) { return r.g[2]; });
+    if (mode === 'Away') list = list.filter(function (r) { return !r.g[2]; });
+    var rows = list.slice().reverse().map(function (r) {
+      var g = r.g;
+      return [r.n, (g[2] ? 'vs ' : 'at ') + oppName(g[1]), (g[3] > g[4] ? 'W ' : 'L ') + g[3] + '-' + g[4], g[5], g[6], g[7], g[8], g[13] + '-' + g[14], g[15] + '-' + g[16], g[12]];
+    });
+    var n = list.length, sum = function (i) { return list.reduce(function (a, r) { return a + r.g[i]; }, 0); };
+    rows.push({ cls: 'me', cells: ['', 'Average', n ? list.filter(function (r) { return r.g[3] > r.g[4]; }).length + '-' + list.filter(function (r) { return r.g[3] < r.g[4]; }).length : '', f1(sum(5), n), f1(sum(6), n), f1(sum(7), n), f1(sum(8), n), f1(sum(13), n) + '-' + f1(sum(14), n), f1(sum(15), n) + '-' + f1(sum(16), n), f1(sum(12), n)] });
+    body.appendChild(dataTable(['#', 'Opp', 'Result', 'Min', 'Pts', 'Ast', 'Reb', 'FG', 'FT', 'PF'], rows));
+    var hi = list.reduce(function (m, r) { return r.g[6] > m.g[6] ? r : m; }, list[0]);
+    body.appendChild(el('p', 'sub', 'Season high ' + hi.g[6] + ' points, game ' + hi.n + ' ' + (hi.g[2] ? 'vs ' : 'at ') + oppName(hi.g[1]) + '.'));
+  }
+
+  function pvShooting(body, p, team) {
+    var s = statsOf(p), mode = pvSub('shoot', 'Efficiency');
+    body.appendChild(seg(['Efficiency', 'Trend', 'Mix'], mode, function (o) { pvSetSub('shoot', o); }));
+    if (!s) { body.appendChild(el('p', 'sub', 'No games on record yet.')); return; }
+    var x = s.x, la = leagueAvg(), log = (save.lg.stats[p.id] || {}).log || [];
+    if (mode === 'Efficiency') {
+      var fgp = x.fga ? 100 * x.fg / x.fga : 0, ftp = x.fta ? 100 * x.ft / x.fta : 0;
+      var lfg = la.fga ? 100 * la.fg / la.fga : fgp, lft = la.fta ? 100 * la.ft / la.fta : ftp;
+      function cmp(label, mine, avgv, max) {
+        var box = el('div', 'cmp');
+        box.appendChild(el('div', 'cmp-h', label + ' · ' + mine.toFixed(1) + (avgv ? ' vs league ' + avgv.toFixed(1) : '')));
+        var tr = el('span', 'track'), f = el('span', 'fill good'); f.style.width = Math.min(100, 100 * mine / max) + '%'; tr.appendChild(f);
+        if (avgv) { var m = el('i', 'mark'); m.style.left = Math.min(100, 100 * avgv / max) + '%'; tr.appendChild(m); }
+        box.appendChild(tr);
+        return box;
+      }
+      body.appendChild(cmp('Field goal %', fgp, la.fga ? lfg : 0, 60));
+      body.appendChild(cmp('Free throw %', ftp, la.fta ? lft : 0, 100));
+      var ppS = x.fga ? x.pts / x.fga : 0, ts = (x.fga + 0.44 * x.fta) ? 100 * x.pts / (2 * (x.fga + 0.44 * x.fta)) : 0;
+      body.appendChild(boxes([['Shots / game', f1(x.fga, x.g)], ['FT tries / game', f1(x.fta, x.g)], ['Pts per shot', ppS.toFixed(2)], ['True shooting', ts.toFixed(1) + '%']]));
+      body.appendChild(el('p', 'sub', 'The mark on each bar is the league average this season.'));
+    } else if (mode === 'Trend') {
+      if (log.length < 2) { body.appendChild(el('p', 'sub', 'Trends appear after two games with your club.')); return; }
+      body.appendChild(el('div', 'group-title', 'Points per game'));
+      body.appendChild(lineChart(log.map(function (g) { return g[6]; }), x.pts / x.g));
+      var roll = [];
+      for (var i = 0; i < log.length; i++) {
+        var a = 0, b = 0; for (var j = Math.max(0, i - 4); j <= i; j++) { a += log[j][13]; b += log[j][14]; }
+        roll.push(b ? 100 * a / b : 0);
+      }
+      body.appendChild(el('div', 'group-title', 'FG% over the last five games'));
+      body.appendChild(lineChart(roll, x.fga ? 100 * x.fg / x.fga : 0, function (v) { return Math.round(v) + '%'; }));
+      body.appendChild(el('p', 'sub', 'The dashed line is his season average.'));
+    } else {
+      var two = x.fg * 2, ft = x.ft, tot = two + ft || 1;
+      body.appendChild(el('div', 'group-title', 'Where the points come from'));
+      var bar = el('div', 'mixbar');
+      var b1 = el('span', 'm1'); b1.style.width = (100 * two / tot) + '%'; b1.textContent = Math.round(100 * two / tot) + '%';
+      var b2 = el('span', 'm2'); b2.style.width = (100 * ft / tot) + '%'; b2.textContent = Math.round(100 * ft / tot) + '%';
+      bar.appendChild(b1); bar.appendChild(b2); body.appendChild(bar);
+      body.appendChild(legend([['m1', 'Field goals'], ['m2', 'Free throws']]));
+      if (log.length >= 2) {
+        var last = log.slice(-12);
+        body.appendChild(el('div', 'group-title', 'Shots taken and made, last ' + last.length));
+        body.appendChild(pairBars(last.map(function (g) { return g[14]; }), last.map(function (g) { return g[13]; })));
+        body.appendChild(legend([['ba', 'Attempts'], ['bb', 'Made']]));
+      }
+    }
+  }
+
+  function pvRatings(body, p) {
+    var mode = pvSub('rat', 'All');
+    body.appendChild(seg(['All', 'Offence', 'Defence', 'Physical'], mode, function (o) { pvSetSub('rat', o); }));
+    function grp(q) { var s = q.pos || ''; return s.indexOf('G') >= 0 ? 'G' : s.indexOf('C') >= 0 ? 'C' : 'F'; }
+    var pool = save.lg.players.filter(function (q) { return q.status === 'active' && grp(q) === grp(p); });
+    function avg(k) { return pool.length ? pool.reduce(function (a, q) { return a + (q.ratings[k] || 0); }, 0) / pool.length : 0; }
+    var r0 = ratingRow('Overall', p.ratings.ovr), r1 = ratingRow('Potential', p.pot);
+    r0.className += ' wide3'; r1.className += ' wide3';
+    body.appendChild(r0); body.appendChild(r1);
+    RGROUPS.forEach(function (g) {
+      if (mode !== 'All' && mode !== g[0]) return;
+      body.appendChild(el('div', 'group-title', g[0]));
+      g[1].forEach(function (r) {
+        var row = ratingRow(r[0], p.ratings[r[1]]);
+        row.className += ' wide3';
+        var d = Math.round(p.ratings[r[1]] - avg(r[1]));
+        row.lastChild.textContent = p.ratings[r[1]] + ' (' + (d > 0 ? '+' : '') + d + ')';
+        body.appendChild(row);
+      });
+    });
+    body.appendChild(el('p', 'sub', 'The number in brackets is the gap to the average ' + ({ G: 'guard', F: 'forward', C: 'centre' }[grp(p)]) + ' in the league.'));
+  }
+
+  function pvCareer(body, p) {
+    var mode = pvSub('career', 'Per game');
+    body.appendChild(seg(['Per game', 'Totals'], mode, function (o) { pvSetSub('career', o); }));
+    var rows = [];
+    function row(label, t, x) {
+      var g = x.g;
+      var f = function (k) { return mode === 'Totals' ? String(x[k] || 0) : f1(x[k] || 0, g); };
+      rows.push([label, t, g, f('pts'), f('ast'), pctS(x.fg, x.fga), pctS(x.ft, x.fta)]);
+    }
+    if (p.g) row('Last season', '', { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 });
+    (p.career || []).forEach(function (c) { row(seasonLabel(c.y), c.t ? oppName(c.t) : '', c); });
+    var cur = save.lg.stats[p.id];
+    if (cur && cur.g) row(seasonLabel(save.year), p.team ? oppName(p.team) : '', cur);
+    if (!rows.length) { body.appendChild(el('p', 'sub', 'No seasons on record yet.')); return; }
+    body.appendChild(dataTable(['Season', 'Team', 'GP', 'PTS', 'AST', 'FG%', 'FT%'], rows));
+    var all = { g: 0, pts: 0, ast: 0, fg: 0, fga: 0, ft: 0, fta: 0 };
+    (p.career || []).forEach(function (c) { Object.keys(all).forEach(function (k) { all[k] += c[k] || 0; }); });
+    if (cur && cur.g) Object.keys(all).forEach(function (k) { all[k] += cur[k] || 0; });
+    if (all.g) body.appendChild(boxes([['Games', String(all.g)], ['Points', String(all.pts)], ['Assists', String(all.ast)], ['Career FG%', pctS(all.fg, all.fga)]]));
+    if (p.draftedYear) body.appendChild(el('p', 'sub', 'Drafted ' + p.draftedYear + (p.draftPick ? ', pick ' + p.draftPick : '') + '.'));
+  }
+
   function renderRoster(team) {
     var list = document.getElementById('roster-list');
     list.textContent = '';
+    var bd = document.getElementById('roster-badge');
+    bd.textContent = '';
+    bd.appendChild(teamBadge(team));
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
     var squad = League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     var pay = League.payroll(save, team.id);
-    document.getElementById('roster-sub').textContent = squad.length + ' players · ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap';
+    document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap';
     squad.forEach(function (p) {
       var holder = el('div', 'player');
       var card = el('button', 'card');
@@ -404,39 +722,19 @@
       card.appendChild(makeAvatar(p));
       var text = el('span');
       text.appendChild(el('strong', null, p.name));
-      var st = save.lg.stats[p.id];
-      var line = st && st.g ? (st.pts / st.g).toFixed(1) + ' pts · ' + (st.ast / st.g).toFixed(1) + ' ast · ' + st.g + ' G' : (p.g ? (p.pts / p.g).toFixed(1) + ' pts · ' + (p.ast / p.g).toFixed(1) + ' ast (last season)' : 'No games yet');
-      text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' · ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" · ' : '') + 'Age ' + (p.age || '?')));
-      text.appendChild(el('span', 'meta', money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' yr' : ' yrs') + ' left')));
-      text.appendChild(el('span', 'meta', line));
+      text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
-      var detail = el('div', 'detail');
+      var detail = el('button', 'detail quick');
+      detail.type = 'button';
       detail.hidden = true;
-      detail.appendChild(ratingRow('Potential', p.pot));
-      var groups = [
-        ['Offence', [['Scoring', 'sco'], ['Shooting', 'sht'], ['Free throws', 'ft'], ['Three-pointers', 'tpt'], ['Playmaking', 'ply'], ['Ball security', 'tov'], ['Off. rebounding', 'orb']]],
-        ['Defence', [['Def. rebounding', 'drb'], ['Steals', 'stl'], ['Blocks', 'blk'], ['Discipline', 'fou']]],
-        ['Physical', [['Durability', 'dur']]]
-      ];
-      groups.forEach(function (g) {
-        detail.appendChild(el('div', 'group-title', g[0]));
-        g[1].forEach(function (r) { detail.appendChild(ratingRow(r[0], p.ratings[r[1]])); });
-      });
-      if (team.id === save.myId) {
-        var rel = el('button', 'btn ghost wide', 'Release ' + p.name);
-        rel.type = 'button';
-        var armed = false;
-        rel.addEventListener('click', function () {
-          if (squad.length <= 5) { rel.textContent = 'You need at least 5 players'; return; }
-          if (!armed) { armed = true; rel.textContent = 'Tap again to release ' + p.name; return; }
-          League.release(save, p);
-          persist();
-          renderRoster(team);
-        });
-        detail.appendChild(rel);
-      }
+      var s = statsOf(p);
+      detail.appendChild(el('div', 'group-title', s ? 'Averages \u00B7 ' + s.label : 'No games yet'));
+      if (s) detail.appendChild(boxes([['PTS', f1(s.x.pts, s.x.g)], ['AST', f1(s.x.ast, s.x.g)], ['FG%', pctS(s.x.fg, s.x.fga)], ['FT%', pctS(s.x.ft, s.x.fta)]]));
+      detail.appendChild(el('div', 'quick-k', money(p.salary) + ' \u00B7 ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' year' : ' years') + ' left') + ' \u00B7 potential ' + p.pot));
+      detail.appendChild(el('div', 'quick-go', 'Tap for full profile \u203A'));
+      detail.addEventListener('click', function () { openPlayer(p, team); });
       card.addEventListener('click', function () {
         detail.hidden = !detail.hidden;
         holder.classList.toggle('open', !detail.hidden);
@@ -445,7 +743,7 @@
       holder.appendChild(detail);
       list.appendChild(holder);
     });
-    list.appendChild(el('p', 'sub', 'Salaries are estimates except where the record is known (Joe Fulks earned $8,000). Ratings are built from real ' + currentEra.years + ' stats, with rebounds, steals, blocks and turnovers modelled.'));
+    list.appendChild(el('p', 'sub', 'Tap a player for his averages and contract, tap again for the full profile. Salaries are estimates except where the record is known (Joe Fulks earned $8,000).'));
   }
 
   /* ---------- match ---------- */
@@ -604,7 +902,7 @@
   }
   function simGame(g) {
     var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year);
-    if (save.phase === 'regular') League.accumulate(save, r.homeLines.concat(r.awayLines));
+    if (save.phase === 'regular') League.accumulate(save, r.homeLines.concat(r.awayLines), { h: g.home, a: g.away, hs: r.home, as: r.away, nh: r.homeLines.length, day: save.day });
     var inj = League.rollInjuries(save, r.homeLines, g.home).concat(League.rollInjuries(save, r.awayLines, g.away));
     League.tickInjuries(save, g.home); League.tickInjuries(save, g.away);
     return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series, lines: { h: r.homeLines, a: r.awayLines }, inj: inj };
@@ -654,7 +952,7 @@
       hs: mine.home === me.id ? res.home : res.away,
       as: mine.home === me.id ? res.away : res.home
     };
-    if (save.phase === 'regular') League.accumulate(save, res.homeLines.concat(res.awayLines));
+    if (save.phase === 'regular') League.accumulate(save, res.homeLines.concat(res.awayLines), { h: mine.home, a: mine.away, hs: res.home, as: res.away, nh: res.homeLines.length, day: save.day });
     var others = Season.today(save).filter(function (g) {
       return g.home !== me.id && g.away !== me.id;
     }).map(simGame);
@@ -1080,6 +1378,35 @@
     renderSeason();
   }
 
+  /* Horizontal swipe pages with a title and dots. */
+  function carousel(pages) {
+    var wrap = el('div', 'car');
+    var head = el('div', 'car-head');
+    var title = el('h3', 'box-title', pages[0].title);
+    var dots = el('span', 'dots');
+    head.appendChild(title);
+    head.appendChild(dots);
+    var track = el('div', 'car-track');
+    pages.forEach(function (pg, i) {
+      var s = el('div', 'car-page');
+      var n = pg.node;
+      var h3 = n.querySelector && n.querySelector('h3.box-title');
+      if (h3) h3.remove();
+      s.appendChild(n);
+      track.appendChild(s);
+      dots.appendChild(el('i', i === 0 ? 'on' : ''));
+    });
+    track.addEventListener('scroll', function () {
+      var i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+      title.textContent = pages[Math.min(pages.length - 1, i)].title;
+      Array.prototype.forEach.call(dots.children, function (d, k) { d.className = k === i ? 'on' : ''; });
+    });
+    wrap.appendChild(head);
+    wrap.appendChild(track);
+    if (pages.length > 1) head.appendChild(el('small', 'swipe', 'swipe \u203A'));
+    return wrap;
+  }
+
   function standingsTable(div, rows) {
     var wrap = el('div');
     wrap.appendChild(el('h3', 'box-title', div + ' Division'));
@@ -1173,18 +1500,48 @@
     }
 
     var st = Season.standings(save);
-    Object.keys(st).forEach(function (d) { bodyEl.appendChild(standingsTable(d, st[d])); });
+    var divs = Object.keys(st).sort(function (x, y) {
+      var mx = st[x].some(function (r) { return r.id === me.id; }), my = st[y].some(function (r) { return r.id === me.id; });
+      return mx === my ? 0 : mx ? -1 : 1;
+    });
+    bodyEl.appendChild(carousel(divs.map(function (d) { return { title: d + ' Division', node: standingsTable(d, st[d]) }; })));
 
-    var ld = League.leaders(save, 'pts', 3, 10);
-    if (ld.length) {
-      bodyEl.appendChild(el('h3', 'box-title', 'Scoring leaders'));
-      var lc = el('div', 'stat-card headlines');
-      ld.forEach(function (r) {
-        var d = el('div', null, r.p.name + ' \u00B7 ' + r.v.toFixed(1) + ' per game');
-        d.appendChild(el('small', null, (r.p.team ? teamById(r.p.team).city : 'Free agent') + ' \u00B7 ' + r.g + ' games'));
-        lc.appendChild(d);
+    var gp = rec.w + rec.l, qual = Math.max(1, Math.min(15, Math.floor(gp * 0.5)));
+    var cats = [
+      { t: 'Points', f: function (x) { return x.pts / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { t: 'Assists', f: function (x) { return x.ast / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { t: 'Field goal %', f: function (x) { return x.fga >= qual * 3 ? 100 * x.fg / x.fga : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { t: 'Free throw %', f: function (x) { return x.fta >= qual ? 100 * x.ft / x.fta : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { t: 'Free throws made', f: function (x) { return x.ft / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { t: 'Fouls', f: function (x) { return x.pf / x.g; }, fmt: function (v) { return v.toFixed(1); } }
+    ];
+    var pages = [];
+    cats.forEach(function (c) {
+      var rows = Object.keys(save.lg.stats).map(function (id) {
+        var x = save.lg.stats[id], p = League.byId(save, id);
+        return p && x.g >= qual ? { p: p, v: c.f(x), g: x.g } : null;
+      }).filter(function (r) { return r && r.v >= 0; }).sort(function (a2, b2) { return b2.v - a2.v; }).slice(0, 3);
+      if (!rows.length) return;
+      var box = el('div', 'stat-card lead');
+      rows.forEach(function (r, i) {
+        var line = el('button', 'lead-row');
+        line.type = 'button';
+        line.appendChild(el('span', 'rk', String(i + 1)));
+        line.appendChild(makeAvatar(r.p));
+        var tx = el('span', 'who');
+        tx.appendChild(el('strong', null, r.p.name));
+        tx.appendChild(el('small', null, (r.p.team ? teamById(r.p.team).city : 'Free agent') + ' \u00B7 ' + r.g + ' games'));
+        line.appendChild(tx);
+        line.appendChild(el('b', 'val', c.fmt(r.v)));
+        line.addEventListener('click', function () { openPlayer(r.p, r.p.team ? teamById(r.p.team) : null); });
+        box.appendChild(line);
       });
-      bodyEl.appendChild(lc);
+      pages.push({ title: c.t + ' leaders', node: box });
+    });
+    if (pages.length) bodyEl.appendChild(carousel(pages));
+    else {
+      bodyEl.appendChild(el('h3', 'box-title', 'League leaders'));
+      bodyEl.appendChild(el('p', 'sub', 'Leaders appear once the season gets going.'));
     }
     var mo = Events.mood(save), sm = Events.summary(save, rosterOf(me.id));
     bodyEl.appendChild(el('h3', 'box-title', 'Clubhouse'));
@@ -1537,6 +1894,13 @@
       title: titleLeader(), allLeague: allLeague()
     };
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null });
+    Object.keys(save.lg.stats).forEach(function (id) {
+      var x = save.lg.stats[id], p = League.byId(save, id);
+      if (!p || !x.g) return;
+      var c = { y: save.year, t: p.team || null };
+      ['g', 'min', 'pts', 'ast', 'trb', 'stl', 'blk', 'tov', 'pf', 'fg', 'fga', 'ft', 'fta'].forEach(function (k) { c[k] = x[k] || 0; });
+      (p.career || (p.career = [])).push(c);
+    });
     var rep = League.progress(save, me.id);
     League.newSeasonContracts(save);
     save.off = {

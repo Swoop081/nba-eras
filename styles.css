@@ -284,3 +284,47 @@ body[data-era-filter="off"]{--court:#B8763C;--court-line:#F6E7CF}
 .pp-row{display:flex;justify-content:space-between;font-size:14px;border-bottom:1px dotted #8a826f}
 .pp-row.me{font-weight:900}
 .meta.injured{color:#a3281f;font-weight:700}
+
+/* carousel, leaders, profile */
+.car{margin-top:6px}
+.car-head{display:flex;align-items:center;gap:10px}
+.car-head .box-title{flex:1;margin:10px 0 6px}
+.dots{display:flex;gap:5px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--line);opacity:.25}.dots i.on{opacity:1}
+.swipe{color:var(--muted);font-size:12px}
+.car-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.car-track::-webkit-scrollbar{display:none}
+.car-page{flex:0 0 100%;scroll-snap-align:start;min-width:0}
+.lead{display:grid;gap:4px;padding:6px 10px}
+.lead-row{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-bottom:1px solid var(--line);padding:8px 2px;color:var(--ink);font-family:var(--font);text-align:left}
+.lead-row:last-child{border-bottom:0}
+.lead-row .rk{width:18px;font-weight:800;color:var(--muted)}
+.lead-row .avatar{width:48px;height:48px;flex:none}
+.lead-row .who{flex:1;min-width:0}.lead-row .who strong{display:block;font-size:17px}.lead-row small{color:var(--muted);font-size:13px}
+.lead-row .val{font-size:24px}
+#roster-badge .badge{width:44px;height:44px}
+.detail.quick{display:grid;gap:8px;text-align:left;width:100%;color:var(--ink);font-family:var(--font);cursor:pointer}
+.detail.quick[hidden]{display:none}
+.quick-k{font-size:14px;color:var(--muted)}.quick-go{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kpi{display:grid;gap:2px;text-align:center;padding:8px 2px;border:2px solid var(--line);border-radius:10px;background:var(--card)}
+.kpi b{font-size:19px}.kpi span{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stickyhead{position:sticky;top:0;z-index:5;background:var(--bg)}.stickyhead .bar{position:static}
+.ptabs{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none}
+.ptabs::-webkit-scrollbar{display:none}
+.ptabs button,.seg button{flex:none;padding:8px 13px;border-radius:999px;border:2px solid var(--line);background:transparent;color:var(--ink);font-family:var(--font);font-size:14px;font-weight:700}
+.ptabs button.on,.seg button.on{background:var(--ink);color:var(--bg)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.phead{display:flex;align-items:center;gap:14px}.phead .avatar{width:64px;height:64px}.phead strong{display:block}
+.chart{width:100%;height:auto}
+.chart .grid{stroke:var(--line);stroke-opacity:.2}.chart .axis{fill:var(--muted);font-size:9px}
+.chart .ln{fill:none;stroke:var(--ink);stroke-width:2}.chart .dot{fill:var(--ink)}.chart .avg{stroke:var(--muted);stroke-dasharray:4 4}
+.chart .bar-a{fill:var(--muted);opacity:.45}.chart .bar-b{fill:var(--ink)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--muted)}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend .m1,.mixbar .m1{background:var(--ink)}.legend .m2,.mixbar .m2{background:var(--muted)}.legend .ba{background:var(--muted);opacity:.45}.legend .bb{background:var(--ink)}
+.mixbar{display:flex;height:34px;border-radius:8px;overflow:hidden;border:2px solid var(--line)}
+.mixbar span{display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--bg)}
+.cmp{display:grid;gap:6px;margin:6px 0}.cmp-h{font-weight:700}
+.cmp .track{position:relative;display:block;height:14px;border-radius:7px;background:rgba(128,128,128,.25)}
+.cmp .fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--ink)}
+.cmp .mark{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--accent);border:1px solid var(--bg)}
+.bar-row.wide3{grid-template-columns:96px 1fr 66px}.bar-row .num{white-space:nowrap}

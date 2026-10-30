@@ -66,12 +66,22 @@
   function bump(save) { save.lg.rev++; }
 
   /* ---------- season stats ---------- */
-  function accumulate(save, lines) {
+  var STAT_KEYS = ['min', 'pts', 'ast', 'trb', 'stl', 'blk', 'tov', 'pf', 'fg', 'fga', 'ft', 'fta'];
+  /* meta {h, a, hs, as, nh, day}: lines before index nh are the home side. Game logs are kept for the user's players only. */
+  function accumulate(save, lines, meta) {
     var st = save.lg.stats;
-    lines.forEach(function (l) {
-      var x = st[l.id] || (st[l.id] = { g: 0, pts: 0, ast: 0, trb: 0, stl: 0, blk: 0, tov: 0, pf: 0, fg: 0, fga: 0, ft: 0, fta: 0 });
-      if (l.s.min > 0 || l.s.fga > 0 || l.s.fta > 0 || l.s.pts > 0) x.g++;
-      ['pts', 'ast', 'trb', 'stl', 'blk', 'tov', 'pf', 'fg', 'fga', 'ft', 'fta'].forEach(function (k) { x[k] += l.s[k] || 0; });
+    lines.forEach(function (l, i) {
+      var x = st[l.id] || (st[l.id] = { g: 0, min: 0, pts: 0, ast: 0, trb: 0, stl: 0, blk: 0, tov: 0, pf: 0, fg: 0, fga: 0, ft: 0, fta: 0 });
+      var played = l.s.min > 0 || l.s.fga > 0 || l.s.fta > 0 || l.s.pts > 0;
+      if (played) x.g++;
+      STAT_KEYS.forEach(function (k) { x[k] = (x[k] || 0) + (l.s[k] || 0); });
+      if (meta && played) {
+        var home = i < meta.nh, tid = home ? meta.h : meta.a;
+        if (tid === save.myId) {
+          (x.log || (x.log = [])).push([meta.day || 0, home ? meta.a : meta.h, home ? 1 : 0, home ? meta.hs : meta.as, home ? meta.as : meta.hs,
+            l.s.min || 0, l.s.pts || 0, l.s.ast || 0, l.s.trb || 0, l.s.stl || 0, l.s.blk || 0, l.s.tov || 0, l.s.pf || 0, l.s.fg || 0, l.s.fga || 0, l.s.ft || 0, l.s.fta || 0]);
+        }
+      }
     });
   }
 
