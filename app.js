@@ -417,6 +417,9 @@
       detail.appendChild(ratingRow('Scoring', p.ratings.sco));
       detail.appendChild(ratingRow('Shooting', p.ratings.sht));
       detail.appendChild(ratingRow('Playmaking', p.ratings.ply));
+      detail.appendChild(ratingRow('Rebounding', p.ratings.reb));
+      detail.appendChild(ratingRow('Steals', p.ratings.stl));
+      detail.appendChild(ratingRow('Blocks', p.ratings.blk));
       detail.appendChild(ratingRow('Durability', p.ratings.dur));
       card.addEventListener('click', function () {
         detail.hidden = !detail.hidden;
@@ -427,7 +430,7 @@
       list.appendChild(holder);
     });
     if (squad.length) {
-      list.appendChild(el('p', 'sub', 'Ratings are derived from each player’s ' + currentEra.years + ' stats. Rosters show where players started the season.'));
+      list.appendChild(el('p', 'sub', 'Ratings are built from each player’s ' + currentEra.years + ' stats, with rebounding, steals and blocks modelled for the match engine. Rosters show where players started the season.'));
     }
   }
 
