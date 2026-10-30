@@ -424,7 +424,120 @@
     if (any) bump(save);
   }
 
+
+  /* ---------- AI clubs: trades, signings, offers ---------- */
+  function wire(save, text) {
+    var w = save.lg.wire || (save.lg.wire = []);
+    w.push({ d: save.day || 0, y: save.year, t: text });
+    if (w.length > 40) w.shift();
+  }
+  function cityOf(teams, id) { var t = teams.filter(function (x) { return x.id === id; })[0]; return t ? t.city : id; }
+  function lastOf(n) { var a = n.split(' '); return a[a.length - 1]; }
+
+  /* One day of league business between the other clubs. */
+  function aiMoves(save, myId, teams) {
+    if (save.phase !== 'regular' || save.day > save.days.length * 0.75) return;
+    var others = teams.filter(function (t) { return t.id !== myId; });
+    if (others.length < 2) return;
+    if (Math.random() < 0.1) {
+      var a = others[Math.floor(Math.random() * others.length)], b = others[Math.floor(Math.random() * others.length)];
+      if (a.id !== b.id) {
+        var pa = rosterOf(save, a.id).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(2, 9);
+        var pb = rosterOf(save, b.id).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(2, 9);
+        var done = false;
+        pa.sort(function () { return Math.random() - 0.5; }).forEach(function (x) {
+          if (done) return;
+          pb.forEach(function (y) {
+            if (done || x.inj > 0 || y.inj > 0) return;
+            var vx = tradeValue(x), vy = tradeValue(y);
+            if (Math.abs(vx - vy) / Math.max(vx, vy) > 0.2) return;
+            var payA = payroll(save, a.id) - x.salary + y.salary, payB = payroll(save, b.id) - y.salary + x.salary;
+            if (payA > save.lg.cap || payB > save.lg.cap) return;
+            x.team = b.id; y.team = a.id;
+            logDeal(save, x, 'Traded', b.id); logDeal(save, y, 'Traded', a.id);
+            wire(save, a.city + ' send ' + x.name + ' to ' + b.city + ' for ' + y.name + '.');
+            done = true;
+          });
+        });
+      }
+    }
+    if (Math.random() < 0.12) {
+      var t = others[Math.floor(Math.random() * others.length)];
+      var roster = rosterOf(save, t.id), hurt = roster.filter(function (p) { return p.inj > 3; }).length;
+      if (roster.length < MAX_ROSTER && (roster.length < 13 || hurt >= 2)) {
+        var fa = freeAgents(save).filter(function (p) { return p.ratings.ovr >= 45 && payroll(save, t.id) + salaryFor(p.ratings.ovr) <= save.lg.cap; })[0];
+        if (fa) {
+          sign(save, fa, t.id, salaryFor(fa.ratings.ovr), 1);
+          wire(save, t.city + ' sign free agent ' + fa.name + (hurt >= 2 ? ' to cover injuries.' : '.'));
+        }
+      }
+    }
+    bump(save);
+  }
+
+  /* A trade proposal from another club: they want one of my rotation players and give a comparable one. */
+  function makeOffer(save, myId, teams) {
+    var mine = rosterOf(save, myId).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; });
+    if (mine.length < 10) return null;
+    var want = mine.slice(2, 8)[Math.floor(Math.random() * 6)];
+    if (!want) return null;
+    var cand = teams.filter(function (t) { return t.id !== myId; }).sort(function () { return Math.random() - 0.5; });
+    for (var i = 0; i < cand.length; i++) {
+      var list = rosterOf(save, cand[i].id).filter(function (p) { return !p.inj; });
+      var vw = tradeValue(want);
+      var give = list.filter(function (p) {
+        var v = tradeValue(p);
+        return v >= vw * 0.8 && v <= vw * 1.2 && Math.abs(p.ratings.ovr - want.ratings.ovr) >= 0 && p.id !== want.id;
+      }).sort(function () { return Math.random() - 0.5; })[0];
+      if (!give) continue;
+      var payMe = payroll(save, myId) - want.salary + give.salary;
+      if (payMe > save.lg.cap) continue;
+      return { themId: cand[i].id, city: cand[i].city, team: cand[i].name, want: want, give: give };
+    }
+    return null;
+  }
+
+  /* Player returns from injury early, or sits out the full time, or the club signs cover. */
+  function injuryChoice(save, id, mode, myId) {
+    var p = byId(save, id);
+    if (!p) return 'He is no longer with the club.';
+    var name = lastOf(p.name);
+    if (mode === 'rush') {
+      if (p.inj <= 0) return name + ' is already fit.';
+      var cut = Math.max(1, Math.floor(p.inj * 0.5));
+      p.inj -= cut;
+      if (Math.random() < 0.3) {
+        var more = 4 + Math.floor(Math.random() * 5);
+        p.inj += more + cut;
+        (p.injHist || (p.injHist = [])).push({ y: save.year, d: save.day || 0, n: more, t: myId });
+        bump(save);
+        return 'Setback. ' + name + ' aggravated it and is out ' + p.inj + ' games.';
+      }
+      bump(save);
+      return name + ' is back ' + cut + ' games early, ' + p.inj + ' to go.';
+    }
+    if (mode === 'sign') {
+      var roster = rosterOf(save, myId);
+      var fa = freeAgents(save).filter(function (q) { return payroll(save, myId) + salaryFor(q.ratings.ovr) <= save.lg.cap; })[0];
+      if (roster.length >= MAX_ROSTER) return 'Your roster is full. Release someone first.';
+      if (!fa) return 'Nobody affordable is available.';
+      sign(save, fa, myId, salaryFor(fa.ratings.ovr), 1);
+      return 'Signed ' + fa.name + ' (' + fa.ratings.ovr + ') on a one-year deal.';
+    }
+    if (p.inj > 0) p.inj = Math.max(0, p.inj - 1);
+    bump(save);
+    return name + ' will heal properly. No risks.';
+  }
+
+  function doOffer(save, myId, themId, giveId, getId) {
+    var a = byId(save, giveId), b = byId(save, getId);
+    if (!a || !b || a.team !== myId || b.team !== themId) return 'The offer is off. The situation changed.';
+    executeTrade(save, myId, themId, [a], [b]);
+    return 'Traded ' + a.name + ' for ' + b.name + '.';
+  }
+
   root.League = {
+    wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,

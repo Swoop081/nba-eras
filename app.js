@@ -956,6 +956,8 @@
       Events.afterGame(save, teamById(save.myId), null, rosterOf(save.myId), us > them);
     });
     Season.record(save, results);
+    League.aiMoves(save, save.myId, save.ids.map(teamById));
+    rosterCache = {};
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
   }
   function eraStart(id) { return ERAS.filter(function (e) { return e.id === id; })[0]; }
@@ -1002,6 +1004,8 @@
     var before = {}, stb = Season.standings(save);
     Object.keys(stb).forEach(function (d) { before[d] = stb[d][0].id; });
     Season.record(save, others.concat([mineResult]));
+    League.aiMoves(save, me.id, save.ids.map(teamById));
+    rosterCache = {};
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     var us = res.home, them = res.away, won = us > them;
     var seriesLine = '';
@@ -1016,7 +1020,7 @@
     var dayGames = others.map(function (g) { return { home: g.home, away: g.away, hs: g.hs, as: g.as, lines: g.lines }; });
     dayGames.unshift({ home: mine.home, away: mine.away, hs: mineResult.hs, as: mineResult.as, mine: true, lines: mine.home === me.id ? { h: res.homeLines, a: res.awayLines } : { h: res.awayLines, a: res.homeLines } });
     var dayInj = myInj.concat(others.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
-    save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
+    save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, myInj: myInj, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
     persist();
     renderMatch(me, opp, res, save.year, label, true);
     show('screen-match');
@@ -1584,6 +1588,13 @@
       bodyEl.appendChild(el('h3', 'box-title', 'League leaders'));
       bodyEl.appendChild(el('p', 'sub', 'Leaders appear once the season gets going.'));
     }
+    var wr = (save.lg.wire || []).filter(function (w) { return w.y === save.year; }).slice(-4).reverse();
+    if (wr.length) {
+      bodyEl.appendChild(el('h3', 'box-title', 'League wire'));
+      var wc = el('div', 'stat-card headlines');
+      wr.forEach(function (w) { var d = el('div', null, w.t); d.appendChild(el('small', null, 'Game day ' + w.d)); wc.appendChild(d); });
+      bodyEl.appendChild(wc);
+    }
     var mo = Events.mood(save), sm = Events.summary(save, rosterOf(me.id));
     bodyEl.appendChild(el('h3', 'box-title', 'Clubhouse'));
     var cc = el('div', 'stat-card meter');
@@ -1762,6 +1773,7 @@
         b.type = 'button';
         b.addEventListener('click', function () {
           var note = Events.apply(save, ev, i, mine);
+          rosterCache = {};
           persist();
           dock.textContent = '';
           bodyEl.appendChild(el('p', 'note', note));

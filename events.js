@@ -63,6 +63,8 @@
     m.cool.conv = Math.max(0, m.cool.conv - 1);
     m.cool.rumour = Math.max(0, m.cool.rumour - 1);
     m.cool.period = Math.max(0, (m.cool.period || 0) - 1);
+    m.cool.inj = Math.max(0, (m.cool.inj || 0) - 1);
+    m.cool.offer = Math.max(0, (m.cool.offer || 0) - 1);
   }
 
 
@@ -211,7 +213,9 @@
         [250, 500, 750, 1000, 1250, 1500].forEach(function (M) { if (tot - x.pts < M && tot >= M) briefs.push({ h: 'Milestone', t: x.name + ' of ' + names(x.team) + ' passed ' + commas(M) + ' points for the season.' }); });
       });
     }
-    out.briefs = briefs.slice(0, 5);
+    var tx = (save.lg.wire || []).filter(function (w) { return w.d === save.day && w.y === save.year; });
+    out.briefs = briefs.slice(0, tx.length ? 4 : 5);
+    tx.slice(0, 2).forEach(function (w) { out.briefs.push({ h: 'Transactions', t: w.t }); });
 
     // injuries
     var inj = (ctx.day.inj || []).map(function (i) { return i.name + ' (' + names(i.team) + ') was hurt and is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + '.'; });
@@ -286,6 +290,32 @@
     if (save.phase === 'regular' && !(m.cool.period > 0) && Math.random() < 0.06) {
       m.cool.period = 14;
       out.push(rnd(PERIOD)(ctx));
+    }
+
+    // injuries to my players: a decision for the manager
+    if (!(m.cool.inj > 0)) {
+      var top7 = ctx.rosterAll ? ctx.rosterAll.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, 7).map(function (p) { return p.id; }) : [];
+      var hurtMine = (ctx.myInj || []).filter(function (h) { return h.team === ctx.me.id && h.games >= 4 && top7.indexOf(h.id) >= 0; })[0];
+      if (hurtMine && save.phase === 'regular') {
+        m.cool.inj = 6;
+        out.push({ kind: 'talk', who: hurtMine.name, pid: hurtMine.id, text: 'The club doctor says ' + hurtMine.name + ' will miss about ' + hurtMine.games + ' games. "I can play through it, boss," he insists. The coach is watching you.', choices: [
+          { label: 'Rush him back early', fx: { s: { m: 3, t: 2 }, inj: { id: hurtMine.id, mode: 'rush' } }, say: 'Rushed back' },
+          { label: 'Let him heal properly', fx: { s: { m: 1, t: 3 }, inj: { id: hurtMine.id, mode: 'rest' }, coach: 1 }, say: 'Rested' },
+          { label: 'Sign a free agent to cover', fx: { inj: { id: hurtMine.id, mode: 'sign' } }, say: 'Signed cover' }
+        ] });
+      }
+    }
+
+    // a rival club wires a trade offer
+    if (save.phase === 'regular' && save.day <= save.days.length * 0.75 && !(m.cool.offer > 0) && Math.random() < 0.06 && root.League && ctx.others) {
+      var of = root.League.makeOffer(save, ctx.me.id, ctx.others.concat([ctx.opp]));
+      if (of) {
+        m.cool.offer = 14;
+        out.push({ kind: 'rumour', who: of.give.name, text: of.city.toUpperCase() + ' CLUB WIRES OFFER STOP WILL SEND ' + of.give.name.toUpperCase() + ' (' + of.give.ratings.ovr + ' OVERALL, ' + (of.give.pos || 'PLAYER') + ', $' + of.give.salary.toLocaleString('en-US') + ') FOR ' + of.want.name.toUpperCase() + ' (' + of.want.ratings.ovr + ', $' + of.want.salary.toLocaleString('en-US') + ') STOP YOUR ANSWER STOP', choices: [
+            { label: 'Accept the swap', fx: { offer: { them: of.themId, give: of.want.id, get: of.give.id } }, say: 'Accepted' },
+            { label: 'Decline', fx: {}, say: 'Declined' }
+          ] });
+      }
     }
 
     var conv = pickConversation(save, ctx, lines, won);
@@ -365,6 +395,8 @@
       rosterMe.forEach(function (p) { var y = pm(save, p.id); y.m = clamp(y.m + fx.team.m); });
       notes.push('Team morale ' + (fx.team.m > 0 ? '+' : '') + fx.team.m);
     }
+    if (fx.inj && root.League) notes.push(root.League.injuryChoice(save, fx.inj.id, fx.inj.mode, save.myId));
+    if (fx.offer && root.League) notes.push(root.League.doOffer(save, save.myId, fx.offer.them, fx.offer.give, fx.offer.get));
     if (fx.coach) { m.coach = clamp(m.coach + fx.coach); notes.push('Coach trust ' + (fx.coach > 0 ? '+' : '') + fx.coach); }
     if (fx.fans) { m.fans = clamp(m.fans + fx.fans); notes.push('Fans ' + (fx.fans > 0 ? '+' : '') + fx.fans); }
     return notes.length ? notes.join(' · ') : c.say;
