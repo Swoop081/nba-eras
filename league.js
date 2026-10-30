@@ -40,6 +40,7 @@
       var age = q.age || 26;
       q.pot = clamp(Math.round(q.ratings.ovr + Math.max(0, 27 - age) * 1.2 + rnd(0, 4)), q.ratings.ovr, 99);
       lg.players.push(q);
+      logDeal(save, q, 'Original deal', q.team);
     });
     teams.forEach(function (t) {
       var list = lg.players.filter(function (p) { return p.team === t.id; });
@@ -149,8 +150,16 @@
     save.lg.players.forEach(function (p) { if (p.status === 'active' && p.team) p.yrs = Math.max(0, p.yrs - 1); });
   }
 
+  function logDeal(save, p, how, teamId) {
+    var d = p.deals || (p.deals = []);
+    d.push({ y: save.year, s: p.salary, n: p.yrs, t: teamId === undefined ? p.team : teamId, h: how });
+    if (d.length > 14) d.shift();
+  }
+
   function sign(save, p, teamId, salary, years) {
+    var how = p.team === teamId && p.status === 'active' ? 'Re-signed' : 'Signed';
     p.team = teamId; p.salary = salary; p.yrs = years; p.status = 'active';
+    logDeal(save, p, how);
     bump(save);
   }
 
@@ -164,7 +173,7 @@
       if (t.id === myId) return;
       rosterOf(save, t.id).forEach(function (p) {
         if (p.yrs > 0) return;
-        if (p.ratings.ovr >= 50 && Math.random() < 0.8) { p.salary = salaryFor(p.ratings.ovr); p.yrs = 1 + Math.floor(Math.random() * 3); }
+        if (p.ratings.ovr >= 50 && Math.random() < 0.8) { p.salary = salaryFor(p.ratings.ovr); p.yrs = 1 + Math.floor(Math.random() * 3); logDeal(save, p, 'Re-signed'); }
         else { p.team = null; }
       });
     });
@@ -310,6 +319,7 @@
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
     else { p.salary = Math.max(1000, salaryFor(p.ratings.ovr) - 500); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    logDeal(save, p, d.kind === 'dispersal' ? 'Dispersal pick' : 'Drafted, pick ' + slot.pick, slot.team);
     slot.player = p.id;
     if (!byId(save, p.id)) save.lg.players.push(p);
     d.at++;
@@ -358,8 +368,8 @@
   }
 
   function executeTrade(save, meId, themId, give, get) {
-    give.forEach(function (p) { p.team = themId; });
-    get.forEach(function (p) { p.team = meId; });
+    give.forEach(function (p) { p.team = themId; logDeal(save, p, 'Traded', themId); });
+    get.forEach(function (p) { p.team = meId; logDeal(save, p, 'Traded', meId); });
     bump(save);
   }
 
@@ -401,6 +411,7 @@
         var r = Math.random();
         var n = r < 0.55 ? 2 + Math.floor(Math.random() * 4) : r < 0.85 ? 6 + Math.floor(Math.random() * 7) : r < 0.97 ? 13 + Math.floor(Math.random() * 13) : 30 + Math.floor(Math.random() * 30);
         p.inj = n;
+        (p.injHist || (p.injHist = [])).push({ y: save.year, d: save.day || 0, n: n, t: teamId });
         hurt.push({ id: p.id, name: p.name, team: teamId, games: n });
       }
     });

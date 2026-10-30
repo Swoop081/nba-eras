@@ -392,7 +392,7 @@
 
   /* ---------- player profile ---------- */
   var PV = null;
-  var PTABS = ['Overview', 'Season', 'Game log', 'Shooting', 'Ratings', 'Career'];
+  var PTABS = ['Overview', 'Season', 'Game log', 'Shooting', 'Ratings', 'Career', 'Contract', 'Injuries', 'Awards'];
   var RGROUPS = [
     ['Offence', [['Scoring', 'sco'], ['Shooting', 'sht'], ['Free throws', 'ft'], ['Three-pointers', 'tpt'], ['Playmaking', 'ply'], ['Ball security', 'tov'], ['Off. rebounding', 'orb']]],
     ['Defence', [['Def. rebounding', 'drb'], ['Steals', 'stl'], ['Blocks', 'blk'], ['Discipline', 'fou']]],
@@ -520,7 +520,7 @@
     head.appendChild(tx);
     head.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
     body.appendChild(head);
-    var fn = { 'Overview': pvOverview, 'Season': pvSeason, 'Game log': pvLog, 'Shooting': pvShooting, 'Ratings': pvRatings, 'Career': pvCareer }[PV.tab];
+    var fn = { 'Overview': pvOverview, 'Season': pvSeason, 'Game log': pvLog, 'Shooting': pvShooting, 'Ratings': pvRatings, 'Career': pvCareer, 'Contract': pvContract, 'Injuries': pvInjuries, 'Awards': pvAwards }[PV.tab];
     fn(body, p, team);
   }
   function pvSub(name, def) { return PV.sub[name] || def; }
@@ -681,6 +681,47 @@
       });
     });
     body.appendChild(el('p', 'sub', 'The number in brackets is the gap to the average ' + ({ G: 'guard', F: 'forward', C: 'centre' }[grp(p)]) + ' in the league.'));
+  }
+
+  function pvContract(body, p) {
+    var tm = function (id) { return id ? oppName(id) : 'Free agent'; };
+    body.appendChild(el('div', 'group-title', 'Current deal'));
+    body.appendChild(boxes([['Salary', money(p.salary)], ['Years left', p.yrs <= 0 ? 'Expiring' : String(p.yrs)], ['Worth', money(League.salaryFor(p.ratings.ovr))], ['Cap share', Math.round(100 * p.salary / save.lg.cap) + '%']]));
+    var diff = p.salary - League.salaryFor(p.ratings.ovr);
+    body.appendChild(el('p', 'sub', diff > 400 ? 'Paid about ' + money(diff) + ' above his market value.' : diff < -400 ? 'A bargain: ' + money(-diff) + ' below his market value.' : 'Paid close to his market value.'));
+    if (p.team === save.myId) {
+      var trust = Events.pm(save, p.id).t;
+      body.appendChild(el('p', 'sub', 'Asking about ' + money(League.ask(save, p, trust)) + ' a year at his next contract' + (trust < 40 ? ', and he is unhappy with you.' : '.')));
+    }
+    var deals = (p.deals || []).slice().reverse();
+    body.appendChild(el('div', 'group-title', 'Contract history'));
+    if (!deals.length) { body.appendChild(el('p', 'sub', 'No contract history yet.')); return; }
+    body.appendChild(dataTable(['Year', 'Club', 'Deal', 'Salary', 'Yrs'], deals.map(function (d) { return [seasonLabel(d.y), tm(d.t), d.h, money(d.s), d.n]; })));
+  }
+
+  function pvInjuries(body, p) {
+    var dur = p.ratings.dur || 60, hist = p.injHist || [];
+    body.appendChild(el('div', 'group-title', 'Status'));
+    var cc = el('div', 'stat-card');
+    cc.appendChild(el('p', 'sub', p.inj > 0 ? 'Injured. Out for ' + p.inj + (p.inj === 1 ? ' more game.' : ' more games.') : 'Healthy and available.'));
+    body.appendChild(cc);
+    var missed = hist.reduce(function (a, h) { return a + h.n; }, 0);
+    body.appendChild(boxes([['Durability', String(dur)], ['Injuries', String(hist.length)], ['Games out', String(missed)], ['Risk', dur >= 75 ? 'Low' : dur >= 45 ? 'Average' : 'High']]));
+    body.appendChild(el('div', 'group-title', 'History'));
+    if (!hist.length) { body.appendChild(el('p', 'sub', 'No injuries on record.')); return; }
+    body.appendChild(dataTable(['Season', 'Game', 'Out', 'Severity'], hist.slice().reverse().map(function (h) {
+      return [seasonLabel(h.y), h.d ? 'day ' + h.d : '\u2013', h.n + ' games', h.n < 6 ? 'Minor' : h.n < 13 ? 'Moderate' : h.n < 30 ? 'Serious' : 'Season-threatening'];
+    })));
+    body.appendChild(el('p', 'sub', 'Durability is the rating that keeps him on the floor. Lower numbers get hurt more often.'));
+  }
+
+  function pvAwards(body, p) {
+    var aw = (p.awards || []).slice().reverse();
+    var count = function (n) { return aw.filter(function (x) { return x.a === n; }).length; };
+    body.appendChild(boxes([['Titles', String(count('League champion'))], ['MVP', String(count('Most Valuable Player'))], ['All-League', String(count('All-League First Team') + count('All-League Second Team'))], ['Leader', String(count('Scoring champion') + count('Assists leader'))]]));
+    body.appendChild(el('div', 'group-title', 'Honours'));
+    if (!aw.length) { body.appendChild(el('p', 'sub', 'No honours yet. They are handed out when each season ends: MVP, scoring and assist titles, All-League teams and the championship.')); return; }
+    body.appendChild(dataTable(['Season', 'Honour'], aw.map(function (x) { return [seasonLabel(x.y), x.a]; })));
   }
 
   function pvCareer(body, p) {
@@ -1894,6 +1935,18 @@
       title: titleLeader(), allLeague: allLeague()
     };
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null });
+    (function () {
+      function award(id, name) { var q = League.byId(save, id); if (q) (q.awards || (q.awards = [])).push({ y: save.year, a: name }); }
+      if (review.mvp) award(review.mvp.id, 'Most Valuable Player');
+      if (review.pts[0]) award(review.pts[0].id, 'Scoring champion');
+      if (review.ast[0]) award(review.ast[0].id, 'Assists leader');
+      review.allLeague.first.forEach(function (x) { award(x.id, 'All-League First Team'); });
+      review.allLeague.second.forEach(function (x) { award(x.id, 'All-League Second Team'); });
+      if (save.champion) save.lg.players.forEach(function (q) {
+        var x = save.lg.stats[q.id];
+        if (q.status === 'active' && q.team === save.champion && x && x.g) award(q.id, 'League champion');
+      });
+    })();
     Object.keys(save.lg.stats).forEach(function (id) {
       var x = save.lg.stats[id], p = League.byId(save, id);
       if (!p || !x.g) return;
