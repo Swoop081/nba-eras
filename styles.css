@@ -101,9 +101,9 @@ body[data-era-filter="on"] .avatar img{filter:grayscale(1) contrast(1.1)}
 
 body[data-screen="screen-title"][data-phase="modern"]{--grain:.03}
 body[data-screen="screen-title"][data-phase="nineties"]{--grain:.24}
-body[data-screen="screen-title"][data-phase="bw"]{--grain:.3}
+body[data-screen="screen-title"][data-phase="bw"]{--grain:.1}
 body[data-screen="screen-title"].flicker{--grain:.6}
-body[data-era-filter="on"]:not([data-screen="screen-title"]){--grain:.07}
+body[data-era-filter="on"]:not([data-screen="screen-title"]){--grain:0}
 body[data-era-filter="off"]:not([data-screen="screen-title"]){--grain:0}
 
 body[data-screen="screen-title"][data-phase="nineties"] #scan{opacity:.75}
@@ -133,4 +133,9 @@ body.flicker #sweep{animation:sweepmove .7s ease-in}
 }
 
 /* Logos with dark artwork stay readable on the dark modern theme */
-body[data-era-filter="off"] .badge img{background:#E6DCC6;border-radius:50%}
+body[data-era-filter="off"] .badge.has-logo img{background:#E6DCC6;border-radius:8px;padding:3px}
+
+/* Real logos: no circle, nothing cropped, full shape shown */
+.badge.has-logo{width:64px;height:64px;border:0;border-radius:0;overflow:visible}
+.badge.big.has-logo{width:150px;height:150px}
+.badge.has-logo img{object-fit:contain}

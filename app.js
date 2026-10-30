@@ -258,6 +258,7 @@
       badge.textContent = '';
       badge.style.background = 'transparent';
       badge.style.borderColor = 'transparent';
+      badge.classList.add('has-logo');
       badge.appendChild(img);
     };
     img.onerror = function () { next(); };
