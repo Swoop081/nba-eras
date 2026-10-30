@@ -28,6 +28,30 @@
   }
 
   /* ---------- creation ---------- */
+  /* Opening night: every club carries the same number of players. Extras go to the free-agent pool; short clubs sign from it. */
+  function openingRosters(lg, teams) {
+    teams.forEach(function (t) {
+      lg.players.filter(function (p) { return p.team === t.id && p.status === 'active'; })
+        .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })
+        .slice(OPENING_ROSTER).forEach(function (p) { p.team = null; });
+    });
+    var guard = 0, short = true;
+    while (short && guard++ < 40) {
+      short = false;
+      teams.forEach(function (t) {
+        var list = lg.players.filter(function (p) { return p.team === t.id && p.status === 'active'; });
+        if (list.length >= OPENING_ROSTER) return;
+        short = true;
+        var pay = list.reduce(function (a, p) { return a + p.salary; }, 0);
+        var fa = lg.players.filter(function (p) { return !p.team && p.status === 'active'; })
+          .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
+        if (!fa) { short = false; return; }
+        fa.team = t.id; fa.yrs = 1 + Math.floor(Math.random() * 2);
+        fa.salary = Math.min(fa.salary, Math.max(1000, lg.cap - pay));
+      });
+    }
+  }
+
   function init(save, players, teams) {
     var lg = { rev: 0, cap: capFor(save.year), players: [], stats: {}, history: [], year: save.year, draft: null, off: null };
     players.forEach(function (p) {
@@ -52,27 +76,7 @@
         list.forEach(function (p) { if (!p.known) p.salary = Math.max(1000, round100(p.salary * f)); });
       }
     });
-    /* Opening night: every club carries the same number of players. Extras go to the free-agent pool; short clubs sign from it. */
-    teams.forEach(function (t) {
-      lg.players.filter(function (p) { return p.team === t.id; })
-        .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })
-        .slice(OPENING_ROSTER).forEach(function (p) { p.team = null; });
-    });
-    var guard = 0, short = true;
-    while (short && guard++ < 40) {
-      short = false;
-      teams.forEach(function (t) {
-        var list = lg.players.filter(function (p) { return p.team === t.id; });
-        if (list.length >= OPENING_ROSTER) return;
-        short = true;
-        var pay = list.reduce(function (a, p) { return a + p.salary; }, 0);
-        var fa = lg.players.filter(function (p) { return !p.team && p.status === 'active'; })
-          .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
-        if (!fa) { short = false; return; }
-        fa.team = t.id; fa.yrs = 1 + Math.floor(Math.random() * 2);
-        fa.salary = Math.min(fa.salary, Math.max(1000, lg.cap - pay));
-      });
-    }
+    openingRosters(lg, teams);
     save.lg = lg;
     ensurePicks(save, teams);
   }
@@ -686,7 +690,7 @@
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
-    init: init, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
+    init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf

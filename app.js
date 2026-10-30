@@ -145,6 +145,7 @@
   /* ---------- era select ---------- */
   var ERAS = [
     { id: '1946', years: '1946-47', title: 'The Founding Season', blurb: 'The Basketball Association of America, the league the NBA counts as its first. 11 teams, 60 games, no shot clock and a $55,000 team salary cap.', open: true, teams: 'data/teams-1946.json', players: 'data/players-1946.json' },
+    { id: '1946s2', years: '1947-48', title: 'Season Two', blurb: 'Start on opening night of 1947-48. The real 1946-47 season is on the record, four clubs have folded and the Baltimore Bullets have joined. See who improved and who declined.', open: true, second: true, teams: 'data/teams-1946.json', players: 'data/players-1946.json' },
     { years: '1950s-60s', title: 'The Shot Clock Era', blurb: 'Locked for now' },
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
@@ -247,7 +248,7 @@
      If none exists the coloured initials badge stays. */
   function applyLogo(badge, team) {
     var base = 'assets/logos/' + team.id;
-    var era = currentEra ? currentEra.id : '';
+    var era = currentEra ? currentEra.id.replace(/s\d+$/, '') : '';
     var urls = [];
     if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
     urls.push(base + '.png', base + '.svg');
@@ -282,8 +283,8 @@
         card.appendChild(makeBadge(team, false));
         var text = el('span');
         text.appendChild(el('strong', null, team.city + ' ' + team.name));
-        text.appendChild(el('span', 'meta', 'In history: ' + team.w + '-' + team.l + ', ' + ordinal(rank) + ' in the ' + div));
-        if (team.id === data.champion) text.appendChild(el('span', 'tag', 'Won the first title'));
+        text.appendChild(el('span', 'meta', team.isNew ? 'New club this season' : (data.second ? 'Last season: ' : 'In history: ') + team.w + '-' + team.l + (data.second ? '' : ', ' + ordinal(rank) + ' in the ' + div)));
+        if (team.id === data.champion) text.appendChild(el('span', 'tag', data.second ? 'Reigning champions' : 'Won the first title'));
         else if (team.id === data.runnerUp) text.appendChild(el('span', 'tag', 'Lost the final'));
         card.appendChild(text);
         card.addEventListener('click', function () {
@@ -299,7 +300,78 @@
     });
   }
 
+  /* Opening night of the second season, built from the real first season: history is recorded, clubs fold and join, rosters are rebuilt. */
+  function buildSeasonTwo(cb, fail) {
+    var base = ERAS.filter(function (e) { return e.id === '1946'; })[0];
+    Promise.all([fetch(base.teams).then(function (r) { return r.json(); }), fetch(base.players).then(function (r) { return r.json(); }), fetch('data/draft-1947.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; }).catch(function () { return { prospects: [] }; })])
+      .then(function (res) {
+        var data = res[0], pl = res[1], draft = res[2];
+        seasons['1946'] = data; seasons['1946s2'] = data;
+        playersByEra['1946'] = pl;
+        var keep = currentEra; currentEra = base;
+        building = true;
+        try {
+          var tmp = 'philadelphia-warriors';
+          save = Season.create('1946', 1946, data.teams, tmp, 60);
+          League.init(save, pl.players, data.teams);
+          ensureTm();
+          data.teams.forEach(function (t) { save.rec[t.id] = { w: t.w, l: t.l }; });
+          save.lg.players.forEach(function (p) {
+            if (p.g > 0) save.lg.stats[p.id] = { g: p.g, min: 0, pts: p.pts || 0, ast: p.ast || 0, trb: 0, stl: 0, blk: 0, tov: 0, pf: p.pf || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 };
+          });
+          save.phase = 'done'; save.champion = data.champion;
+          startOffseason(true);
+          // only facts we know stay as honours: the title and the scoring and assist leaders
+          save.lg.players.forEach(function (p) {
+            if (p.awards) p.awards = p.awards.filter(function (x) { return x.a !== 'Most Valuable Player' && x.a.indexOf('All-League') < 0; });
+          });
+          save.lg.history.forEach(function (h) { h.mvp = null; });
+          save.lg.players.forEach(function (p) { (p.career || []).forEach(function (c) { c.real = true; }); });
+          applyFates();
+          save.myId = null;
+          var d = save.lg.draft;
+          function finishPool() {
+            d.pool.forEach(function (p) {
+              if (p.status !== 'prospect') return;
+              p.status = 'active'; p.team = null; p.salary = League.salaryFor(p.ratings.ovr); p.yrs = 1;
+              if (!League.byId(save, p.id)) save.lg.players.push(p);
+            });
+          }
+          while (d && d.at < d.picks.length) League.aiPick(save);
+          if (d) finishPool();
+          var teams = save.ids.map(teamById);
+          League.aiReSign(save, teams, null);
+          League.startDraft(save, teams, draft.prospects, 5);
+          d = save.lg.draft;
+          while (d.at < d.picks.length) League.aiPick(save);
+          finishPool();
+          League.aiRosterPass(save, teams, null);
+          League.openingRosters(save.lg, teams);
+          save.off = null;
+        } catch (e) { building = false; currentEra = keep; if (fail) fail(e); return; }
+        building = false; currentEra = keep;
+        cb(save);
+      }).catch(function (e) { if (fail) fail(e); });
+  }
+  var s2 = null;
+
   function openTeams(era) {
+    if (era.second) {
+      currentEra = era; selected = null; dock.hidden = true;
+      teamSub.textContent = era.years;
+      show('screen-team');
+      teamList.textContent = 'Building the 1947-48 league: ageing the players, folding four clubs, running the dispersal and the draft...';
+      buildSeasonTwo(function (sv) {
+        s2 = sv;
+        var data = {
+          divisions: ['Eastern', 'Western'], second: true, champion: seasons['1946'].champion, runnerUp: seasons['1946'].runnerUp,
+          teams: sv.ids.map(function (id) { var t = Object.assign({}, sv.tm[id]); var old = seasons['1946'].teams.filter(function (x) { return x.id === id; })[0]; t.w = old ? old.w : 0; t.l = old ? old.l : 0; t.isNew = !old; return t; })
+        };
+        teamSub.textContent = era.years + ' \u00B7 ' + data.teams.length + ' teams';
+        renderTeams(data);
+      }, function () { teamList.textContent = 'Could not build the league. Open the game from its web address, not as a local file.'; });
+      return;
+    }
     currentEra = era;
     selected = null;
     dock.hidden = true;
@@ -332,10 +404,11 @@
     holder.appendChild(crest(selected, true));
     applyLogo(holder, selected);
     document.getElementById('ready-name').textContent = selected.city + ' ' + selected.name;
-    document.getElementById('ready-line').textContent =
-      'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
+    document.getElementById('ready-line').textContent = currentEra.second
+      ? (selected.isNew ? 'A brand new club for the 1947-48 season. Opening night is next.' : 'Last season this club went ' + selected.w + '-' + selected.l + '. Opening night of 1947-48 is next.')
+      : 'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
     store.set('team', selected.id);
-    buildFatesBox();
+    if (currentEra.second) { var ob = document.getElementById('fates-box'); if (ob) ob.parentNode.removeChild(ob); } else buildFatesBox();
     show('screen-ready');
   });
 
@@ -736,7 +809,7 @@
       var f = function (k) { return mode === 'Totals' ? String(x[k] || 0) : f1(x[k] || 0, g); };
       rows.push([label, t, g, f('pts'), f('ast'), pctS(x.fg, x.fga), pctS(x.ft, x.fta)]);
     }
-    if (p.g) row('Last season', '', { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 });
+    if (p.g && !(p.career || []).some(function (c) { return c.real; })) row('Real 1946-47', '', { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 });
     (p.career || []).forEach(function (c) { row(seasonLabel(c.y), c.t ? oppName(c.t) : '', c); });
     var cur = save.lg.stats[p.id];
     if (cur && cur.g) row(seasonLabel(save.year), p.team ? oppName(p.team) : '', cur);
@@ -922,7 +995,8 @@
   var save = null;
   var pendingAfterMatch = false;
   var rosterCache = {};
-  function persist() { store.set('save', save); }
+  var building = false;
+  function persist() { if (!building) store.set('save', save); }
   function teamById(id) {
     if (save && save.tm && save.tm[id]) return save.tm[id];
     return seasons[currentEra.id].teams.filter(function (t) { return t.id === id; })[0];
@@ -982,6 +1056,16 @@
   function eraStart(id) { return ERAS.filter(function (e) { return e.id === id; })[0]; }
 
   function startSeason() {
+    if (currentEra.second) {
+      if (!s2) return;
+      save = s2; s2 = null;
+      save.myId = selected.id;
+      var old = seasons['1946'].teams.filter(function (x) { return x.id === selected.id; })[0];
+      save.lg.history.forEach(function (h) { h.rec = old ? old.w + '-' + old.l : ''; });
+      currentEra = ERAS.filter(function (e) { return e.id === '1946'; })[0];
+      startNextSeason();
+      return;
+    }
     var data = seasons[currentEra.id];
     loadPlayers(function (pl) {
       if (!pl) return;
@@ -2111,7 +2195,7 @@
     return { first: list.slice(0, 5), second: list.slice(5, 10) };
   }
 
-  function startOffseason() {
+  function startOffseason(silent) {
     var me = teamById(save.myId);
     var best = null;
     League.leaders(save, 'pts', 20, 15).forEach(function (r) {
@@ -2158,6 +2242,7 @@
     var hist = History.get(save.year);
     if (hist.length) save.off.fates = hist.map(function (d) { return { id: d.id, choice: 'history', res: {}, applied: false }; });
     rosterCache = {};
+    if (silent) return;
     persist();
     openOff();
   }
