@@ -1887,7 +1887,7 @@
 
   /* ---------- records and history ---------- */
   var RV = { tab: 'Champions' };
-  var RTABS = ['Champions', 'Game highs', 'Season highs', 'Career', 'Honours'];
+  var RTABS = ['Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
   function openRecords() { RV.tab = RV.tab || 'Champions'; renderRecords(); show('screen-records'); }
   function renderRecords() {
     var v = League.recordsView(save), body = document.getElementById('records-body'), tabs = document.getElementById('records-tabs');
@@ -1908,6 +1908,19 @@
       section('Most championships', ['#', 'Club', 'Titles', 'Years'], v.teamTitles.map(function (x, i) { return [i + 1, city(x.id), x.n, x.years.map(function (y) { return seasonLabel(y).slice(-5); }).join(', ')]; }), 'No champions yet. The first one is crowned at the end of this season.');
       section('Most titles by a player', ['#', 'Player', 'Titles'], v.playerTitles.map(function (x, i) { return [i + 1, plr(x.p), x.n]; }), 'No player has won a title yet.');
       section('Champions by year', ['Season', 'Champion', 'Your club'], v.byYear.map(function (h) { return [seasonLabel(h.year), city(h.champion), h.rec || '']; }));
+    } else if (RV.tab === 'My legacy') {
+      var hs = (save.lg.history || []).filter(function (h) { return h.me; }), W = 0, L = 0, T = 0, P = 0, best = null;
+      hs.forEach(function (h) {
+        var m = /^(\d+)-(\d+)$/.exec(h.rec || ''); if (m) { W += +m[1]; L += +m[2]; var pc = +m[1] / Math.max(1, +m[1] + +m[2]); if (!best || pc > best.pc) best = { pc: pc, rec: h.rec, y: h.year }; }
+        if (h.champion === h.me) T++;
+        if (h.po) P++;
+      });
+      var tile = el('div', 'stat-card');
+      [['Titles', T], ['Seasons', hs.length], ['Playoffs', P], ['Record', W + '-' + L], ['Best', best ? best.rec + ' (' + seasonLabel(best.y).slice(-5) + ')' : '\u2013']].forEach(function (k) {
+        var r = el('div', 'row'); r.style.justifyContent = 'space-between'; r.appendChild(el('span', null, k[0])); r.appendChild(el('strong', null, String(k[1]))); tile.appendChild(r);
+      });
+      body.appendChild(tile);
+      section('Your seasons', ['Season', 'Record', 'Result'], hs.slice().reverse().map(function (h) { return [seasonLabel(h.year), h.rec, h.champion === h.me ? 'Champions' : h.po ? 'Playoffs' : 'Missed']; }), 'Your first season is still to be played.');
     } else if (RV.tab === 'Game highs') {
       var names = { pts: 'Most points in a game', ast: 'Most assists in a game', trb: 'Most rebounds in a game', fg: 'Most field goals in a game', ft: 'Most free throws in a game', stl: 'Most steals in a game', blk: 'Most blocks in a game' };
       Object.keys(names).forEach(function (k) {
@@ -3233,7 +3246,7 @@
       mvp: best ? { id: best.p.id, name: best.p.name } : null,
       title: titleLeader(), allLeague: allLeague(), recap: buildRecap(), owner: judgeOwner()
     };
-    save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null });
+    save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null, me: save.myId, po: madePlayoffs() });
     (function () {
       function award(id, name) { var q = League.byId(save, id); if (q) (q.awards || (q.awards = [])).push({ y: save.year, a: name }); }
       if (review.mvp) award(review.mvp.id, 'Most Valuable Player');

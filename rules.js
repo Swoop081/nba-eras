@@ -20,9 +20,16 @@
       playoffs: 'The best clubs by record qualify and meet in short series that grow longer each round, ending in a best-of-seven Finals.',
       notes: ['Four 12-minute quarters', '24-second shot clock', 'Six personal fouls and you are out', 'Players are paid by their club, no league cap']
     },
+    1954: {
+      kind: 'div3',
+      playoffs: 'The top three clubs in each division qualify. The division winner gets a bye; seconds and thirds meet in a short series, then division finals and the Finals are best-of-seven.'
+    },
     1956: { games: 72 },
     1961: { games: 79 },
-    1967: { games: 81 },
+    1967: {
+      games: 81, kind: 'div4x',
+      playoffs: 'The top four clubs in each division qualify: first plays fourth and second plays third, every round a best-of-seven through the Finals.'
+    },
     1968: { games: 82 },
     1976: {
       games: 82, kind: 'nba12', firstBest: 3,
