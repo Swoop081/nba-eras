@@ -1,5 +1,434 @@
 index failed: https://stats.nba.com/stats/commonallplayers The read operation timed out
 index failed: https://stats.nba.com/stats/playerindex The read operation timed out
 box score route failed: HTTP Error 403: Forbidden
-players page failed: HTTP Error 403: Forbidden
-Could not load the NBA player list. Open https://www.nba.com/players once in your browser, then retry.
+no photo Nikola Jokic %d format: a real number is required, not str
+no photo Luka Dončić %d format: a real number is required, not str
+no id for Shai Gilgeous-Alexander
+no photo Giannis Antetokounmpo %d format: a real number is required, not str
+no photo Anthony Edwards %d format: a real number is required, not str
+no photo Victor Wembanyama %d format: a real number is required, not str
+no id for Jayson Tatum
+no id for Donovan Mitchell
+no id for Cade Cunningham
+no id for Kevin Durant
+no photo Jalen Brunson %d format: a real number is required, not str
+no photo Paolo Banchero %d format: a real number is required, not str
+no photo Tyrese Maxey %d format: a real number is required, not str
+no photo Devin Booker %d format: a real number is required, not str
+no photo Jalen Johnson %d format: a real number is required, not str
+no photo Tyrese Haliburton %d format: a real number is required, not str
+no photo Stephen Curry %d format: a real number is required, not str
+no photo Joel Embiid %d format: a real number is required, not str
+no photo Domantas Sabonis %d format: a real number is required, not str
+no photo Alperen Sengun %d format: a real number is required, not str
+no photo Karl-Anthony Towns %d format: a real number is required, not str
+no id for Jaylen Brown
+no photo Cooper Flagg %d format: a real number is required, not str
+no photo Jamal Murray %d format: a real number is required, not str
+no photo Chet Holmgren %d format: a real number is required, not str
+no photo Jalen Williams %d format: a real number is required, not str
+no photo Kawhi Leonard %d format: a real number is required, not str
+no photo Anthony Davis %d format: a real number is required, not str
+no photo Trae Young %d format: a real number is required, not str
+no photo Evan Mobley %d format: a real number is required, not str
+no photo Amen Thompson %d format: a real number is required, not str
+no photo Bam Adebayo %d format: a real number is required, not str
+no photo LeBron James %d format: a real number is required, not str
+no photo Ja Morant %d format: a real number is required, not str
+no photo James Harden %d format: a real number is required, not str
+no photo Zion Williamson %d format: a real number is required, not str
+no photo Deni Avdija %d format: a real number is required, not str
+no photo De'Aaron Fox %d format: a real number is required, not str
+no photo Scottie Barnes %d format: a real number is required, not str
+no photo Lauri Markkanen %d format: a real number is required, not str
+no photo Michael Porter Jr. %d format: a real number is required, not str
+no photo Julius Randle %d format: a real number is required, not str
+no photo Brandon Miller %d format: a real number is required, not str
+no photo Kyrie Irving %d format: a real number is required, not str
+no photo Pascal Siakam %d format: a real number is required, not str
+no photo Austin Reaves %d format: a real number is required, not str
+no id for LaMelo Ball
+no photo OG Anunoby %d format: a real number is required, not str
+no photo Desmond Bane %d format: a real number is required, not str
+no photo Franz Wagner %d format: a real number is required, not str
+no photo Jaren Jackson Jr. %d format: a real number is required, not str
+no photo Jarrett Allen %d format: a real number is required, not str
+no photo Darius Garland %d format: a real number is required, not str
+no photo Tyler Herro %d format: a real number is required, not str
+no id for Derrick White
+no photo Aaron Gordon %d format: a real number is required, not str
+no photo Jabari Smith Jr. %d format: a real number is required, not str
+no photo Ivica Zubac %d format: a real number is required, not str
+no photo Damian Lillard %d format: a real number is required, not str
+no photo Zach LaVine %d format: a real number is required, not str
+no photo Stephon Castle %d format: a real number is required, not str
+no photo Paul George %d format: a real number is required, not str
+no photo Norman Powell %d format: a real number is required, not str
+no photo Jalen Duren %d format: a real number is required, not str
+no photo Trey Murphy III %d format: a real number is required, not str
+no photo Jalen Green %d format: a real number is required, not str
+no photo Dylan Harper %d format: a real number is required, not str
+no photo Keyonte George %d format: a real number is required, not str
+no photo Dyson Daniels %d format: a real number is required, not str
+no photo Naz Reid %d format: a real number is required, not str
+no photo DeMar DeRozan %d format: a real number is required, not str
+no photo Mikal Bridges %d format: a real number is required, not str
+no photo Ajay Mitchell %d format: a real number is required, not str
+no photo Nickeil Alexander-Walker %d format: a real number is required, not str
+no photo Onyeka Okongwu %d format: a real number is required, not str
+no photo Cameron Boozer %d format: a real number is required, not str
+no id for Myles Turner
+no photo Rudy Gobert %d format: a real number is required, not str
+no photo Jaden McDaniels %d format: a real number is required, not str
+no photo Dejounte Murray %d format: a real number is required, not str
+no photo Miles Bridges %d format: a real number is required, not str
+no photo Jrue Holiday %d format: a real number is required, not str
+no photo Immanuel Quickley %d format: a real number is required, not str
+no photo Josh Giddey %d format: a real number is required, not str
+no photo Fred VanVleet %d format: a real number is required, not str
+no photo Andrew Nembhard %d format: a real number is required, not str
+no photo Ty Jerome %d format: a real number is required, not str
+no photo Josh Hart %d format: a real number is required, not str
+no photo Donovan Clingan %d format: a real number is required, not str
+no photo Devin Vassell %d format: a real number is required, not str
+no photo Darryn Peterson %d format: a real number is required, not str
+no id for Alex Sarr
+no photo AJ Dybantsa %d format: a real number is required, not str
+no photo CJ McCollum %d format: a real number is required, not str
+no photo Grayson Allen %d format: a real number is required, not str
+no photo Peyton Watson %d format: a real number is required, not str
+no id for P.J. Washington
+no photo Cameron Johnson %d format: a real number is required, not str
+no photo Ausar Thompson %d format: a real number is required, not str
+no photo Walker Kessler %d format: a real number is required, not str
+no photo Jerami Grant %d format: a real number is required, not str
+no photo Cedric Coward %d format: a real number is required, not str
+no photo Zach Edey %d format: a real number is required, not str
+no photo Jaime Jaquez Jr. %d format: a real number is required, not str
+no photo Jonathan Kuminga %d format: a real number is required, not str
+no photo Herbert Jones %d format: a real number is required, not str
+no photo Jordan Poole %d format: a real number is required, not str
+no photo Isaiah Hartenstein %d format: a real number is required, not str
+no photo Alex Caruso %d format: a real number is required, not str
+no photo Jalen Suggs %d format: a real number is required, not str
+no id for VJ Edgecombe
+no photo Toumani Camara %d format: a real number is required, not str
+no photo De'Andre Hunter %d format: a real number is required, not str
+no id for Jakob Poeltl
+no photo Matas Buzelis %d format: a real number is required, not str
+no photo Caleb Wilson %d format: a real number is required, not str
+no photo Christian Braun %d format: a real number is required, not str
+no photo Yaxel Lendeborg %d format: a real number is required, not str
+no photo Brandin Podziemski %d format: a real number is required, not str
+no photo Tari Eason %d format: a real number is required, not str
+no photo Reed Sheppard %d format: a real number is required, not str
+no photo Ryan Rollins %d format: a real number is required, not str
+no photo Kel'el Ware %d format: a real number is required, not str
+no photo Derik Queen %d format: a real number is required, not str
+no photo Dillon Brooks %d format: a real number is required, not str
+no photo Deandre Ayton %d format: a real number is required, not str
+no photo Duncan Robinson %d format: a real number is required, not str
+no photo Aaron Nesmith %d format: a real number is required, not str
+no photo Obi Toppin %d format: a real number is required, not str
+no photo Klay Thompson %d format: a real number is required, not str
+no photo Andrew Wiggins %d format: a real number is required, not str
+no photo Bennedict Mathurin %d format: a real number is required, not str
+no photo Wendell Carter Jr. %d format: a real number is required, not str
+no photo Keegan Murray %d format: a real number is required, not str
+no photo Dennis Schröder %d format: a real number is required, not str
+no photo Daniel Gafford %d format: a real number is required, not str
+no photo Draymond Green %d format: a real number is required, not str
+no photo Kelly Oubre Jr. %d format: a real number is required, not str
+no id for Brook Lopez
+no photo Keaton Wagler %d format: a real number is required, not str
+no photo Jaylen Wells %d format: a real number is required, not str
+no photo Bobby Portis %d format: a real number is required, not str
+no photo Jeremiah Fears %d format: a real number is required, not str
+no photo Cason Wallace %d format: a real number is required, not str
+no photo Malik Monk %d format: a real number is required, not str
+no photo Ace Bailey %d format: a real number is required, not str
+no photo Bilal Coulibaly %d format: a real number is required, not str
+no photo Kyshawn George %d format: a real number is required, not str
+no photo Mikel Brown Jr. %d format: a real number is required, not str
+no photo Max Christie %d format: a real number is required, not str
+no photo Naji Marshall %d format: a real number is required, not str
+no photo Al Horford %d format: a real number is required, not str
+no photo Collin Sexton %d format: a real number is required, not str
+no photo Davion Mitchell %d format: a real number is required, not str
+no photo Ayo Dosunmu %d format: a real number is required, not str
+no photo Saddiq Bey %d format: a real number is required, not str
+no photo Jared McCain %d format: a real number is required, not str
+no photo Tristan da Silva %d format: a real number is required, not str
+no photo Darius Acuff Jr. %d format: a real number is required, not str
+no photo Julian Champagnie %d format: a real number is required, not str
+no photo Keldon Johnson %d format: a real number is required, not str
+no id for Khris Middleton
+no photo Jalen Smith %d format: a real number is required, not str
+no photo Sam Merrill %d format: a real number is required, not str
+no photo Jaylon Tyson %d format: a real number is required, not str
+no photo Anthony Black %d format: a real number is required, not str
+no photo Luguentz Dort %d format: a real number is required, not str
+no photo Kingston Flemings %d format: a real number is required, not str
+no photo Isaac Okoro %d format: a real number is required, not str
+no photo Mario Hezonja %d format: a real number is required, not str
+no photo Zaccharie Risacher %d format: a real number is required, not str
+no photo Jarace Walker %d format: a real number is required, not str
+no photo Rui Hachimura %d format: a real number is required, not str
+no photo Pelle Larsson %d format: a real number is required, not str
+no id for Kyle Kuzma
+no photo RJ Barrett %d format: a real number is required, not str
+no photo Tre Johnson %d format: a real number is required, not str
+no photo Nolan Traoré %d format: a real number is required, not str
+no photo Egor Dëmin %d format: a real number is required, not str
+no photo Moussa Diabaté %d format: a real number is required, not str
+no photo Derrick Jones Jr. %d format: a real number is required, not str
+no photo Kasparas Jakučionis %d format: a real number is required, not str
+no photo Khaman Maluach %d format: a real number is required, not str
+no photo Precious Achiuwa %d format: a real number is required, not str
+no photo Luke Kornet %d format: a real number is required, not str
+no photo Aaron Wiggins %d format: a real number is required, not str
+no photo Payton Pritchard %d format: a real number is required, not str
+no photo John Collins %d format: a real number is required, not str
+no photo Paul Reed %d format: a real number is required, not str
+no photo Kris Dunn %d format: a real number is required, not str
+no photo Quentin Grimes %d format: a real number is required, not str
+no photo Sandro Mamukelashvili %d format: a real number is required, not str
+no photo Matisse Thybulle %d format: a real number is required, not str
+no photo Ziaire Williams %d format: a real number is required, not str
+no photo Ja'Kobe Walter %d format: a real number is required, not str
+no photo Daniss Jenkins %d format: a real number is required, not str
+no photo Kentavious Caldwell-Pope %d format: a real number is required, not str
+no photo Keon Ellis %d format: a real number is required, not str
+no photo Trevon Brazile %d format: a real number is required, not str
+no photo Gui Santos %d format: a real number is required, not str
+no photo Terrence Shannon Jr. %d format: a real number is required, not str
+no photo Landry Shamet %d format: a real number is required, not str
+no photo Dean Wade %d format: a real number is required, not str
+no id for Harrison Barnes
+no photo Sam Hauser %d format: a real number is required, not str
+no photo Noah Clowney %d format: a real number is required, not str
+no photo Day'Ron Sharpe %d format: a real number is required, not str
+no photo Sion James %d format: a real number is required, not str
+no photo Tyrese Proctor %d format: a real number is required, not str
+no photo Isaiah Jackson %d format: a real number is required, not str
+no photo Kobe Sanders %d format: a real number is required, not str
+no photo Anfernee Simons %d format: a real number is required, not str
+no photo Collin Gillespie %d format: a real number is required, not str
+no photo Jamal Shead %d format: a real number is required, not str
+no photo Neemias Queta %d format: a real number is required, not str
+no photo Mitchell Robinson %d format: a real number is required, not str
+no photo Leonard Miller %d format: a real number is required, not str
+no photo Alpha Diallo %d format: a real number is required, not str
+no photo De'Anthony Melton %d format: a real number is required, not str
+no id for Marcus Smart
+no photo Jake LaRavia %d format: a real number is required, not str
+no photo A.J. Green %d format: a real number is required, not str
+no photo Miles McBride %d format: a real number is required, not str
+no photo Josh Dix %d format: a real number is required, not str
+no photo Sidy Cissoko %d format: a real number is required, not str
+no id for Mo Bamba
+no photo Jock Landale %d format: a real number is required, not str
+no photo Jordan Walsh %d format: a real number is required, not str
+no photo Chaney Johnson %d format: a real number is required, not str
+no photo Tre Jones %d format: a real number is required, not str
+no photo Marcus Sasser %d format: a real number is required, not str
+no photo Javonte Green %d format: a real number is required, not str
+no photo Quenton Jackson %d format: a real number is required, not str
+no photo Cam Spencer %d format: a real number is required, not str
+no photo Tim Hardaway Jr. %d format: a real number is required, not str
+no photo Yves Missi %d format: a real number is required, not str
+no photo Jordan Goodwin %d format: a real number is required, not str
+no photo Baylor Scheierman %d format: a real number is required, not str
+no photo Moritz Wagner %d format: a real number is required, not str
+no photo Ryan Kalkbrenner %d format: a real number is required, not str
+no photo Meleek Thomas %d format: a real number is required, not str
+no photo Kevin Huerter %d format: a real number is required, not str
+no photo Georges Niang %d format: a real number is required, not str
+no id for Will Richard
+no photo Gradey Dick %d format: a real number is required, not str
+no photo Isaiah Stewart %d format: a real number is required, not str
+no photo Jaylin Williams %d format: a real number is required, not str
+no photo Scoot Henderson %d format: a real number is required, not str
+no photo Robert Williams III %d format: a real number is required, not str
+no photo Daeqwon Plowden %d format: a real number is required, not str
+no photo Bub Carrington %d format: a real number is required, not str
+no photo Justin Champagnie %d format: a real number is required, not str
+no photo Royce O'Neale %d format: a real number is required, not str
+no photo Buddy Hield %d format: a real number is required, not str
+no photo Bryce Hopkins %d format: a real number is required, not str
+no photo Brandon Williams %d format: a real number is required, not str
+no photo Graham Ike %d format: a real number is required, not str
+no photo Larry Nance Jr. %d format: a real number is required, not str
+no photo Jay Huff %d format: a real number is required, not str
+no photo Quinten Post %d format: a real number is required, not str
+no photo Nikola Jović %d format: a real number is required, not str
+no photo Trey Lyles %d format: a real number is required, not str
+no photo DeAndre Jordan %d format: a real number is required, not str
+no photo Trendon Watford %d format: a real number is required, not str
+no photo Jamal Cain %d format: a real number is required, not str
+no photo Jabari Walker %d format: a real number is required, not str
+no photo Jamison Battle %d format: a real number is required, not str
+no photo Collin Murray-Boyles %d format: a real number is required, not str
+no photo Brice Sensabaugh %d format: a real number is required, not str
+no photo Tidjane Salaün %d format: a real number is required, not str
+no photo Isaiah Joe %d format: a real number is required, not str
+no photo Bogdan Bogdanovic %d format: a real number is required, not str
+no photo Jarred Vanderbilt %d format: a real number is required, not str
+no photo Scotty Pippen Jr. %d format: a real number is required, not str
+no photo Joan Beringer %d format: a real number is required, not str
+no photo Karlo Matković %d format: a real number is required, not str
+no photo Tyler Kolek %d format: a real number is required, not str
+no photo Bennett Stirtz %d format: a real number is required, not str
+no photo Jevon Carter %d format: a real number is required, not str
+no photo Luke Kennard %d format: a real number is required, not str
+no photo Emanuel Sharp %d format: a real number is required, not str
+no photo Tobe Awaka %d format: a real number is required, not str
+no photo Morez Johnson Jr. %d format: a real number is required, not str
+no photo Walter Clayton Jr. %d format: a real number is required, not str
+no photo Gary Payton II %d format: a real number is required, not str
+no photo Clint Capela %d format: a real number is required, not str
+no id for GG Jackson II
+no photo Brayden Burries %d format: a real number is required, not str
+no photo Nate Ament %d format: a real number is required, not str
+no photo Andre Drummond %d format: a real number is required, not str
+no photo Aday Mara %d format: a real number is required, not str
+no photo Kenrich Williams %d format: a real number is required, not str
+no photo Ryan Dunn %d format: a real number is required, not str
+no photo Oso Ighodaro %d format: a real number is required, not str
+no photo Jonathan Mogbo %d format: a real number is required, not str
+no photo Allen Graves %d format: a real number is required, not str
+no photo Danny Wolf %d format: a real number is required, not str
+no photo Noa Essengue %d format: a real number is required, not str
+no photo Caleb Martin %d format: a real number is required, not str
+no photo Marvin Bagley III %d format: a real number is required, not str
+no photo Tyus Jones %d format: a real number is required, not str
+no photo Ron Holland II %d format: a real number is required, not str
+no photo Oscar Tshiebwe %d format: a real number is required, not str
+no photo Jalen Slawson %d format: a real number is required, not str
+no photo Ben Sheppard %d format: a real number is required, not str
+no photo Ousmane Dieng %d format: a real number is required, not str
+no photo Jose Alvarado %d format: a real number is required, not str
+no photo Adem Bona %d format: a real number is required, not str
+no photo Luka Garza %d format: a real number is required, not str
+no photo Josh Minott %d format: a real number is required, not str
+no photo Jaylin Sellers %d format: a real number is required, not str
+no photo Baba Miller %d format: a real number is required, not str
+no photo Jordan Clarkson %d format: a real number is required, not str
+no photo Jase Richardson %d format: a real number is required, not str
+no photo Goga Bitadze %d format: a real number is required, not str
+no photo Vit Krejci %d format: a real number is required, not str
+no photo Micah Potter %d format: a real number is required, not str
+no photo Branden Carlson %d format: a real number is required, not str
+no photo Terance Mann %d format: a real number is required, not str
+no photo Zach Collins %d format: a real number is required, not str
+no photo Dailyn Swain %d format: a real number is required, not str
+no photo Sergio de Larrea %d format: a real number is required, not str
+no photo Kevon Looney %d format: a real number is required, not str
+no photo Bones Hyland %d format: a real number is required, not str
+no photo Nikola Vučević %d format: a real number is required, not str
+no photo Trayce Jackson-Davis %d format: a real number is required, not str
+no photo Hugo González %d format: a real number is required, not str
+no photo Drake Powell %d format: a real number is required, not str
+no photo Christian Anderson Jr. %d format: a real number is required, not str
+no photo PJ Hall %d format: a real number is required, not str
+no photo Jordan Hawkins %d format: a real number is required, not str
+no photo Cam Whitmore %d format: a real number is required, not str
+no photo Taurean Prince %d format: a real number is required, not str
+no photo Charles Bassey %d format: a real number is required, not str
+no photo LJ Cryer %d format: a real number is required, not str
+no photo Steven Adams %d format: a real number is required, not str
+no photo Kris Murray %d format: a real number is required, not str
+no photo Dru Smith %d format: a real number is required, not str
+no photo Gary Trent Jr. %d format: a real number is required, not str
+no photo Jaylen Clark %d format: a real number is required, not str
+no photo Duop Reath %d format: a real number is required, not str
+no photo Nique Clifford %d format: a real number is required, not str
+no photo Alex Karaban %d format: a real number is required, not str
+no photo Mike Conley %d format: a real number is required, not str
+no photo Hannes Steinbach %d format: a real number is required, not str
+no photo Craig Porter %d format: a real number is required, not str
+no photo Jalen Pickett %d format: a real number is required, not str
+no photo Jaden Hardy %d format: a real number is required, not str
+no photo James Wiseman %d format: a real number is required, not str
+no photo Colin Castleton %d format: a real number is required, not str
+no photo Alex Morales %d format: a real number is required, not str
+no photo Rasheer Fleming %d format: a real number is required, not str
+no photo Yang Hansen %d format: a real number is required, not str
+no photo Carter Bryant %d format: a real number is required, not str
+no photo Tarris Reed Jr. %d format: a real number is required, not str
+no photo Kyle Filipowski %d format: a real number is required, not str
+no photo Zuby Ejiofor %d format: a real number is required, not str
+no photo Corey Kispert %d format: a real number is required, not str
+no photo Ron Harper Jr. %d format: a real number is required, not str
+no photo Moussa Cisse %d format: a real number is required, not str
+no photo Jett Howard %d format: a real number is required, not str
+no photo Zeke Nnaji %d format: a real number is required, not str
+no photo Cam Christie %d format: a real number is required, not str
+no photo Bryce McGowens %d format: a real number is required, not str
+no photo Brooks Barnhizer %d format: a real number is required, not str
+no photo Micah Peavy %d format: a real number is required, not str
+no photo Labaron Philon Jr. %d format: a real number is required, not str
+no photo Jamaree Bouyea %d format: a real number is required, not str
+no photo Pat Spencer %d format: a real number is required, not str
+no photo Jayson Kent %d format: a real number is required, not str
+no photo John Tonje %d format: a real number is required, not str
+no photo Leaky Black %d format: a real number is required, not str
+no photo Jordan McLaughlin %d format: a real number is required, not str
+no photo Jaden Bradley %d format: a real number is required, not str
+no photo Alijah Martin %d format: a real number is required, not str
+no photo Kyle Anderson %d format: a real number is required, not str
+no id for Svi Mykhailiuk
+no photo Josh Green %d format: a real number is required, not str
+no photo Tony Bradley %d format: a real number is required, not str
+no photo Dorian Finney-Smith %d format: a real number is required, not str
+no photo Liam McNeeley %d format: a real number is required, not str
+no photo DaRon Holmes II %d format: a real number is required, not str
+no photo Ryan Nembhard %d format: a real number is required, not str
+no photo Tolu Smith %d format: a real number is required, not str
+no photo Elijah Harkless %d format: a real number is required, not str
+no photo Jae'Sean Tate %d format: a real number is required, not str
+no photo Bruce Thornton %d format: a real number is required, not str
+no photo Braden Smith %d format: a real number is required, not str
+no photo Nick Martinelli %d format: a real number is required, not str
+no photo Chris Mañon %d format: a real number is required, not str
+no photo Taylor Hendricks %d format: a real number is required, not str
+no photo Simone Fontecchio %d format: a real number is required, not str
+no photo Nick Richards %d format: a real number is required, not str
+no photo Jericho Sims %d format: a real number is required, not str
+no photo Zyon Pullin %d format: a real number is required, not str
+no photo Koa Peat %d format: a real number is required, not str
+no photo Ja'Kobi Gillespie %d format: a real number is required, not str
+no photo Jaxson Hayes %d format: a real number is required, not str
+no photo Josh Okogie %d format: a real number is required, not str
+no photo Felix Okpara %d format: a real number is required, not str
+no photo Ben Saraf %d format: a real number is required, not str
+no photo Ebuka Okorie %d format: a real number is required, not str
+no photo Chaz Lanier %d format: a real number is required, not str
+no photo Malevy Leons %d format: a real number is required, not str
+no photo Isaiah Crawford %d format: a real number is required, not str
+no photo Bronny James %d format: a real number is required, not str
+no photo Olivier-Maxence Prosper %d format: a real number is required, not str
+no photo Ryan Conwell %d format: a real number is required, not str
+no photo Myron Gardner %d format: a real number is required, not str
+no photo Bogoljub Marković %d format: a real number is required, not str
+no photo Jaden Akins %d format: a real number is required, not str
+no photo Isaiah Collier %d format: a real number is required, not str
+no photo Will Riley %d format: a real number is required, not str
+no photo Tre Mann %d format: a real number is required, not str
+no photo Asa Newell %d format: a real number is required, not str
+no photo Chris Cenac Jr. %d format: a real number is required, not str
+no photo Tobi Lawal %d format: a real number is required, not str
+no photo Isaac Jones %d format: a real number is required, not str
+no photo Kobe Brown %d format: a real number is required, not str
+no photo Isaiah Evans %d format: a real number is required, not str
+no photo Cody Williams %d format: a real number is required, not str
+no photo Justin Edwards %d format: a real number is required, not str
+no photo Caleb Love %d format: a real number is required, not str
+no photo Maliq Brown %d format: a real number is required, not str
+no photo David Jones Garcia %d format: a real number is required, not str
+no photo Reece Beekman %d format: a real number is required, not str
+no id for Anthony Gill
+no photo Karim López %d format: a real number is required, not str
+no photo Pacome Dadiet %d format: a real number is required, not str
+no photo Mohamed Diawara %d format: a real number is required, not str
+saved 0, missing 430
