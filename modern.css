@@ -388,3 +388,21 @@ body[data-modern="1"] #trade-body:has(.tlist){display:flex;flex-direction:column
 body[data-modern="1"] #trade-body .ttabs,body[data-modern="1"] #trade-body .tmeter{flex:none}
 body[data-modern="1"] #trade-body .tlist{flex:1;min-height:0;position:relative;overflow:hidden;display:block}
 body[data-modern="1"] #trade-body .tlist .pgr{position:absolute;inset:0}
+
+/* franchise card v2: logo and the name + three stats block share one height */
+body[data-modern="1"] .fc-top{display:grid;grid-template-columns:auto 1fr;align-items:stretch;gap:12px}
+body[data-modern="1"] .fc-top .badge.has-logo,body[data-modern="1"] .fc-top .badge:not(.has-logo){width:168px;height:168px;font-size:44px}
+body[data-modern="1"] .fc-right{display:flex;flex-direction:column;justify-content:space-between;min-width:0;height:168px}
+body[data-modern="1"] .fc-name{margin-top:-2px;gap:0}
+body[data-modern="1"] .fc-name small{font-size:15px;line-height:1}
+body[data-modern="1"] .fc-name b{line-height:.9;white-space:nowrap}
+body[data-modern="1"] .fc-stats{grid-template-columns:1fr;gap:5px}
+body[data-modern="1"] .fc-stats div{display:flex;justify-content:space-between;align-items:center;padding:0 10px;height:30px;border-radius:10px}
+body[data-modern="1"] .fc-stats small{font-size:12px}
+body[data-modern="1"] .fc-stats b{font-size:20px}
+body[data-modern="1"] .fc-ps{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:100%;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08)}
+body[data-modern="1"] .fc-ps div{display:grid;justify-items:center}
+body[data-modern="1"] .fc-ps b{font-size:16px;margin:0}
+body[data-modern="1"] .fc-ps small{font-size:9.5px;letter-spacing:.04em}
+body[data-modern="1"] .rail{align-items:flex-start;padding-top:6px}
+body[data-modern="1"] .fc-stats div{height:34px}

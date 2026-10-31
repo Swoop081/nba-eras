@@ -333,20 +333,23 @@
         var top = el('div', 'fc-top');
         top.appendChild(makeBadge(team, false));
         applyLogo(top.firstChild, team);
+        var right = el('div', 'fc-right');
         var nm = el('div', 'fc-name');
         nm.appendChild(el('small', null, team.city));
-        nm.appendChild(el('b', null, team.name));
-        top.appendChild(nm);
-        c.appendChild(top);
+        var nb = el('b', null, team.name);
+        nb.style.fontSize = Math.min(46, Math.floor(122 / (team.name.length * 0.46))) + 'px';
+        nm.appendChild(nb);
+        right.appendChild(nm);
         var stats = el('div', 'fc-stats');
-        [['Rating', String(team.rating), '#' + team.rank + ' of 30'], ['Record', '0-0', 'Opening night'], ['Avg age', team.avgAge.toFixed(1), team.young ? team.young + ' young core' : 'veteran core']].forEach(function (x) {
+        [['Rating', String(team.rating)], ['Record', '0-0'], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
           var d = el('div');
           d.appendChild(el('small', null, x[0]));
           d.appendChild(el('b', null, x[1]));
-          d.appendChild(el('em', null, x[2]));
           stats.appendChild(d);
         });
-        c.appendChild(stats);
+        right.appendChild(stats);
+        top.appendChild(right);
+        c.appendChild(top);
         var out = team.rank <= 6 ? 'Contender' : team.rank <= 14 ? 'Playoff team' : team.rank <= 22 ? 'On the bubble' : 'Rebuilding';
         var ol = el('div', 'fc-out', out);
         c.appendChild(ol);
@@ -357,6 +360,9 @@
           cell.appendChild(el('b', null, String(p.ovr)));
           cell.appendChild(el('span', null, p.name.split(' ').slice(-1)[0]));
           cell.appendChild(el('small', null, (p.pos || '') + ' \u00B7 ' + (p.age || '')));
+          var ss = el('div', 'fc-ps');
+          (p.best || []).forEach(function (x) { var q = el('div'); q.appendChild(el('b', null, x[1])); q.appendChild(el('small', null, x[0])); ss.appendChild(q); });
+          cell.appendChild(ss);
           trio.appendChild(cell);
         });
         c.appendChild(trio);
@@ -394,6 +400,25 @@
     build();
   }
 
+  /* each player's three headline numbers: points first, then the two per-game areas he ranks highest in around the league */
+  function bestStatsIndex(list) {
+    var pool = list.filter(function (p) { return p.prev && p.prev.mpg >= 18 && p.prev.g >= 20; });
+    var defs = [['RPG', 'trb', 1], ['APG', 'ast', 1], ['SPG', 'stl', 1], ['BPG', 'blk', 1]];
+    var sorted = {};
+    defs.forEach(function (d) { sorted[d[1]] = pool.map(function (p) { return p.prev[d[1]] || 0; }).sort(function (a, b) { return a - b; }); });
+    var byId = {};
+    list.forEach(function (p) { if (p.prev) byId[p.id] = p; });
+    function pct(key, v) { var a = sorted[key], lo = 0; while (lo < a.length && a[lo] < v) lo++; return a.length ? lo / a.length : 0; }
+    return function (p) {
+      var q = byId[p.id]; if (!q) return fallbackBest(p);
+      var v = q.prev, out = [['PPG', v.pts.toFixed(1)]];
+      var cand = defs.map(function (d) { var raw = v[d[2] === 1 ? d[1] : d[1]]; return { l: d[0], k: d[1], raw: raw || 0, s: pct(d[1], raw || 0), m: d[2] }; });
+      cand.sort(function (a, b) { return b.s - a.s; });
+      cand.slice(0, 2).forEach(function (c) { out.push([c.l, c.m === 100 ? (c.raw * (c.raw < 1.5 ? 100 : 1)).toFixed(1).replace(/\.0$/, '') + '' : c.raw.toFixed(1)]); });
+      return out;
+    };
+  }
+  function fallbackBest(p) { return [['OVR', String(p.ovr)]]; }
   function renderTeams(data) {
     if (data.current) { renderRails(data); return; }
     teamList.className = 'list';
@@ -512,13 +537,13 @@
     show('screen-team');
     if (era.current) {
       teamList.textContent = 'Loading the league...';
-      Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), new Promise(function (ok) { loadPlayers(ok); })])
+      Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), new Promise(function (ok) { loadPlayers(ok); }), fetch('data/players-2025.json').then(function (r) { return r.json(); }).catch(function () { return { players: [] }; })])
         .then(function (res) {
-          var data = res[0], pl = res[1];
+          var data = res[0], pl = res[1], real = bestStatsIndex(res[2].players);
           data.current = true;
           data.teams.forEach(function (t) {
             var list = pl.players.filter(function (p) { return p.teamId === t.id; }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
-            t.top = list.slice(0, 3).map(function (p) { return { id: p.id, name: p.name, pos: p.pos, age: p.age, ovr: p.ratings.ovr }; });
+            t.top = list.slice(0, 3).map(function (p) { return { id: p.id, name: p.name, pos: p.pos, age: p.age, ovr: p.ratings.ovr, best: real(p) }; });
             var eight = list.slice(0, 8);
             t.rating = eight.length ? Math.round(eight.reduce(function (a, p) { return a + p.ratings.ovr; }, 0) / eight.length) : 0;
             t.avgAge = eight.length ? Math.round(10 * eight.reduce(function (a, p) { return a + (p.age || 26); }, 0) / eight.length) / 10 : 0;
