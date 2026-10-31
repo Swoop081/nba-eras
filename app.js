@@ -75,6 +75,7 @@
   /* The vintage black-and-white look belongs to the old eras; the present day is always in colour. */
   function eraLook(era) { applyEraFilter(era && era.current ? false : eraFilterBox.checked); body.dataset.modern = era && era.current ? '1' : '0'; if (!(era && era.current)) Phone.stop(); }
   function modernUI() { return body.dataset.modern === '1'; }
+  body.dataset.modern = '1'; applyEraFilter(false);
   eraFilterBox.addEventListener('change', function () {
     store.set('eraFilter', eraFilterBox.checked);
     eraLook(currentEra);
@@ -179,7 +180,11 @@
   ];
 
   var eraList = document.getElementById('era-list');
+  // The game is built backwards from the present day: only the current season is shown for now.
+  // The founding-era entries stay in the code and come back as the history is rebuilt.
+  var SHOW_ALL_ERAS = false;
   ERAS.forEach(function (era) {
+    if (!SHOW_ALL_ERAS && !era.current) return;
     var card = el('button', 'card era');
     card.type = 'button';
     card.appendChild(el('span', 'year', era.years));
