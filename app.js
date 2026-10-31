@@ -1311,6 +1311,12 @@
   var lv = null;
   var COURT_SPOTS = [[50, 41], [15, 52], [85, 52], [30, 80], [70, 80]];
   var OPP_SPOTS = [[50, 12], [29, 27], [71, 27], [36, 59], [64, 59]];
+  var FULL_SVG = (function () {
+    var half = '<rect x="34" y="2" width="32" height="22" class="key"/><circle cx="50" cy="24" r="8"/><path d="M10 2v13a40 26 0 0 0 80 0V2"/><circle cx="50" cy="7" r="1.6"/><path d="M44 4.5h12"/>';
+    return '<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="97"/><path d="M1.5 50h97"/><circle cx="50" cy="50" r="10"/>' + half + '<g transform="translate(0,100) scale(1,-1)">' + half + '</g></svg>';
+  })();
+  var ME_FULL = [[10, 84], [30, 77], [50, 84], [70, 77], [90, 84]];
+  var OP_FULL = [[10, 16], [30, 23], [50, 16], [70, 23], [90, 16]];
   var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
 
   /* Puts the opponent's portrait inside the little circle when we have one. */
@@ -1321,7 +1327,8 @@
     node.dataset.pid = p.id;
     var lab = el('span', 'opn', lastName(p.name));
     node.appendChild(lab);
-    img.onload = function () { if (node.dataset.pid !== p.id) return; node.textContent = ''; node.classList.add('face'); node.appendChild(img); node.appendChild(lab); };
+    if (node._pp) node.appendChild(node._pp);
+    img.onload = function () { if (node.dataset.pid !== p.id) return; node.textContent = ''; node.classList.add('face'); node.appendChild(img); node.appendChild(lab); if (node._pp) node.appendChild(node._pp); };
     img.onerror = function () { if (k < exts.length) img.src = 'assets/players/' + p.id + '.' + exts[k++]; };
     img.onerror();
   }
@@ -1358,19 +1365,32 @@
     });
     var court = document.getElementById('court');
     court.textContent = '';
-    court.innerHTML = COURT_SVG;
+    var full = modernUI();
+    court.innerHTML = full ? FULL_SVG : COURT_SVG;
+    court.classList.toggle('full', full);
+    if (full) {
+      var home = mine && mine.home === me.id ? me : opp;
+      court.style.setProperty('--home', (home.colors && home.colors[0]) || '#C8102E');
+      var cc = el('div', 'cc-logo');
+      cc.appendChild(teamBadge(home));
+      court.appendChild(cc);
+      var hm = el('span', 'cc-tag', home.city + ' · home');
+      court.appendChild(hm);
+    }
     lv.pl = []; lv.op = [];
     lv.ids = [];
     COURT_SPOTS.forEach(function (sp, i) {
       var p = g.onH[i].p, o = g.onA[i].p;
       lv.ids.push(p.id + '|' + o.id);
       var d = el('div', 'op');
+      if (full) d._pp = el('span', 'pp', '0');
       attachFace(d, o);
-      d.style.left = OPP_SPOTS[i][0] + '%';
-      d.style.top = OPP_SPOTS[i][1] + '%';
+      d.style.left = (full ? OP_FULL : OPP_SPOTS)[i][0] + '%';
+      d.style.top = (full ? OP_FULL : OPP_SPOTS)[i][1] + '%';
       court.appendChild(d); lv.op.push(d);
       var b = el('button', 'pl');
       b.type = 'button';
+      if (full) sp = ME_FULL[i];
       b.style.left = sp[0] + '%'; b.style.top = sp[1] + '%';
       b.appendChild(makeAvatar(p));
       b.appendChild(el('span', 'nm', lastName(p.name)));
@@ -1467,7 +1487,7 @@
     document.getElementById('lv-b').textContent = lv.db;
     document.getElementById('lv-clock').textContent = clockText(g);
     document.getElementById('lv-period').textContent = periodLabel(g);
-    for (var i = 0; i < 5; i++) lv.pl[i].pp.textContent = g.onH[i].s.pts;
+    for (var i = 0; i < 5; i++) { lv.pl[i].pp.textContent = g.onH[i].s.pts; if (lv.op[i]._pp) lv.op[i]._pp.textContent = g.onA[i].s.pts; }
   }
 
   /* ---------- timeout decisions: situational, each with its own trade-off ---------- */

@@ -353,3 +353,30 @@ body[data-modern="1"] #trade-body .card strong{font-size:19px;white-space:nowrap
 body[data-modern="1"] #trade-body .card .meta{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body[data-modern="1"] .pg{grid-auto-rows:max-content}
 body[data-modern="1"] .card{height:auto;min-height:52px;align-items:center}
+
+/* ---------- live game: the home team's floor, ten portraits, gamecast style ---------- */
+body[data-modern="1"] .court.full{aspect-ratio:auto;flex:1;min-height:0;margin:8px 10px 0;border:0;border-radius:18px;
+  background:repeating-linear-gradient(90deg,#C0824A 0 22px,#B77A42 22px 44px);box-shadow:inset 0 0 0 3px rgba(255,255,255,.18),0 10px 30px rgba(0,0,0,.45)}
+body[data-modern="1"] .court.full svg.lines{stroke:rgba(255,246,228,.85);stroke-width:.5}
+body[data-modern="1"] .court.full svg.lines .key{fill:color-mix(in srgb,var(--home) 78%,#000);fill-opacity:.9}
+body[data-modern="1"] .cc-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;display:grid;place-items:center;pointer-events:none}
+body[data-modern="1"] .cc-logo .badge{width:60px;height:60px;border:0;background:transparent}
+body[data-modern="1"] .cc-logo .badge.has-logo{width:60px;height:60px}
+body[data-modern="1"] .cc-tag{position:absolute;left:50%;top:calc(50% + 34px);transform:translateX(-50%);font:700 10px var(--font);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,246,228,.85);white-space:nowrap}
+body[data-modern="1"] .court.full .pl{width:66px;gap:2px}
+body[data-modern="1"] .court.full .pl .avatar{width:56px;height:56px;border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+body[data-modern="1"] .court.full .pl.ball .avatar{box-shadow:0 0 0 3px var(--team),0 4px 12px rgba(0,0,0,.4)}
+body[data-modern="1"] .court.full .pl .nm,body[data-modern="1"] .court.full .op .opn{font:700 11px var(--font);background:rgba(10,11,16,.85);color:#fff;border:0;padding:1px 6px;border-radius:7px}
+body[data-modern="1"] .court.full .op .opn{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:2px}
+body[data-modern="1"] .court.full .op{width:56px;height:56px;border:3px solid rgba(255,255,255,.85);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+body[data-modern="1"] .court.full .op.ball{box-shadow:0 0 0 3px #fff,0 4px 12px rgba(0,0,0,.4)}
+body[data-modern="1"] .court.full .pp{position:absolute;top:-5px;right:-5px;min-width:22px;height:22px;border-radius:11px;background:#fff;color:#0A0B10;font:800 12px var(--font);display:flex;align-items:center;justify-content:center;padding:0 5px;z-index:2}
+body[data-modern="1"] #ticker{flex:none;min-height:0;max-height:112px;overflow:hidden;padding:8px 14px}
+body[data-modern="1"] #ticker .tk{font-size:14px}
+body[data-modern="1"] #ticker .tk:first-child{font-size:16px}
+body[data-modern="1"] #screen-live .btn.opt{min-height:42px;padding:6px 14px}
+body[data-modern="1"] #screen-live .btn.opt small{display:none}
+body[data-modern="1"] #screen-live .dec-title{font-size:14px}
+body[data-modern="1"] #screen-live:has(.dec-title) #ticker{max-height:42px}
+body[data-modern="1"] #screen-live:has(.dec-title) #ticker .tk:nth-child(n+2){display:none}
+body[data-modern="1"] .court.full{min-height:300px}
