@@ -53,9 +53,11 @@
   introBox.checked = store.get('intro', true);
   applyEraFilter(eraFilterBox.checked);
 
+  /* The vintage black-and-white look belongs to the old eras; the present day is always in colour. */
+  function eraLook(era) { applyEraFilter(era && era.current ? false : eraFilterBox.checked); }
   eraFilterBox.addEventListener('change', function () {
     store.set('eraFilter', eraFilterBox.checked);
-    applyEraFilter(eraFilterBox.checked);
+    eraLook(currentEra);
   });
   introBox.addEventListener('change', function () {
     store.set('intro', introBox.checked);
@@ -150,7 +152,7 @@
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
     { years: '1990s-2000s', title: 'The Multimedia Era', blurb: 'Locked for now' },
-    { years: '2010s-now', title: 'The HD and Social Era', blurb: 'Locked for now' }
+    { id: '2026', years: '2026-27', title: 'The Present Day', blurb: 'Opening night of the current NBA season. 30 teams, 82 games, the three-point line, a 16-team playoff and a salary cap. Real rosters; build forward from here.', open: true, current: true, teams: 'data/teams-2026.json', players: 'data/players-2026.json' }
   ];
 
   var eraList = document.getElementById('era-list');
@@ -251,7 +253,8 @@
     var era = currentEra ? currentEra.id.replace(/s\d+$/, '') : '';
     var urls = [];
     if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
-    urls.push(base + '.png', base + '.svg');
+    // the generic file may be a vintage logo, so the present day only uses a file made for it
+    if (!(currentEra && currentEra.current)) urls.push(base + '.png', base + '.svg');
     var i = 0;
     var img = new Image();
     img.alt = '';
@@ -273,8 +276,9 @@
     teamList.textContent = '';
     data.divisions.forEach(function (div) {
       var teams = data.teams.filter(function (t) { return t.division === div; });
-      teams.sort(function (a, c) { return c.w - a.w; });
-      teamList.appendChild(el('p', 'group-title', div + ' division'));
+      if (data.current) teams.sort(function (a, c) { return a.city < c.city ? -1 : a.city > c.city ? 1 : a.name < c.name ? -1 : 1; });
+      else teams.sort(function (a, c) { return c.w - a.w; });
+      teamList.appendChild(el('p', 'group-title', div + (data.current ? ' conference' : ' division')));
       teams.forEach(function (team) {
         var rank = 1;
         teams.forEach(function (o) { if (o.w > team.w) rank++; });
@@ -283,8 +287,10 @@
         card.appendChild(makeBadge(team, false));
         var text = el('span');
         text.appendChild(el('strong', null, team.city + ' ' + team.name));
-        text.appendChild(el('span', 'meta', team.isNew ? 'New club this season' : (data.second ? 'Last season: ' : 'In history: ') + team.w + '-' + team.l + (data.second ? '' : ', ' + ordinal(rank) + ' in the ' + div)));
-        if (team.id === data.champion) text.appendChild(el('span', 'tag', data.second ? 'Reigning champions' : 'Won the first title'));
+        if (data.current) text.appendChild(el('span', 'meta', team.note || ''));
+        else text.appendChild(el('span', 'meta', team.isNew ? 'New club this season' : (data.second ? 'Last season: ' : 'In history: ') + team.w + '-' + team.l + (data.second ? '' : ', ' + ordinal(rank) + ' in the ' + div)));
+        if (data.current) { /* no history to show on opening night */ }
+        else if (team.id === data.champion) text.appendChild(el('span', 'tag', data.second ? 'Reigning champions' : 'Won the first title'));
         else if (team.id === data.runnerUp) text.appendChild(el('span', 'tag', 'Lost the final'));
         card.appendChild(text);
         card.addEventListener('click', function () {
@@ -373,10 +379,28 @@
       return;
     }
     currentEra = era;
+    eraLook(era);
     selected = null;
     dock.hidden = true;
     teamSub.textContent = era.years;
     show('screen-team');
+    if (era.current) {
+      teamList.textContent = 'Loading the league...';
+      Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), new Promise(function (ok) { loadPlayers(ok); })])
+        .then(function (res) {
+          var data = res[0], pl = res[1];
+          data.current = true;
+          data.teams.forEach(function (t) {
+            var list = pl.players.filter(function (p) { return p.teamId === t.id; }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+            t.note = list.length ? list[0].name + ' (' + list[0].ratings.ovr + ')' + (list[1] ? ', ' + list[1].name + ' (' + list[1].ratings.ovr + ')' : '') : '';
+          });
+          seasons[era.id] = data;
+          teamSub.textContent = era.years + ' \u00B7 ' + data.teams.length + ' teams';
+          renderTeams(data);
+        })
+        .catch(function () { teamList.textContent = 'Could not load the league data. Open the game from its web address, not as a local file.'; });
+      return;
+    }
     if (seasons[era.id]) {
       teamSub.textContent = era.years + ' · ' + seasons[era.id].teams.length + ' teams';
       renderTeams(seasons[era.id]);
@@ -404,11 +428,13 @@
     holder.appendChild(crest(selected, true));
     applyLogo(holder, selected);
     document.getElementById('ready-name').textContent = selected.city + ' ' + selected.name;
-    document.getElementById('ready-line').textContent = currentEra.second
+    document.getElementById('ready-line').textContent = currentEra.current
+      ? 'Opening night of 2026-27 is next. Rosters are as they stood in the first week of the season.'
+      : currentEra.second
       ? (selected.isNew ? 'A brand new club for the 1947-48 season. Opening night is next.' : 'Last season this club went ' + selected.w + '-' + selected.l + '. Opening night of 1947-48 is next.')
       : 'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
     store.set('team', selected.id);
-    if (currentEra.second) { var ob = document.getElementById('fates-box'); if (ob) ob.parentNode.removeChild(ob); } else buildFatesBox();
+    if (currentEra.second || currentEra.current) { var ob = document.getElementById('fates-box'); if (ob) ob.parentNode.removeChild(ob); } else buildFatesBox();
     show('screen-ready');
   });
 
@@ -1024,7 +1050,8 @@
     return save.days.filter(function (d) { return d.some(function (g) { return g[0] === id || g[1] === id; }); }).length;
   }
   function seasonLabel(y) { return y + '-' + String(y + 1).slice(2); }
-  function money(n) { return '$' + n.toLocaleString('en-US'); }
+  function divTitle(d) { return d + (save && save.eraId === '2026' ? ' Conference' : ' Division'); }
+  function money(n) { return League.money(n, save && save.lg ? save.lg.cap : 0); }
   function teamRating(id) {
     var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
     return r.length ? Math.round(r.reduce(function (a, b) { return a + b; }, 0) / r.length) : 0;
@@ -1144,8 +1171,8 @@
     var d = save.division[id], rows = Season.standings(save)[d], i = 0;
     rows.forEach(function (r, k) { if (r.id === id) i = k; });
     var me = rows[i], city = teamById(id).city;
-    if (i === 0) return rows.length > 1 && rows[1].gb ? 'The result leaves ' + city + ' alone in first place in the ' + d + ' Division, ' + (rows[1].gb === 1 ? 'a game' : rows[1].gb + ' games') + ' clear.' : 'The result leaves ' + city + ' tied for first in the ' + d + ' Division.';
-    return 'The result leaves ' + city + ' ' + (me.gb === 1 ? 'a game' : me.gb + ' games') + ' behind ' + teamById(rows[0].id).city + ' in the ' + d + ' Division.';
+    if (i === 0) return rows.length > 1 && rows[1].gb ? 'The result leaves ' + city + ' alone in first place in the ' + d + ' Division, ' + (rows[1].gb === 1 ? 'a game' : rows[1].gb + ' games') + ' clear.' : 'The result leaves ' + city + ' tied for first in the ' + divTitle(d) + '.';
+    return 'The result leaves ' + city + ' ' + (me.gb === 1 ? 'a game' : me.gb + ' games') + ' behind ' + teamById(rows[0].id).city + ' in the ' + divTitle(d) + '.';
   }
 
   /* ---------- live match ---------- */
@@ -1584,7 +1611,7 @@
 
   function standingsTable(div, rows) {
     var wrap = el('div');
-    wrap.appendChild(el('h3', 'box-title', div + ' Division'));
+    wrap.appendChild(el('h3', 'box-title', divTitle(div)));
     var scroll = el('div', 'boxwrap');
     var table = el('table', 'box');
     var thead = el('thead'), hr = el('tr');
@@ -1804,7 +1831,7 @@
       var mx = st[x].some(function (r) { return r.id === me.id; }), my = st[y].some(function (r) { return r.id === me.id; });
       return mx === my ? 0 : mx ? -1 : 1;
     });
-    bodyEl.appendChild(carousel(divs.map(function (d) { return { title: d + ' Division', node: standingsTable(d, st[d]) }; })));
+    bodyEl.appendChild(carousel(divs.map(function (d) { return { title: divTitle(d), node: standingsTable(d, st[d]) }; })));
 
     var gp = rec.w + rec.l, qual = Math.max(1, Math.min(15, Math.floor(gp * 0.5)));
     var cats = [
@@ -2345,7 +2372,7 @@
     if (r.recap) {
       var rc = r.recap, sc = el('div', 'stat-card');
       sc.appendChild(el('div', 'group-title', 'Your season'));
-      sc.appendChild(el('p', 'sub', ordinalN(rc.pos) + ' in the ' + rc.div + ' Division \u00B7 ' + rc.po));
+      sc.appendChild(el('p', 'sub', ordinalN(rc.pos) + ' in the ' + divTitle(rc.div) + ' \u00B7 ' + rc.po));
       if (rc.best) sc.appendChild(el('p', 'sub', 'Best win: ' + rc.best.us + '-' + rc.best.them + ' over ' + teamById(rc.best.opp).city));
       if (rc.worst && rc.worst.us < rc.worst.them) sc.appendChild(el('p', 'sub', 'Worst loss: ' + rc.worst.us + '-' + rc.worst.them + ' to ' + teamById(rc.worst.opp).city));
       if (rc.star) sc.appendChild(el('p', 'sub', 'Big night: ' + rc.star.name + ' scored ' + rc.star.pts + ' against ' + teamById(rc.star.opp).city));
@@ -2621,7 +2648,7 @@
       fetch('data/draft-' + year + '.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; })
         .catch(function () { return { prospects: [] }; })
         .then(function (d) {
-          League.startDraft(save, save.ids.map(teamById), d.prospects, 5);
+          League.startDraft(save, save.ids.map(teamById), d.prospects, League.draftRounds());
           offStep('draft');
         });
     });
@@ -2793,6 +2820,8 @@
     if (!data) return;
     var era = eraStart(data.eraId);
     currentEra = era;
+    eraLook(era);
+    League.setEra(data.year);
     continueBtn.disabled = true;
     Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), fetch(era.players).then(function (r) { return r.json(); })])
       .then(function (res) {

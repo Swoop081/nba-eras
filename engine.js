@@ -20,7 +20,9 @@
 
   // Tuned so 1946-47 lands near a 28% FG league scoring about 68 a night.
   var PARAMS = {
-    1946: { use: 0.9, poss: 86, fg: 0.2, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 }
+    1946: { use: 0.9, poss: 86, fg: 0.2, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 },
+    // 2026-27: about 100 possessions, 37 threes a night at 36%, 47% from the field.
+    2026: { use: 0.8, poss: 100, fg: 0.36, fb: 1.0, fsh: 0.0045, fsc: 0.0013, threes: true, tpBase: 0.14, tpDiv: 220, tpq: 0.78, tov: 0.135, foul: 0.165, orb: 0.25, ftb: 0.58, ftm: 0.32, astp: 1.7 }
   };
 
   function params(year) {
@@ -106,13 +108,13 @@
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
     }
-    var q = pr.fg * (0.62 + 0.0095 * shooter.p.ratings.sht + 0.0030 * shooter.p.ratings.sco);
+    var q = pr.fg * ((pr.fb !== undefined ? pr.fb : 0.62) + (pr.fsh || 0.0095) * shooter.p.ratings.sht + (pr.fsc || 0.0030) * shooter.p.ratings.sco);
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
     q *= (mo.fgMul || 1) * (md.oppFgMul || 1) * (md.double === shooter.p.id ? 0.93 : 1);
     if (st.eo || st.ed) q *= Math.exp((st.eo || 0) - (st.ed || 0));
-    var three = pr.threes && r() < 0.15 + shooter.p.ratings.tpt / 500;
-    if (three) { q = q * 0.78; }
+    var three = pr.threes && r() < (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500);
+    if (three) { q = q * (pr.tpq || 0.78); }
     var made = r() < q;
     if (fouled) {
       var n = made ? 1 : (three ? 3 : 2);
@@ -120,7 +122,7 @@
       ev.kind = 'foul'; ev.fta = 0; ev.ftm = 0;
       for (var i = 0; i < n; i++) {
         shooter.s.fta++; ev.fta++;
-        if (r() < 0.38 + 0.4 * shooter.p.ratings.ft / 100) { shooter.s.ft++; shooter.s.pts++; pts++; ev.ftm++; }
+        if (r() < (pr.ftb !== undefined ? pr.ftb : 0.38) + (pr.ftm !== undefined ? pr.ftm : 0.4) * shooter.p.ratings.ft / 100) { shooter.s.ft++; shooter.s.pts++; pts++; ev.ftm++; }
       }
       if (made) { shooter.s.fg++; shooter.s.pts += three ? 3 : 2; pts += three ? 3 : 2; ev.and1 = true; }
       ev.pts = pts;
@@ -133,7 +135,7 @@
       shooter.s.fg++; if (three) shooter.s.tp++;
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
-      if (r() < 0.72 * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
+      if (r() < (pr.astp || 0.72) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
         var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply; });
         passer.s.ast++; ev.ast = passer.p.name;
       }

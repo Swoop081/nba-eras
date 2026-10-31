@@ -119,6 +119,13 @@
       var rest = ranked(state, state.ids.filter(function (id) { return champs.indexOf(id) < 0; })).slice(0, 2);
       round = [ser(state, champs[0], champs[1], 1, 2, 7, 'Division champions'), ser(state, rest[0], rest[1], 3, 4, 7, 'Next best records')];
       names = ['Semifinals', 'Finals'];
+    } else if (kind === 'nba' && divs.length === 2 && divs.every(function (d) { return st[d].length >= 8; })) {
+      round = [];
+      divs.forEach(function (d) {
+        var t = st[d].map(function (x) { return x.id; });
+        [[1, 8], [4, 5], [2, 7], [3, 6]].forEach(function (p) { round.push(ser(state, t[p[0] - 1], t[p[1] - 1], p[0], p[1], 7, null, d)); });
+      });
+      names = ['First round', 'Conference semifinals', 'Conference finals', 'Finals'];
     } else if (kind === 'div4' && divs.length === 2 && divs.every(function (d) { return st[d].length >= 4; })) {
       round = [];
       divs.forEach(function (d) {
@@ -137,7 +144,7 @@
       best = q === 8 ? [3, 5, 7] : [5, 7];
       kind = 'top';
     } else {
-      best = names.length === 3 ? [3, 3, 7] : [7, 7];
+      best = names.length === 4 ? [7, 7, 7, 7] : names.length === 3 ? [3, 3, 7] : [7, 7];
       if (state.fmt === 'ladder47') best = [3, 3, 7];
       if (state.fmt === 'div4') best = [3, 3, 7];
     }

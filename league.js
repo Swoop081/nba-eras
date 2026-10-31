@@ -4,8 +4,22 @@
   var W = { sco: .39, sht: .10, ft: .04, ply: .08, tov: .04, orb: .05, drb: .07, stl: .07, blk: .05, fou: .03, dur: .08 };
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou', 'dur'];
   var KNOWN_SALARY = { 'joe-fulks': 8000, 'tom-king': 16500 };
-  var CAP = { 1946: 55000 };
+  var CAP = { 1946: 55000, 2026: 165000 };
   var MIN_ROSTER = 9, MAX_ROSTER = 15, OPENING_ROSTER = 12;
+  /* The modern game counts money in thousands of dollars (a $165,000 cap is $165 million); the founding era counts dollars. */
+  var MODERN = false, MINSAL = 1000;
+  function setEra(year) {
+    MODERN = year >= 2000;
+    MINSAL = MODERN ? 1300 : 1000;
+    MIN_ROSTER = MODERN ? 13 : 9;
+    OPENING_ROSTER = MODERN ? 15 : 12;
+    if (root.League) root.League.MIN_ROSTER = MIN_ROSTER;
+  }
+  function money(n, cap) {
+    if (cap > 100000) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
+    return '$' + n.toLocaleString('en-US');
+  }
+  function draftRounds() { return MODERN ? 2 : 5; }
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
@@ -19,7 +33,10 @@
     return Math.round(35 + 0.6 * w);
   }
 
-  function salaryFor(ovr) { return round100(1500 + Math.max(0, ovr - 45) * 140); }
+  function salaryFor(ovr) {
+    if (MODERN) return round100(MINSAL + Math.pow(Math.max(0, ovr - 44) / 44, 2.1) * 52000);
+    return round100(1500 + Math.max(0, ovr - 45) * 140);
+  }
 
   function capFor(year) {
     var ks = Object.keys(CAP).map(Number).sort(function (a, b) { return a - b; }), c = CAP[ks[0]];
@@ -47,12 +64,13 @@
           .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
         if (!fa) { short = false; return; }
         fa.team = t.id; fa.yrs = 1 + Math.floor(Math.random() * 2);
-        fa.salary = Math.min(fa.salary, Math.max(1000, lg.cap - pay));
+        fa.salary = Math.min(fa.salary, Math.max(MINSAL, lg.cap - pay));
       });
     }
   }
 
   function init(save, players, teams) {
+    setEra(save.year);
     var lg = { rev: 0, cap: capFor(save.year), players: [], stats: {}, history: [], year: save.year, draft: null, off: null };
     players.forEach(function (p) {
       var q = JSON.parse(JSON.stringify(p));
@@ -70,14 +88,16 @@
       var list = lg.players.filter(function (p) { return p.team === t.id; });
       var pay = list.reduce(function (a, p) { return a + p.salary; }, 0);
       var fixed = list.filter(function (p) { return p.known; }).reduce(function (a, p) { return a + p.salary; }, 0);
-      var limit = lg.cap - 1500;
+      var limit = MODERN ? Math.round(lg.cap * 0.9) : lg.cap - 1500;
       if (pay > limit) {
         var f = (limit - fixed) / (pay - fixed);
-        list.forEach(function (p) { if (!p.known) p.salary = Math.max(1000, round100(p.salary * f)); });
+        list.forEach(function (p) { if (!p.known) p.salary = Math.max(MINSAL, round100(p.salary * f)); });
       }
     });
-    openingRosters(lg, teams);
     save.lg = lg;
+    // unsigned veterans, so a short club can fill its roster on opening night
+    if (MODERN) makeVeterans(save, null, 40, 41, 52);
+    openingRosters(lg, teams);
     ensurePicks(save, teams);
   }
 
@@ -163,7 +183,7 @@
   /* ---------- contracts ---------- */
   function ask(save, p, trust) {
     var f = 1.04 - ((trust === undefined ? 50 : trust) - 50) / 400;
-    return Math.max(1000, round100(salaryFor(p.ratings.ovr) * f));
+    return Math.max(MINSAL, round100(salaryFor(p.ratings.ovr) * f));
   }
 
   function expiring(save, teamId) {
@@ -232,6 +252,9 @@
   var FIRST = ['Bob', 'Jack', 'Bill', 'Jim', 'Tom', 'Dick', 'Joe', 'Ed', 'Frank', 'Hank', 'Don', 'Ray', 'Ken', 'Walt', 'Al', 'Gene', 'Paul', 'Lou', 'Red', 'Chuck', 'Ted', 'Stan', 'Norm', 'Art', 'Harry', 'Mike', 'Gus', 'Lenny', 'Mel', 'Sam'];
   var LAST = ['Anderson', 'Brennan', 'Carlson', 'Dugan', 'Elliott', 'Foley', 'Grady', 'Hanlon', 'Irwin', 'Jarvis', 'Kowalski', 'Lindgren', 'Moran', 'Novak', 'Olsen', 'Pruitt', 'Quinn', 'Reilly', 'Sullivan', 'Tierney', 'Underwood', 'Vance', 'Walsh', 'Yates', 'Zeller', 'Barlow', 'Cody', 'Dwyer', 'Egan', 'Fitch', 'Gorman', 'Hurley', 'Ivers', 'Judd', 'Kane', 'Lowry', 'Maddox', 'Nolan', 'Oakes', 'Pace'];
   var COLLEGES = ['Notre Dame', 'Kentucky', 'Illinois', 'Duke', 'Indiana', 'Ohio State', 'Utah', 'Holy Cross', 'Bradley', 'DePaul', 'Oklahoma A&M', 'NYU', 'St. John\'s', 'Kansas', 'Wisconsin', 'Purdue', 'Colorado', 'Villanova', 'La Salle', 'Penn State'];
+  var FIRST_M = ['Jalen', 'Marcus', 'Tyrese', 'Darius', 'Cameron', 'Isaiah', 'Malik', 'Jaylen', 'Terrence', 'Devin', 'Caleb', 'Andre', 'Xavier', 'Elijah', 'Jamal', 'Trey', 'Kobe', 'Nolan', 'Brandon', 'Jordan', 'Micah', 'Dante', 'Zion', 'Amari', 'Khalil', 'Tyler', 'Jaden', 'Cole', 'Noah', 'Ethan', 'Mason', 'Rayan', 'Mouhamed', 'Luka', 'Nikola', 'Matteo', 'Leo', 'Ousmane', 'Theo', 'Yuki'];
+  var LAST_M = ['Washington', 'Carter', 'Brooks', 'Henderson', 'Coleman', 'Bryant', 'Ellis', 'Foster', 'Gaines', 'Holloway', 'Ingram', 'Jenkins', 'Knox', 'Lawson', 'Mitchell', 'Newton', 'Okafor', 'Powell', 'Reese', 'Sanders', 'Thornton', 'Vaughn', 'Wallace', 'Young', 'Zimmerman', 'Banks', 'Crawford', 'Diallo', 'Edwards', 'Fields', 'Graham', 'Hayes', 'Isaac', 'Jovanovic', 'Kovac', 'Lindqvist', 'Moreau', 'Nunez', 'Petrovic', 'Rossi'];
+  var COLLEGES_M = ['Duke', 'Kentucky', 'Kansas', 'UConn', 'Houston', 'Arizona', 'Gonzaga', 'Tennessee', 'Auburn', 'Alabama', 'Purdue', 'Baylor', 'UCLA', 'Michigan State', 'Texas', 'Florida', 'North Carolina', 'Creighton', 'Overseas', 'G League Ignite'];
   var BIAS = {
     G: { ply: 12, tov: 10, stl: 10, tpt: 6, ft: 6, sco: 0, sht: 0, orb: -14, drb: -12, blk: -18, fou: 0, dur: 0 },
     F: { ply: 0, tov: 0, stl: 0, tpt: 0, ft: 0, sco: 2, sht: 0, orb: 0, drb: 0, blk: 0, fou: 0, dur: 0 },
@@ -264,13 +287,23 @@
       list.push(makePlayer(rp, target, age, pot));
       seen[rp.id] = 1;
     });
-    var n = 0;
+    var n = 0, k0 = list.length;
     while (list.length < total) {
-      var name = pick(FIRST) + ' ' + pick(LAST), id = name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ +/g, '-');
+      var fn = MODERN ? pick(FIRST_M) : pick(FIRST), ln = MODERN ? pick(LAST_M) : pick(LAST);
+      var name = fn + ' ' + ln, id = name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ +/g, '-');
       if (seen[id] || n++ > 500) continue;
       seen[id] = 1;
-      var target = clamp(Math.round(rnd(40, 56) + gauss() * 2), 38, 60);
-      list.push(makePlayer({ id: id, name: name, pos: pick(['G', 'G', 'F', 'F', 'F/C', 'C', 'G/F']), college: pick(COLLEGES) }, target, Math.round(rnd(21, 24)), target + Math.round(rnd(3, 14))));
+      var rank = list.length - k0, target, age, pot;
+      if (MODERN) {
+        target = rank < 14 ? clamp(Math.round(71 - rank * 1.1 + gauss() * 2), 54, 73) : clamp(Math.round(rnd(42, 55) + gauss() * 2), 38, 58);
+        age = Math.round(rnd(19, 22));
+        pot = target + Math.round(rank < 14 ? rnd(8, 17) : rnd(3, 12));
+      } else {
+        target = clamp(Math.round(rnd(40, 56) + gauss() * 2), 38, 60);
+        age = Math.round(rnd(21, 24));
+        pot = target + Math.round(rnd(3, 14));
+      }
+      list.push(makePlayer({ id: id, name: name, pos: pick(['G', 'G', 'F', 'F', 'F/C', 'C', 'G/F']), college: MODERN ? pick(COLLEGES_M) : pick(COLLEGES) }, target, age, pot));
     }
     list.forEach(function (p) {
       p.scout = { ovr: clamp(Math.round(p.ratings.ovr + gauss() * 3), 30, 95), pot: clamp(Math.round(p.pot + gauss() * 6), 35, 99) };
@@ -326,7 +359,7 @@
     save.lg.players.forEach(function (p) { used[p.id] = 1; });
     var made = 0, guard = 0;
     while (made < n && guard++ < 400) {
-      var name = pick(FIRST) + ' ' + pick(LAST), id = name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ +/g, '-');
+      var name = MODERN ? pick(FIRST_M) + ' ' + pick(LAST_M) : pick(FIRST) + ' ' + pick(LAST), id = name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ +/g, '-');
       if (used[id]) continue;
       used[id] = 1;
       var target = clamp(Math.round(rnd(lo, hi)), 40, 80);
@@ -347,7 +380,7 @@
     var d = save.lg.draft, slot = d.picks[d.at];
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
-    else { p.salary = Math.max(1000, salaryFor(p.ratings.ovr) - 500); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? 1000 : 500)); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     logDeal(save, p, d.kind === 'dispersal' ? 'Dispersal pick' : 'Drafted, pick ' + slot.pick, slot.team);
     slot.player = p.id;
     if (!byId(save, p.id)) save.lg.players.push(p);
@@ -370,7 +403,7 @@
     if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3;
     if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * 0.1);
     v *= 1 + (p.imp || 0) * 1.5;
-    v += (salaryFor(o) - p.salary) / 250;
+    v += (salaryFor(o) - p.salary) / (MODERN ? 1000 : 250);
     return Math.max(1, v);
   }
 
@@ -389,8 +422,8 @@
     if (themN > maxRoster && give.length > get.length) return { ok: false, reason: 'They have no room for that many players.', ratio: 0 };
     var inMe = sum(get, function (p) { return p.salary; }), outMe = sum(give, function (p) { return p.salary; });
     var mePay = payroll(save, meId) - outMe + inMe, themPay = payroll(save, themId) + outMe - inMe;
-    if (mePay > cap && inMe > outMe) return { ok: false, reason: 'That would put you $' + (mePay - cap).toLocaleString('en-US') + ' over the $' + cap.toLocaleString('en-US') + ' cap. Send out more salary.', ratio: 0 };
-    if (themPay > cap && outMe > inMe) return { ok: false, reason: 'They would be $' + (themPay - cap).toLocaleString('en-US') + ' over the cap. Take back more salary.', ratio: 0 };
+    if (mePay > cap && inMe > outMe) return { ok: false, reason: 'That would put you ' + money(mePay - cap, cap) + ' over the ' + money(cap, cap) + ' cap. Send out more salary.', ratio: 0 };
+    if (themPay > cap && outMe > inMe) return { ok: false, reason: 'They would be ' + money(themPay - cap, cap) + ' over the cap. Take back more salary.', ratio: 0 };
     var gain = sum(give, tradeValue) + ex.gain, loss = sum(get, tradeValue) + ex.loss;
     var ratio = loss > 0 ? gain / loss : 9;
     if (ratio < 1.1) return { ok: false, reason: ratio >= 0.9 ? 'Close, but they want a little more.' : 'They do not think that is fair.', ratio: ratio, close: ratio >= 0.9 };
@@ -693,6 +726,6 @@
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
-    makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
+    makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);

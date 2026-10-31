@@ -44,9 +44,26 @@
       lclose: ['{O} Nips {C}, {them}-{us}', '{C} Falls Just Short Against {O}', '{star} Scores {pts} In Vain As {C} Drops Close One'],
       lblow: ['{C} Humbled By {O}, {them}-{us}', '{O} Overwhelms {C} Five'],
       desk: 'Sports Desk', paper: 'The Daily Sentinel', announcer: 'The announcer', hall: 'the Garden'
+    },
+    2026: {
+      win: ['{C} Handle {O}, {us}-{them}', '{star} Drops {pts} As {C} Beat {O}', '{C} Get Past {O}'],
+      close: ['{C} Edge {O}, {us}-{them}, In Thriller', '{star} Leads {C} To Narrow Win Over {O}', '{C} Survive Late Push From {O}'],
+      blow: ['{C} Roll Past {O}, {us}-{them}', '{O} Blown Out By {C}', '{C} Run Away From {O}'],
+      loss: ['{O} Beat {C}, {them}-{us}', '{C} Fall To {O}', '{O} Get The Better Of {C}'],
+      lclose: ['{O} Edge {C}, {them}-{us}', '{C} Come Up Just Short Against {O}', '{star} Scores {pts} In Vain As {C} Drop Close One'],
+      lblow: ['{C} Run Over By {O}, {them}-{us}', '{O} Blow Out {C}'],
+      desk: 'Sports Desk', paper: 'The Courtside Report', announcer: 'The broadcast', hall: 'the arena', modern: true, period: PERIOD_M_FLAG(),
+      radio: ['{n} hits another! That is {x} points tonight and the building is on its feet!', 'And {n} from the wing, good! {x} for him now and nobody can slow him down!', 'You are watching something special. {n} has {x} points and he is not done!'],
+      radioAst: '{n} with another dime, that is {x} assists tonight. He sees the whole floor!',
+      fanHot: ['I have had season tickets for twenty years and this is the most fun I have had. Keep it going!', 'The whole city is talking about the {C}. Make room on the bandwagon!'],
+      fanCold: ['Three straight losses. Is anyone in the front office watching these games?', 'I want a refund on my League Pass. Fix this team!'],
+      fanWin: ['Great night at {hall}. The team gave us our money\'s worth.', 'Took my kid to the game and he got a high five from {star}. He will talk about it for a year.'],
+      fanLoss: ['Forty dollars for parking and a loss to boot. Come on!', 'The team looked tired out there. Rest the guys, I say.'],
+      fanNames: ['A Season Ticket Holder', 'Section 104', 'Longtime Fan', 'Upper Bowl Charlie', 'Mrs. Annie Kowalski']
     }
   };
-  function voice(year) { return VOICE[year] || VOICE[1946]; }
+  function PERIOD_M_FLAG() { return true; }
+  function voice(year) { return year >= 2026 ? VOICE[2026] : (VOICE[year] || VOICE[1946]); }
 
   /* ---------- after-game mood changes ---------- */
   function afterGame(save, me, mine, rosterMe, won) {
@@ -67,6 +84,42 @@
     m.cool.offer = Math.max(0, (m.cool.offer || 0) - 1);
   }
 
+
+  /* Little scenes from the modern road: sponsors, social media, the league office. */
+  var PERIOD_M = [
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A shoe company wants the whole roster at a promotional event on an off day. There is money in it for the club and a lot of cameras.', choices: [
+        { label: 'Say yes and do the event', fx: { team: { m: -1 }, fans: 5 }, say: 'The cameras love it' },
+        { label: 'Protect the off day', fx: { team: { m: 2 } }, say: 'The players rest' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A clip of one of your players arguing with a referee is going viral. The league office has called to ask whether the club will comment.', choices: [
+        { label: 'Back the player publicly', fx: { team: { m: 3 }, fans: 2, coach: -1 }, say: 'The locker room appreciates it' },
+        { label: 'Stay quiet and let it pass', fx: {}, say: 'It blows over in a day' },
+        { label: 'Fine him quietly', fx: { team: { m: -2 }, coach: 2 }, say: 'The message is received' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A podcast host is writing that your club is "all offence and no defence" and wants a response before the next show.', choices: [
+        { label: 'Say the team will answer on the floor', fx: { team: { m: 2 }, fans: 1 }, say: 'The quote does the rounds' },
+        { label: 'Fire back on social media', fx: { team: { m: 1 }, fans: -3, coach: -1 }, say: 'The argument drags on all week' },
+        { label: 'No comment', fx: {}, say: 'He runs the segment anyway' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, text: 'A children\'s hospital asks the club to host a visit on an off night. The local press will be there.', choices: [
+        { label: 'Send the whole team', fx: { team: { m: -1 }, fans: 6, coach: 1 }, say: 'A warm night for a good cause' },
+        { label: 'Send a few players and a donation', fx: { fans: 2 }, say: 'Quiet generosity' }
+      ] };
+    },
+    function (ctx) {
+      return { kind: 'talk', who: null, coach: true, text: 'Coach: "Boss, the schedule has us on the second night of a back-to-back after a long flight. I can rest the starters, but we might lose the game."', choices: [
+        { label: 'Rest the starters', fx: { team: { m: 3 }, coach: 2 }, say: 'Fresh legs for the stretch run' },
+        { label: 'Play everyone', fx: { team: { m: -2 }, coach: -1, fans: 1 }, say: 'The tired legs show' }
+      ] };
+    }
+  ];
 
   /* Little scenes from the 1940s road: rail travel, exhibitions, the war's aftermath. */
   var PERIOD = [
@@ -310,7 +363,7 @@
     var bigPts = star.s.pts >= 20;
     var topAst = lines.slice().sort(function (a, b) { return b.s.ast - a.s.ast; })[0];
     if (bigPts || topAst.s.ast >= 7) {
-      var text = bigPts
+      var text = v.modern ? (bigPts ? rnd(v.radio) : v.radioAst) : bigPts
         ? rnd(['And {n} hits again! That is {x} points tonight, folks, and the crowd is on its feet!', '{n} from the corner. Good! He now has {x} points and nobody can stop him!', 'Listeners, you are hearing history. {n} has {x} points and the night is young!'])
         : '{n} threads another pass, that is {x} assists for him tonight. He sees the whole floor!';
       out.push({ kind: 'radio', text: fill(text, { n: bigPts ? star.name : topAst.name, x: bigPts ? star.s.pts : topAst.s.ast }), source: v.announcer });
@@ -318,11 +371,12 @@
 
     if (Math.abs(m.streak) >= 3 || Math.random() < 0.3) {
       var fan;
-      if (m.streak >= 3) fan = rnd(['Sir, I have watched basketball in this city twenty years and never seen a quintet play so. Keep it up!', 'The whole street is talking about the {C} club. Make room on the bandwagon!']);
+      if (v.modern) fan = m.streak >= 3 ? rnd(v.fanHot) : m.streak <= -3 ? rnd(v.fanCold) : won ? rnd(v.fanWin) : rnd(v.fanLoss);
+      else if (m.streak >= 3) fan = rnd(['Sir, I have watched basketball in this city twenty years and never seen a quintet play so. Keep it up!', 'The whole street is talking about the {C} club. Make room on the bandwagon!']);
       else if (m.streak <= -3) fan = rnd(['Sir, are the {C} a basketball team or a social club? I want my money back!', 'Three straight defeats! Somebody in the front office is asleep at the switch.']);
       else if (won) fan = rnd(['A fine evening at {hall}. The boys gave us our money\'s worth.', 'My boy shook {star}\'s hand after the game. He will talk about it for a year.']);
       else fan = rnd(['A dollar twenty for a seat in the rafters and a loss to boot. Highway robbery!', 'The boys looked tired out there. Give them a rest, I say.']);
-      out.push({ kind: 'fans', text: fill(fan, { C: ctx.me.city, hall: v.hall, star: last(star.name) }), name: rnd(['A Loyal Fan', 'Cheap Seat Charlie', 'Disgruntled of Flatbush', 'A Season Ticket Holder', 'Mrs. Annie Kowalski']) });
+      out.push({ kind: 'fans', text: fill(fan, { C: ctx.me.city, hall: v.hall, star: last(star.name) }), name: rnd(v.modern ? v.fanNames : ['A Loyal Fan', 'Cheap Seat Charlie', 'Disgruntled of Flatbush', 'A Season Ticket Holder', 'Mrs. Annie Kowalski']) });
     }
 
     if (m.cool.rumour === 0 && Math.random() < 0.14) {
@@ -333,20 +387,21 @@
       if (Math.random() < 0.6) {
         out.push({
           kind: 'rumour', pid: target.id, who: target.name,
-          text: fill('REPORT FROM {OC} STOP {OT} CLUB SAID TO BE ASKING ABOUT {P} STOP WILL YOU DENY IT STOP', { OC: other.city.toUpperCase(), OT: other.name.toUpperCase(), P: target.name.toUpperCase() }),
+          text: v.modern ? fill('League sources say the {OT} have been asking about {P}. Do you want to shut the rumour down?', { OT: other.name, P: target.name })
+            : fill('REPORT FROM {OC} STOP {OT} CLUB SAID TO BE ASKING ABOUT {P} STOP WILL YOU DENY IT STOP', { OC: other.city.toUpperCase(), OT: other.name.toUpperCase(), P: target.name.toUpperCase() }),
           choices: [
             { label: 'Wire back: not for sale', fx: { s: { m: 2, t: 4 }, fans: 1 }, say: 'Denied' },
             { label: 'Say nothing', fx: { s: { t: target && pm(save, target.id).m < 50 ? -3 : -1 } }, say: 'No comment' }
           ]
         });
       } else {
-        out.push({ kind: 'rumour', text: fill('OWNERS MEETING IN {OC} STOP TALK OF SCHEDULE CHANGES AND NEW ARENAS STOP NOTHING CONFIRMED STOP', { OC: other.city.toUpperCase() }), choices: [{ label: 'Noted', fx: {}, say: 'Noted' }] });
+        out.push({ kind: 'rumour', text: v.modern ? fill('Owners are meeting in {OC} and there is talk of schedule changes. Nothing is confirmed.', { OC: other.city }) : fill('OWNERS MEETING IN {OC} STOP TALK OF SCHEDULE CHANGES AND NEW ARENAS STOP NOTHING CONFIRMED STOP', { OC: other.city.toUpperCase() }), choices: [{ label: 'Noted', fx: {}, say: 'Noted' }] });
       }
     }
 
     if (save.phase === 'regular' && !(m.cool.period > 0) && Math.random() < 0.06) {
       m.cool.period = 14;
-      out.push(rnd(PERIOD)(ctx));
+      out.push(rnd(v.modern ? PERIOD_M : PERIOD)(ctx));
     }
 
     // injuries to my players: a decision for the manager
@@ -368,7 +423,7 @@
       var of = root.League.makeOffer(save, ctx.me.id, ctx.others.concat([ctx.opp]));
       if (of) {
         m.cool.offer = 14;
-        out.push({ kind: 'rumour', who: of.give.name, text: of.city.toUpperCase() + ' CLUB WIRES OFFER STOP WILL SEND ' + of.give.name.toUpperCase() + ' (' + of.give.ratings.ovr + ' OVERALL, ' + (of.give.pos || 'PLAYER') + ', $' + of.give.salary.toLocaleString('en-US') + ') FOR ' + of.want.name.toUpperCase() + ' (' + of.want.ratings.ovr + ', $' + of.want.salary.toLocaleString('en-US') + ') STOP YOUR ANSWER STOP', choices: [
+        out.push({ kind: 'rumour', who: of.give.name, text: v.modern ? 'The ' + of.team + ' offer ' + of.give.name + ' (' + of.give.ratings.ovr + ' overall, ' + (of.give.pos || 'player') + ', ' + root.League.money(of.give.salary, save.lg.cap) + ') for ' + of.want.name + ' (' + of.want.ratings.ovr + ', ' + root.League.money(of.want.salary, save.lg.cap) + '). What do you say?' : of.city.toUpperCase() + ' CLUB WIRES OFFER STOP WILL SEND ' + of.give.name.toUpperCase() + ' (' + of.give.ratings.ovr + ' OVERALL, ' + (of.give.pos || 'PLAYER') + ', $' + of.give.salary.toLocaleString('en-US') + ') FOR ' + of.want.name.toUpperCase() + ' (' + of.want.ratings.ovr + ', $' + of.want.salary.toLocaleString('en-US') + ') STOP YOUR ANSWER STOP', choices: [
             { label: 'Accept the swap', fx: { offer: { them: of.themId, give: of.want.id, get: of.give.id } }, say: 'Accepted' },
             { label: 'Decline', fx: {}, say: 'Declined' }
           ] });
@@ -377,6 +432,16 @@
 
     var conv = pickConversation(save, ctx, lines, won);
     if (conv) { m.cool.conv = 3; out.push(conv); }
+    if (v.modern) {
+      var M = function (t) {
+        return typeof t !== 'string' ? t : t.replace(/Skipper/g, 'Boss').replace(/Give the boys a day off/g, 'Give the guys a day off').replace(/A fellow plays better/g, 'A player plays better')
+          .replace(/Fellows on other clubs are making real money\./g, 'Guys on other teams are getting paid.').replace(/the boys/g, 'the guys').replace(/The boys/g, 'The guys');
+      };
+      out.forEach(function (e) {
+        e.text = M(e.text);
+        (e.choices || []).forEach(function (c) { c.label = M(c.label); c.say = M(c.say); });
+      });
+    }
     return out;
   }
 

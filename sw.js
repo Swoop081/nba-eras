@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v46';
+var CACHE = 'nba-eras-v48';
 var SHELL = [
   './',
   'index.html',
@@ -13,7 +13,9 @@ var SHELL = [
   'manifest.webmanifest',
   'data/teams-1946.json',
   'data/players-1946.json',
-  'data/draft-1947.json'
+  'data/draft-1947.json',
+  'data/teams-2026.json',
+  'data/players-2026.json'
 ];
 
 self.addEventListener('install', function (event) {
