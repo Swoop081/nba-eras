@@ -123,6 +123,7 @@
     if (fouled) {
       var n = made ? 1 : (three ? 3 : 2);
       shooter.s.fga += made ? 1 : 0;
+      if (made && three) { shooter.s.tpa++; shooter.s.tp++; }
       ev.kind = 'foul'; ev.fta = 0; ev.ftm = 0;
       for (var i = 0; i < n; i++) {
         shooter.s.fta++; ev.fta++;
@@ -194,13 +195,14 @@
   /* ---------- stepwise game, so the match screen can pause for decisions ---------- */
   function start(home, away, year, seed, edges) {
     var pr = params(year);
-    var perQ = Math.round(pr.poss / 4);
+    var perQ = pr.poss / 4;
     var prep0H = prep(home), prep0A = prep(away);
     var g = {
       pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep0H, A: prep0A, year: year,
-      perQ: perQ, limit: perQ, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
+      perQ: perQ, limit: 0, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
       mods: { H: {}, A: {} }, rest: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
     };
+    g.limit = Math.floor(perQ + g.r());
     setLineups(g);
     return g;
   }
@@ -221,9 +223,9 @@
     g.qh += a; g.qa += b; g.hs += a; g.as += b; g.k++; g.n++;
     if (g.k >= g.limit) {
       g.quarters.push([g.qh, g.qa]);
-      g.qh = 0; g.qa = 0; g.k = 0; g.q++;
+      g.qh = 0; g.qa = 0; g.k = 0; g.q++; g.limit = Math.floor(g.perQ + g.r());
       if (g.q >= 4) {
-        if (g.hs === g.as && g.ot < 6) { g.ot++; g.limit = Math.round(g.perQ / 2); }
+        if (g.hs === g.as && g.ot < 6) { g.ot++; g.limit = Math.max(4, Math.round(g.perQ / 2)); }
         else g.over = true;
       }
     }
