@@ -1188,6 +1188,23 @@
     var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
     return r.length ? Math.round(r.reduce(function (a, b) { return a + b; }, 0) / r.length) : 0;
   }
+  /* Strength of a set of players: the average of the best eight. */
+  function strengthOf(list) {
+    var r = list.map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
+    return r.length ? r.reduce(function (a, b) { return a + b; }, 0) / r.length : 0;
+  }
+  /* Chance of winning the title, from how every club's top eight compare. Pass a roster to see a what-if. */
+  function titleOdds(id, listOverride) {
+    var tot = 0, mine = 0;
+    save.ids.forEach(function (tid) {
+      var s = strengthOf(tid === id && listOverride ? listOverride : rosterOf(tid));
+      var w = Math.exp(0.62 * s);
+      tot += w;
+      if (tid === id) mine = w;
+    });
+    return tot ? Math.round(1000 * mine / tot) / 10 : 0;
+  }
+  function pctText(v) { return (v < 10 ? v.toFixed(1) : String(Math.round(v))) + '%'; }
   function sideRating(id, w) {
     var top = rosterOf(id).slice().sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(0, 8);
     if (!top.length) return 0;
@@ -1922,6 +1939,8 @@
   var PAGED = ['roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
   function pageify(box) {
     if (!modernUI() || box._busy || !box.offsetParent) return;
+    var tl = box.id === 'trade-body' ? box.querySelector(':scope > .tlist') : null;
+    if (tl) { pageify(tl); return; }
     var kids = Array.prototype.slice.call(box.children).filter(function (k) { return !k.classList.contains('pgr'); });
     if (!kids.length) return;
     box._busy = true;
@@ -2340,7 +2359,7 @@
     bodyEl.className = 'hub';
     var titleEl = document.getElementById('season-title');
     titleEl.textContent = me.city + ' ' + me.name;
-    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + rec.w + '-' + rec.l + ' · ' + money(League.payroll(save, me.id));
+    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + rec.w + '-' + rec.l + ' · ' + money(League.payroll(save, me.id)) + (save.phase === 'done' ? '' : ' · Title ' + pctText(titleOdds(me.id)));
     var hdr = document.querySelector('#screen-season .bar');
     var gear = hdr.querySelector('.gear');
     if (!gear) {
@@ -3018,6 +3037,16 @@
     bar.appendChild(fill);
     meterRow.appendChild(bar);
     body.appendChild(meterRow);
+    if (give.length || get.length) {
+      var after = mine.filter(function (p) { return !trade.give[p.id]; }).concat(get);
+      var r0 = Math.round(strengthOf(mine)), r1 = Math.round(strengthOf(after)), o0 = titleOdds(me.id), o1 = titleOdds(me.id, after);
+      var dl = el('p', 'tdelta');
+      dl.appendChild(el('span', null, 'Rating ' + r0 + ' \u2192 '));
+      dl.appendChild(el('b', r1 > r0 ? 'up' : r1 < r0 ? 'dn' : '', String(r1)));
+      dl.appendChild(el('span', null, ' · Title ' + pctText(o0) + ' \u2192 '));
+      dl.appendChild(el('b', o1 > o0 ? 'up' : o1 < o0 ? 'dn' : '', pctText(o1)));
+      dock.appendChild(dl);
+    }
     dock.appendChild(el('p', res.ok && !trade.msg ? 'dec-title tmsg' : 'note tmsg', trade.msg || (give.length || get.length || ex.n ? res.reason : 'Tap players on both tabs to build a deal.')));
     var list = el('div', 'tlist');
     function toggle(map, id) { if (map[id]) delete map[id]; else map[id] = 1; trade.msg = ''; renderTrade(); }

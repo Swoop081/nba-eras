@@ -380,3 +380,11 @@ body[data-modern="1"] #screen-live .dec-title{font-size:14px}
 body[data-modern="1"] #screen-live:has(.dec-title) #ticker{max-height:42px}
 body[data-modern="1"] #screen-live:has(.dec-title) #ticker .tk:nth-child(n+2){display:none}
 body[data-modern="1"] .court.full{min-height:300px}
+body[data-modern="1"] .tdelta{margin:0;font:600 15px var(--font);color:var(--muted)}
+body[data-modern="1"] .tdelta b{color:var(--ink);font-weight:800}
+body[data-modern="1"] .tdelta b.up{color:#4ADE80}
+body[data-modern="1"] .tdelta b.dn{color:#F87171}
+body[data-modern="1"] #trade-body:has(.tlist){display:flex;flex-direction:column;gap:8px}
+body[data-modern="1"] #trade-body .ttabs,body[data-modern="1"] #trade-body .tmeter{flex:none}
+body[data-modern="1"] #trade-body .tlist{flex:1;min-height:0;position:relative;overflow:hidden;display:block}
+body[data-modern="1"] #trade-body .tlist .pgr{position:absolute;inset:0}
