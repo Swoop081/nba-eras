@@ -152,3 +152,41 @@ body[data-modern="1"] .car-head .box-title{margin:8px 2px 6px}
 body[data-modern="1"] .ev,body[data-modern="1"] .paper.phone-feed{padding:12px;gap:8px}
 body[data-modern="1"] .ptabs{padding:4px 12px 8px}
 body[data-modern="1"] .bar{background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+
+/* franchise rails */
+body[data-modern="1"] #screen-team{overflow:hidden}
+body[data-modern="1"] #team-list.rails{display:flex;flex-direction:column;gap:10px;padding:2px 0 0;flex:1;min-height:0;overflow:hidden}
+body[data-modern="1"] .rail-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px}
+body[data-modern="1"] .conf-tabs{display:flex;gap:6px}
+body[data-modern="1"] .conf-tabs button{padding:8px 13px;border-radius:999px;border:0;background:var(--raised);color:var(--muted);font:600 13.5px var(--font)}
+body[data-modern="1"] .conf-tabs button.on{background:var(--team);color:var(--on)}
+body[data-modern="1"] .rail-count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+body[data-modern="1"] .rail{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:2px 14px 120px;flex:1;min-height:0}
+body[data-modern="1"] .rail::-webkit-scrollbar{display:none}
+body[data-modern="1"] .fcard{flex:0 0 86%;scroll-snap-align:center;display:flex;flex-direction:column;gap:14px;padding:16px;border-radius:24px;max-height:560px;
+  background:linear-gradient(165deg,color-mix(in srgb,var(--c) 34%,var(--card)),var(--card) 58%)}
+body[data-modern="1"] .fc-top{display:flex;align-items:center;gap:14px}
+body[data-modern="1"] .fc-top .badge.has-logo,body[data-modern="1"] .fc-top .badge:not(.has-logo){width:84px;height:84px;font-size:26px}
+body[data-modern="1"] .fc-name{display:grid;line-height:1}
+body[data-modern="1"] .fc-name small{font-size:14px;color:var(--muted);font-weight:600}
+body[data-modern="1"] .fc-name b{font-family:var(--disp);font-weight:800;font-size:40px;line-height:.95}
+body[data-modern="1"] .fc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+body[data-modern="1"] .fc-stats div{display:grid;gap:1px;padding:10px;border-radius:14px;background:rgba(0,0,0,.28)}
+body[data-modern="1"] .fc-stats small{font-size:11.5px;color:var(--muted)}
+body[data-modern="1"] .fc-stats b{font-family:var(--disp);font-weight:800;font-size:28px;line-height:1}
+body[data-modern="1"] .fc-stats em{font-style:normal;font-size:11.5px;color:var(--muted)}
+body[data-modern="1"] .fc-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto}
+body[data-modern="1"] .fc-p{display:grid;justify-items:center;gap:1px;text-align:center;padding:10px 4px 8px;border-radius:16px;background:rgba(0,0,0,.28)}
+body[data-modern="1"] .fc-p.lead{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 70%,transparent)}
+body[data-modern="1"] .fc-p .avatar{width:68px;height:68px}
+body[data-modern="1"] .fc-p b{font-family:var(--disp);font-weight:800;font-size:30px;line-height:1;margin-top:4px}
+body[data-modern="1"] .fc-p span{font-size:13px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-modern="1"] .fc-p small{font-size:11px;color:var(--muted)}
+body[data-modern="1"] .rail{align-items:flex-start;padding-top:6px}
+body[data-modern="1"] .fcard{max-height:none}
+body[data-modern="1"] .fc-trio{margin-top:0}
+body[data-modern="1"] .fc-p .avatar{width:76px;height:76px}
+body[data-modern="1"] .fc-out{display:grid;gap:2px;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.28)}
+body[data-modern="1"] .fc-out b{font-family:var(--disp);font-weight:800;font-size:22px;color:var(--c)}
+body[data-modern="1"] .fc-out span{font-size:14px;line-height:1.35;color:var(--ink)}
+body[data-modern="1"] .rail{align-items:center;padding-top:0;padding-bottom:96px}

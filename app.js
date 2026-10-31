@@ -302,7 +302,104 @@
     next();
   }
 
+  /* The present day: franchises are swipeable cards, East and West, no endless list. */
+  function renderRails(data) {
+    teamList.textContent = '';
+    teamList.className = 'rails';
+    var ranked = data.teams.slice().sort(function (a, b) { return b.rating - a.rating; });
+    ranked.forEach(function (t, i) { t.rank = i + 1; });
+    var conf = 'Eastern';
+    var tabs = el('div', 'seg conf-tabs');
+    var count = el('span', 'rail-count');
+    var rail = el('div', 'rail');
+    var cardEls = [];
+    function pick(card, team) {
+      selected = team;
+      teamTheme();
+      takeBtn.textContent = 'Take over the ' + team.city + ' ' + team.name;
+      dock.hidden = false;
+      var idx = cardEls.indexOf(card);
+      count.textContent = (idx + 1) + ' of ' + cardEls.length;
+    }
+    function build() {
+      rail.textContent = '';
+      cardEls = [];
+      var list = data.teams.filter(function (t) { return t.division === conf; }).sort(function (a, b) { return a.city < b.city ? -1 : 1; });
+      list.forEach(function (team) {
+        var c = el('article', 'fcard');
+        c.style.setProperty('--c', team.colors ? team.colors[0] : '#888');
+        var top = el('div', 'fc-top');
+        top.appendChild(makeBadge(team, false));
+        applyLogo(top.firstChild, team);
+        var nm = el('div', 'fc-name');
+        nm.appendChild(el('small', null, team.city));
+        nm.appendChild(el('b', null, team.name));
+        top.appendChild(nm);
+        c.appendChild(top);
+        var stats = el('div', 'fc-stats');
+        [['Rating', String(team.rating), '#' + team.rank + ' of 30'], ['Record', '0-0', 'Opening night'], ['Avg age', team.avgAge.toFixed(1), team.young ? team.young + ' young core' : 'veteran core']].forEach(function (x) {
+          var d = el('div');
+          d.appendChild(el('small', null, x[0]));
+          d.appendChild(el('b', null, x[1]));
+          d.appendChild(el('em', null, x[2]));
+          stats.appendChild(d);
+        });
+        c.appendChild(stats);
+        var out = team.rank <= 6 ? ['Contender', 'Built to win now. The owner expects a deep playoff run.']
+          : team.rank <= 14 ? ['Playoff team', 'Good enough for the bracket. One move could make it a contender.']
+          : team.rank <= 22 ? ['On the bubble', 'Could go either way. The next few moves decide it.']
+          : ['Rebuilding', 'The wins will come later. Build around the young players and the picks.'];
+        var ol = el('div', 'fc-out');
+        ol.appendChild(el('b', null, out[0]));
+        ol.appendChild(el('span', null, out[1]));
+        c.appendChild(ol);
+        var trio = el('div', 'fc-trio');
+        team.top.forEach(function (p, i) {
+          var cell = el('div', 'fc-p' + (i === 0 ? ' lead' : ''));
+          cell.appendChild(makeAvatar(p));
+          cell.appendChild(el('b', null, String(p.ovr)));
+          cell.appendChild(el('span', null, p.name.split(' ').slice(-1)[0]));
+          cell.appendChild(el('small', null, (p.pos || '') + ' \u00B7 ' + (p.age || '')));
+          trio.appendChild(cell);
+        });
+        c.appendChild(trio);
+        c._team = team;
+        rail.appendChild(c);
+        cardEls.push(c);
+      });
+      rail.scrollLeft = 0;
+      if (cardEls.length) pick(cardEls[0], cardEls[0]._team);
+    }
+    var tick = null;
+    rail.addEventListener('scroll', function () {
+      clearTimeout(tick);
+      tick = setTimeout(function () {
+        var mid = rail.scrollLeft + rail.clientWidth / 2, best = null, bd = 1e9;
+        cardEls.forEach(function (c) { var d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = c; } });
+        if (best && best._team !== selected) pick(best, best._team);
+      }, 60);
+    });
+    ['Eastern', 'Western'].forEach(function (name) {
+      var b = el('button', name === conf ? 'on' : '', name + ' conference');
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        conf = name;
+        Array.prototype.forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === b); });
+        build();
+      });
+      tabs.appendChild(b);
+    });
+    var head = el('div', 'rail-head');
+    head.appendChild(tabs);
+    head.appendChild(count);
+    teamList.appendChild(head);
+    teamList.appendChild(rail);
+    build();
+  }
+
   function renderTeams(data) {
+    if (data.current) { renderRails(data); return; }
+    teamList.className = 'list';
     teamList.textContent = '';
     data.divisions.forEach(function (div) {
       var teams = data.teams.filter(function (t) { return t.division === div; });
@@ -424,6 +521,11 @@
           data.current = true;
           data.teams.forEach(function (t) {
             var list = pl.players.filter(function (p) { return p.teamId === t.id; }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+            t.top = list.slice(0, 3).map(function (p) { return { id: p.id, name: p.name, pos: p.pos, age: p.age, ovr: p.ratings.ovr }; });
+            var eight = list.slice(0, 8);
+            t.rating = eight.length ? Math.round(eight.reduce(function (a, p) { return a + p.ratings.ovr; }, 0) / eight.length) : 0;
+            t.avgAge = eight.length ? Math.round(10 * eight.reduce(function (a, p) { return a + (p.age || 26); }, 0) / eight.length) / 10 : 0;
+            t.young = list.filter(function (p) { return (p.age || 26) <= 23 && p.ratings.ovr >= 60; }).length;
             t.note = list.length ? list[0].name + ' (' + list[0].ratings.ovr + ')' + (list[1] ? ', ' + list[1].name + ' (' + list[1].ratings.ovr + ')' : '') : '';
           });
           seasons[era.id] = data;
