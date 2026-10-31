@@ -1901,7 +1901,481 @@
     return wrap;
   }
 
+  /* ---------- the present-day hub: one screen, no scrolling ---------- */
+  var hubTab = 'table';
+  var DETAILS = ['basic', 'standard', 'nerd'];
+  function ui() {
+    var u = store.get('ui', null) || {};
+    if (DETAILS.indexOf(u.detail) < 0) u.detail = 'standard';
+    if (!u.tabs || !u.tabs.length) u.tabs = ['table', 'leaders', 'team', 'club'];
+    if (!u.cats) u.cats = null;
+    return u;
+  }
+  function saveUi(u) { store.set('ui', u); }
+  var TABS = { table: 'Table', leaders: 'Leaders', team: 'Team', club: 'Club' };
+
+  function formAll() {
+    var f = {};
+    save.ids.forEach(function (id) { f[id] = { w: 0, l: 0, pf: 0, pa: 0, g: 0, res: [], home: { w: 0, l: 0 }, away: { w: 0, l: 0 }, close: { w: 0, l: 0 } }; });
+    (save.results || []).forEach(function (r) {
+      [[r.h, r.hs, r.as, true], [r.a, r.as, r.hs, false]].forEach(function (x) {
+        var t = f[x[0]]; if (!t) return;
+        var won = x[1] > x[2];
+        t.g++; t.pf += x[1]; t.pa += x[2]; t.res.push(won ? 1 : 0); t.margin = t.margin || []; t.margin.push(x[1] - x[2]);
+        (x[3] ? t.home : t.away)[won ? 'w' : 'l']++;
+        if (Math.abs(x[1] - x[2]) <= 5) t.close[won ? 'w' : 'l']++;
+      });
+    });
+    return f;
+  }
+  function streakOf(res) {
+    if (!res.length) return '-';
+    var last = res[res.length - 1], n = 0;
+    for (var i = res.length - 1; i >= 0 && res[i] === last; i--) n++;
+    return (last ? 'W' : 'L') + n;
+  }
+
+  /* a horizontally swipeable rail of pages with dots */
+  function hubRail(pages) {
+    var wrap = el('div', 'hrail');
+    var track = el('div', 'hrail-track');
+    var dots = el('div', 'hrail-dots');
+    pages.forEach(function (pg, i) {
+      var c = el('section', 'hpage');
+      c.appendChild(el('h3', 'hp-title', pg.title));
+      c.appendChild(pg.node);
+      track.appendChild(c);
+      dots.appendChild(el('i', i === 0 ? 'on' : ''));
+    });
+    var tick = null;
+    track.addEventListener('scroll', function () {
+      clearTimeout(tick);
+      tick = setTimeout(function () {
+        var i = Math.round(track.scrollLeft / (track.firstChild.offsetWidth + 10));
+        Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === i); });
+      }, 50);
+    });
+    wrap.appendChild(track);
+    if (pages.length > 1) wrap.appendChild(dots);
+    return wrap;
+  }
+
+  function leaderDefs(detail) {
+    var gp = (save.rec[save.myId].w + save.rec[save.myId].l), qual = Math.max(1, Math.min(15, Math.floor(gp * 0.5)));
+    var pct = function (a, b, min) { return function (x) { return x[b] >= min ? 100 * x[a] / x[b] : -1; }; };
+    var all = [
+      { id: 'pts', t: 'Points', lvl: 0, f: function (x) { return x.pts / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'ast', t: 'Assists', lvl: 0, f: function (x) { return x.ast / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'trb', t: 'Rebounds', lvl: 0, f: function (x) { return x.trb / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'stl', t: 'Steals', lvl: 1, f: function (x) { return x.stl / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'blk', t: 'Blocks', lvl: 1, f: function (x) { return x.blk / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'fgp', t: 'Field goal %', lvl: 1, f: pct('fg', 'fga', qual * 3), fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'ftp', t: 'Free throw %', lvl: 1, f: pct('ft', 'fta', qual), fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'tpm', t: 'Threes made', lvl: 2, f: function (x) { return (x.tp || 0) / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'tpp', t: 'Three-point %', lvl: 2, f: pct('tp', 'tpa', qual * 2), fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'ts', t: 'True shooting %', lvl: 2, f: function (x) { var d = 2 * (x.fga + 0.44 * x.fta); return x.fga >= qual * 3 && d ? 100 * x.pts / d : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'min', t: 'Minutes', lvl: 2, f: function (x) { return x.min / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'tov', t: 'Turnovers', lvl: 2, f: function (x) { return x.tov / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'eff', t: 'Efficiency', lvl: 2, f: function (x) { return (x.pts + x.trb + x.ast + x.stl + x.blk - (x.fga - x.fg) - (x.fta - x.ft) - x.tov) / x.g; }, fmt: function (v) { return v.toFixed(1); } }
+    ];
+    return { all: all, qual: qual, level: DETAILS.indexOf(detail) };
+  }
+
+  function hubLeaders(u) {
+    var d = leaderDefs(u.detail);
+    var show = d.all.filter(function (c) { return u.cats ? u.cats.indexOf(c.id) >= 0 : c.lvl <= d.level; });
+    var n = u.detail === 'nerd' ? 7 : u.detail === 'basic' ? 4 : 5;
+    var pages = [];
+    show.forEach(function (c) {
+      var rows = Object.keys(save.lg.stats).map(function (id) {
+        var x = save.lg.stats[id], p = League.byId(save, id);
+        return p && x.g >= d.qual ? { p: p, v: c.f(x), g: x.g } : null;
+      }).filter(function (r) { return r && r.v >= 0; }).sort(function (a, b) { return b.v - a.v; }).slice(0, n);
+      var box = el('div', 'lb');
+      if (!rows.length) box.appendChild(el('p', 'sub', 'Fills in after a few games.'));
+      var top = rows.length ? rows[0].v || 1 : 1;
+      rows.forEach(function (r, i) {
+        var line = el('button', 'lb-row' + (r.p.team === save.myId ? ' mine' : ''));
+        line.type = 'button';
+        line.appendChild(el('span', 'rk', String(i + 1)));
+        line.appendChild(makeAvatar(r.p));
+        var tx = el('span', 'who');
+        tx.appendChild(el('b', null, r.p.name));
+        var tm = r.p.team ? teamById(r.p.team) : null;
+        tx.appendChild(el('small', null, (tm ? tm.city : 'Free agent') + (u.detail === 'nerd' ? ' · ' + r.g + ' g' : '')));
+        line.appendChild(tx);
+        var val = el('span', 'val');
+        val.appendChild(el('b', null, c.fmt(r.v)));
+        var bar = el('i'); bar.style.width = Math.max(6, Math.round(100 * r.v / top)) + '%';
+        val.appendChild(bar);
+        line.appendChild(val);
+        line.addEventListener('click', function () { openPlayer(r.p, tm); });
+        box.appendChild(line);
+      });
+      pages.push({ title: c.t, node: box });
+    });
+    if (!pages.length) return el('p', 'sub', 'No categories selected.');
+    return hubRail(pages);
+  }
+
+  function hubTable(u, f) {
+    var st = Season.standings(save), me = save.myId;
+    var divs = Object.keys(st).sort(function (x, y) {
+      var mx = st[x].some(function (r) { return r.id === me; }), my = st[y].some(function (r) { return r.id === me; });
+      return mx === my ? 0 : mx ? -1 : 1;
+    });
+    var lvl = DETAILS.indexOf(u.detail);
+    var pages = [];
+    if (save.playoffs) pages.push({ title: 'Playoffs', node: bracketView() });
+    divs.forEach(function (d) {
+      var tb = el('table', 'ht');
+      var hr = el('tr'); var cols = ['', 'W', 'L', 'GB'];
+      if (lvl >= 1) cols.push('L10', 'Strk');
+      if (lvl >= 2) cols.push('PF', 'PA');
+      cols.forEach(function (h, i) { hr.appendChild(el('th', i === 0 ? 'tn' : null, h)); });
+      var th = el('thead'); th.appendChild(hr); tb.appendChild(th);
+      var body = el('tbody');
+      st[d].forEach(function (r, i) {
+        var t = teamById(r.id), x = f[r.id] || { res: [], g: 0, pf: 0, pa: 0 };
+        var tr = el('tr', r.id === me ? 'me' : null);
+        tr.dataset.rank = String(i + 1);
+        var tdn = el('td', 'tn');
+        tdn.appendChild(el('span', 'pos', String(i + 1)));
+        var sb = teamBadge(t); sb.className += ' sm'; tdn.appendChild(sb);
+        tdn.appendChild(document.createTextNode(t.city));
+        tr.appendChild(tdn);
+        tr.appendChild(el('td', null, String(r.w)));
+        tr.appendChild(el('td', null, String(r.l)));
+        tr.appendChild(el('td', null, r.gb ? String(r.gb) : '-'));
+        if (lvl >= 1) {
+          var l10 = x.res.slice(-10), w10 = l10.reduce(function (a, b) { return a + b; }, 0);
+          tr.appendChild(el('td', null, l10.length ? w10 + '-' + (l10.length - w10) : '-'));
+          tr.appendChild(el('td', null, streakOf(x.res)));
+        }
+        if (lvl >= 2) {
+          tr.appendChild(el('td', null, x.g ? (x.pf / x.g).toFixed(1) : '-'));
+          tr.appendChild(el('td', null, x.g ? (x.pa / x.g).toFixed(1) : '-'));
+        }
+        if (i === 5 || i === 9) tr.classList.add('cut');
+        body.appendChild(tr);
+      });
+      tb.appendChild(body);
+      pages.push({ title: divTitle(d), node: tb });
+    });
+    return hubRail(pages);
+  }
+
+  function spark(vals, w, h) {
+    var ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h); svg.setAttribute('class', 'spark');
+    if (vals.length < 2) return svg;
+    var mx = Math.max(10, Math.max.apply(null, vals.map(Math.abs)));
+    var pts = vals.map(function (v, i) { return [i * (w / (vals.length - 1)), h / 2 - (v / mx) * (h / 2 - 3)]; });
+    var zero = document.createElementNS(ns, 'line');
+    zero.setAttribute('x1', 0); zero.setAttribute('x2', w); zero.setAttribute('y1', h / 2); zero.setAttribute('y2', h / 2); zero.setAttribute('class', 'z');
+    svg.appendChild(zero);
+    var pl = document.createElementNS(ns, 'polyline');
+    pl.setAttribute('points', pts.map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' '));
+    pl.setAttribute('class', 'ln');
+    svg.appendChild(pl);
+    return svg;
+  }
+  function stat(label, value, sub) {
+    var d = el('div', 'hs');
+    d.appendChild(el('small', null, label));
+    d.appendChild(el('b', null, value));
+    if (sub) d.appendChild(el('em', null, sub));
+    return d;
+  }
+  function rankOf(vals, mine, high) {
+    var r = 1; vals.forEach(function (v) { if (high ? v > mine : v < mine) r++; });
+    return r;
+  }
+
+  function hubTeam(u, f) {
+    var me = save.myId, x = f[me], lvl = DETAILS.indexOf(u.detail), rec = save.rec[me];
+    var pages = [];
+    var form = el('div', 'hf');
+    var top = el('div', 'hs-row');
+    top.appendChild(stat('Record', rec.w + '-' + rec.l, rec.w + rec.l ? Math.round(100 * rec.w / (rec.w + rec.l)) + '% wins' : 'Opening night'));
+    top.appendChild(stat('Streak', streakOf(x.res), 'Last 10: ' + (function () { var l = x.res.slice(-10), w = l.reduce(function (a, b) { return a + b; }, 0); return l.length ? w + '-' + (l.length - w) : '-'; })()));
+    var diff = x.g ? (x.pf - x.pa) / x.g : 0;
+    top.appendChild(stat('Margin', x.g ? (diff > 0 ? '+' : '') + diff.toFixed(1) : '-', 'per game'));
+    form.appendChild(top);
+    var dots = el('div', 'hdots');
+    x.res.slice(-10).forEach(function (r) { dots.appendChild(el('i', r ? 'w' : 'l', r ? 'W' : 'L')); });
+    if (!x.res.length) dots.appendChild(el('small', null, 'No games played yet'));
+    form.appendChild(dots);
+    if (lvl >= 1) { var sp = spark(x.margin || [], 300, 110); form.appendChild(sp); }
+    pages.push({ title: 'Form', node: form });
+
+    var rt = el('div', 'hr');
+    var ids = save.ids;
+    [['Overall', teamRating], ['Offence', offRating], ['Defence', defRating]].forEach(function (c) {
+      var vals = ids.map(function (id) { return c[1](id); }), mine = c[1](me), avg = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+      var row = el('div', 'hr-row');
+      row.appendChild(el('span', null, c[0]));
+      var tr = el('span', 'track');
+      var fl = el('span', 'fill ' + level(mine)); fl.style.width = Math.min(100, mine) + '%';
+      tr.appendChild(fl);
+      var mk = el('i', 'avg'); mk.style.left = Math.min(100, avg) + '%'; tr.appendChild(mk);
+      row.appendChild(tr);
+      row.appendChild(el('b', null, String(mine)));
+      row.appendChild(el('small', null, '#' + rankOf(vals, mine, true)));
+      rt.appendChild(row);
+    });
+    pages.push({ title: 'Ratings', node: rt });
+
+    if (lvl >= 1) {
+      var sc = el('div', 'hs-grid');
+      var pfs = ids.map(function (id) { var t = f[id]; return t.g ? t.pf / t.g : 0; }), pas = ids.map(function (id) { var t = f[id]; return t.g ? t.pa / t.g : 0; });
+      var ppg = x.g ? x.pf / x.g : 0, opp = x.g ? x.pa / x.g : 0;
+      sc.appendChild(stat('Points for', x.g ? ppg.toFixed(1) : '-', x.g ? '#' + rankOf(pfs, ppg, true) + ' in the league' : ''));
+      sc.appendChild(stat('Points against', x.g ? opp.toFixed(1) : '-', x.g ? '#' + rankOf(pas, opp, false) + ' fewest' : ''));
+      if (lvl >= 2) {
+        sc.appendChild(stat('Home', x.home.w + '-' + x.home.l));
+        sc.appendChild(stat('Away', x.away.w + '-' + x.away.l));
+        sc.appendChild(stat('Close games', x.close.w + '-' + x.close.l, 'within 5 points'));
+        var pay = League.payroll(save, me);
+        sc.appendChild(stat('Cap room', money(save.lg.cap - pay), money(pay) + ' payroll'));
+      }
+      pages.push({ title: 'Scoring', node: sc });
+    }
+    return hubRail(pages);
+  }
+
+  function hubClub(u) {
+    var me = teamById(save.myId);
+    ensureOwner();
+    var pages = [];
+    var ow = el('div', 'hc');
+    ow.appendChild(el('p', 'goal', save.owner.text + '.'));
+    ow.appendChild(ratingRow('Owner trust', save.ownerTrust));
+    var sm = Events.summary(save, rosterOf(me.id));
+    ow.appendChild(ratingRow('Team morale', sm.morale));
+    if (u.detail !== 'basic') { ow.appendChild(ratingRow('Fan interest', sm.fans)); ow.appendChild(ratingRow('Coach trust', sm.coach)); }
+    pages.push({ title: 'The owner', node: ow });
+    var mo = Events.mood(save);
+    var feed = el('div', 'hc feed');
+    var items = [];
+    (save.lg.wire || []).filter(function (w) { return w.y === save.year; }).slice(-3).reverse().forEach(function (w) { items.push([w.t, 'Game day ' + w.d]); });
+    mo.news.slice(-3).reverse().forEach(function (n) { items.push([n.text, n.date]); });
+    items.slice(0, 5).forEach(function (it) { var d = el('div', 'fi', it[0]); d.appendChild(el('small', null, it[1])); feed.appendChild(d); });
+    if (!items.length) feed.appendChild(el('p', 'sub', 'Quiet so far.'));
+    pages.push({ title: 'Around the league', node: feed });
+    var mine = save.results.filter(function (r) { return r.h === me.id || r.a === me.id; }).slice(-5).reverse();
+    var rg = el('div', 'hc');
+    mine.forEach(function (r) {
+      var home = r.h === me.id, us = home ? r.hs : r.as, them = home ? r.as : r.hs, o = teamById(home ? r.a : r.h);
+      var line = el('div', 'gm ' + (us > them ? 'w' : 'l'));
+      line.appendChild(el('b', null, us > them ? 'W' : 'L'));
+      var sb = teamBadge(o); sb.className += ' sm'; line.appendChild(sb);
+      line.appendChild(el('span', null, (home ? 'vs ' : 'at ') + o.city));
+      line.appendChild(el('em', null, us + '-' + them));
+      rg.appendChild(line);
+    });
+    if (!mine.length) rg.appendChild(el('p', 'sub', 'No games yet.'));
+    pages.push({ title: 'Recent games', node: rg });
+    return hubRail(pages);
+  }
+
+  function hubSheet(title, build) {
+    var ov = el('div', 'sheet-ov');
+    var sh = el('div', 'sheet');
+    sh.appendChild(el('h3', null, title));
+    build(sh, function () { ov.remove(); });
+    ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+    ov.appendChild(sh);
+    document.body.appendChild(ov);
+  }
+
+  function customise() {
+    hubSheet('Customise', function (sh, close) {
+      var u = ui();
+      function chips(label, items, isOn, toggle) {
+        sh.appendChild(el('p', 'sh-l', label));
+        var row = el('div', 'chips');
+        items.forEach(function (it) {
+          var b = el('button', isOn(it[0]) ? 'on' : '', it[1]); b.type = 'button';
+          b.addEventListener('click', function () { toggle(it[0]); saveUi(u); b.classList.toggle('on', isOn(it[0])); });
+          row.appendChild(b);
+        });
+        sh.appendChild(row);
+      }
+      sh.appendChild(el('p', 'sh-l', 'Stat detail'));
+      var seg = el('div', 'chips');
+      [['basic', 'Basic'], ['standard', 'Standard'], ['nerd', 'Everything']].forEach(function (d) {
+        var b = el('button', u.detail === d[0] ? 'on' : '', d[1]); b.type = 'button';
+        b.addEventListener('click', function () {
+          u.detail = d[0]; u.cats = null; saveUi(u);
+          Array.prototype.forEach.call(seg.children, function (x) { x.classList.toggle('on', x === b); });
+          catRow.remove(); catRow = buildCats(); sh.insertBefore(catRow, done);
+        });
+        seg.appendChild(b);
+      });
+      sh.appendChild(seg);
+      chips('Tabs', Object.keys(TABS).map(function (k) { return [k, TABS[k]]; }), function (k) { return u.tabs.indexOf(k) >= 0; }, function (k) {
+        var i = u.tabs.indexOf(k);
+        if (i >= 0) { if (u.tabs.length > 1) u.tabs.splice(i, 1); } else u.tabs.push(k);
+        u.tabs.sort(function (a, b) { return Object.keys(TABS).indexOf(a) - Object.keys(TABS).indexOf(b); });
+      });
+      function buildCats() {
+        var wrap = el('div');
+        var d = leaderDefs(u.detail);
+        var cur = u.cats || d.all.filter(function (c) { return c.lvl <= d.level; }).map(function (c) { return c.id; });
+        wrap.appendChild(el('p', 'sh-l', 'Leader categories'));
+        var row = el('div', 'chips');
+        d.all.forEach(function (c) {
+          var b = el('button', cur.indexOf(c.id) >= 0 ? 'on' : '', c.t); b.type = 'button';
+          b.addEventListener('click', function () {
+            var i = cur.indexOf(c.id);
+            if (i >= 0) { if (cur.length > 1) cur.splice(i, 1); } else cur.push(c.id);
+            u.cats = cur.slice(); saveUi(u); b.classList.toggle('on', cur.indexOf(c.id) >= 0);
+          });
+          row.appendChild(b);
+        });
+        wrap.appendChild(row);
+        return wrap;
+      }
+      var catRow = buildCats();
+      sh.appendChild(catRow);
+      var done = el('button', 'btn primary wide', 'Done'); done.type = 'button';
+      done.addEventListener('click', function () { close(); renderSeason(); });
+      sh.appendChild(done);
+    });
+  }
+
+  function renderHub() {
+    var me = teamById(save.myId), rec = save.rec[me.id], u = ui();
+    var bodyEl = document.getElementById('season-body');
+    bodyEl.textContent = '';
+    bodyEl.className = 'hub';
+    var titleEl = document.getElementById('season-title');
+    titleEl.textContent = me.city + ' ' + me.name;
+    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + rec.w + '-' + rec.l + ' · ' + money(League.payroll(save, me.id));
+    var hdr = document.querySelector('#screen-season .bar');
+    var gear = hdr.querySelector('.gear');
+    if (!gear) {
+      gear = el('button', 'gear', '⚙'); gear.type = 'button'; gear.setAttribute('aria-label', 'Customise');
+      hdr.appendChild(gear);
+    }
+    gear.onclick = customise;
+    document.getElementById('season-dock').hidden = true;
+
+    var next = Season.myNext(save), reg = save.phase === 'regular', done = save.phase === 'done';
+    var f = formAll();
+
+    /* the next game */
+    var hero = el('div', 'hh');
+    if (done) {
+      var champ = teamById(save.champion);
+      hero.classList.add('champ');
+      var cb = teamBadge(champ); hero.appendChild(cb);
+      var tx = el('div', 'hh-t');
+      tx.appendChild(el('b', null, champ.city + ' ' + champ.name));
+      tx.appendChild(el('small', null, champ.id === me.id ? 'You won the title' : 'Champions of ' + seasonLabel(save.year)));
+      hero.appendChild(tx);
+    } else if (next) {
+      var oppId = next.home === me.id ? next.away : next.home, opp = teamById(oppId), orec = save.rec[oppId];
+      var head = el('div', 'hh-when', reg ? 'Game ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name);
+      hero.appendChild(head);
+      var vs = el('div', 'hh-vs');
+      [[me, rec, 'mine'], [opp, orec, '']].forEach(function (x, i) {
+        if (i === 1) vs.appendChild(el('span', 'at', next.home === me.id ? 'vs' : 'at'));
+        var s = el('div', 'hh-side ' + x[2]);
+        s.appendChild(teamBadge(x[0]));
+        var t = el('div');
+        t.appendChild(el('b', null, x[0].city));
+        t.appendChild(el('small', null, x[1].w + '-' + x[1].l));
+        s.appendChild(t);
+        vs.appendChild(s);
+      });
+      hero.appendChild(vs);
+      var chipsEl = el('div', 'hh-cmp');
+      var cmps = [['OVR', teamRating(me.id), teamRating(oppId)]];
+      if (u.detail !== 'basic') cmps.push(['OFF', offRating(me.id), offRating(oppId)], ['DEF', defRating(me.id), defRating(oppId)]);
+      cmps.forEach(function (c) {
+        var d = el('span', c[1] >= c[2] ? 'up' : 'dn');
+        d.appendChild(el('small', null, c[0]));
+        d.appendChild(el('b', null, c[1] + ' – ' + c[2]));
+        chipsEl.appendChild(d);
+      });
+      hero.appendChild(chipsEl);
+    } else {
+      var msg = reg ? 'Rest day' : Season.inPlayoffs(save, me.id) ? 'Your club is resting' : 'Out of the playoffs';
+      hero.appendChild(el('div', 'hh-when', msg));
+    }
+    bodyEl.appendChild(hero);
+
+    /* tabs */
+    var tabs = u.tabs.filter(function (k) { return TABS[k]; });
+    if (tabs.indexOf(hubTab) < 0) hubTab = tabs[0];
+    var tabBar = el('div', 'htabs');
+    var panel = el('div', 'hpanel');
+    function showTab(k) {
+      hubTab = k;
+      Array.prototype.forEach.call(tabBar.children, function (b) { b.classList.toggle('on', b.dataset.k === k); });
+      panel.textContent = '';
+      var node = k === 'table' ? hubTable(u, f) : k === 'leaders' ? hubLeaders(u) : k === 'team' ? hubTeam(u, f) : hubClub(u);
+      panel.appendChild(node);
+      requestAnimationFrame(fitRows);
+    }
+    function fitRows() {
+      var tbs = panel.querySelectorAll('table.ht');
+      for (var t = 0; t < tbs.length; t++) {
+        var tb = tbs[t], rows = tb.tBodies[0].rows, avail = panel.clientHeight, rh = 26;
+        var max = Math.max(5, Math.floor((avail - 66) / rh));
+        for (var i = 0; i < rows.length; i++) rows[i].hidden = false;
+        if (rows.length > max) {
+          var keep = max - 1;
+          for (var j = 0; j < rows.length; j++) {
+            var mineRow = rows[j].classList.contains('me');
+            rows[j].hidden = !(j < keep || (mineRow && j >= keep && j === rows.length - 1) || (mineRow && j >= keep));
+          }
+          // always leave room for the user's own row
+          var shown = 0; for (var k2 = 0; k2 < rows.length; k2++) if (!rows[k2].hidden) shown++;
+          if (shown > max) for (var m = rows.length - 1; m >= 0 && shown > max; m--) if (!rows[m].hidden && !rows[m].classList.contains('me')) { rows[m].hidden = true; shown--; }
+        }
+      }
+    }
+    tabs.forEach(function (k) {
+      var b = el('button', k === hubTab ? 'on' : '', TABS[k]); b.type = 'button'; b.dataset.k = k;
+      b.addEventListener('click', function () { showTab(k); });
+      tabBar.appendChild(b);
+    });
+    bodyEl.appendChild(tabBar);
+    bodyEl.appendChild(panel);
+
+    /* the bar at the bottom */
+    var dk = el('div', 'hdock');
+    var play = el('button', 'btn primary wide', done ? (save.off ? 'Continue the off-season' : 'Begin the off-season') : next ? 'Play game' : (reg ? 'Sim today' : 'Sim the playoffs'));
+    play.type = 'button';
+    play.addEventListener('click', function () {
+      if (done) { if (!save.off) startOffseason(); else openOff(); }
+      else if (!next && !reg) simPlayoffs(); else playNext();
+    });
+    dk.appendChild(play);
+    var row = el('div', 'hd-row');
+    function nav(label, fn) { var b = el('button', 'btn', label); b.type = 'button'; b.addEventListener('click', fn); row.appendChild(b); }
+    nav('Roster', function () { renderRoster(me); show('screen-roster'); });
+    nav('Trades', function () { openTrade('season'); });
+    nav('Records', openRecords);
+    if (reg) nav('Sim', function () {
+      hubSheet('Sim', function (sh, close) {
+        [['Sim a week', function () { simDays(7); }], ['Sim to the playoffs', function () { simDays(500); }]].forEach(function (a) {
+          var b = el('button', 'btn wide', a[0]); b.type = 'button';
+          b.addEventListener('click', function () { close(); a[1](); });
+          sh.appendChild(b);
+        });
+      });
+    });
+    dk.appendChild(row);
+    bodyEl.appendChild(dk);
+    showTab(hubTab);
+  }
+
   function renderSeason() {
+    if (modernUI()) { renderHub(); return; }
     var me = teamById(save.myId);
     var rec = save.rec[me.id];
     var bodyEl = document.getElementById('season-body');

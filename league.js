@@ -108,7 +108,7 @@
   function bump(save) { save.lg.rev++; }
 
   /* ---------- season stats ---------- */
-  var STAT_KEYS = ['min', 'pts', 'ast', 'trb', 'stl', 'blk', 'tov', 'pf', 'fg', 'fga', 'ft', 'fta'];
+  var STAT_KEYS = ['min', 'pts', 'ast', 'trb', 'stl', 'blk', 'tov', 'pf', 'fg', 'fga', 'ft', 'fta', 'tp', 'tpa'];
   /* meta {h, a, hs, as, nh, day}: lines before index nh are the home side. Game logs are kept for the user's players only. */
   function accumulate(save, lines, meta) {
     var st = save.lg.stats;
