@@ -23,6 +23,26 @@ def main():
     for yr in sys.argv[1:]:
         out = os.path.join(HERE, 'data-%d' % (int(yr) - 1))   # BR season 2026 = 2025-26
         os.makedirs(out, exist_ok=True)
+        # standings: every table on the season page that has team, W and L
+        html = get('https://www.basketball-reference.com/leagues/NBA_%s.html' % yr)
+        time.sleep(5)
+        if html:
+            try:
+                html = html.replace('<!--', '').replace('-->', '')
+                rows = []
+                for t in pd.read_html(io.StringIO(html)):
+                    cols = [str(c) for c in t.columns]
+                    if 'W' in cols and 'L' in cols and len(cols) < 12 and len(t) >= 3:
+                        name = [c for c in cols if c not in ('W', 'L')][0]
+                        for _, r in t.iterrows():
+                            n = str(r[name]).replace('*', '').strip()
+                            if n and n != 'nan' and not n.endswith('Division') and str(r['W']).isdigit():
+                                rows.append((n, int(r['W']), int(r['L'])))
+                if rows:
+                    pd.DataFrame(rows, columns=['team', 'W', 'L']).drop_duplicates('team').to_csv(os.path.join(out, 'standings_bbref.csv'), index=False)
+                    print('OK standings', yr, len(rows), flush=True)
+            except Exception as e:
+                print('standings fail', yr, e, flush=True)
         for t in TABLES:
             url = 'https://www.basketball-reference.com/leagues/NBA_%s_%s.html' % (yr, t)
             html = get(url)
