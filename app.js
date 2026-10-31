@@ -181,6 +181,17 @@
     { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Real rosters as they were.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025.json' }
   ];
 
+  /* Every season back to 1996-97, built from the real box scores: opening night, real rosters, the league as it stood. */
+  (function () {
+    var CH = { 1995: 'Bulls', 1996: 'Bulls', 1997: 'Bulls', 1998: 'Spurs', 1999: 'Lakers', 2000: 'Lakers', 2001: 'Lakers', 2002: 'Spurs', 2003: 'Pistons', 2004: 'Spurs', 2005: 'Heat', 2006: 'Spurs',
+      2007: 'Celtics', 2008: 'Lakers', 2009: 'Lakers', 2010: 'Mavericks', 2011: 'Heat', 2012: 'Heat', 2013: 'Spurs', 2014: 'Warriors', 2015: 'Cavaliers', 2016: 'Warriors', 2017: 'Warriors',
+      2018: 'Raptors', 2019: 'Lakers', 2020: 'Bucks', 2021: 'Warriors', 2022: 'Nuggets', 2023: 'Celtics' };
+    for (var y = 2024; y >= 1996; y--) {
+      var yrs = y + '-' + String((y + 1) % 100).replace(/^(\d)$/, '0$1');
+      ERAS.push({ id: String(y), logo: '2026', years: yrs, title: 'Defending: ' + CH[y - 1], blurb: 'Opening night, real rosters as they were.', open: true, current: true, teams: 'data/teams-' + y + '.json', players: 'data/players-' + y + '.json' });
+    }
+  })();
+
   var eraList = document.getElementById('era-list');
   // The game is built backwards from the present day: only the current season is shown for now.
   // The founding-era entries stay in the code and come back as the history is rebuilt.
@@ -537,9 +548,9 @@
     show('screen-team');
     if (era.current) {
       teamList.textContent = 'Loading the league...';
-      Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), new Promise(function (ok) { loadPlayers(ok); }), fetch('data/players-2025.json').then(function (r) { return r.json(); }).catch(function () { return { players: [] }; })])
+      Promise.all([fetch(era.teams).then(function (r) { return r.json(); }), new Promise(function (ok) { loadPlayers(ok); }), (era.id === '2026' ? fetch('data/players-2025.json').then(function (r) { return r.json(); }).catch(function () { return { players: [] }; }) : Promise.resolve({ players: [] }))])
         .then(function (res) {
-          var data = res[0], pl = res[1], real = bestStatsIndex(res[2].players);
+          var data = res[0], pl = res[1], real = bestStatsIndex(era.id === '2026' ? res[2].players : pl.players);
           data.current = true;
           data.teams.forEach(function (t) {
             var list = pl.players.filter(function (p) { return p.teamId === t.id; }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
@@ -1221,7 +1232,7 @@
     return save.days.filter(function (d) { return d.some(function (g) { return g[0] === id || g[1] === id; }); }).length;
   }
   function seasonLabel(y) { return y + '-' + String(y + 1).slice(2); }
-  function divTitle(d) { return d + (save && (save.eraId === '2026' || save.eraId === '2025') ? ' Conference' : ' Division'); }
+  function divTitle(d) { return d + (save && ((eraStart(save.eraId) || {}).current) ? ' Conference' : ' Division'); }
   function money(n) { return League.money(n, save && save.lg ? save.lg.cap : 0); }
   function teamRating(id) {
     var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
@@ -2002,7 +2013,7 @@
   }
 
   /* ---------- no vertical scrolling: long lists become swipeable pages ---------- */
-  var PAGED = ['roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
+  var PAGED = ['era-list', 'roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
   function pageify(box) {
     if (!modernUI() || box._busy || !box.offsetParent) return;
     var tl = box.id === 'trade-body' ? box.querySelector(':scope > .tlist') : null;

@@ -51,7 +51,7 @@ EAST = {'Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'New Jersey Nets', '
 COLORS = {'Seattle SuperSonics': ('#00653A', '#FFC200', 1610612760), 'Vancouver Grizzlies': ('#00B2A9', '#B15C2A', 1610612763), 'New Jersey Nets': ('#002A60', '#CD1041', 1610612751),
           'New Orleans Hornets': ('#00778B', '#280071', 1610612740), 'Charlotte Bobcats': ('#1D1160', '#F26532', 1610612766), 'Washington Bullets': ('#002B5C', '#E31837', 1610612764)}
 
-AGG = ('2TM', '3TM', '4TM', 'TOT')
+AGG = ('2TM', '3TM', '4TM', '5TM', '6TM', 'TOT')
 
 
 def load(name):

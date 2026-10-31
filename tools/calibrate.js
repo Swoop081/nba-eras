@@ -132,9 +132,10 @@ for (let it = 1; it <= (+process.argv[5] || 10); it++) {
 if (process.argv.includes('--write')) {
   players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = p.ovr0; p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; delete p.ovr0; });
   fs.writeFileSync(path.join(R, 'data/players-' + ERA + '.json'), JSON.stringify(doc, null, 1));
-  const pf = path.join(R, 'data/era-params.json');
-  const all = fs.existsSync(pf) ? JSON.parse(fs.readFileSync(pf, 'utf8')) : {};
+  fs.mkdirSync(path.join(R, 'data/params'), { recursive: true });
+  const pf = path.join(R, 'data/params/' + ERA + '.json');
+  const all = {};
   const rd = o => { const q = {}; for (const k in o) q[k] = typeof o[k] === 'number' ? Math.round(o[k] * 10000) / 10000 : o[k]; return q; };
-  all[YEAR] = rd(P); fs.writeFileSync(pf, JSON.stringify(all, null, 1));
+  all[YEAR] = rd(P); fs.writeFileSync(pf, JSON.stringify(all));
   console.log('written');
 }

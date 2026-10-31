@@ -15,17 +15,23 @@
       games: 60, kind: 'div4',
       playoffs: 'Top four clubs in each division qualify. Division semifinals and finals are best-of-three, then a best-of-seven Finals.'
     },
+    1996: {
+      games: 82, kind: 'nba', firstBest: 5,
+      playoffs: 'The eight best records in each conference qualify and are seeded one to eight. The first round is a best-of-five; every later round, including the Finals, is a best-of-seven.',
+      notes: ['Four 12-minute quarters', '24-second shot clock and the three-point line', 'Salary cap with exceptions', 'Rosters of 12 to 15']
+    },
     2000: {
       games: 82, kind: 'nba',
       playoffs: 'The eight best records in each conference qualify and are seeded one to eight. Every round is a best-of-seven: first round, conference semifinals, conference finals, then the Finals between the two conference champions. (The real league also runs a play-in tournament for seeds seven to ten. That is not in the game yet.)',
       notes: ['Four 12-minute quarters', 'Six personal fouls and you are out', '24-second shot clock and the three-point line', '30 clubs, 15-man rosters', 'Salary cap and contracts']
-    }
+    },
+    2003: { firstBest: 7 }
   };
   function get(year) {
     var best = null;
     Object.keys(TABLE).map(Number).sort(function (a, b) { return a - b; }).forEach(function (y) { if (y <= year) best = y; });
     var out = { since: best };
-    ['games', 'kind', 'playoffs', 'notes'].forEach(function (k) {
+    ['games', 'kind', 'playoffs', 'notes', 'firstBest'].forEach(function (k) {
       for (var y = best; y !== null && y >= 1946; y--) if (TABLE[y] && TABLE[y][k] !== undefined) { out[k] = TABLE[y][k]; break; }
     });
     return out;

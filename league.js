@@ -4,19 +4,23 @@
   var W = { sco: .39, sht: .10, ft: .04, ply: .08, tov: .04, orb: .05, drb: .07, stl: .07, blk: .05, fou: .03, dur: .08 };
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou', 'dur'];
   var KNOWN_SALARY = { 'joe-fulks': 8000, 'tom-king': 16500 };
-  var CAP = { 1946: 55000, 2000: 165000 };
+  var CAP = { 1946: 55000, 1996: 24400, 1997: 26900, 1998: 30000, 1999: 34000, 2000: 35500, 2001: 42500, 2002: 40300, 2003: 43800, 2004: 43900, 2005: 49500, 2006: 53100, 2007: 55600,
+    2008: 58700, 2009: 57700, 2010: 58000, 2011: 58000, 2012: 58000, 2013: 58700, 2014: 63100, 2015: 70000, 2016: 94100, 2017: 99100, 2018: 101900, 2019: 109100, 2020: 109100,
+    2021: 112400, 2022: 123700, 2023: 136000, 2024: 140600, 2025: 154600, 2026: 165000 };
+  var SCALE = 1;
   var MIN_ROSTER = 9, MAX_ROSTER = 15, OPENING_ROSTER = 12;
   /* The modern game counts money in thousands of dollars (a $165,000 cap is $165 million); the founding era counts dollars. */
   var MODERN = false, MINSAL = 1000;
   function setEra(year) {
-    MODERN = year >= 2000;
-    MINSAL = MODERN ? 1300 : 1000;
+    MODERN = year >= 1996;
+    SCALE = MODERN ? capFor(year) / 165000 : 1;
+    MINSAL = MODERN ? Math.max(200, Math.round(1300 * SCALE / 10) * 10) : 1000;
     MIN_ROSTER = MODERN ? 13 : 9;
     OPENING_ROSTER = MODERN ? 15 : 12;
     if (root.League) root.League.MIN_ROSTER = MIN_ROSTER;
   }
   function money(n, cap) {
-    if (cap > 100000) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
+    if (MODERN || cap > 100000) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
     return '$' + n.toLocaleString('en-US');
   }
   function draftRounds() { return MODERN ? 2 : 5; }
@@ -34,7 +38,7 @@
   }
 
   function salaryFor(ovr) {
-    if (MODERN) return round100(MINSAL + Math.pow(Math.max(0, ovr - 44) / 44, 2.1) * 52000);
+    if (MODERN) return round100(MINSAL + Math.pow(Math.max(0, ovr - 44) / 44, 2.1) * 52000 * SCALE);
     return round100(1500 + Math.max(0, ovr - 45) * 140);
   }
 
@@ -380,7 +384,7 @@
     var d = save.lg.draft, slot = d.picks[d.at];
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
-    else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? 1000 : 500)); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? Math.round(1000 * SCALE) : 500)); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     logDeal(save, p, d.kind === 'dispersal' ? 'Dispersal pick' : 'Drafted, pick ' + slot.pick, slot.team);
     slot.player = p.id;
     if (!byId(save, p.id)) save.lg.players.push(p);
