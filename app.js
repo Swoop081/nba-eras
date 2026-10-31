@@ -29,6 +29,7 @@
   var screens = document.querySelectorAll('.screen');
   function show(id) {
     for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+    if (typeof Phone !== 'undefined' && Phone.onScreen) Phone.onScreen(id);
     var target = document.getElementById(id);
     target.classList.add('active');
     target.scrollTop = 0;
@@ -54,7 +55,8 @@
   applyEraFilter(eraFilterBox.checked);
 
   /* The vintage black-and-white look belongs to the old eras; the present day is always in colour. */
-  function eraLook(era) { applyEraFilter(era && era.current ? false : eraFilterBox.checked); }
+  function eraLook(era) { applyEraFilter(era && era.current ? false : eraFilterBox.checked); body.dataset.modern = era && era.current ? '1' : '0'; if (!(era && era.current)) Phone.stop(); }
+  function modernUI() { return body.dataset.modern === '1'; }
   eraFilterBox.addEventListener('change', function () {
     store.set('eraFilter', eraFilterBox.checked);
     eraLook(currentEra);
@@ -1034,6 +1036,7 @@
   var rosterCache = {};
   var building = false;
   function persist() { if (!building) store.set('save', save); }
+  Phone.setSource({ save: function () { return save; }, team: function (id) { try { return teamById(id); } catch (e) { return null; } } });
   function teamById(id) {
     if (save && save.tm && save.tm[id]) return save.tm[id];
     return seasons[currentEra.id].teams.filter(function (t) { return t.id === id; })[0];
@@ -1948,9 +1951,20 @@
   /* A full front page. The photo is the day's best performer who has a portrait, from any club. */
   function renderPaper(ev) {
     var pg = el('article', 'paper');
+    var M = modernUI();
     var mast = el('header', 'pp-mast');
-    mast.appendChild(el('div', 'pp-name', ev.paper));
-    mast.appendChild(el('div', 'pp-meta', ev.date + ' \u00B7 ' + ev.edition + ' EDITION \u00B7 TWO CENTS'));
+    if (M) {
+      pg.className = 'paper phone-feed';
+      var ic = el('span', 'ph-ic', 'C');
+      mast.appendChild(ic);
+      var mt = el('div', 'ph-who');
+      mt.appendChild(el('b', null, 'Courtside'));
+      mt.appendChild(el('small', null, 'Game recap \u00B7 now'));
+      mast.appendChild(mt);
+    } else {
+      mast.appendChild(el('div', 'pp-name', ev.paper));
+      mast.appendChild(el('div', 'pp-meta', ev.date + ' \u00B7 ' + ev.edition + ' EDITION \u00B7 TWO CENTS'));
+    }
     pg.appendChild(mast);
     pg.appendChild(el('h2', 'pp-head', ev.head));
     pg.appendChild(el('p', 'pp-deck', ev.deck));
@@ -1988,22 +2002,22 @@
       var featNodes = [];
       if (ev.featPhoto) featNodes.push(photoFig([ev.featPhoto], function (c) { return c.name + ' of ' + c.team + '.'; }));
       featNodes.push(el('p', 'pp-p', ev.feat));
-      section('Feat of the day', featNodes);
+      section(M ? 'Highlight' : 'Feat of the day', featNodes);
     }
-    section('Around the circuit', ev.scores.map(function (g) {
+    section(M ? 'Around the league' : 'Around the circuit', ev.scores.map(function (g) {
       var r = el('div', 'pp-score');
       r.appendChild(el('span', null, g.w + ' ' + g.ws + ', ' + g.l + ' ' + g.ls));
       r.appendChild(el('small', null, g.top));
       return r;
     }));
-    section('On the wire', ev.briefs.map(function (b) {
+    section(M ? 'Breaking' : 'On the wire', ev.briefs.map(function (b) {
       var p = el('p', 'pp-p');
       p.appendChild(el('b', null, b.h + '. '));
       p.appendChild(document.createTextNode(b.t));
       return p;
     }));
-    section('Injury list', (ev.injuries || []).map(function (t) { return el('p', 'pp-p', t); }));
-    section('The standing', ev.table.map(function (d) {
+    section(M ? 'Injury report' : 'Injury list', (ev.injuries || []).map(function (t) { return el('p', 'pp-p', t); }));
+    section(M ? 'Standings' : 'The standing', ev.table.map(function (d) {
       var box = el('div', 'pp-tab');
       box.appendChild(el('b', null, d.div));
       d.rows.forEach(function (r) {
@@ -2017,16 +2031,80 @@
     return pg;
   }
 
+  /* The present day: every item arrives as something on the phone. */
+  function handleOf(name) { return '@' + String(name || 'fan').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 16) + (name && name.length % 7 > 3 ? '' : String(10 + (String(name).length * 7) % 89)); }
+  function phoneHead(card, app, color, glyph, who, sub) {
+    var h = el('div', 'ph-head');
+    var ic = el('span', 'ph-ic', glyph); ic.style.background = color;
+    h.appendChild(ic);
+    var w = el('div', 'ph-who');
+    w.appendChild(el('b', null, who));
+    w.appendChild(el('small', null, app + (sub ? ' \u00B7 ' + sub : '') + ' \u00B7 now'));
+    h.appendChild(w);
+    card.appendChild(h);
+  }
+  function engage(card, seed) {
+    var n = 40 + (seed * 37) % 900;
+    var row = el('div', 'ph-eng');
+    row.appendChild(el('span', null, '\u21BB ' + Math.round(n * 0.4)));
+    row.appendChild(el('span', null, '\u2661 ' + n));
+    row.appendChild(el('span', null, '\u2197'));
+    card.appendChild(row);
+  }
+  function phoneEvent(card, ev) {
+    card.classList.add('ph');
+    var seed = String(ev.text || ev.head || '').length;
+    if (ev.kind === 'news') {
+      phoneHead(card, 'Hoops', '#1D9BF0', 'H', ev.source.replace(/^The /, ''), handleOf(ev.source));
+      card.appendChild(el('p', 'ph-text', ev.head));
+      card.appendChild(el('p', 'ph-sub', ev.sub));
+      engage(card, seed);
+    } else if (ev.kind === 'radio') {
+      phoneHead(card, 'Clips', '#8E3AF0', '\u25B6', 'Broadcast clip', '@' + 'gamenight');
+      var clip = el('div', 'ph-clip');
+      clip.appendChild(el('span', 'ph-play', '\u25B6'));
+      clip.appendChild(el('span', 'ph-cap', '\u201C' + ev.text + '\u201D'));
+      card.appendChild(clip);
+      engage(card, seed);
+    } else if (ev.kind === 'fans') {
+      phoneHead(card, 'Mentions', '#F4511E', '@', ev.name, handleOf(ev.name));
+      card.appendChild(el('p', 'ph-text', ev.text));
+      engage(card, seed);
+    } else if (ev.kind === 'rumour') {
+      phoneHead(card, 'Breaking', '#D8232A', '!', 'League Insider', '@leagueinsider');
+      card.appendChild(el('p', 'ph-text', ev.text));
+      engage(card, seed + 5);
+    } else {
+      var pl = ev.pid ? rosterOf(save.myId).filter(function (p) { return p.id === ev.pid; })[0] : null;
+      var who = ev.pid ? ev.who : ev.coach ? 'Coach' : 'Group chat';
+      if (pl) {
+        var h = el('div', 'ph-head');
+        h.appendChild(makeAvatar(pl));
+        var w = el('div', 'ph-who');
+        w.appendChild(el('b', null, ev.who));
+        w.appendChild(el('small', null, 'Messages \u00B7 ' + (pl.pos ? pl.pos + ' \u00B7 ' : '') + 'ovr ' + pl.ratings.ovr + ' \u00B7 now'));
+        h.appendChild(w);
+        card.appendChild(h);
+      } else {
+        phoneHead(card, 'Messages', ev.coach ? '#34C759' : '#5E5CE6', ev.coach ? 'C' : '\u2605', who, '');
+      }
+      var b = el('p', 'ph-bubble', ev.text.replace(/^Coach: \u201C?"?/, '').replace(/"$/, ''));
+      card.appendChild(b);
+    }
+  }
+
   function renderEvent(ev) {
     var bodyEl = document.getElementById('ev-body');
     var dock = document.getElementById('ev-dock');
     bodyEl.textContent = '';
     dock.textContent = '';
-    document.getElementById('ev-title').textContent = 'Today';
-    document.getElementById('ev-sub').textContent = Events.dateFor(save) + ' · ' + save.pending.length + (save.pending.length === 1 ? ' item' : ' items') + ' left';
+    document.getElementById('ev-title').textContent = modernUI() ? 'Notifications' : 'Today';
+    document.getElementById('ev-sub').textContent = Events.dateFor(save) + ' · ' + save.pending.length + (modernUI() ? (save.pending.length === 1 ? ' unread' : ' unread') : (save.pending.length === 1 ? ' item' : ' items') + ' left');
     var card = el('div', 'ev ev-' + ev.kind);
     if (ev.kind === 'paper') {
       card = renderPaper(ev);
+    } else if (modernUI() && ev.kind !== 'talk') {
+      phoneEvent(card, ev);
     } else if (ev.kind === 'news') {
       card.appendChild(el('div', 'kicker', ev.source));
       card.appendChild(el('h3', 'head', ev.head));
@@ -2048,6 +2126,8 @@
     } else if (ev.kind === 'rumour') {
       card.appendChild(el('div', 'kicker', 'Telegram'));
       card.appendChild(el('p', 'telegram', ev.text));
+    } else if (ev.kind === 'talk' && modernUI()) {
+      phoneEvent(card, ev);
     } else if (ev.kind === 'talk') {
       card.appendChild(el('div', 'kicker', ev.pid ? 'A word, boss?' : ev.coach ? 'The coach' : 'The clubhouse'));
       if (ev.pid) {
