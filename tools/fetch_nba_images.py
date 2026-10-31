@@ -105,7 +105,7 @@ def main():
         if not pid:
             print('no id for', p['name']); miss += 1; continue
         try:
-            save(out, get('https://cdn.nba.com/headshots/nba/latest/1040x760/%d.png' % pid)); ok += 1
+            save(out, get('https://cdn.nba.com/headshots/nba/latest/1040x760/%d.png' % int(pid))); ok += 1
         except Exception as e:
             print('no photo', p['name'], e); miss += 1
         time.sleep(0.15)
