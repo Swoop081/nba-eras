@@ -4,7 +4,7 @@
   var W = { sco: .39, sht: .10, ft: .04, ply: .08, tov: .04, orb: .05, drb: .07, stl: .07, blk: .05, fou: .03, dur: .08 };
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou', 'dur'];
   var KNOWN_SALARY = { 'joe-fulks': 8000, 'tom-king': 16500 };
-  var CAP = { 1946: 55000, 1996: 24400, 1997: 26900, 1998: 30000, 1999: 34000, 2000: 35500, 2001: 42500, 2002: 40300, 2003: 43800, 2004: 43900, 2005: 49500, 2006: 53100, 2007: 55600,
+  var CAP = { 1946: 55000, 1979: 3500, 1984: 3600, 1985: 4233, 1986: 4945, 1987: 6164, 1988: 7232, 1989: 9802, 1990: 11871, 1991: 11871, 1992: 12500, 1993: 14000, 1994: 15175, 1995: 15964, 1996: 24400, 1997: 26900, 1998: 30000, 1999: 34000, 2000: 35500, 2001: 42500, 2002: 40300, 2003: 43800, 2004: 43900, 2005: 49500, 2006: 53100, 2007: 55600,
     2008: 58700, 2009: 57700, 2010: 58000, 2011: 58000, 2012: 58000, 2013: 58700, 2014: 63100, 2015: 70000, 2016: 94100, 2017: 99100, 2018: 101900, 2019: 109100, 2020: 109100,
     2021: 112400, 2022: 123700, 2023: 136000, 2024: 140600, 2025: 154600, 2026: 165000 };
   var SCALE = 1;
@@ -12,11 +12,11 @@
   /* The modern game counts money in thousands of dollars (a $165,000 cap is $165 million); the founding era counts dollars. */
   var MODERN = false, MINSAL = 1000;
   function setEra(year) {
-    MODERN = year >= 1996;
+    MODERN = year >= 1979;
     SCALE = MODERN ? capFor(year) / 165000 : 1;
-    MINSAL = MODERN ? Math.max(200, Math.round(1300 * SCALE / 10) * 10) : 1000;
-    MIN_ROSTER = MODERN ? 13 : 9;
-    OPENING_ROSTER = MODERN ? 15 : 12;
+    MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : 1000;
+    MIN_ROSTER = MODERN ? (year >= 1996 ? 13 : 11) : 9;
+    OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
     if (root.League) root.League.MIN_ROSTER = MIN_ROSTER;
   }
   function money(n, cap) {

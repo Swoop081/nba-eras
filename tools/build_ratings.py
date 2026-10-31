@@ -38,7 +38,7 @@ def team_name(code):
          'LAC': 'Los Angeles Clippers', 'LAL': 'Los Angeles Lakers', 'MEM': 'Memphis Grizzlies', 'VAN': 'Vancouver Grizzlies', 'MIA': 'Miami Heat', 'MIL': 'Milwaukee Bucks',
          'MIN': 'Minnesota Timberwolves', 'NOP': 'New Orleans Pelicans', 'NOH': 'New Orleans Hornets', 'NOK': 'New Orleans Hornets', 'NYK': 'New York Knicks',
          'OKC': 'Oklahoma City Thunder', 'SEA': 'Seattle SuperSonics', 'ORL': 'Orlando Magic', 'PHI': 'Philadelphia 76ers', 'PHX': 'Phoenix Suns', 'POR': 'Portland Trail Blazers',
-         'SAC': 'Sacramento Kings', 'SAS': 'San Antonio Spurs', 'TOR': 'Toronto Raptors', 'UTA': 'Utah Jazz', 'WAS': 'Washington Wizards', 'WSB': 'Washington Bullets'}
+         'SAC': 'Sacramento Kings', 'SAS': 'San Antonio Spurs', 'TOR': 'Toronto Raptors', 'UTA': 'Utah Jazz', 'WAS': 'Washington Wizards', 'WSB': 'Washington Bullets', 'KCK': 'Kansas City Kings', 'SDC': 'San Diego Clippers'}
     if code == 'CHA':
         return 'Charlotte Bobcats' if 2005 <= YR <= 2014 else 'Charlotte Hornets'
     if code == 'CHH':
@@ -49,7 +49,7 @@ ALIAS = {'los-angeles-clippers': 'la-clippers'}
 EAST = {'Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'New Jersey Nets', 'Charlotte Bobcats', 'Charlotte Hornets', 'Chicago Bulls', 'Cleveland Cavaliers', 'Detroit Pistons', 'Indiana Pacers',
         'Miami Heat', 'Milwaukee Bucks', 'New York Knicks', 'Orlando Magic', 'Philadelphia 76ers', 'Toronto Raptors', 'Washington Wizards', 'Washington Bullets'}
 COLORS = {'Seattle SuperSonics': ('#00653A', '#FFC200', 1610612760), 'Vancouver Grizzlies': ('#00B2A9', '#B15C2A', 1610612763), 'New Jersey Nets': ('#002A60', '#CD1041', 1610612751),
-          'New Orleans Hornets': ('#00778B', '#280071', 1610612740), 'Charlotte Bobcats': ('#1D1160', '#F26532', 1610612766), 'Washington Bullets': ('#002B5C', '#E31837', 1610612764)}
+          'New Orleans Hornets': ('#00778B', '#280071', 1610612740), 'Charlotte Bobcats': ('#1D1160', '#F26532', 1610612766), 'Washington Bullets': ('#002B5C', '#E31837', 1610612764), 'Kansas City Kings': ('#6F2C91', '#FFFFFF', 1610612758), 'San Diego Clippers': ('#C8102E', '#1D428A', 1610612746)}
 
 AGG = ('2TM', '3TM', '4TM', '5TM', '6TM', 'TOT')
 
@@ -81,6 +81,8 @@ def pick_agg(df):
 
 
 def pct_of(values, v):
+    if len(values) == 0:
+        return 0.5
     lo = np.sum(values < v)
     eq = np.sum(values == v)
     return (lo + 0.5 * eq) / len(values)
