@@ -42,6 +42,24 @@ def player_index():
             return {norm(r[f] + ' ' + r[l]): r[i] for r in rows}
         except Exception as e:
             print('index failed:', url.split('?')[0], e)
+    try:  # fallback: every player listed in a played game's box score (cdn.nba.com is open to cloud servers)
+        sch = json.loads(get('https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json', False))
+        ids = [g['gameId'] for d in sch['leagueSchedule']['gameDates'] for g in d['games'] if g.get('gameStatus') == 3]
+        out = {}
+        for gid in ids:
+            try:
+                bx = json.loads(get('https://cdn.nba.com/static/json/liveData/boxscore/boxscore_%s.json' % gid, False))['game']
+            except Exception:
+                continue
+            for side in ('homeTeam', 'awayTeam'):
+                for pl in bx[side]['players']:
+                    out[norm(pl['name'])] = pl['personId']
+            time.sleep(0.1)
+        if len(out) > 150:
+            return out
+        print('box scores gave only', len(out))
+    except Exception as e:
+        print('box score route failed:', e)
     try:  # fallback: the players page embeds the full list
         html = get('https://www.nba.com/players', False)
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
