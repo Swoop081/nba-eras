@@ -52,6 +52,7 @@
     target.classList.add('active');
     target.scrollTop = 0;
     body.dataset.screen = id;
+    pageifyScreen(id);
   }
 
   var backs = document.querySelectorAll('[data-back]');
@@ -345,13 +346,8 @@
           stats.appendChild(d);
         });
         c.appendChild(stats);
-        var out = team.rank <= 6 ? ['Contender', 'Built to win now. The owner expects a deep playoff run.']
-          : team.rank <= 14 ? ['Playoff team', 'Good enough for the bracket. One move could make it a contender.']
-          : team.rank <= 22 ? ['On the bubble', 'Could go either way. The next few moves decide it.']
-          : ['Rebuilding', 'The wins will come later. Build around the young players and the picks.'];
-        var ol = el('div', 'fc-out');
-        ol.appendChild(el('b', null, out[0]));
-        ol.appendChild(el('span', null, out[1]));
+        var out = team.rank <= 6 ? 'Contender' : team.rank <= 14 ? 'Playoff team' : team.rank <= 22 ? 'On the bubble' : 'Rebuilding';
+        var ol = el('div', 'fc-out', out);
         c.appendChild(ol);
         var trio = el('div', 'fc-trio');
         team.top.forEach(function (p, i) {
@@ -1901,6 +1897,67 @@
     return wrap;
   }
 
+  /* ---------- no vertical scrolling: long lists become swipeable pages ---------- */
+  var PAGED = ['roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
+  function pageify(box) {
+    if (!modernUI() || box._busy || !box.offsetParent) return;
+    var kids = Array.prototype.slice.call(box.children).filter(function (k) { return !k.classList.contains('pgr'); });
+    if (!kids.length) return;
+    box._busy = true;
+    var gap = 8, avail = box.clientHeight - 30;
+    var units = [], carry = [];
+    kids.forEach(function (k) {
+      carry.push(k);
+      var head = k.classList.contains('group-title') || k.classList.contains('box-title') || k.tagName === 'H3';
+      if (!head) { units.push(carry); carry = []; }
+    });
+    if (carry.length) units.push(carry);
+    var pages = [], cur = [], h = 0;
+    units.forEach(function (u) {
+      var uh = u.reduce(function (a, k) { return a + k.offsetHeight + gap; }, 0);
+      if (cur.length && h + uh > avail) { pages.push(cur); cur = []; h = 0; }
+      cur = cur.concat(u); h += uh;
+    });
+    if (cur.length) pages.push(cur);
+    if (pages.length > 1) {
+      var pgr = el('div', 'pgr'), track = el('div', 'pgr-track'), dots = el('div', 'pgr-dots');
+      pages.forEach(function (list, i) {
+        var pg = el('section', 'pg');
+        if (list.length === 1 && list[0].offsetHeight > avail) pg.classList.add('tall');
+        list.forEach(function (k) { pg.appendChild(k); });
+        track.appendChild(pg);
+        dots.appendChild(el('i', ''));
+      });
+      var tick = null;
+      function mark() {
+        var w = track.firstChild ? track.firstChild.offsetWidth : 1, i = Math.round(track.scrollLeft / (w + 10));
+        box._pi = i;
+        Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === i); });
+      }
+      track.addEventListener('scroll', function () { clearTimeout(tick); tick = setTimeout(mark, 40); });
+      pgr.appendChild(track); pgr.appendChild(dots);
+      box.appendChild(pgr);
+      var want = Math.min(box._pi || 0, pages.length - 1);
+      track.scrollLeft = want * (track.firstChild.offsetWidth + 10);
+      dots.children[want].classList.add('on');
+    }
+    box._busy = false;
+  }
+  function pageifyScreen(id) {
+    var sc = document.getElementById(id);
+    if (!sc) return;
+    (typeof PAGED !== 'undefined' ? PAGED : []).forEach(function (bid) { var b = sc.querySelector('#' + bid); if (b) requestAnimationFrame(function () { pageify(b); }); });
+  }
+  PAGED.forEach(function (bid) {
+    var b = document.getElementById(bid);
+    if (!b) return;
+    new MutationObserver(function () {
+      if (b._busy) return;
+      b._pi = b._pi || 0;
+      requestAnimationFrame(function () { pageify(b); });
+    }).observe(b, { childList: true });
+  });
+
   /* ---------- the present-day hub: one screen, no scrolling ---------- */
   var hubTab = 'table';
   var DETAILS = ['basic', 'standard', 'nerd'];
@@ -2667,6 +2724,28 @@
       });
       return box;
     }));
+    if (M) {
+      // the recap is a swipeable feed, not a long page
+      var kids = Array.prototype.slice.call(pg.children), pages = [];
+      function grab(pred) { var out = kids.filter(pred); out.forEach(function (k) { kids.splice(kids.indexOf(k), 1); }); return out; }
+      var first = grab(function (k) { return k.classList.contains('pp-mast') || k.classList.contains('pp-head') || k.classList.contains('pp-deck') || k.classList.contains('pp-photo'); });
+      var story = grab(function (k) { return k.classList.contains('pp-p'); });
+      var secs = kids;
+      function wrap(list) { var d = el('div', 'rc phone-feed'); list.forEach(function (n) { d.appendChild(n); }); return d; }
+      function secOf(name) { return secs.filter(function (k) { var h = k.querySelector('h3'); return h && h.textContent === name; }); }
+      pages.push({ title: '', node: wrap(first) });
+      var p2 = story.concat(secOf('Highlight'));
+      if (p2.length) pages.push({ title: 'The game', node: wrap(p2) });
+      var p3 = secOf('Around the league');
+      if (p3.length) pages.push({ title: 'Around the league', node: wrap(p3.map(function (x) { x.querySelector('h3').remove(); return x; })) });
+      var p4 = secOf('Breaking').concat(secOf('Injury report'));
+      if (p4.length) pages.push({ title: 'Breaking', node: wrap(p4) });
+      var p5 = secOf('Standings');
+      if (p5.length) pages.push({ title: 'Standings', node: wrap(p5.map(function (x) { x.querySelector('h3').remove(); return x; })) });
+      var rail = hubRail(pages);
+      rail.classList.add('recap');
+      return rail;
+    }
     return pg;
   }
 
