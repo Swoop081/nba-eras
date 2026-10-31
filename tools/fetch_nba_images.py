@@ -60,6 +60,17 @@ def player_index():
         print('box scores gave only', len(out))
     except Exception as e:
         print('box score route failed:', e)
+    try:  # fallback: Wikidata keeps each player's NBA.com id (property P3647)
+        import urllib.parse
+        q = 'SELECT ?n ?id WHERE { ?p wdt:P3647 ?id; rdfs:label ?n. FILTER(LANG(?n)="en") }'
+        u = 'https://query.wikidata.org/sparql?format=json&query=' + urllib.parse.quote(q)
+        rows = json.loads(get(u, False))['results']['bindings']
+        out = {norm(r['n']['value']): r['id']['value'] for r in rows if r['id']['value'].isdigit()}
+        if len(out) > 150:
+            return out
+        print('wikidata gave only', len(out))
+    except Exception as e:
+        print('wikidata route failed:', e)
     try:  # fallback: the players page embeds the full list
         html = get('https://www.nba.com/players', False)
         m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
