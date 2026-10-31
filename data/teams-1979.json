@@ -42,7 +42,7 @@
    "id": "chicago-bulls",
    "city": "Chicago",
    "name": "Bulls",
-   "division": "Eastern",
+   "division": "Western",
    "w": 0,
    "l": 0,
    "colors": [
@@ -117,7 +117,7 @@
    "id": "houston-rockets",
    "city": "Houston",
    "name": "Rockets",
-   "division": "Western",
+   "division": "Eastern",
    "w": 0,
    "l": 0,
    "colors": [
@@ -177,7 +177,7 @@
    "id": "milwaukee-bucks",
    "city": "Milwaukee",
    "name": "Bucks",
-   "division": "Eastern",
+   "division": "Western",
    "w": 0,
    "l": 0,
    "colors": [
@@ -267,7 +267,7 @@
    "id": "san-antonio-spurs",
    "city": "San Antonio",
    "name": "Spurs",
-   "division": "Western",
+   "division": "Eastern",
    "w": 0,
    "l": 0,
    "colors": [

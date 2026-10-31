@@ -181,12 +181,14 @@
     { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Real rosters as they were.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025.json' }
   ];
 
-  /* Every season back to 1979-80, built from the real box scores: opening night, real rosters, the league as it stood. */
+  /* Every season back to 1951-52, built from the real box scores: opening night, real rosters, the league as it stood. */
   (function () {
-    var CH = { 1978: 'SuperSonics', 1979: 'Lakers', 1980: 'Celtics', 1981: 'Lakers', 1982: '76ers', 1983: 'Celtics', 1984: 'Lakers', 1985: 'Celtics', 1986: 'Lakers', 1987: 'Lakers', 1988: 'Pistons', 1989: 'Pistons', 1990: 'Bulls', 1991: 'Bulls', 1992: 'Bulls', 1993: 'Rockets', 1994: 'Rockets', 1995: 'Bulls', 1996: 'Bulls', 1997: 'Bulls', 1998: 'Spurs', 1999: 'Lakers', 2000: 'Lakers', 2001: 'Lakers', 2002: 'Spurs', 2003: 'Pistons', 2004: 'Spurs', 2005: 'Heat', 2006: 'Spurs',
+    var CH = { 1950: 'Royals', 1951: 'Lakers', 1952: 'Lakers', 1953: 'Lakers', 1954: 'Nationals', 1955: 'Warriors', 1956: 'Celtics', 1957: 'Hawks', 1958: 'Celtics', 1959: 'Celtics', 1960: 'Celtics',
+      1961: 'Celtics', 1962: 'Celtics', 1963: 'Celtics', 1964: 'Celtics', 1965: 'Celtics', 1966: '76ers', 1967: 'Celtics', 1968: 'Celtics', 1969: 'Knicks', 1970: 'Bucks', 1971: 'Lakers', 1972: 'Knicks',
+      1973: 'Celtics', 1974: 'Warriors', 1975: 'Celtics', 1976: 'Trail Blazers', 1977: 'Bullets', 1978: 'SuperSonics', 1979: 'Lakers', 1980: 'Celtics', 1981: 'Lakers', 1982: '76ers', 1983: 'Celtics', 1984: 'Lakers', 1985: 'Celtics', 1986: 'Lakers', 1987: 'Lakers', 1988: 'Pistons', 1989: 'Pistons', 1990: 'Bulls', 1991: 'Bulls', 1992: 'Bulls', 1993: 'Rockets', 1994: 'Rockets', 1995: 'Bulls', 1996: 'Bulls', 1997: 'Bulls', 1998: 'Spurs', 1999: 'Lakers', 2000: 'Lakers', 2001: 'Lakers', 2002: 'Spurs', 2003: 'Pistons', 2004: 'Spurs', 2005: 'Heat', 2006: 'Spurs',
       2007: 'Celtics', 2008: 'Lakers', 2009: 'Lakers', 2010: 'Mavericks', 2011: 'Heat', 2012: 'Heat', 2013: 'Spurs', 2014: 'Warriors', 2015: 'Cavaliers', 2016: 'Warriors', 2017: 'Warriors',
       2018: 'Raptors', 2019: 'Lakers', 2020: 'Bucks', 2021: 'Warriors', 2022: 'Nuggets', 2023: 'Celtics' };
-    for (var y = 2024; y >= 1979; y--) {
+    for (var y = 2024; y >= 1951; y--) {
       var yrs = y + '-' + String((y + 1) % 100).replace(/^(\d)$/, '0$1');
       ERAS.push({ id: String(y), logo: '2026', years: yrs, title: 'Defending: ' + CH[y - 1], blurb: 'Opening night, real rosters as they were.', open: true, current: true, teams: 'data/teams-' + y + '.json', players: 'data/players-' + y + '.json' });
     }

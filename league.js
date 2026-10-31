@@ -4,7 +4,7 @@
   var W = { sco: .39, sht: .10, ft: .04, ply: .08, tov: .04, orb: .05, drb: .07, stl: .07, blk: .05, fou: .03, dur: .08 };
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou', 'dur'];
   var KNOWN_SALARY = { 'joe-fulks': 8000, 'tom-king': 16500 };
-  var CAP = { 1946: 55000, 1979: 3500, 1984: 3600, 1985: 4233, 1986: 4945, 1987: 6164, 1988: 7232, 1989: 9802, 1990: 11871, 1991: 11871, 1992: 12500, 1993: 14000, 1994: 15175, 1995: 15964, 1996: 24400, 1997: 26900, 1998: 30000, 1999: 34000, 2000: 35500, 2001: 42500, 2002: 40300, 2003: 43800, 2004: 43900, 2005: 49500, 2006: 53100, 2007: 55600,
+  var CAP = { 1946: 55000, 1951: 80000, 1956: 110000, 1961: 170000, 1966: 280000, 1970: 600000, 1974: 1200000, 1977: 2000000, 1979: 3500, 1984: 3600, 1985: 4233, 1986: 4945, 1987: 6164, 1988: 7232, 1989: 9802, 1990: 11871, 1991: 11871, 1992: 12500, 1993: 14000, 1994: 15175, 1995: 15964, 1996: 24400, 1997: 26900, 1998: 30000, 1999: 34000, 2000: 35500, 2001: 42500, 2002: 40300, 2003: 43800, 2004: 43900, 2005: 49500, 2006: 53100, 2007: 55600,
     2008: 58700, 2009: 57700, 2010: 58000, 2011: 58000, 2012: 58000, 2013: 58700, 2014: 63100, 2015: 70000, 2016: 94100, 2017: 99100, 2018: 101900, 2019: 109100, 2020: 109100,
     2021: 112400, 2022: 123700, 2023: 136000, 2024: 140600, 2025: 154600, 2026: 165000 };
   var SCALE = 1;
@@ -13,14 +13,15 @@
   var MODERN = false, MINSAL = 1000;
   function setEra(year) {
     MODERN = year >= 1979;
-    SCALE = MODERN ? capFor(year) / 165000 : 1;
-    MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : 1000;
+    SCALE = MODERN ? capFor(year) / 165000 : capFor(year) / 55000;
+    MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : Math.round(1000 * SCALE / 100) * 100;
     MIN_ROSTER = MODERN ? (year >= 1996 ? 13 : 11) : 9;
     OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
     if (root.League) root.League.MIN_ROSTER = MIN_ROSTER;
   }
   function money(n, cap) {
-    if (MODERN || cap > 100000) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
+    if (MODERN) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
+    if (n >= 1000000) return '$' + (n / 1000000).toFixed(2).replace(/0$/, '') + 'M';
     return '$' + n.toLocaleString('en-US');
   }
   function draftRounds() { return MODERN ? 2 : 5; }
@@ -39,7 +40,7 @@
 
   function salaryFor(ovr) {
     if (MODERN) return round100(MINSAL + Math.pow(Math.max(0, ovr - 44) / 44, 2.1) * 52000 * SCALE);
-    return round100(1500 + Math.max(0, ovr - 45) * 140);
+    return round100((1500 + Math.max(0, ovr - 45) * 140) * SCALE);
   }
 
   function capFor(year) {
@@ -92,7 +93,7 @@
       var list = lg.players.filter(function (p) { return p.team === t.id; });
       var pay = list.reduce(function (a, p) { return a + p.salary; }, 0);
       var fixed = list.filter(function (p) { return p.known; }).reduce(function (a, p) { return a + p.salary; }, 0);
-      var limit = MODERN ? Math.round(lg.cap * 0.9) : lg.cap - 1500;
+      var limit = MODERN ? Math.round(lg.cap * 0.9) : lg.cap - Math.round(1500 * SCALE);
       if (pay > limit) {
         var f = (limit - fixed) / (pay - fixed);
         list.forEach(function (p) { if (!p.known) p.salary = Math.max(MINSAL, round100(p.salary * f)); });
@@ -384,7 +385,7 @@
     var d = save.lg.draft, slot = d.picks[d.at];
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
-    else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? Math.round(1000 * SCALE) : 500)); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? Math.round(1000 * SCALE) : Math.round(500 * SCALE))); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     logDeal(save, p, d.kind === 'dispersal' ? 'Dispersal pick' : 'Drafted, pick ' + slot.pick, slot.team);
     slot.player = p.id;
     if (!byId(save, p.id)) save.lg.players.push(p);
@@ -407,7 +408,7 @@
     if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3;
     if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * 0.1);
     v *= 1 + (p.imp || 0) * 1.5;
-    v += (salaryFor(o) - p.salary) / (MODERN ? 1000 : 250);
+    v += (salaryFor(o) - p.salary) / (MODERN ? 1000 : 250 * SCALE);
     return Math.max(1, v);
   }
 

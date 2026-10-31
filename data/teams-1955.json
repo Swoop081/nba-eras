@@ -1,0 +1,132 @@
+{
+ "season": "1955-56",
+ "league": "National Basketball Association",
+ "games": 72,
+ "divisions": [
+  "Eastern",
+  "Western"
+ ],
+ "source": "NBA 1955-56. Colours are approximations.",
+ "teams": [
+  {
+   "id": "boston-celtics",
+   "city": "Boston",
+   "name": "Celtics",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#007A33",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612738,
+   "rw": 39,
+   "rl": 33
+  },
+  {
+   "id": "fort-wayne-pistons",
+   "city": "Fort Wayne",
+   "name": "Pistons",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#C8102E",
+    "#1D42BA"
+   ],
+   "nbaId": 1610612765,
+   "rw": 37,
+   "rl": 35
+  },
+  {
+   "id": "minneapolis-lakers",
+   "city": "Minneapolis",
+   "name": "Lakers",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#552583",
+    "#FDB927"
+   ],
+   "nbaId": 1610612747,
+   "rw": 33,
+   "rl": 39
+  },
+  {
+   "id": "new-york-knicks",
+   "city": "New York",
+   "name": "Knicks",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#006BB6",
+    "#F58426"
+   ],
+   "nbaId": 1610612752,
+   "rw": 35,
+   "rl": 37
+  },
+  {
+   "id": "philadelphia-warriors",
+   "city": "Philadelphia",
+   "name": "Warriors",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D428A",
+    "#FFC72C"
+   ],
+   "nbaId": 1610612744,
+   "rw": 45,
+   "rl": 27
+  },
+  {
+   "id": "rochester-royals",
+   "city": "Rochester",
+   "name": "Royals",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#6F2C91",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612758,
+   "rw": 31,
+   "rl": 41
+  },
+  {
+   "id": "st-louis-hawks",
+   "city": "St. Louis",
+   "name": "Hawks",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#E03A3E",
+    "#C1D32F"
+   ],
+   "nbaId": 1610612737,
+   "rw": 33,
+   "rl": 39
+  },
+  {
+   "id": "syracuse-nationals",
+   "city": "Syracuse",
+   "name": "Nationals",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#004B87",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612755,
+   "rw": 35,
+   "rl": 37
+  }
+ ]
+}

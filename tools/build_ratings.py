@@ -33,12 +33,18 @@ W = B.W
 CODE = {'BRK': 'BKN', 'CHO': 'CHA', 'PHO': 'PHX'}
 # franchise names by code for the year being built (Basketball Reference codes)
 def team_name(code):
+    if code == 'MIL' and False: pass
     n = {'ATL': 'Atlanta Hawks', 'BOS': 'Boston Celtics', 'BKN': 'Brooklyn Nets', 'NJN': 'New Jersey Nets', 'CHI': 'Chicago Bulls', 'CLE': 'Cleveland Cavaliers',
          'DAL': 'Dallas Mavericks', 'DEN': 'Denver Nuggets', 'DET': 'Detroit Pistons', 'GSW': 'Golden State Warriors', 'HOU': 'Houston Rockets', 'IND': 'Indiana Pacers',
          'LAC': 'Los Angeles Clippers', 'LAL': 'Los Angeles Lakers', 'MEM': 'Memphis Grizzlies', 'VAN': 'Vancouver Grizzlies', 'MIA': 'Miami Heat', 'MIL': 'Milwaukee Bucks',
          'MIN': 'Minnesota Timberwolves', 'NOP': 'New Orleans Pelicans', 'NOH': 'New Orleans Hornets', 'NOK': 'New Orleans Hornets', 'NYK': 'New York Knicks',
          'OKC': 'Oklahoma City Thunder', 'SEA': 'Seattle SuperSonics', 'ORL': 'Orlando Magic', 'PHI': 'Philadelphia 76ers', 'PHX': 'Phoenix Suns', 'POR': 'Portland Trail Blazers',
-         'SAC': 'Sacramento Kings', 'SAS': 'San Antonio Spurs', 'TOR': 'Toronto Raptors', 'UTA': 'Utah Jazz', 'WAS': 'Washington Wizards', 'WSB': 'Washington Bullets', 'KCK': 'Kansas City Kings', 'SDC': 'San Diego Clippers'}
+         'SAC': 'Sacramento Kings', 'SAS': 'San Antonio Spurs', 'TOR': 'Toronto Raptors', 'UTA': 'Utah Jazz', 'WAS': 'Washington Wizards', 'WSB': 'Washington Bullets', 'KCK': 'Kansas City Kings', 'SDC': 'San Diego Clippers',
+         'PHW': 'Philadelphia Warriors', 'SFW': 'San Francisco Warriors', 'SYR': 'Syracuse Nationals', 'BLB': 'Baltimore Bullets', 'BAL': 'Baltimore Bullets', 'CAP': 'Capital Bullets',
+         'FTW': 'Fort Wayne Pistons', 'MNL': 'Minneapolis Lakers', 'ROC': 'Rochester Royals', 'CIN': 'Cincinnati Royals', 'KCO': 'Kansas City-Omaha Kings',
+         'MLH': 'Milwaukee Hawks', 'STL': 'St. Louis Hawks', 'INO': 'Indianapolis Olympians', 'TRI': 'Tri-Cities Blackhawks', 'SDR': 'San Diego Rockets',
+         'CHP': 'Chicago Packers', 'CHZ': 'Chicago Zephyrs', 'BUF': 'Buffalo Braves', 'NOJ': 'New Orleans Jazz', 'NYN': 'New York Nets', 'DNA': 'Denver Nuggets',
+         'SAC': 'Sacramento Kings', 'SAS': 'San Antonio Spurs'}
     if code == 'CHA':
         return 'Charlotte Bobcats' if 2005 <= YR <= 2014 else 'Charlotte Hornets'
     if code == 'CHH':
@@ -46,9 +52,30 @@ def team_name(code):
     return n[code]
 
 ALIAS = {'los-angeles-clippers': 'la-clippers'}
+def is_east(nm):
+    if nm in ('Boston Celtics', 'New York Knicks', 'Philadelphia Warriors', 'Syracuse Nationals', 'Philadelphia 76ers', 'Buffalo Braves', 'Cleveland Cavaliers', 'New Jersey Nets', 'Brooklyn Nets',
+              'New York Nets', 'Indiana Pacers', 'Miami Heat', 'Orlando Magic', 'Charlotte Hornets', 'Charlotte Bobcats', 'Toronto Raptors', 'Washington Wizards', 'Washington Bullets', 'Capital Bullets'):
+        return True
+    if nm == 'Baltimore Bullets': return YR >= 1967 or YR <= 1955
+    if nm == 'Cincinnati Royals': return YR >= 1963
+    if nm in ('Atlanta Hawks', 'Detroit Pistons'): return YR >= 1971
+    if nm == 'Milwaukee Bucks': return YR <= 1970 or YR >= 1981
+    if nm == 'Chicago Bulls': return YR >= 1981
+    if nm in ('San Antonio Spurs', 'Houston Rockets'): return 1976 <= YR <= 1980
+    return False
+
+
+EAST_OLD = {'Boston Celtics', 'New York Knicks', 'Philadelphia Warriors', 'Syracuse Nationals', 'Philadelphia 76ers', 'Baltimore Bullets', 'Capital Bullets', 'Washington Bullets',
+            'Cincinnati Royals', 'Buffalo Braves', 'Cleveland Cavaliers', 'New Jersey Nets', 'New York Nets', 'Indiana Pacers'}
 EAST = {'Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'New Jersey Nets', 'Charlotte Bobcats', 'Charlotte Hornets', 'Chicago Bulls', 'Cleveland Cavaliers', 'Detroit Pistons', 'Indiana Pacers',
         'Miami Heat', 'Milwaukee Bucks', 'New York Knicks', 'Orlando Magic', 'Philadelphia 76ers', 'Toronto Raptors', 'Washington Wizards', 'Washington Bullets'}
-COLORS = {'Seattle SuperSonics': ('#00653A', '#FFC200', 1610612760), 'Vancouver Grizzlies': ('#00B2A9', '#B15C2A', 1610612763), 'New Jersey Nets': ('#002A60', '#CD1041', 1610612751),
+COLORS = {'Syracuse Nationals': ('#004B87', '#FFFFFF', 1610612755), 'Philadelphia Warriors': ('#1D428A', '#FFC72C', 1610612744), 'San Francisco Warriors': ('#1D428A', '#FFC72C', 1610612744),
+          'Minneapolis Lakers': ('#552583', '#FDB927', 1610612747), 'Rochester Royals': ('#6F2C91', '#FFFFFF', 1610612758), 'Cincinnati Royals': ('#6F2C91', '#FFFFFF', 1610612758),
+          'Fort Wayne Pistons': ('#C8102E', '#1D42BA', 1610612765), 'St. Louis Hawks': ('#E03A3E', '#C1D32F', 1610612737), 'Milwaukee Hawks': ('#E03A3E', '#C1D32F', 1610612737),
+          'Baltimore Bullets': ('#002B5C', '#E31837', 1610612764), 'Capital Bullets': ('#002B5C', '#E31837', 1610612764), 'San Diego Rockets': ('#CE1141', '#C4CED4', 1610612745),
+          'Buffalo Braves': ('#FF6600', '#006BB6', 1610612746), 'New Orleans Jazz': ('#002B5C', '#F9A01B', 1610612762), 'New York Nets': ('#002A60', '#CD1041', 1610612751),
+          'Chicago Packers': ('#E03A3E', '#000000', 1610612764), 'Chicago Zephyrs': ('#E03A3E', '#000000', 1610612764), 'Indianapolis Olympians': ('#1D428A', '#FFFFFF', 1610612758), 'Tri-Cities Blackhawks': ('#E03A3E', '#000000', 1610612737), 'Kansas City-Omaha Kings': ('#6F2C91', '#FFFFFF', 1610612758),
+          'Seattle SuperSonics': ('#00653A', '#FFC200', 1610612760), 'Vancouver Grizzlies': ('#00B2A9', '#B15C2A', 1610612763), 'New Jersey Nets': ('#002A60', '#CD1041', 1610612751),
           'New Orleans Hornets': ('#00778B', '#280071', 1610612740), 'Charlotte Bobcats': ('#1D1160', '#F26532', 1610612766), 'Washington Bullets': ('#002B5C', '#E31837', 1610612764), 'Kansas City Kings': ('#6F2C91', '#FFFFFF', 1610612758), 'San Diego Clippers': ('#C8102E', '#1D428A', 1610612746)}
 
 AGG = ('2TM', '3TM', '4TM', '5TM', '6TM', 'TOT')
@@ -88,6 +115,27 @@ def pct_of(values, v):
     return (lo + 0.5 * eq) / len(values)
 
 
+def num(r, c, d=0.0):
+    try:
+        v = r[c]
+    except KeyError:
+        return d
+    try:
+        v = float(v)
+    except (TypeError, ValueError):
+        return d
+    return d if np.isnan(v) else v
+
+
+def opt(r, c, nd=3):
+    v = num(r, c, None) if False else None
+    try:
+        x = float(r[c])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return None if np.isnan(x) else round(x, nd)
+
+
 def clamp(v, lo, hi):
     return max(lo, min(hi, v))
 
@@ -119,12 +167,12 @@ def main():
         if k not in A['pg'] or k not in splits:
             continue
         g_ = A['pg'][k]; t_ = A['tot'][k]; p_ = A['pp'].get(k); s_ = A['sh'][k] if k in A['sh'] else None; b_ = A['pb'][k] if k in A['pb'] else None
-        mp = float(a['MP']) if not np.isnan(a['MP']) else 0
+        mp = num(a, 'MP')
         if mp < 1:
             continue
         team = max(splits[k], key=lambda x: x[1])[0]
         gp_team = max(splits[k], key=lambda x: x[1])[1]
-        players.append({'k': k, 'name': g_['Player'], 'age': int(a['Age']), 'pos': a['Pos'], 'team': team, 'mp': mp, 'g': float(a['G']),
+        players.append({'k': k, 'name': g_['Player'], 'age': int(num(a, 'Age', 26)), 'pos': a['Pos'], 'team': team, 'mp': mp, 'g': num(a, 'G'),
                         'a': a, 'g_': g_, 't': t_, 'p': p_, 's': s_, 'b': b_, 'gp_team': gp_team, 'splits': splits[k]})
 
     def col(fn, minmp=400):
@@ -257,9 +305,9 @@ def main():
         g_ = p['g_']; a = p['a']
         ro = rost.get(p['k'])
         hgt = B.parse_ht(ro['Ht']) if ro else hmap.get(B.slug(p['name'])) or {'G': 75, 'G-F': 78, 'F': 80, 'F-C': 82, 'C': 83}[p['pc']]
-        prev = {'g': int(p['g']), 'mpg': round(float(g_['MP']), 1), 'pts': float(g_['PTS']), 'trb': float(g_['TRB']), 'ast': float(g_['AST']), 'stl': float(g_['STL']), 'blk': float(g_['BLK']), 'tov': float(g_['TOV']),
-                'fg': None if np.isnan(g_['FG%']) else round(float(g_['FG%']), 3), 'tp': None if np.isnan(g_['3P%']) else round(float(g_['3P%']), 3), 'ft': None if np.isnan(g_['FT%']) else round(float(g_['FT%']), 3),
-                'ts': None if np.isnan(a['TS%']) else round(float(a['TS%']), 3), 'usg': float(a['USG%']), 'per': float(a['PER']), 'bpm': float(a['BPM']), 'ws': float(a['WS']), 'vorp': float(a['VORP'])}
+        prev = {'g': int(p['g']), 'mpg': round(num(g_, 'MP'), 1), 'pts': num(g_, 'PTS'), 'trb': num(g_, 'TRB'), 'ast': num(g_, 'AST'), 'stl': num(g_, 'STL'), 'blk': num(g_, 'BLK'), 'tov': num(g_, 'TOV'),
+                'fg': opt(g_, 'FG%'), 'tp': opt(g_, '3P%'), 'ft': opt(g_, 'FT%'),
+                'ts': opt(a, 'TS%'), 'usg': num(a, 'USG%'), 'per': num(a, 'PER'), 'bpm': num(a, 'BPM'), 'ws': num(a, 'WS'), 'vorp': num(a, 'VORP')}
         rows.append({'id': B.slug(p['name']), 'name': p['name'], 'age': p['age'], 'pos': p['pc'], 'teamId': p['team'], 'hgt': hgt,
                      'ratings': {x: r[x] for x in ('ovr', 'sco', 'sht', 'ply', 'dur', 'stl', 'blk', 'ft', 'tpt', 'orb', 'drb', 'tov', 'fou')},
                      'imp': imp, 'prev': prev, '_mp': p['mp'], '_splits': p['splits']})
@@ -309,9 +357,9 @@ def main():
     for r in pool_out:
         r['teamId'] = None
     outp = os.path.join(OUT, 'players-%s.json' % ERA)
-    if os.path.exists(outp) and '--force' not in sys.argv:
-        sys.exit('refusing to overwrite a fitted file: ' + outp + ' (use --force)')
-    json.dump({'season': yr_txt, 'source': 'Basketball Reference %s: per game, totals, per 36, per 100, advanced, shooting, play-by-play. Ratings are percentiles of the measuring stat, shrunk by minutes.' % yr_txt,
+    keep = os.path.exists(outp) and '--force' not in sys.argv     # a fitted ratings file is never overwritten; the teams file is still refreshed
+    if not keep:
+      json.dump({'season': yr_txt, 'source': 'Basketball Reference %s: per game, totals, per 36, per 100, advanced, shooting, play-by-play. Ratings are percentiles of the measuring stat, shrunk by minutes.' % yr_txt,
                'lg': lg, 'players': final, 'pool': pool_out}, open(outp, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     base = {t['id']: t for t in json.load(open(os.path.join(OUT, 'teams-2026.json')))['teams']}
     teams = []
@@ -323,8 +371,7 @@ def main():
             city, nick = nm.rsplit(' ', 1) if nm not in ('Portland Trail Blazers',) else ('Portland', 'Trail Blazers')
             if nm.endswith('SuperSonics'): city, nick = 'Seattle', 'SuperSonics'
             t = {'id': tid, 'city': city, 'name': nick, 'division': 'Eastern' if nm in EAST else 'Western', 'w': 0, 'l': 0, 'colors': [c1, c2], 'nbaId': nid}
-        if nm in EAST: t['division'] = 'Eastern'
-        elif nm in ('New Orleans Hornets', 'Seattle SuperSonics', 'Vancouver Grizzlies'): t['division'] = 'Western'
+        t['division'] = 'Eastern' if is_east(nm) else 'Western'
         if tid in recs: t['rw'], t['rl'] = recs[tid]
         teams.append(t)
     json.dump({'season': yr_txt, 'league': 'National Basketball Association', 'games': int(lg['games']), 'divisions': ['Eastern', 'Western'], 'source': 'NBA ' + yr_txt + '. Colours are approximations.', 'teams': teams}, open(os.path.join(OUT, 'teams-%s.json' % ERA), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

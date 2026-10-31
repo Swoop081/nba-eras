@@ -1,0 +1,147 @@
+{
+ "season": "1962-63",
+ "league": "National Basketball Association",
+ "games": 80,
+ "divisions": [
+  "Eastern",
+  "Western"
+ ],
+ "source": "NBA 1962-63. Colours are approximations.",
+ "teams": [
+  {
+   "id": "boston-celtics",
+   "city": "Boston",
+   "name": "Celtics",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#007A33",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612738,
+   "rw": 58,
+   "rl": 22
+  },
+  {
+   "id": "chicago-zephyrs",
+   "city": "Chicago",
+   "name": "Zephyrs",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#E03A3E",
+    "#000000"
+   ],
+   "nbaId": 1610612764,
+   "rw": 25,
+   "rl": 55
+  },
+  {
+   "id": "cincinnati-royals",
+   "city": "Cincinnati",
+   "name": "Royals",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#6F2C91",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612758,
+   "rw": 42,
+   "rl": 38
+  },
+  {
+   "id": "detroit-pistons",
+   "city": "Detroit",
+   "name": "Pistons",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D42BA",
+    "#C8102E"
+   ],
+   "nbaId": 1610612765,
+   "rw": 34,
+   "rl": 46
+  },
+  {
+   "id": "los-angeles-lakers",
+   "city": "Los Angeles",
+   "name": "Lakers",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#552583",
+    "#FDB927"
+   ],
+   "nbaId": 1610612747,
+   "rw": 53,
+   "rl": 27
+  },
+  {
+   "id": "new-york-knicks",
+   "city": "New York",
+   "name": "Knicks",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#006BB6",
+    "#F58426"
+   ],
+   "nbaId": 1610612752,
+   "rw": 21,
+   "rl": 59
+  },
+  {
+   "id": "san-francisco-warriors",
+   "city": "San Francisco",
+   "name": "Warriors",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D428A",
+    "#FFC72C"
+   ],
+   "nbaId": 1610612744,
+   "rw": 31,
+   "rl": 49
+  },
+  {
+   "id": "st-louis-hawks",
+   "city": "St. Louis",
+   "name": "Hawks",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#E03A3E",
+    "#C1D32F"
+   ],
+   "nbaId": 1610612737,
+   "rw": 48,
+   "rl": 32
+  },
+  {
+   "id": "syracuse-nationals",
+   "city": "Syracuse",
+   "name": "Nationals",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#004B87",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612755,
+   "rw": 48,
+   "rl": 32
+  }
+ ]
+}

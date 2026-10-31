@@ -47,7 +47,7 @@ function run(S) {
   return { wins: W2, st: ST, ppg };
 }
 function report(r, tag) {
-  let mw = 0; ids.forEach(i => mw += Math.abs(r.wins[i] - realW[i])); mw /= ids.length;
+  let mw = 0, mc = 0; ids.forEach(i => { if (realW[i] >= 0) { mw += Math.abs(r.wins[i] - realW[i]); mc++; } }); mw /= Math.max(1, mc);
   let ep = 0, er = 0, ea = 0, n = 0;
   players.forEach(p => { const s = r.st[p.id]; if (s.g < 20 || p.prev.mpg < 15) return; n++; ep += Math.abs(s.pts / s.g - p.prev.pts); er += Math.abs(s.trb / s.g - p.prev.trb); ea += Math.abs(s.ast / s.g - p.prev.ast); });
   console.log(tag, 'league PPG', r.ppg.toFixed(1), '(real ' + (LG ? LG.pts : 115.6) + ') | wins MAE', mw.toFixed(1), '| PPG MAE', (ep / n).toFixed(2), 'RPG', (er / n).toFixed(2), 'APG', (ea / n).toFixed(2), 'n', n);
@@ -123,7 +123,8 @@ for (let it = 1; it <= ITER; it++) {
 }
 fitLeague(3); r = run(S); report(r, 'locked');
 for (let it = 1; it <= (+process.argv[5] || 10); it++) {
-  ids.forEach(i => {   // club residual: spread over the rotation as hidden impact
+  ids.forEach(i => {   // club residual
+    if (!(realW[i] >= 0)) return;   // club residual: spread over the rotation as hidden impact
     const d = (realW[i] - r.wins[i]) / GAMES * 0.040;
     const top = byTeam[i].slice().sort((a, b) => b.ratings.ovr - a.ratings.ovr).slice(0, 9);
     top.forEach(p => { p.imp = clamp((p.imp || 0) + d, -0.06, 0.06); });
