@@ -20,7 +20,7 @@ if (!Object.keys(realW).length) {
   teams.forEach(t => { const k = Object.keys(CODE).find(c => (t.id === c || t.id.startsWith(c + '-'))); realW[t.id] = stand[CODE[k]]; });
 }
 const players = doc.players;
-players.forEach(p => { p.ratings.ovr = ovrOf(p.ratings); p.avail = Math.min(1, (p.prev.g || 0) / GAMES); });
+players.forEach(p => { p.ovr0 = p.ratings.ovr; p.ratings.ovr = ovrOf(p.ratings); p.avail = Math.min(1, (p.prev.g || 0) / GAMES); });
 function ovrOf(r) { let s = 0; for (const k in W) s += W[k] * r[k]; return Math.round(35 + 0.6 * s); }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const byTeam = {}; players.forEach(p => (byTeam[p.teamId] = byTeam[p.teamId] || []).push(p));
@@ -82,11 +82,23 @@ function fitLeague(rounds) {
 }
 fitLeague(+process.env.LGROUNDS || 6);
 let r = run(S); report(r, 'start');
+function lockOvr() {   // overall is a measure of value and stays where the builder put it; only the mix of skills moves
+  players.forEach(p => {
+    const k = p.ratings;
+    for (let q = 0; q < 6; q++) {
+      const d = (p.ovr0 - ovrOf(k)) / (0.6 * (1 - W.dur));
+      if (Math.abs(d) < 0.3) break;
+      for (const x of ['stl', 'blk', 'tov', 'fou', 'ft']) k[x] = clamp(k[x] + d * 2.2, 3, 99);
+    }
+    k.ovr = p.ovr0;
+  });
+}
+
 for (let it = 1; it <= ITER; it++) {
   players.forEach(p => {
     const s = r.st[p.id]; if (s.g < 12) return;
     const g = s.g, sim = { pts: s.pts / g, trb: s.trb / g, ast: s.ast / g, stl: s.stl / g, blk: s.blk / g, tov: s.tov / g };
-    const real = p.prev, k = p.ratings, wt = 0.55;
+    const real = p.prev, k = p.ratings, wt = 0.4;
     const adj = (a, b) => clamp(Math.pow((b + 0.35) / (a + 0.35), wt), 0.88, 1.14);
     k.sco = clamp(k.sco * adj(sim.pts, real.pts), 3, 99);
     k.ply = clamp(k.ply * adj(sim.ast, real.ast), 3, 99);
@@ -98,16 +110,22 @@ for (let it = 1; it <= ITER; it++) {
     if (s.fga / g > 3 && real.fg) { const sfg = s.fg / s.fga; k.sht = clamp(k.sht * clamp(Math.pow((real.fg + .02) / (sfg + .02), .6), .94, 1.07), 3, 99); }
     k.ovr = ovrOf(k);
   });
+  lockOvr();
+  if (it % 4 === 0) fitLeague(1);
+  r = run(S); report(r, 'iter ' + it);
+}
+fitLeague(3); r = run(S); report(r, 'locked');
+for (let it = 1; it <= (+process.argv[5] || 10); it++) {
   ids.forEach(i => {   // club residual: spread over the rotation as hidden impact
-    const d = (realW[i] - r.wins[i]) / 82 * 0.040;
+    const d = (realW[i] - r.wins[i]) / GAMES * 0.040;
     const top = byTeam[i].slice().sort((a, b) => b.ratings.ovr - a.ratings.ovr).slice(0, 9);
     top.forEach(p => { p.imp = clamp((p.imp || 0) + d, -0.06, 0.06); });
   });
-  r = run(S); report(r, 'iter ' + it);
+  r = run(S); report(r, 'imp ' + it);
 }
 if (process.argv.includes('--write')) {
-  players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = ovrOf(p.ratings); p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; });
-  fs.writeFileSync(path.join(R, 'data/players-2025.json'), JSON.stringify(doc, null, 1));
+  players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = p.ovr0; p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; delete p.ovr0; });
+  fs.writeFileSync(path.join(R, 'data/players-' + ERA + '.json'), JSON.stringify(doc, null, 1));
   const pf = path.join(R, 'data/era-params.json');
   const all = fs.existsSync(pf) ? JSON.parse(fs.readFileSync(pf, 'utf8')) : {};
   const rd = o => { const q = {}; for (const k in o) q[k] = typeof o[k] === 'number' ? Math.round(o[k] * 10000) / 10000 : o[k]; return q; };

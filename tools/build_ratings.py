@@ -45,6 +45,7 @@ def team_name(code):
         return 'Charlotte Hornets'
     return n[code]
 
+ALIAS = {'los-angeles-clippers': 'la-clippers'}
 EAST = {'Atlanta Hawks', 'Boston Celtics', 'Brooklyn Nets', 'New Jersey Nets', 'Charlotte Bobcats', 'Charlotte Hornets', 'Chicago Bulls', 'Cleveland Cavaliers', 'Detroit Pistons', 'Indiana Pacers',
         'Miami Heat', 'Milwaukee Bucks', 'New York Knicks', 'Orlando Magic', 'Philadelphia 76ers', 'Toronto Raptors', 'Washington Wizards', 'Washington Bullets'}
 COLORS = {'Seattle SuperSonics': ('#00653A', '#FFC200', 1610612760), 'Vancouver Grizzlies': ('#00B2A9', '#B15C2A', 1610612763), 'New Jersey Nets': ('#002A60', '#CD1041', 1610612751),
@@ -272,7 +273,7 @@ def main():
         lst.sort(key=lambda r: -r['_mp'])
         nm = team_name(t)
         for i, r in enumerate(lst):
-            r['teamId'] = B.slug(nm)
+            r['teamId'] = ALIAS.get(B.slug(nm), B.slug(nm))
             name_of[r['teamId']] = nm
             (final if i < 15 else pool).append(r)
     seen = {}
@@ -292,7 +293,7 @@ def main():
         for _, r in pd.read_csv(st_fn).iterrows():
             nm = str(r['team']).strip()
             sid = B.slug(nm.replace('New Orleans/Oklahoma City', 'New Orleans').replace('Los Angeles Clippers', 'LA Clippers'))
-            sid = {'los-angeles-clippers': 'la-clippers'}.get(sid, sid)
+            sid = ALIAS.get(sid, sid)
             recs[sid] = (int(r['W']), int(r['L']))
     tg = sum(w + l for w, l in recs.values()) or 30 * 82
     T = {c: float(np.nansum([r[c] for r in A['tot'].values()])) for c in ('PTS', 'FGA', 'FG', '3P', '3PA', 'FT', 'FTA', 'ORB', 'DRB', 'TRB', 'AST', 'TOV', 'STL', 'BLK', 'PF') if c in tot.columns}
