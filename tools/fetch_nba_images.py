@@ -18,6 +18,12 @@ TEAM_IDS = {'atlanta-hawks':1610612737,'boston-celtics':1610612738,'brooklyn-net
  'portland-trail-blazers':1610612757,'sacramento-kings':1610612758,'san-antonio-spurs':1610612759,'toronto-raptors':1610612761,
  'utah-jazz':1610612762,'washington-wizards':1610612764}
 
+# NBA person ids for stars the public lists leave out (check the photos after a run)
+OVERRIDE = {'jayson-tatum':1628369,'jaylen-brown':1627759,'kevin-durant':201142,'shai-gilgeousalexander':1628983,
+ 'donovan-mitchell':1628378,'cade-cunningham':1630595,'lamelo-ball':1630163,'derrick-white':1628401,'myles-turner':1626167,
+ 'alex-sarr':1642259,'pj-washington':1629023,'jakob-poeltl':1627751,'brook-lopez':201572,'khris-middleton':203114,
+ 'kyle-kuzma':1628398,'harrison-barnes':203084,'marcus-smart':203935,'mo-bamba':1628964,'gg-jackson-ii':1641713}
+
 def get(url, binary=True):
     req = urllib.request.Request(url, headers=UA)
     with urllib.request.urlopen(req, timeout=30) as r:
@@ -101,7 +107,7 @@ def main():
     for p in pl:
         out = os.path.join(ROOT, 'assets/players', p['id'] + '.png')
         if os.path.exists(out): continue
-        pid = idx.get(norm(p['name']))
+        pid = OVERRIDE.get(p['id']) or idx.get(norm(p['name']))
         if not pid:
             print('no id for', p['name']); miss += 1; continue
         try:
