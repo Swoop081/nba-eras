@@ -60,7 +60,7 @@
   function buzz(n) {
     if (!n) return;
     var h = host();
-    while (h.children.length > 2) h.removeChild(h.firstChild);
+    while (h.children.length > 0) h.removeChild(h.firstChild);
     var b = document.createElement('div'); b.className = 'pb';
     var ic = document.createElement('span'); ic.className = 'pb-ic'; ic.style.background = n.c; ic.textContent = n.g;
     var tx = document.createElement('div'); tx.className = 'pb-tx';
@@ -72,9 +72,12 @@
     var gone = false;
     function go() { if (gone) return; gone = true; b.classList.add('out'); setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 300); }
     b.addEventListener('click', go);
+    var y0 = null;
+    b.addEventListener('touchstart', function (e) { y0 = e.touches[0].clientY; }, { passive: true });
+    b.addEventListener('touchmove', function (e) { if (y0 !== null && y0 - e.touches[0].clientY > 14) go(); }, { passive: true });
     h.appendChild(b);
     try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
-    setTimeout(go, 5200);
+    setTimeout(go, 3600);
   }
 
   function one() {

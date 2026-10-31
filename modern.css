@@ -115,3 +115,10 @@ body[data-modern="1"] .card.team{padding-left:20px}
 /* portraits sit on a wash of the club colour instead of a white disc */
 body[data-modern="1"] .avatar{background:linear-gradient(165deg,color-mix(in srgb,var(--team) 55%,#14161d),#14161d);color:var(--ink)}
 body[data-modern="1"] .avatar img{background:transparent}
+
+/* banners: one at a time, compact, never covering the page for long */
+body[data-modern="1"] .pb{padding:8px 12px;border-radius:16px}
+body[data-modern="1"] .pb-ic{width:30px;height:30px;border-radius:8px;font-size:14px}
+body[data-modern="1"] .pb-tx small{display:none}
+body[data-modern="1"] .pb-tx b{font-size:13px;color:var(--muted);font-weight:600}
+body[data-modern="1"] .pb-tx span{font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
