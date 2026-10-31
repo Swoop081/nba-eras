@@ -177,7 +177,8 @@
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
     { years: '1990s-2000s', title: 'The Multimedia Era', blurb: 'Locked for now' },
-    { id: '2026', years: '2026-27', title: 'The Present Day', blurb: 'Opening night of the current NBA season. 30 teams, 82 games, the three-point line, a 16-team playoff and a salary cap. Real rosters; build forward from here.', open: true, current: true, teams: 'data/teams-2026.json', players: 'data/players-2026.json' }
+    { id: '2026', years: '2026-27', title: 'The Present Day', blurb: 'Opening night of the current NBA season. 30 teams, 82 games, the three-point line, a 16-team playoff and a salary cap. Real rosters; build forward from here.', open: true, current: true, teams: 'data/teams-2026.json', players: 'data/players-2026.json' },
+    { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Real rosters as they were.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025.json' }
   ];
 
   var eraList = document.getElementById('era-list');
@@ -279,7 +280,7 @@
      If none exists the coloured initials badge stays. */
   function applyLogo(badge, team) {
     var base = 'assets/logos/' + team.id;
-    var era = currentEra ? currentEra.id.replace(/s\d+$/, '') : '';
+    var era = currentEra ? (currentEra.logo || currentEra.id.replace(/s\d+$/, '')) : '';
     var urls = [];
     if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
     // the generic file may be a vintage logo, so the present day only uses a file made for it
@@ -559,7 +560,7 @@
     applyLogo(holder, selected);
     document.getElementById('ready-name').textContent = selected.city + ' ' + selected.name;
     document.getElementById('ready-line').textContent = currentEra.current
-      ? 'Opening night of 2026-27 is next. Rosters are as they stood in the first week of the season.'
+      ? 'Opening night of ' + currentEra.years + ' is next.'
       : currentEra.second
       ? (selected.isNew ? 'A brand new club for the 1947-48 season. Opening night is next.' : 'Last season this club went ' + selected.w + '-' + selected.l + '. Opening night of 1947-48 is next.')
       : 'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
@@ -1181,7 +1182,7 @@
     return save.days.filter(function (d) { return d.some(function (g) { return g[0] === id || g[1] === id; }); }).length;
   }
   function seasonLabel(y) { return y + '-' + String(y + 1).slice(2); }
-  function divTitle(d) { return d + (save && save.eraId === '2026' ? ' Conference' : ' Division'); }
+  function divTitle(d) { return d + (save && (save.eraId === '2026' || save.eraId === '2025') ? ' Conference' : ' Division'); }
   function money(n) { return League.money(n, save && save.lg ? save.lg.cap : 0); }
   function teamRating(id) {
     var r = rosterOf(id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);

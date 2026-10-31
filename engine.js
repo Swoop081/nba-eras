@@ -22,7 +22,7 @@
   var PARAMS = {
     1946: { use: 0.9, poss: 86, fg: 0.2, threes: false, tov: 0.14, foul: 0.20, orb: 0.30 },
     // 2026-27: about 100 possessions, 37 threes a night at 36%, 47% from the field.
-    2026: { use: 0.8, poss: 100, fg: 0.36, fb: 1.0, fsh: 0.0045, fsc: 0.0013, threes: true, tpBase: 0.14, tpDiv: 220, tpq: 0.78, tov: 0.135, foul: 0.165, orb: 0.25, ftb: 0.58, ftm: 0.32, astp: 1.7 }
+    2000: { use: 0.8, poss: 100, fg: 0.36, fb: 1.0, fsh: 0.0045, fsc: 0.0013, threes: true, tpBase: 0.14, tpDiv: 220, tpq: 0.78, tov: 0.135, foul: 0.165, orb: 0.25, ftb: 0.58, ftm: 0.32, astp: 1.7 }
   };
 
   function params(year) {

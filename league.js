@@ -4,7 +4,7 @@
   var W = { sco: .39, sht: .10, ft: .04, ply: .08, tov: .04, orb: .05, drb: .07, stl: .07, blk: .05, fou: .03, dur: .08 };
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou', 'dur'];
   var KNOWN_SALARY = { 'joe-fulks': 8000, 'tom-king': 16500 };
-  var CAP = { 1946: 55000, 2026: 165000 };
+  var CAP = { 1946: 55000, 2000: 165000 };
   var MIN_ROSTER = 9, MAX_ROSTER = 15, OPENING_ROSTER = 12;
   /* The modern game counts money in thousands of dollars (a $165,000 cap is $165 million); the founding era counts dollars. */
   var MODERN = false, MINSAL = 1000;

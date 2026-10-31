@@ -15,7 +15,7 @@
       games: 60, kind: 'div4',
       playoffs: 'Top four clubs in each division qualify. Division semifinals and finals are best-of-three, then a best-of-seven Finals.'
     },
-    2026: {
+    2000: {
       games: 82, kind: 'nba',
       playoffs: 'The eight best records in each conference qualify and are seeded one to eight. Every round is a best-of-seven: first round, conference semifinals, conference finals, then the Finals between the two conference champions. (The real league also runs a play-in tournament for seeds seven to ten. That is not in the game yet.)',
       notes: ['Four 12-minute quarters', 'Six personal fouls and you are out', '24-second shot clock and the three-point line', '30 clubs, 15-man rosters', 'Salary cap and contracts']

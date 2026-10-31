@@ -63,7 +63,7 @@
     }
   };
   function PERIOD_M_FLAG() { return true; }
-  function voice(year) { return year >= 2026 ? VOICE[2026] : (VOICE[year] || VOICE[1946]); }
+  function voice(year) { return year >= 2000 ? VOICE[2026] : (VOICE[year] || VOICE[1946]); }
 
   /* ---------- after-game mood changes ---------- */
   function afterGame(save, me, mine, rosterMe, won) {

@@ -1,0 +1,451 @@
+team,Player,Pos,Ht,Age,GP,PTS,REB,AST
+OKC,Cason Wallace,Guard,6-3,22,77,8.6,3.1,2.6
+OKC,Isaiah Joe,Guard,6-4,26,71,11.1,2.5,1.3
+OKC,Luguentz Dort,Guard,6-3,27,69,8.3,3.6,1.2
+OKC,Chet Holmgren,Center / Forward,7-1,24,69,17.1,8.9,1.7
+OKC,Shai Gilgeous-Alexander,Guard,6-6,27,68,31.1,4.3,6.6
+OKC,Aaron Wiggins,Guard,6-4,27,65,9.4,3.1,1.7
+OKC,Jaylin Williams,Forward,6-9,23,65,7.2,5.5,2.4
+OKC,Ajay Mitchell,Guard,6-5,23,57,13.6,3.3,3.6
+OKC,Alex Caruso,Guard,6-4,32,56,6.2,2.8,2.0
+OKC,Kenrich Williams,Guard / Forward,6-7,31,56,6.5,3.3,1.4
+OKC,Isaiah Hartenstein,Center / Forward,7-0,28,47,9.2,9.4,3.5
+OKC,Branden Carlson,Center,7-0,26,42,5.8,3.0,0.7
+OKC,Brooks Barnhizer,Guard,6-5,24,40,1.7,2.0,0.6
+OKC,Jalen Williams,Guard / Forward,6-5,25,33,17.1,4.6,5.5
+OKC,Nikola Topic,Guard,6-6,20,10,5.2,1.9,4.4
+ATL,Nickeil Alexander-Walker,Guard,6-5,27,78,20.8,3.4,3.7
+ATL,Mouhamed Gueye,Forward,6-10,23,77,4.4,3.6,0.9
+ATL,Dyson Daniels,Guard,6-7,23,76,11.9,6.8,5.9
+ATL,Onyeka Okongwu,Forward / Center,6-8,25,74,15.2,7.6,3.1
+ATL,Jalen Johnson,Forward,6-8,24,72,22.5,10.3,7.9
+ATL,Zaccharie Risacher,Forward,6-8,21,67,9.6,3.8,1.1
+ATL,Keaton Wallace,Guard,6-3,27,53,3.5,1.1,1.8
+ATL,Luke Kennard,Guard,6-5,29,46,7.9,2.2,2.1
+ATL,Vit Krejci,Guard,6-8,25,46,9.0,2.1,1.5
+ATL,Asa Newell,Forward,6-10,20,44,5.2,2.2,0.6
+ATL,Gabe Vincent,Guard,6-3,29,24,3.9,1.1,1.6
+ATL,Jock Landale,Center,6-11,30,23,9.1,4.1,1.7
+ATL,Kristaps Porzingis,Forward / Center,7-3,30,17,17.1,5.1,2.7
+BOS,Payton Pritchard,Guard,6-1,28,79,17.0,3.9,5.2
+BOS,Sam Hauser,Forward,6-7,28,78,9.2,3.8,1.5
+BOS,Baylor Scheierman,Guard,6-6,25,77,5.5,3.5,1.5
+BOS,Derrick White,Guard,6-4,31,77,16.5,4.4,5.4
+BOS,Neemias Queta,Center,7-0,26,76,10.2,8.4,1.7
+BOS,Hugo Gonzalez,Guard,6-6,20,74,3.9,3.3,0.5
+BOS,Jaylen Brown,Forward,6-7,29,71,28.7,6.9,5.1
+BOS,Luka Garza,Center,6-10,27,69,8.1,4.1,1.0
+BOS,Jordan Walsh,Guard,6-6,22,68,5.4,4.0,0.8
+BOS,Anfernee Simons,Guard,6-4,26,49,14.2,2.4,2.4
+BOS,Josh Minott,Forward,6-8,23,33,5.8,3.6,1.0
+BOS,Jayson Tatum,Forward,6-8,28,16,21.8,10.0,5.3
+BOS,Nikola Vucevic,Forward,6-10,35,16,9.7,6.6,2.0
+BKN,Nic Claxton,Forward / Center,6-11,26,69,11.7,6.9,3.7
+BKN,Noah Clowney,Forward,6-9,21,66,12.3,4.1,1.6
+BKN,Terance Mann,Guard / Forward,6-7,29,63,7.2,3.2,3.0
+BKN,Drake Powell,Guard / Forward,6-5,20,63,6.5,1.8,1.4
+BKN,Day'Ron Sharpe,Forward,6-9,24,62,8.7,6.7,2.3
+BKN,Danny Wolf,Forward,6-11,21,57,8.9,4.9,2.2
+BKN,Nolan Traore,Guard,6-3,19,56,8.9,1.8,3.8
+BKN,Ziaire Williams,Forward,6-9,24,56,10.2,2.4,1.1
+BKN,Jalen Wilson,Forward,6-6,25,54,6.4,2.1,0.9
+BKN,Egor Demin,Guard,6-8,20,52,10.3,3.2,3.3
+BKN,Michael Porter Jr.,Forward,6-10,27,52,24.2,7.1,3.0
+BKN,Ben Saraf,Guard,6-6,19,44,7.5,2.1,3.3
+BKN,Cam Thomas,Guard,6-3,24,24,15.6,1.8,3.1
+CHA,Sion James,Guard,6-5,23,82,5.4,3.5,2.0
+CHA,Kon Knueppel,Guard / Forward,6-6,20,81,18.5,5.3,3.4
+CHA,Miles Bridges,Forward,6-7,28,77,17.1,5.8,3.2
+CHA,Moussa Diabate,Forward,6-10,24,73,7.9,8.7,1.9
+CHA,LaMelo Ball,Guard,6-8,24,72,20.1,4.8,7.1
+CHA,Ryan Kalkbrenner,Center,7-1,24,69,7.6,5.5,0.8
+CHA,Brandon Miller,Forward,6-9,23,65,20.2,4.9,3.3
+CHA,Josh Green,Guard,6-5,25,58,4.3,1.8,0.8
+CHA,Tre Mann,Guard,6-3,25,53,5.5,1.7,1.6
+CHA,Pat Connaughton,Guard,6-5,33,42,2.6,1.5,0.4
+CHA,Collin Sexton,Guard,6-2,27,42,14.2,1.9,3.7
+CHA,Tidjane Salaun,Forward,6-8,20,37,6.0,4.0,0.7
+CHA,Grant Williams,Forward,6-6,27,36,7.0,3.9,1.6
+CHA,Liam McNeeley,Forward,6-7,20,31,4.3,2.4,0.8
+CHI,Matas Buzelis,Forward,6-10,21,77,16.3,5.8,2.1
+CHI,Patrick Williams,Forward,6-8,24,72,7.0,3.0,1.5
+CHI,Tre Jones,Guard,6-1,26,65,14.1,3.1,5.4
+CHI,Isaac Okoro,Forward / Guard,6-6,25,63,9.3,2.7,1.6
+CHI,Josh Giddey,Guard,6-8,23,54,17.0,8.3,9.1
+CHI,Jalen Smith,Forward / Center,6-10,26,53,10.2,6.7,1.2
+CHI,Nikola Vucevic,Forward,6-10,35,48,16.9,9.0,3.8
+CHI,Ayo Dosunmu,Guard,6-4,26,45,15.0,3.0,3.6
+CHI,Kevin Huerter,Guard,6-7,27,44,10.9,3.8,2.6
+CHI,Lachlan Olbrich,Center,6-8,22,37,2.4,3.0,1.1
+CHI,Julian Phillips,Forward,6-8,22,35,2.8,1.3,0.2
+CHI,Dalen Terry,Forward,6-7,23,34,3.5,1.9,1.3
+CHI,Rob Dillingham,Guard,6-3,21,30,9.6,3.0,2.8
+CHI,Coby White,Guard,6-4,26,29,18.6,3.7,4.7
+CHI,Leonard Miller,Forward,6-10,22,27,11.7,5.8,1.3
+CHI,Collin Sexton,Guard,6-2,27,26,17.5,2.9,2.5
+CHI,Guerschon Yabusele,Forward,6-8,30,26,10.0,5.7,1.7
+CLE,Donovan Mitchell,Guard,6-3,29,70,27.9,4.5,5.7
+CLE,Jaylon Tyson,Guard / Forward,6-6,23,66,13.2,5.1,2.2
+CLE,Evan Mobley,Center,6-11,24,65,18.2,9.0,3.6
+CLE,Craig Porter,Guard,6-1,26,64,4.5,3.4,3.2
+CLE,Nae'Qwan Tomlin,Forward,6-10,25,64,5.8,2.9,0.8
+CLE,Thomas Bryant,Center,6-10,28,60,6.2,3.4,0.6
+CLE,Dean Wade,Forward / Center,6-9,29,59,5.8,4.2,1.5
+CLE,Jarrett Allen,Center / Forward,6-9,28,56,15.4,8.5,1.8
+CLE,Sam Merrill,Guard,6-5,30,52,12.8,2.6,2.4
+CLE,Tyrese Proctor,Guard,6-4,22,50,5.4,1.3,1.5
+CLE,De'Andre Hunter,Forward / Guard,6-7,28,43,14.0,4.2,2.1
+CLE,Lonzo Ball,Guard,6-6,28,35,4.6,4.0,3.9
+CLE,Larry Nance Jr.,Forward,6-9,33,35,3.7,2.7,1.0
+CLE,Dennis Schroder,Guard,6-1,32,30,8.2,2.3,4.3
+CLE,Keon Ellis,Guard,6-3,26,29,8.3,2.8,1.6
+CLE,Darius Garland,Guard,6-1,26,26,18.0,2.4,6.9
+CLE,James Harden,Guard,6-5,36,26,20.5,4.8,7.7
+DET,Javonte Green,Guard / Forward,6-4,32,82,6.9,2.8,0.7
+DET,Ron Holland II,Forward,6-8,20,78,8.2,4.0,1.2
+DET,Duncan Robinson,Forward,6-8,31,77,12.2,2.7,2.1
+DET,Ausar Thompson,Guard / Forward,6-7,23,73,9.9,5.7,3.1
+DET,Daniss Jenkins,Guard,6-3,24,72,9.3,2.3,3.9
+DET,Jalen Duren,Center,6-11,22,70,19.5,10.5,2.0
+DET,Paul Reed,Forward,6-9,26,65,7.8,4.5,1.2
+DET,Cade Cunningham,Guard,6-6,24,64,23.9,5.5,9.9
+DET,Tobias Harris,Forward,6-7,33,63,13.3,5.1,2.5
+DET,Caris LeVert,Guard,6-7,31,60,7.4,2.0,2.7
+DET,Isaiah Stewart,Forward / Center,6-9,24,58,10.0,5.0,1.1
+DET,Marcus Sasser,Guard,6-2,25,38,5.2,1.0,2.0
+DET,Chaz Lanier,Guard,6-3,24,34,2.4,0.7,0.5
+DET,Jaden Ivey,Guard,6-4,24,33,8.2,2.2,1.6
+IND,Jay Huff,Forward,7-1,28,82,9.5,4.0,1.5
+IND,Jarace Walker,Forward,6-7,22,76,11.6,5.1,2.5
+IND,Ben Sheppard,Guard,6-6,24,65,7.1,3.0,1.8
+IND,Pascal Siakam,Forward,6-9,31,62,24.0,6.6,3.8
+IND,Andrew Nembhard,Guard / Forward,6-3,26,57,16.9,2.8,7.7
+IND,T.J. McConnell,Guard,6-2,34,56,9.4,2.2,5.1
+IND,Quenton Jackson,Guard,6-5,27,49,9.1,2.3,2.9
+IND,Micah Potter,Center,6-10,27,47,9.7,5.0,1.5
+IND,Aaron Nesmith,Guard / Forward,6-5,26,45,13.8,4.2,1.9
+IND,Isaiah Jackson,Forward,6-10,24,38,6.4,5.6,0.8
+IND,Taelon Peter,Guard,6-3,24,38,4.5,1.6,1.1
+IND,Kam Jones,Guard,6-4,24,37,4.4,1.6,3.2
+IND,Johnny Furphy,Guard,6-9,21,35,5.1,4.4,1.2
+IND,Ethan Thompson,Guard,6-4,26,32,7.0,2.2,1.8
+IND,Bennedict Mathurin,Guard / Forward,6-5,23,28,17.8,5.4,2.3
+IND,Kobe Brown,Forward,6-7,26,27,9.4,4.9,2.0
+IND,Obi Toppin,Forward,6-9,28,24,11.6,4.4,2.3
+MIA,Kel'el Ware,Center,7-0,21,77,11.1,9.0,0.7
+MIA,Jaime Jaquez Jr.,Guard,6-6,25,75,15.4,5.0,4.7
+MIA,Bam Adebayo,Center / Forward,6-10,28,73,20.1,10.0,3.2
+MIA,Simone Fontecchio,Forward,6-7,30,70,8.5,3.0,1.4
+MIA,Pelle Larsson,Guard,6-5,25,70,11.4,3.5,3.4
+MIA,Davion Mitchell,Guard,6-0,27,70,9.3,2.7,6.5
+MIA,Dru Smith,Guard,6-3,28,70,5.6,2.5,2.6
+MIA,Andrew Wiggins,Guard,6-8,31,68,15.4,4.8,2.7
+MIA,Norman Powell,Guard,6-4,32,58,21.7,3.5,2.5
+MIA,Kasparas Jakucionis,Guard,6-5,19,53,6.2,2.6,2.6
+MIA,Nikola Jovic,Forward,6-10,22,47,7.3,3.3,2.2
+MIA,Myron Gardner,Forward,6-5,24,45,3.6,2.7,1.0
+MIA,Tyler Herro,Guard,6-5,26,33,20.5,4.8,4.1
+MIA,Keshad Johnson,Forward,6-7,24,32,4.3,1.9,0.3
+MIL,A.J. Green,Guard,6-5,26,78,10.4,2.7,1.9
+MIL,Ryan Rollins,Guard,6-3,23,74,17.3,4.6,5.6
+MIL,Myles Turner,Forward / Center,6-11,30,71,11.9,5.3,1.5
+MIL,Kyle Kuzma,Forward,6-10,30,69,13.0,4.5,2.7
+MIL,Bobby Portis,Forward,6-11,31,67,13.7,6.4,1.6
+MIL,Jericho Sims,Center,6-9,27,67,5.0,5.5,1.6
+MIL,Gary Trent Jr.,Guard,6-6,27,65,8.1,1.0,1.2
+MIL,Gary Harris,Guard,6-4,31,48,2.7,1.3,1.1
+MIL,Andre Jackson Jr.,Guard,6-6,24,48,2.4,1.5,0.9
+MIL,Pete Nance,Forward,6-10,26,47,5.4,2.7,1.0
+MIL,Kevin Porter Jr.,Guard / Forward,6-4,25,38,17.4,5.2,7.4
+MIL,Giannis Antetokounmpo,Forward / Guard,6-11,31,36,27.6,9.8,5.4
+MIL,Cole Anthony,Guard,6-3,25,35,6.7,2.5,3.5
+MIL,Ousmane Dieng,Forward,6-9,22,30,11.0,4.6,3.6
+MIL,Taurean Prince,Forward,6-8,32,26,9.2,3.1,1.8
+NYK,Mikal Bridges,Forward,6-7,29,82,14.4,3.8,3.7
+NYK,Karl-Anthony Towns,Center,7-0,30,75,20.1,11.9,3.0
+NYK,Jalen Brunson,Guard,6-3,29,74,26.0,3.3,6.8
+NYK,Jordan Clarkson,Guard,6-5,33,72,8.6,1.8,1.3
+NYK,Mohamed Diawara,Forward,6-9,21,69,3.6,1.4,0.8
+NYK,OG Anunoby,Forward,6-8,28,67,16.7,5.2,2.2
+NYK,Josh Hart,Guard,6-5,31,66,12.0,7.4,4.8
+NYK,Tyler Kolek,Guard,6-3,25,62,4.4,1.6,2.7
+NYK,Mitchell Robinson,Center,7-1,28,60,5.7,8.8,0.9
+NYK,Ariel Hukporti,Center,6-11,24,54,2.2,2.9,0.5
+NYK,Landry Shamet,Guard,6-5,29,51,9.3,1.8,1.4
+NYK,Miles McBride,Guard,6-1,25,41,12.0,2.4,2.6
+NYK,Pacome Dadiet,Forward,6-8,20,29,1.7,0.9,0.4
+NYK,Jose Alvarado,Guard,6-0,28,28,6.6,2.0,3.8
+ORL,Desmond Bane,Guard,6-6,27,82,20.1,4.1,4.1
+ORL,Wendell Carter Jr.,Forward / Center,6-10,26,78,11.8,7.4,2.0
+ORL,Tristan da Silva,Forward,6-8,24,77,9.9,3.7,1.6
+ORL,Paolo Banchero,Forward,6-10,23,72,22.2,8.4,5.2
+ORL,Goga Bitadze,Center / Forward,6-11,26,64,5.9,5.0,1.3
+ORL,Anthony Black,Guard,6-7,22,64,15.0,3.8,3.7
+ORL,Noah Penda,Guard / Forward,6-7,21,59,3.8,3.2,1.2
+ORL,Jalen Suggs,Guard,6-5,24,57,13.8,3.9,5.5
+ORL,Jett Howard,Guard,6-6,22,55,5.5,1.6,0.8
+ORL,Jase Richardson,Guard,6-1,20,54,4.4,1.2,1.1
+ORL,Jonathan Isaac,Forward,6-10,28,52,2.6,2.5,0.4
+ORL,Tyus Jones,Guard,6-2,29,48,3.0,1.1,2.4
+ORL,Moritz Wagner,Center,6-11,28,36,6.9,3.2,0.8
+ORL,Franz Wagner,Forward,6-10,24,34,20.6,5.2,3.3
+PHI,VJ Edgecombe,Guard,6-4,20,75,16.0,5.6,4.2
+PHI,Quentin Grimes,Guard,6-4,25,75,13.4,3.6,3.3
+PHI,Dominick Barlow,Forward,6-9,22,71,7.7,4.8,1.2
+PHI,Adem Bona,Forward,6-10,23,71,4.8,4.3,0.5
+PHI,Tyrese Maxey,Guard,6-2,25,70,28.3,4.1,6.6
+PHI,Justin Edwards,Forward,6-7,22,64,6.0,1.5,1.3
+PHI,Jabari Walker,Forward,6-7,23,64,4.3,3.0,0.5
+PHI,Andre Drummond,Center,6-10,32,63,6.4,8.4,1.3
+PHI,Trendon Watford,Forward,6-8,25,53,6.5,3.3,2.5
+PHI,Kelly Oubre Jr.,Forward,6-7,30,50,14.1,5.0,1.6
+PHI,Joel Embiid,Center / Forward,7-0,32,38,26.9,7.7,3.9
+PHI,Paul George,Forward,6-9,35,37,17.3,5.3,3.6
+PHI,Jared McCain,Guard,6-3,22,37,6.6,2.0,1.7
+PHI,Cameron Payne,Guard,6-3,31,22,7.4,2.0,2.6
+TOR,Jamal Shead,Guard,6-1,23,82,6.6,1.7,5.4
+TOR,Scottie Barnes,Forward,6-7,24,80,18.1,7.5,5.9
+TOR,Sandro Mamukelashvili,Forward / Center,6-9,26,80,11.2,4.9,1.9
+TOR,Brandon Ingram,Forward,6-9,28,77,21.5,5.6,3.7
+TOR,Gradey Dick,Guard,6-6,22,76,6.0,1.9,0.7
+TOR,Ja'Kobe Walter,Guard,6-5,21,72,7.5,2.6,1.2
+TOR,Immanuel Quickley,Guard,6-3,26,70,16.4,4.0,5.9
+TOR,Jamison Battle,Forward,6-7,24,61,3.1,1.5,0.4
+TOR,RJ Barrett,Forward / Guard,6-6,25,57,19.3,5.3,3.3
+TOR,Collin Murray-Boyles,Forward,6-7,20,57,8.5,5.0,1.9
+TOR,Jakob Poeltl,Center,7-0,30,46,10.7,7.0,2.0
+TOR,Ochai Agbaji,Guard,6-5,25,42,4.3,2.3,0.7
+TOR,Jonathan Mogbo,Forward,6-9,24,40,1.5,1.7,0.6
+WAS,Bub Carrington,Guard,6-4,20,82,10.7,3.4,4.6
+WAS,Will Riley,Forward,6-9,20,74,10.3,2.9,2.0
+WAS,Justin Champagnie,Guard / Forward,6-6,24,69,8.7,5.6,1.2
+WAS,Tre Johnson,Guard,6-5,20,60,12.2,2.8,2.0
+WAS,Bilal Coulibaly,Guard,6-8,21,56,11.7,4.3,2.6
+WAS,Anthony Gill,Forward,6-8,33,55,5.8,2.9,1.3
+WAS,Jamir Watkins,Forward,6-6,24,50,7.4,3.9,1.3
+WAS,Tristan Vukcevic,Forward,6-10,23,49,9.0,3.0,1.1
+WAS,Kyshawn George,Forward,6-8,22,48,14.8,5.1,4.5
+WAS,Alex Sarr,Center,7-0,20,48,16.3,7.4,2.7
+WAS,Sharife Cooper,Guard,6-1,24,41,8.1,2.1,3.0
+WAS,Marvin Bagley III,Forward,6-11,27,38,10.1,5.7,1.5
+WAS,C.J. McCollum,Guard,6-4,34,35,18.8,3.5,3.6
+WAS,Khris Middleton,Forward,6-7,34,34,10.3,3.9,3.3
+WAS,Malaki Branham,Forward,6-4,22,28,4.6,1.6,0.8
+WAS,Jaden Hardy,Guard,6-3,23,23,12.6,1.7,1.3
+WAS,Cam Whitmore,Forward,6-7,21,21,9.2,2.8,0.7
+WAS,Trae Young,Guard,6-2,27,5,15.2,3.0,6.2
+DAL,Max Christie,Guard,6-5,23,77,12.3,3.2,2.0
+DAL,Naji Marshall,Forward,6-7,28,74,15.2,4.7,3.3
+DAL,Cooper Flagg,Forward,6-9,19,70,21.0,6.7,4.5
+DAL,Klay Thompson,Guard,6-7,36,69,11.7,2.1,1.4
+DAL,Brandon Williams,Guard,6-2,26,66,13.0,2.9,3.9
+DAL,Dwight Powell,Forward,6-11,34,63,3.3,4.1,1.1
+DAL,Ryan Nembhard,Guard,5-11,23,60,6.6,2.2,5.3
+DAL,Caleb Martin,Forward,6-5,30,58,3.9,2.5,1.4
+DAL,P.J. Washington,Forward,6-7,27,56,14.2,7.0,1.8
+DAL,Daniel Gafford,Forward / Center,6-10,27,55,9.5,6.9,1.1
+DAL,Moussa Cisse,Center,6-11,23,38,4.5,5.7,0.2
+DAL,D'Angelo Russell,Guard,6-5,30,26,10.2,2.3,4.0
+DAL,Anthony Davis,Forward / Center,6-10,33,20,20.4,11.1,2.8
+DAL,Dereck Lively II,Center,7-1,22,7,4.3,5.3,1.9
+DEN,Bruce Brown,Guard,6-5,29,82,7.9,3.9,2.1
+DEN,Tim Hardaway Jr.,Guard,6-6,34,80,13.5,2.6,1.4
+DEN,Jamal Murray,Guard,6-4,29,75,25.4,4.4,7.1
+DEN,Nikola Jokic,Center,7-0,31,65,27.7,12.9,10.7
+DEN,Jonas Valanciunas,Center,6-11,33,65,8.7,5.1,1.2
+DEN,Spencer Jones,Forward,6-7,24,64,5.5,3.3,0.8
+DEN,Julian Strawther,Guard,6-6,23,57,7.2,2.0,1.1
+DEN,Cameron Johnson,Forward,6-8,30,54,12.2,3.8,2.4
+DEN,Peyton Watson,Guard,6-7,23,54,14.6,4.9,2.1
+DEN,Zeke Nnaji,Forward / Center,6-11,25,52,3.7,2.6,0.6
+DEN,Jalen Pickett,Guard,6-2,26,50,5.2,2.3,2.3
+DEN,Christian Braun,Guard,6-6,24,44,12.0,4.8,2.7
+DEN,Aaron Gordon,Forward,6-9,30,36,16.2,5.8,2.7
+DEN,DaRon Holmes II,Forward,6-9,23,25,3.7,1.4,0.6
+GSW,Brandin Podziemski,Guard,6-4,23,82,13.8,5.1,3.7
+GSW,Gary Payton II,Guard,6-3,33,73,7.5,3.6,1.7
+GSW,Will Richard,Guard,6-3,23,69,6.4,2.5,1.3
+GSW,Draymond Green,Forward,6-7,36,68,8.4,5.5,5.5
+GSW,Gui Santos,Forward,6-6,23,68,9.2,3.9,2.3
+GSW,Quinten Post,Center,7-0,26,67,7.7,4.0,1.4
+GSW,Pat Spencer,Guard,6-3,29,66,7.2,2.4,3.5
+GSW,Moses Moody,Guard,6-5,23,60,12.1,3.3,1.6
+GSW,De'Anthony Melton,Guard,6-4,27,49,12.3,3.2,2.6
+GSW,Al Horford,Center,6-10,39,45,8.3,4.9,2.6
+GSW,Buddy Hield,Guard,6-4,32,44,8.0,2.5,1.5
+GSW,Stephen Curry,Guard,6-3,38,43,26.6,3.6,4.7
+GSW,Jimmy Butler,Forward,6-7,36,38,20.0,5.6,4.9
+GSW,Trayce Jackson-Davis,Forward,6-9,26,36,4.2,3.1,0.9
+GSW,Jonathan Kuminga,Forward,6-7,23,20,12.1,5.9,2.5
+GSW,Kristaps Porzingis,Forward / Center,7-3,30,15,16.1,5.3,2.3
+HOU,Reed Sheppard,Guard,6-2,22,82,13.5,2.9,3.4
+HOU,Amen Thompson,Guard / Forward,6-7,23,79,18.3,7.8,5.3
+HOU,Kevin Durant,Forward,6-10,37,78,26.0,5.5,4.8
+HOU,Josh Okogie,Guard,6-4,27,78,4.5,2.6,0.9
+HOU,Jabari Smith Jr.,Forward,6-11,23,77,15.8,6.9,1.9
+HOU,Clint Capela,Forward / Center,6-10,32,75,3.8,4.6,0.7
+HOU,Alperen Sengun,Center,6-10,23,72,20.4,8.9,6.2
+HOU,Tari Eason,Forward,6-8,25,60,10.5,6.3,1.5
+HOU,Aaron Holiday,Guard,6-1,29,57,5.5,1.0,1.1
+HOU,Jae'Sean Tate,Forward,6-4,30,46,2.8,1.6,0.5
+HOU,Dorian Finney-Smith,Forward,6-8,33,37,3.3,2.5,1.0
+HOU,Steven Adams,Center,7-0,32,32,5.8,8.6,1.5
+HOU,Jeff Green,Forward,6-9,39,30,2.2,0.8,0.3
+LAC,Kris Dunn,Guard,6-4,32,82,7.3,3.3,3.6
+LAC,Brook Lopez,Center,7-0,38,75,8.5,3.6,1.3
+LAC,Nicolas Batum,Forward,6-8,37,74,4.0,2.5,0.9
+LAC,John Collins,Forward / Center,6-10,28,69,13.6,5.3,1.0
+LAC,Kobe Sanders,Guard,6-8,23,68,7.3,2.3,1.6
+LAC,Kawhi Leonard,Forward,6-7,34,65,27.9,6.4,3.6
+LAC,Jordan Miller,Guard,6-5,26,60,10.0,3.0,2.3
+LAC,Cam Christie,Guard,6-6,20,55,2.8,1.4,0.6
+LAC,Derrick Jones Jr.,Forward,6-7,29,50,10.1,3.5,1.4
+LAC,James Harden,Guard,6-5,36,44,25.4,4.8,8.1
+LAC,Ivica Zubac,Center,7-1,29,43,14.4,11.0,2.2
+LAC,Yanic Konan Niederhauser,Center,6-11,23,41,4.3,2.9,0.3
+LAC,Bennedict Mathurin,Guard / Forward,6-5,23,26,17.4,5.5,2.5
+LAC,Bogdan Bogdanovic,Guard,6-6,33,23,7.4,2.6,2.2
+LAC,Darius Garland,Guard,6-1,26,19,19.9,2.3,6.4
+LAC,Chris Paul,Guard,6-0,40,16,2.9,1.8,3.3
+LAL,Jake LaRavia,Forward,6-7,24,82,8.2,4.0,1.8
+LAL,Deandre Ayton,Center,7-1,27,72,12.5,8.0,0.8
+LAL,Rui Hachimura,Forward,6-8,28,68,11.5,3.3,0.8
+LAL,Jaxson Hayes,Center / Forward,6-11,25,66,7.5,4.1,0.9
+LAL,Jarred Vanderbilt,Forward,6-9,27,65,4.4,4.5,1.3
+LAL,Luka Doncic,Guard / Forward,6-6,27,64,33.5,7.7,8.3
+LAL,Marcus Smart,Guard,6-3,32,62,9.3,2.8,3.0
+LAL,LeBron James,Forward / Guard,6-9,41,60,20.9,6.1,7.2
+LAL,Dalton Knecht,Forward,6-6,25,54,4.2,1.4,0.4
+LAL,Austin Reaves,Guard,6-5,27,51,23.3,4.7,5.5
+LAL,Maxi Kleber,Forward,6-11,34,43,2.0,2.0,0.6
+LAL,Bronny James,Guard,6-2,21,42,2.9,0.5,1.2
+LAL,Luke Kennard,Guard,6-5,29,32,9.0,2.6,2.4
+LAL,Nick Smith Jr.,Guard,6-2,22,30,6.2,0.8,1.0
+LAL,Gabe Vincent,Guard,6-3,29,29,4.8,0.9,1.3
+LAL,Drew Timme,Forward,6-10,25,27,3.4,1.2,0.9
+LAL,Adou Thiero,Guard,6-7,21,25,1.9,1.1,0.4
+MEM,Cam Spencer,Guard,6-4,26,72,11.1,2.5,5.6
+MEM,Jaylen Wells,Forward,6-8,22,69,12.5,3.2,1.6
+MEM,Cedric Coward,Guard,6-5,22,62,13.6,5.9,2.8
+MEM,GG Jackson,Forward,6-9,21,55,12.5,4.3,1.5
+MEM,Olivier-Maxence Prosper,Forward,6-7,23,53,10.0,3.5,1.0
+MEM,Kentavious Caldwell-Pope,Guard,6-5,33,51,8.4,2.5,2.7
+MEM,Jaren Jackson Jr.,Forward / Center,6-11,26,45,19.2,5.8,1.9
+MEM,Jock Landale,Center,6-11,30,45,11.3,6.5,1.7
+MEM,Santi Aldama,Forward / Center,6-11,25,43,14.0,6.7,2.9
+MEM,Javon Small,Guard,6-1,23,41,9.7,3.1,3.7
+MEM,Vince Williams Jr.,Guard,6-4,25,34,8.0,4.0,4.4
+MEM,Jahmai Mashack,Guard,6-4,23,31,6.2,2.6,2.2
+MEM,John Konchar,Guard,6-5,30,30,3.2,3.1,1.3
+MEM,Taylor Hendricks,Forward,6-9,22,26,10.6,4.7,1.2
+MEM,Walter Clayton Jr.,Guard,6-4,23,24,9.7,2.1,5.7
+MEM,Ja Morant,Guard,6-3,26,20,19.5,3.3,8.1
+MEM,Rayan Rupert,Guard / Forward,6-6,21,16,12.2,6.4,2.1
+MEM,Ty Jerome,Guard / Forward,6-5,28,15,19.7,2.8,5.7
+MEM,Zach Edey,Center,7-4,23,11,13.6,11.1,1.1
+MIN,Donte DiVincenzo,Guard,6-4,29,82,12.2,4.1,3.8
+MIN,Julius Randle,Forward,6-9,31,79,21.1,6.7,5.0
+MIN,Naz Reid,Center / Forward,6-9,26,77,13.6,6.2,2.2
+MIN,Rudy Gobert,Center,7-1,33,76,10.9,11.5,1.7
+MIN,Jaden McDaniels,Forward,6-10,25,73,14.8,4.2,2.7
+MIN,Bones Hyland,Guard,6-2,25,71,8.5,1.8,2.6
+MIN,Jaylen Clark,Guard,6-4,24,68,4.0,1.8,0.6
+MIN,Anthony Edwards,Guard,6-5,24,61,28.8,5.0,3.7
+MIN,Mike Conley,Guard,6-1,38,54,4.5,1.7,2.9
+MIN,Terrence Shannon Jr.,Guard / Forward,6-6,25,43,5.6,1.1,0.9
+MIN,Joan Beringer,Forward,6-11,19,40,3.9,2.3,0.3
+MIN,Rob Dillingham,Guard,6-3,21,35,3.5,1.2,1.7
+MIN,Joe Ingles,Forward,6-8,38,27,1.5,0.7,1.3
+NOP,Jeremiah Fears,Guard,6-3,19,82,14.3,3.7,3.4
+NOP,Derik Queen,Center,6-9,21,81,11.7,7.1,3.7
+NOP,Saddiq Bey,Forward,6-7,27,72,17.7,5.6,2.5
+NOP,Yves Missi,Center,6-11,21,66,5.7,5.8,1.3
+NOP,Trey Murphy III,Forward,6-8,25,66,21.5,5.7,3.8
+NOP,Karlo Matkovic,Forward / Center,6-10,25,62,5.7,3.7,0.8
+NOP,Zion Williamson,Forward,6-6,25,62,21.0,5.7,3.2
+NOP,Micah Peavy,Guard / Forward,6-7,24,61,4.3,1.9,1.0
+NOP,Herbert Jones,Forward,6-7,27,56,8.9,3.4,2.8
+NOP,Jordan Hawkins,Guard,6-5,23,51,5.1,1.7,0.8
+NOP,Bryce McGowens,Guard,6-6,23,42,8.1,2.1,1.5
+NOP,Jose Alvarado,Guard,6-0,28,41,7.9,2.8,3.1
+NOP,Jordan Poole,Guard,6-4,26,39,13.4,2.0,3.1
+NOP,Kevon Looney,Forward,6-9,30,21,2.8,5.6,1.6
+NOP,Dejounte Murray,Guard,6-5,29,14,16.7,5.4,6.4
+PHX,Oso Ighodaro,Forward,7-0,23,82,6.5,5.1,2.3
+PHX,Collin Gillespie,Guard,6-1,26,80,12.7,4.1,4.6
+PHX,Royce O'Neale,Forward,6-6,32,78,9.8,4.8,2.7
+PHX,Ryan Dunn,Forward,6-8,23,70,5.8,4.2,1.5
+PHX,Jordan Goodwin,Guard,6-3,27,70,8.7,4.9,2.2
+PHX,Devin Booker,Guard,6-6,29,64,26.1,3.9,6.0
+PHX,Mark Williams,Center,7-0,24,60,11.7,8.0,1.0
+PHX,Dillon Brooks,Forward / Guard,6-6,30,56,20.2,3.6,1.8
+PHX,Rasheer Fleming,Forward,6-9,21,55,4.3,2.3,0.3
+PHX,Grayson Allen,Guard,6-5,30,51,16.5,3.0,3.8
+PHX,Jamaree Bouyea,Guard,6-2,26,46,5.7,1.8,1.8
+PHX,Khaman Maluach,Center,7-1,19,46,3.0,2.9,0.1
+PHX,Isaiah Livers,Forward,6-6,27,36,1.8,1.7,0.6
+PHX,Jalen Green,Guard,6-4,24,32,17.8,3.6,2.8
+PHX,Nick Richards,Center,6-11,28,28,3.2,3.3,0.3
+SAC,DeMar DeRozan,Guard,6-7,36,77,18.4,2.9,4.1
+SAC,Nique Clifford,Guard,6-5,24,75,8.6,3.8,2.4
+SAC,Maxime Raynaud,Center,7-1,23,74,12.5,7.5,1.4
+SAC,Precious Achiuwa,Forward,6-8,26,73,10.1,6.7,1.4
+SAC,Russell Westbrook,Guard,6-3,37,64,15.2,5.4,6.7
+SAC,Malik Monk,Guard,6-3,28,62,12.5,1.9,3.0
+SAC,Dylan Cardwell,Center,6-10,24,44,5.4,7.5,1.4
+SAC,Keon Ellis,Guard,6-3,26,43,5.6,1.3,0.6
+SAC,Drew Eubanks,Forward,6-10,29,42,5.2,3.0,0.5
+SAC,Dennis Schroder,Guard,6-1,32,40,12.8,3.1,5.3
+SAC,Zach LaVine,Guard,6-5,31,39,19.2,2.8,2.3
+SAC,Devin Carter,Guard,6-2,24,38,8.9,3.3,2.7
+SAC,Daeqwon Plowden,Guard / Forward,6-6,27,32,10.8,3.0,1.3
+SAC,Doug McDermott,Forward,6-8,34,29,5.7,1.3,0.8
+SAC,Keegan Murray,Forward,6-8,25,23,14.0,5.7,1.7
+SAC,Domantas Sabonis,Forward,6-11,29,19,15.8,11.4,4.1
+SAS,Julian Champagnie,Forward,6-7,25,82,11.1,5.8,1.5
+SAS,Keldon Johnson,Forward / Guard,6-5,26,82,13.2,5.4,1.4
+SAS,Harrison Barnes,Forward,6-8,34,77,9.9,2.8,1.9
+SAS,De'Aaron Fox,Guard,6-3,28,72,18.6,3.8,6.2
+SAS,Carter Bryant,Forward,6-6,20,71,4.2,2.5,0.7
+SAS,Dylan Harper,Guard,6-5,20,69,11.8,3.4,3.9
+SAS,Stephon Castle,Guard,6-6,21,68,16.7,5.3,7.4
+SAS,Luke Kornet,Forward / Center,7-1,30,68,6.5,6.1,1.9
+SAS,Devin Vassell,Guard / Forward,6-5,25,67,13.9,4.0,2.5
+SAS,Victor Wembanyama,Forward / Center,7-4,22,64,25.0,11.5,3.1
+SAS,Jordan McLaughlin,Guard,5-11,30,44,2.0,0.7,0.9
+SAS,Kelly Olynyk,Forward / Center,7-0,35,42,3.2,1.8,1.2
+SAS,Lindy Waters III,Forward,6-6,28,40,2.4,0.7,0.5
+SAS,Jeremy Sochan,Forward,6-8,23,28,4.1,2.6,1.0
+SAS,Bismack Biyombo,Forward,6-9,33,25,0.9,1.0,0.2
+UTA,Kyle Filipowski,Center,6-11,22,77,11.4,7.2,2.6
+UTA,Brice Sensabaugh,Forward,6-5,22,75,14.9,3.1,1.9
+UTA,Ace Bailey,Forward,6-9,19,72,13.8,4.2,1.8
+UTA,Cody Williams,Forward,6-7,21,67,8.8,3.0,2.0
+UTA,Isaiah Collier,Guard,6-3,21,59,11.7,2.5,7.2
+UTA,Keyonte George,Guard,6-4,22,54,23.6,3.7,6.1
+UTA,Svi Mykhailiuk,Forward,6-8,28,50,9.4,2.5,1.9
+UTA,Walter Clayton Jr.,Guard,6-4,23,45,6.8,2.0,3.2
+UTA,Lauri Markkanen,Forward,7-0,28,42,26.7,6.9,2.1
+UTA,Jusuf Nurkic,Center,6-11,31,41,10.9,10.4,4.8
+UTA,Kevin Love,Forward / Center,6-10,37,37,6.7,5.8,1.8
+UTA,Taylor Hendricks,Forward,6-9,22,33,4.9,3.0,0.7
+UTA,Oscar Tshiebwe,Forward / Center,6-8,26,27,7.8,6.6,1.2
+UTA,John Konchar,Guard,6-5,30,26,5.9,5.7,3.0
+UTA,Kyle Anderson,Forward,6-9,32,20,7.1,3.3,3.1
+UTA,Bez Mbeng,Guard,6-4,22,15,8.1,3.8,4.1
+POR,Toumani Camara,Forward,6-7,26,82,13.4,5.1,2.5
+POR,Donovan Clingan,Center,7-2,22,77,12.1,11.6,2.1
+POR,Sidy Cissoko,Guard,6-6,22,75,5.1,2.2,1.5
+POR,Deni Avdija,Forward,6-9,25,66,24.2,6.9,6.7
+POR,Robert Williams III,Center / Forward,6-10,28,59,6.7,7.0,1.0
+POR,Jerami Grant,Forward,6-8,32,57,18.6,3.5,2.1
+POR,Kris Murray,Forward,6-8,25,57,5.8,3.6,1.4
+POR,Jrue Holiday,Guard,6-3,35,53,16.3,4.6,6.1
+POR,Shaedon Sharpe,Guard,6-5,23,50,20.8,4.3,2.6
+POR,Caleb Love,Guard,6-3,24,49,10.4,2.3,2.5
+POR,Rayan Rupert,Guard / Forward,6-6,22,48,2.9,1.8,0.7
+POR,Yang Hansen,Center,7-1,20,43,2.2,1.5,0.5
+POR,Duop Reath,Center,6-9,29,32,2.9,1.2,0.3
+POR,Blake Wesley,Guard,6-4,23,31,4.8,1.3,2.0
+POR,Scoot Henderson,Guard,6-2,22,30,14.2,2.7,3.7
+POR,Matisse Thybulle,Guard / Forward,6-5,29,30,5.8,2.0,0.9

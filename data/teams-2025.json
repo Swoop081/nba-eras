@@ -1,0 +1,402 @@
+{
+ "season": "2025-26",
+ "league": "National Basketball Association",
+ "games": 82,
+ "source": "NBA 2025-26 opening night. Colours are approximations.",
+ "divisions": [
+  "Eastern",
+  "Western"
+ ],
+ "teams": [
+  {
+   "id": "atlanta-hawks",
+   "city": "Atlanta",
+   "name": "Hawks",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#E03A3E",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612737
+  },
+  {
+   "id": "boston-celtics",
+   "city": "Boston",
+   "name": "Celtics",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#007A33",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612738
+  },
+  {
+   "id": "brooklyn-nets",
+   "city": "Brooklyn",
+   "name": "Nets",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#111111",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612751
+  },
+  {
+   "id": "charlotte-hornets",
+   "city": "Charlotte",
+   "name": "Hornets",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D1160",
+    "#00A3B4"
+   ],
+   "nbaId": 1610612766
+  },
+  {
+   "id": "chicago-bulls",
+   "city": "Chicago",
+   "name": "Bulls",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#CE1141",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612741
+  },
+  {
+   "id": "cleveland-cavaliers",
+   "city": "Cleveland",
+   "name": "Cavaliers",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#860038",
+    "#FDBB30"
+   ],
+   "nbaId": 1610612739
+  },
+  {
+   "id": "detroit-pistons",
+   "city": "Detroit",
+   "name": "Pistons",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D42BA",
+    "#C8102E"
+   ],
+   "nbaId": 1610612765
+  },
+  {
+   "id": "indiana-pacers",
+   "city": "Indiana",
+   "name": "Pacers",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#002D62",
+    "#FDBB30"
+   ],
+   "nbaId": 1610612754
+  },
+  {
+   "id": "miami-heat",
+   "city": "Miami",
+   "name": "Heat",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#98002E",
+    "#F9A01B"
+   ],
+   "nbaId": 1610612748
+  },
+  {
+   "id": "milwaukee-bucks",
+   "city": "Milwaukee",
+   "name": "Bucks",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#00471B",
+    "#EEE1C6"
+   ],
+   "nbaId": 1610612749
+  },
+  {
+   "id": "new-york-knicks",
+   "city": "New York",
+   "name": "Knicks",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#006BB6",
+    "#F58426"
+   ],
+   "nbaId": 1610612752
+  },
+  {
+   "id": "orlando-magic",
+   "city": "Orlando",
+   "name": "Magic",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#0077C0",
+    "#C4CED4"
+   ],
+   "nbaId": 1610612753
+  },
+  {
+   "id": "philadelphia-76ers",
+   "city": "Philadelphia",
+   "name": "76ers",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#006BB6",
+    "#ED174C"
+   ],
+   "nbaId": 1610612755
+  },
+  {
+   "id": "toronto-raptors",
+   "city": "Toronto",
+   "name": "Raptors",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#CE1141",
+    "#FFFFFF"
+   ],
+   "nbaId": 1610612761
+  },
+  {
+   "id": "washington-wizards",
+   "city": "Washington",
+   "name": "Wizards",
+   "division": "Eastern",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#002B5C",
+    "#E31837"
+   ],
+   "nbaId": 1610612764
+  },
+  {
+   "id": "dallas-mavericks",
+   "city": "Dallas",
+   "name": "Mavericks",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#00538C",
+    "#B8C4CA"
+   ],
+   "nbaId": 1610612742
+  },
+  {
+   "id": "denver-nuggets",
+   "city": "Denver",
+   "name": "Nuggets",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#0E2240",
+    "#FEC524"
+   ],
+   "nbaId": 1610612743
+  },
+  {
+   "id": "golden-state-warriors",
+   "city": "Golden State",
+   "name": "Warriors",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D428A",
+    "#FFC72C"
+   ],
+   "nbaId": 1610612744
+  },
+  {
+   "id": "houston-rockets",
+   "city": "Houston",
+   "name": "Rockets",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#CE1141",
+    "#C4CED4"
+   ],
+   "nbaId": 1610612745
+  },
+  {
+   "id": "la-clippers",
+   "city": "LA",
+   "name": "Clippers",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D428A",
+    "#C8102E"
+   ],
+   "nbaId": 1610612746
+  },
+  {
+   "id": "los-angeles-lakers",
+   "city": "Los Angeles",
+   "name": "Lakers",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#552583",
+    "#FDB927"
+   ],
+   "nbaId": 1610612747
+  },
+  {
+   "id": "memphis-grizzlies",
+   "city": "Memphis",
+   "name": "Grizzlies",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#5D76A9",
+    "#12173F"
+   ],
+   "nbaId": 1610612763
+  },
+  {
+   "id": "minnesota-timberwolves",
+   "city": "Minnesota",
+   "name": "Timberwolves",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#0C2340",
+    "#78BE20"
+   ],
+   "nbaId": 1610612750
+  },
+  {
+   "id": "new-orleans-pelicans",
+   "city": "New Orleans",
+   "name": "Pelicans",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#0C2340",
+    "#C8A15B"
+   ],
+   "nbaId": 1610612740
+  },
+  {
+   "id": "oklahoma-city-thunder",
+   "city": "Oklahoma City",
+   "name": "Thunder",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#007AC1",
+    "#EF3B24"
+   ],
+   "nbaId": 1610612760
+  },
+  {
+   "id": "phoenix-suns",
+   "city": "Phoenix",
+   "name": "Suns",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#1D1160",
+    "#E56020"
+   ],
+   "nbaId": 1610612756
+  },
+  {
+   "id": "portland-trail-blazers",
+   "city": "Portland",
+   "name": "Trail Blazers",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#E03A3E",
+    "#111111"
+   ],
+   "nbaId": 1610612757
+  },
+  {
+   "id": "sacramento-kings",
+   "city": "Sacramento",
+   "name": "Kings",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#5A2D81",
+    "#C4CED4"
+   ],
+   "nbaId": 1610612758
+  },
+  {
+   "id": "san-antonio-spurs",
+   "city": "San Antonio",
+   "name": "Spurs",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#111111",
+    "#C4CED4"
+   ],
+   "nbaId": 1610612759
+  },
+  {
+   "id": "utah-jazz",
+   "city": "Utah",
+   "name": "Jazz",
+   "division": "Western",
+   "w": 0,
+   "l": 0,
+   "colors": [
+    "#002B5C",
+    "#F9A01B"
+   ],
+   "nbaId": 1610612762
+  }
+ ]
+}
