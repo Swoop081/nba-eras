@@ -135,7 +135,7 @@
     for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
     timers = [];
     body.classList.remove('flicker');
-    setPhase('bw');
+    setPhase('modern');
     body.dataset.menu = 'show';
   }
   function playIntro() {
@@ -149,7 +149,10 @@
     later(function () { setPhase('nineties'); }, 2550);
     later(flick, 5000);
     later(function () { setPhase('bw'); }, 5350);
-    later(function () { body.dataset.menu = 'show'; }, 6400);
+    // after the black and white, one more flicker and back to the colour start screen, where it stays
+    later(flick, 6700);
+    later(function () { setPhase('modern'); }, 7050);
+    later(function () { body.dataset.menu = 'show'; }, 7500);
   }
 
   document.getElementById('screen-title').addEventListener('click', function () {
