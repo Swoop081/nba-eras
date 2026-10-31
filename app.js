@@ -3261,7 +3261,10 @@
       dev: rep.mine.map(function (x) { return { id: x.p.id, name: x.p.name, from: x.from, to: x.to, age: x.p.age }; }),
       retired: rep.retired.map(function (x) { return { id: x.p.id, name: x.p.name, ovr: x.ovr }; })
     };
-    var hist = History.get(save.year);
+    var hist = History.get(save.year).filter(function (d) {
+      if (d.join.length || d.fold.length || Object.keys(d.move || {}).length) return true;
+      return Object.keys(d.rename || {}).some(function (k) { return !!clubBySlug(k); });
+    });
     if (hist.length) save.off.fates = hist.map(function (d) { return { id: d.id, choice: 'history', res: {}, applied: false }; });
     rosterCache = {};
     if (silent) return;
@@ -3437,8 +3440,15 @@
 
 
   function fateDef(f) { return History.get(save.year).filter(function (d) { return d.id === f.id; })[0]; }
+  function slugOf(t) { return (t.city + ' ' + t.name).toLowerCase().replace(/[^a-z0-9 ]/g, '').trim().replace(/ +/g, '-'); }
+  function clubBySlug(key) {
+    for (var i = 0; i < save.ids.length; i++) { var t = save.tm[save.ids[i]]; if (t && (slugOf(t) === key || t.id === key && slugOf(t) === key)) return t; }
+    return null;
+  }
   function fateDerive(f) {
     var d = fateDef(f), hist = f.choice === 'history';
+    var ren = [];
+    if (hist) Object.keys(d.rename || {}).forEach(function (k) { var t = clubBySlug(k); if (t) ren.push({ id: t.id, to: d.rename[k], from: t.city + ' ' + t.name }); });
     var foldIds = hist ? d.fold.filter(function (id) { return save.ids.indexOf(id) >= 0; }) : [];
     var staying = save.ids.filter(function (id) { return foldIds.indexOf(id) < 0; }).map(teamById);
     var conflicts = [];
@@ -3449,7 +3459,7 @@
     var move = {}, ok = hist && Object.keys(d.move || {}).length > 0;
     if (ok) Object.keys(d.move).forEach(function (id) { var t = save.tm[id]; if (!t || save.ids.indexOf(id) < 0 || t.division !== d.move[id].from) ok = false; });
     if (ok) move = d.move;
-    return { def: d, fold: foldIds, move: move, conflicts: conflicts };
+    return { def: d, fold: foldIds, move: move, conflicts: conflicts, rename: ren };
   }
 
   function offFates(body, me) {
@@ -3478,6 +3488,12 @@
         var t = save.tm[t0.id] || t0, row = el('div', 'row');
         row.appendChild(teamBadge(t));
         row.appendChild(el('strong', null, t.city + ' ' + t.name + ' join'));
+        card.appendChild(row);
+      });
+      x.rename.forEach(function (r) {
+        var t = save.tm[r.id], row = el('div', 'row');
+        row.appendChild(teamBadge(t));
+        row.appendChild(el('strong', null, r.from + ' become the ' + r.to.city + ' ' + r.to.name + (r.id === me.id ? ' (your club)' : '')));
         card.appendChild(row);
       });
       x.conflicts.forEach(function (c) {
@@ -3512,6 +3528,11 @@
       var x = fateDerive(f);
       x.fold.forEach(function (id) { save.ids.splice(save.ids.indexOf(id), 1); foldAll.push(id); });
       Object.keys(x.move).forEach(function (id) { save.tm[id].division = x.move[id].to; });
+      x.rename.forEach(function (r) {
+        var t = save.tm[r.id];
+        t.was = (t.was || []).concat([t.city + ' ' + t.name]);
+        t.city = r.to.city; t.name = r.to.name; t.colors = r.to.colors.slice(); if (r.to.nbaId) t.nbaId = r.to.nbaId;
+      });
       x.def.join.forEach(function (t0) {
         var c = x.conflicts.filter(function (k) { return k.team.id === t0.id; })[0];
         var res = c && f.res[t0.id];
