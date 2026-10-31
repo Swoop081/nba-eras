@@ -1,0 +1,19 @@
+name: Fetch NBA ids
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  ids:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/fetch_nba_ids.py 2>&1 | tee tools/nba-ids-log.txt
+        shell: bash
+      - if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/nba-ids.json tools/nba-ids-log.txt
+          git diff --cached --quiet || git commit -m "Add NBA.com player ids"
+          git pull --rebase -q origin main || true
+          git push

@@ -25,6 +25,9 @@
     2000: { use: 0.8, poss: 100, fg: 0.36, fb: 1.0, fsh: 0.0045, fsc: 0.0013, threes: true, tpBase: 0.14, tpDiv: 220, tpq: 0.78, tov: 0.135, foul: 0.165, orb: 0.25, ftb: 0.58, ftm: 0.32, astp: 1.7 }
   };
 
+  /* Seasons fitted to real league averages (data/era-params.json) override the two hand-tuned entries. */
+  function register(map) { Object.keys(map || {}).forEach(function (y) { PARAMS[y] = map[y]; }); }
+
   function params(year) {
     var keys = Object.keys(PARAMS).map(Number).sort(function (a, b) { return a - b; });
     var best = keys[0];
@@ -250,5 +253,5 @@
     return finalize(g);
   }
 
-  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params, start: start, step: step, finalize: finalize };
+  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params, register: register, start: start, step: step, finalize: finalize };
 })(window);
