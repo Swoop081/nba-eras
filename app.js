@@ -2369,6 +2369,7 @@
         save.rules = save.rules || {};
         [['three', 'Three-point line', [['', 'Standard'], ['short', 'Closer'], ['deep', 'Deeper'], ['off', 'Abolished']]],
          ['clock', 'Shot clock', [['short', '20 sec'], ['', '24 sec'], ['long', '30 sec']]],
+         ['parity', 'Parity', [['tight', 'Tighter'], ['', 'As real'], ['wide', 'Superteams']]],
          ['whistle', 'Officiating', [['tight', 'Tight'], ['', 'Normal'], ['loose', 'Let them play']]]].forEach(function (rr) {
           sh.appendChild(el('p', 'sh-l', rr[1]));
           var row = el('div', 'chips');

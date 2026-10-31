@@ -37,14 +37,15 @@
     var best = keys[0];
     keys.forEach(function (k) { if (k <= year) best = k; });
     var base = PARAMS[best], R = RULES;
-    if (!R.three && !R.clock && !R.whistle) return base;
-    var key = best + '|' + (R.three || '') + (R.clock || '') + (R.whistle || '');
+    if (!R.three && !R.clock && !R.whistle && !R.parity) return base;
+    var key = best + '|' + (R.three || '') + (R.clock || '') + (R.whistle || '') + (R.parity || '');
     if (RCACHE[key]) return RCACHE[key];
     var p = Object.assign({}, base);
     if (R.three === 'off') p.threes = false;
     else if (R.three === 'deep' && p.threes) { p.tpBase = p.tpBase * 0.82; p.tpq = p.tpq * 1.04; }
     else if (R.three === 'short' && p.threes) { p.tpBase = p.tpBase * 1.2; p.tpq = p.tpq * 0.97; }
     if (R.clock === 'short') p.poss = p.poss * 1.07; else if (R.clock === 'long') p.poss = p.poss * 0.93;
+    if (R.parity === 'tight') p.comp = (p.comp || 1) * 0.78; else if (R.parity === 'wide') p.comp = (p.comp || 1) * 1.18;
     if (R.whistle === 'tight') p.foul = p.foul * 1.25; else if (R.whistle === 'loose') p.foul = p.foul * 0.8;
     return (RCACHE[key] = p);
   }
@@ -66,12 +67,22 @@
 
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7];
 
-  function prep(players) {
+  /* Real leagues are tighter than raw ratings suggest: comp pulls every skill toward 55 so rating gaps decide fewer games. */
+  var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou'];
+  function squash(p, c) {
+    var R = {};
+    for (var k in p.ratings) R[k] = p.ratings[k];
+    SKILLS.forEach(function (s) { if (R[s] !== undefined) R[s] = 55 + c * (R[s] - 55); });
+    var q = Object.create(p); q.ratings = R; return q;
+  }
+
+  function prep(players, pr) {
+    var c = pr && pr.comp !== undefined && pr.comp !== 1 ? pr.comp : 0;
     // the coach's rotation order (slot) wins when it is set; otherwise the best play the most
     var top = players.slice().sort(function (a, b) { return (a.slot !== undefined && b.slot !== undefined) ? a.slot - b.slot : b.ratings.ovr - a.ratings.ovr; }).slice(0, SHARE.length);
     return top.map(function (p, i) {
       return {
-        p: p, share: SHARE[i],
+        p: c ? squash(p, c) : p, share: SHARE[i],
         s: { pos: 0, pts: 0, fg: 0, fga: 0, ft: 0, fta: 0, tp: 0, tpa: 0, ast: 0, pf: 0, orb: 0, drb: 0, trb: 0, stl: 0, blk: 0, tov: 0, min: 0 }
       };
     });
@@ -210,7 +221,7 @@
   function start(home, away, year, seed, edges) {
     var pr = params(year);
     var perQ = pr.poss / 4;
-    var prep0H = prep(home), prep0A = prep(away);
+    var prep0H = prep(home, pr), prep0A = prep(away, pr);
     var g = {
       pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep0H, A: prep0A, year: year,
       perQ: perQ, limit: 0, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,

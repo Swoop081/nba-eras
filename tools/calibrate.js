@@ -69,6 +69,12 @@ function fitLeague(rounds) {
     const r = run(2); r.seasons = 2;
     const m = lgOf(r), rr = (a, b) => Math.pow(a / Math.max(b, 1e-6), 0.8);
     P.poss *= Math.pow(LG.fga / m.fga, 0.7);
+    {
+      const sd = a => { const mu = a.reduce((x, y) => x + y) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - mu) ** 2, 0) / a.length); };
+      const sdSim = sd(ids.map(i => r.wins[i])), sdReal = sd(ids.map(i => realW[i]));
+      P.comp = Math.max(0.35, Math.min(1.2, (P.comp || 1) * Math.pow(sdReal / sdSim, 0.8)));
+      console.log('wins SD sim', sdSim.toFixed(1), 'real', sdReal.toFixed(1), 'comp', P.comp.toFixed(3));
+    }
     P.tov *= rr(LG.tov / LG.poss, m.tov / P.poss);
     P.fg *= rr(LG.fg / LG.fga, m.fg / m.fga);
     P.tpBase += (LG['3pa'] / LG.fga - m.tpa / m.fga) * 0.9;
