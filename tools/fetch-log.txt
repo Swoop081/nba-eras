@@ -1,27 +1,8 @@
 index failed: https://stats.nba.com/stats/commonallplayers The read operation timed out
 index failed: https://stats.nba.com/stats/playerindex The read operation timed out
 box score route failed: HTTP Error 403: Forbidden
-no id for Shai Gilgeous-Alexander
-no id for Jayson Tatum
-no id for Donovan Mitchell
-no id for Cade Cunningham
-no id for Kevin Durant
-no id for Jaylen Brown
-no id for LaMelo Ball
-no id for Derrick White
-no id for Myles Turner
-no id for Alex Sarr
-no id for P.J. Washington
 no id for VJ Edgecombe
-no id for Jakob Poeltl
-no id for Brook Lopez
-no id for Khris Middleton
-no id for Kyle Kuzma
-no id for Harrison Barnes
-no id for Marcus Smart
-no id for Mo Bamba
 no id for Will Richard
-no id for GG Jackson II
 no id for Svi Mykhailiuk
 no id for Anthony Gill
-saved 407, missing 23
+saved 19, missing 4
