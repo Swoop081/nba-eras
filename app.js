@@ -27,9 +27,27 @@
 
   /* ---------- screens ---------- */
   var screens = document.querySelectorAll('.screen');
+  /* The present day is painted in your club's colours. */
+  function lum(hex) {
+    var h = String(hex || '#888').replace('#', ''); if (h.length === 3) h = h.replace(/./g, '$&$&');
+    var c = [0, 2, 4].map(function (i) { var v = parseInt(h.substr(i, 2), 16) / 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  }
+  function teamTheme() {
+    var st = document.body.style;
+    var t = null;
+    if (document.body.dataset.modern === '1') { try { t = save ? teamById(save.myId) : (typeof selected !== 'undefined' ? selected : null); } catch (e) { t = null; } }
+    if (!t || !t.colors) { ['--team', '--team2', '--on'].forEach(function (k) { st.removeProperty(k); }); return; }
+    var a = t.colors[0], b = t.colors[1] || '#FFFFFF';
+    // very dark team colours (Nets, Spurs) would vanish on a dark page, so lift to the second colour
+    if (lum(a) < 0.04) { var tmp = a; a = lum(b) > 0.04 ? b : '#8E93A3'; b = tmp; }
+    st.setProperty('--team', a); st.setProperty('--team2', b);
+    st.setProperty('--on', lum(a) > 0.32 ? '#0A0B10' : '#FFFFFF');
+  }
   function show(id) {
     for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
     if (typeof Phone !== 'undefined' && Phone.onScreen) Phone.onScreen(id);
+    teamTheme();
     var target = document.getElementById(id);
     target.classList.add('active');
     target.scrollTop = 0;
@@ -288,6 +306,7 @@
         teams.forEach(function (o) { if (o.w > team.w) rank++; });
         var card = el('button', 'card team');
         card.type = 'button';
+        if (team.colors) card.style.setProperty('--c', team.colors[0]);
         card.appendChild(makeBadge(team, false));
         var text = el('span');
         text.appendChild(el('strong', null, team.city + ' ' + team.name));
@@ -302,6 +321,7 @@
           for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
           card.classList.add('selected');
           selected = team;
+          teamTheme();
           takeBtn.textContent = 'Take over the ' + team.city + ' ' + team.name;
           dock.hidden = false;
         });
@@ -1627,7 +1647,10 @@
     rows.forEach(function (r, i) {
       var tr = el('tr', r.id === save.myId ? 'me' : null);
       var t = teamById(r.id);
-      tr.appendChild(el('td', null, (i + 1) + '. ' + t.city));
+      var tdn = el('td', 'tn');
+      if (modernUI()) { tdn.appendChild(el('span', 'pos', String(i + 1))); var sb = teamBadge(t); sb.className += ' sm'; tdn.appendChild(sb); tdn.appendChild(document.createTextNode(t.city)); }
+      else tdn.textContent = (i + 1) + '. ' + t.city;
+      tr.appendChild(tdn);
       tr.appendChild(el('td', null, String(r.w)));
       tr.appendChild(el('td', null, String(r.l)));
       tr.appendChild(el('td', null, r.gb ? String(r.gb) : '-'));
@@ -1804,6 +1827,37 @@
     } else if (next) {
       var oppId = next.home === me.id ? next.away : next.home;
       var opp = teamById(oppId);
+      if (modernUI()) {
+        card.className = 'stat-card hero';
+        var oprec2 = save.rec[oppId];
+        card.appendChild(el('div', 'hero-when', save.phase === 'regular' ? 'Game ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name));
+        var vs = el('div', 'hero-vs');
+        function side(t, r, here) {
+          var c = el('div', 'hero-side' + (here ? ' mine' : ''));
+          c.appendChild(teamBadge(t));
+          c.appendChild(el('b', null, t.city));
+          c.appendChild(el('small', null, r.w + '-' + r.l));
+          return c;
+        }
+        vs.appendChild(side(me, rec, true));
+        vs.appendChild(el('span', 'hero-at', next.home === me.id ? 'vs' : 'at'));
+        vs.appendChild(side(opp, oprec2, false));
+        card.appendChild(vs);
+        [['Overall', teamRating(me.id), teamRating(oppId)], ['Offence', offRating(me.id), offRating(oppId)], ['Defence', defRating(me.id), defRating(oppId)]].forEach(function (x) {
+          var r = el('div', 'hero-cmp');
+          r.appendChild(el('span', 'n' + (x[1] >= x[2] ? ' lead' : ''), String(x[1])));
+          var mid = el('span', 'mid');
+          var tot = Math.max(1, x[1] + x[2]);
+          var l = el('i', 'l'); l.style.width = Math.round(100 * x[1] / tot) + '%';
+          var rr = el('i', 'r'); rr.style.width = Math.round(100 * x[2] / tot) + '%';
+          mid.appendChild(l); mid.appendChild(rr);
+          var lab = el('em', null, x[0]);
+          var col = el('span', 'col'); col.appendChild(lab); col.appendChild(mid);
+          r.appendChild(col);
+          r.appendChild(el('span', 'n' + (x[2] > x[1] ? ' lead' : ''), String(x[2])));
+          card.appendChild(r);
+        });
+      } else {
       var row = el('div', 'row');
       row.appendChild(teamBadge(opp));
       var tx = el('span');
@@ -1814,6 +1868,7 @@
       row.appendChild(tx);
       card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Next game · ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name));
       card.appendChild(row);
+      }
     } else {
       card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Rest day' : Season.inPlayoffs(save, me.id) ? 'Waiting' : 'Out of the playoffs'));
       card.appendChild(el('p', 'sub', save.phase === 'regular' ? 'No game for your team today.' : Season.inPlayoffs(save, me.id) ? 'Your club is resting while the other series finish.' : 'Your season is over. Sim the rest of the playoffs to crown a champion.'));

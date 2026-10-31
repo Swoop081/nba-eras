@@ -27,7 +27,7 @@
     });
     if (mid.length) outs.push(function () {
       var p = rnd(mid), t = src.team(p.team);
-      return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'Sources: the ' + (t ? t.name : 'club') + ' have been fielding calls about ' + p.name + '. Nothing close, per league sources.' };
+      return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'Sources: the ' + (t ? t.name : 'club') + ' have been fielding calls about ' + p.name + (/\.$/.test(p.name) ? '' : '.') + ' Nothing close, per league sources.' };
     });
     var rec = recs[me];
     if (rec) outs.push(function () {

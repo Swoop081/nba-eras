@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v49';
+var CACHE = 'nba-eras-v50';
 var SHELL = [
   './',
   'index.html',
@@ -11,6 +11,7 @@ var SHELL = [
   'league.js',
   'history.js',
   'phone.js',
+  'modern.css',
   'manifest.webmanifest',
   'data/teams-1946.json',
   'data/players-1946.json',
