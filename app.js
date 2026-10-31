@@ -1904,7 +1904,7 @@
     var kids = Array.prototype.slice.call(box.children).filter(function (k) { return !k.classList.contains('pgr'); });
     if (!kids.length) return;
     box._busy = true;
-    var gap = 8, avail = box.clientHeight - 30;
+    var gap = 8, avail = box.clientHeight - 48;
     var units = [], carry = [];
     kids.forEach(function (k) {
       carry.push(k);
@@ -1937,6 +1937,16 @@
       track.addEventListener('scroll', function () { clearTimeout(tick); tick = setTimeout(mark, 40); });
       pgr.appendChild(track); pgr.appendChild(dots);
       box.appendChild(pgr);
+      // real layout is known now: push anything that does not fit down to the next page
+      var pgs = Array.prototype.slice.call(track.children);
+      for (var pi = 0; pi < pgs.length; pi++) {
+        var pgx = pgs[pi];
+        while (pgx.children.length > 1 && pgx.scrollHeight > pgx.clientHeight + 1) {
+          if (!pgs[pi + 1]) { var np = el('section', 'pg'); track.appendChild(np); dots.appendChild(el('i', '')); pgs.push(np); }
+          pgs[pi + 1].insertBefore(pgx.lastChild, pgs[pi + 1].firstChild);
+        }
+      }
+      pages.length = pgs.length;
       var want = Math.min(box._pi || 0, pages.length - 1);
       track.scrollLeft = want * (track.firstChild.offsetWidth + 10);
       dots.children[want].classList.add('on');

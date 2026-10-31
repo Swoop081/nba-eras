@@ -341,3 +341,15 @@ body[data-modern="1"] .fc-top .badge.has-logo,body[data-modern="1"] .fc-top .bad
 body[data-modern="1"] .fc-top{gap:12px}
 body[data-modern="1"] .fc-name b{font-size:44px}
 body[data-modern="1"] .fc-out{display:inline-flex;justify-self:start;padding:7px 14px;border-radius:999px;background:color-mix(in srgb,var(--c) 38%,#1B1E29);color:#fff;font:700 15px var(--font)}
+
+/* banners sit under the header so the back button is always reachable */
+body[data-modern="1"] #phone-banners{top:calc(max(8px,env(safe-area-inset-top)) + 62px);left:12px;right:12px}
+
+/* club picker rows (trades): name over details, never stacked on top of each other */
+body[data-modern="1"] .card{flex:none}
+body[data-modern="1"] .card>span:not(.badge):not(.ovr){display:grid;gap:2px;min-width:0;text-align:left}
+body[data-modern="1"] #trade-body .card .badge{width:40px;height:40px;flex:none}
+body[data-modern="1"] #trade-body .card strong{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] #trade-body .card .meta{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .pg{grid-auto-rows:max-content}
+body[data-modern="1"] .card{height:auto;min-height:52px;align-items:center}
