@@ -1,0 +1,7 @@
+OK https://www.basketball-reference.com/leagues/NBA_2026_per_game.html 734 rows
+OK https://www.basketball-reference.com/leagues/NBA_2026_totals.html 734 rows
+OK https://www.basketball-reference.com/leagues/NBA_2026_per_minute.html 734 rows
+OK https://www.basketball-reference.com/leagues/NBA_2026_per_poss.html 734 rows
+OK https://www.basketball-reference.com/leagues/NBA_2026_advanced.html 734 rows
+OK https://www.basketball-reference.com/leagues/NBA_2026_shooting.html 734 rows
+OK https://www.basketball-reference.com/leagues/NBA_2026_play-by-play.html 733 rows
