@@ -42,6 +42,13 @@ def player_index():
             return {norm(r[f] + ' ' + r[l]): r[i] for r in rows}
         except Exception as e:
             print('index failed:', url.split('?')[0], e)
+    try:  # fallback: the players page embeds the full list
+        html = get('https://www.nba.com/players', False)
+        m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
+        rows = json.loads(m.group(1))['props']['pageProps']['players']
+        return {norm(r['PLAYER_FIRST_NAME'] + ' ' + r['PLAYER_LAST_NAME']): r['PERSON_ID'] for r in rows}
+    except Exception as e:
+        print('players page failed:', e)
     sys.exit('Could not load the NBA player list. Open https://www.nba.com/players once in your browser, then retry.')
 
 def save(path, data):

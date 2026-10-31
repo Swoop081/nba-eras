@@ -255,6 +255,8 @@
     if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
     // the generic file may be a vintage logo, so the present day only uses a file made for it
     if (!(currentEra && currentEra.current)) urls.push(base + '.png', base + '.svg');
+    // private use: the present day can show the NBA's own logo straight from its CDN
+    if (currentEra && currentEra.current && team.nbaId) urls.push('https://cdn.nba.com/logos/nba/' + team.nbaId + '/primary/L/logo.svg');
     var i = 0;
     var img = new Image();
     img.alt = '';
