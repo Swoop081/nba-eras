@@ -1,6 +1,6 @@
 """Download every Basketball Reference league table we can for a season into tools/data-<season>/bbref_<table>.csv.
 Runs in GitHub Actions (the cloud sandbox cannot reach the site). Usage: python3 tools/fetch_bbref.py 2026 2025"""
-import io, os, sys, time, urllib.request, re
+import io, os, sys, time, urllib.request, urllib.error, re
 
 TABLES = ['per_game', 'totals', 'per_minute', 'per_poss', 'advanced', 'shooting', 'play-by-play']
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15'
@@ -12,6 +12,12 @@ def get(url):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'text/html,application/xhtml+xml', 'Accept-Language': 'en-US,en;q=0.9'})
             return urllib.request.urlopen(req, timeout=40).read().decode('utf-8', 'replace')
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                print('  404', url, flush=True)
+                return None
+            print('  retry', i, url, e, flush=True)
+            time.sleep(8 * (i + 1))
         except Exception as e:
             print('  retry', i, url, e, flush=True)
             time.sleep(8 * (i + 1))
