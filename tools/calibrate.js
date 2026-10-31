@@ -59,7 +59,7 @@ Engine.register({ [YEAR]: P });
 function lgOf(r) {
   const t = {}; let g = 0;
   for (const id in r.st) { const o = r.st[id]; for (const k in o) t[k] = (t[k] || 0) + o[k]; }
-  const tg = ids.length * GAMES;     // team-games in one simulated season
+  const tg = Math.floor(ids.length / 2) * 2 * GAMES;     // team-games in one season (an odd league has one club idle each round)
   const out = {}; for (const k in t) out[k] = t[k] / tg / (r.seasons || 1);
   return out;
 }
