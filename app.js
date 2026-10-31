@@ -615,6 +615,10 @@
 
   function level(v) { return v >= 75 ? 'hi' : v >= 55 ? 'mid' : 'lo'; }
 
+  var NBAIDS = {};
+  fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = d; }).catch(function () {});
+  fetch('data/era-params.json').then(function (r) { return r.json(); }).then(function (d) { Engine.register(d); }).catch(function () {});
+
   /* Uses assets/players/<player-id>.jpg (or .png / .webp) when present; assets/photos works too. */
   function makeAvatar(p) {
     var wrap = el('span', 'avatar');
@@ -628,6 +632,7 @@
     img.onerror = function () { next(); };
     function next() {
       if (i < exts.length) img.src = 'assets/' + exts[i++];
+      else if (i === exts.length && NBAIDS[p.id]) { i++; img.src = 'https://cdn.nba.com/headshots/nba/latest/1040x760/' + NBAIDS[p.id] + '.png'; }
     }
     next();
     return wrap;
@@ -1316,6 +1321,7 @@
       if (!pl) return;
       rosterCache = {};
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60);
+      Engine.setRules({});
       League.init(save, pl.players, data.teams);
       ensureTm();
       persist();
@@ -2359,6 +2365,25 @@
   function customise() {
     hubSheet('Customise', function (sh, close) {
       var u = ui();
+      if (save.eraId !== '1946') {
+        save.rules = save.rules || {};
+        [['three', 'Three-point line', [['', 'Standard'], ['short', 'Closer'], ['deep', 'Deeper'], ['off', 'Abolished']]],
+         ['clock', 'Shot clock', [['short', '20 sec'], ['', '24 sec'], ['long', '30 sec']]],
+         ['whistle', 'Officiating', [['tight', 'Tight'], ['', 'Normal'], ['loose', 'Let them play']]]].forEach(function (rr) {
+          sh.appendChild(el('p', 'sh-l', rr[1]));
+          var row = el('div', 'chips');
+          rr[2].forEach(function (it) {
+            var b = el('button', (save.rules[rr[0]] || '') === it[0] ? 'on' : '', it[1]); b.type = 'button';
+            b.addEventListener('click', function () {
+              if (it[0]) save.rules[rr[0]] = it[0]; else delete save.rules[rr[0]];
+              Engine.setRules(save.rules); persist();
+              Array.prototype.forEach.call(row.children, function (x) { x.classList.toggle('on', x === b); });
+            });
+            row.appendChild(b);
+          });
+          sh.appendChild(row);
+        });
+      }
       function chips(label, items, isOn, toggle) {
         sh.appendChild(el('p', 'sh-l', label));
         var row = el('div', 'chips');
@@ -3718,6 +3743,7 @@
     if (next.mood) { next.mood.streak = 0; next.mood.news = next.mood.news.slice(-3); }
     next.pending = [];
     next.ownerTrust = save.ownerTrust;
+    next.rules = save.rules;
     save = next;
     League.ensurePicks(save, save.ids.map(teamById));
     rosterCache = {};
@@ -3749,6 +3775,7 @@
         playersByEra[era.id] = res[1];
         rosterCache = {};
         save = data;
+        Engine.setRules(save.rules);
         selected = teamById(save.myId);
         if (!save.lg) League.init(save, res[1].players, res[0].teams);
         ensureTm();

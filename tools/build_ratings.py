@@ -324,7 +324,7 @@ def main():
         elif nm in ('New Orleans Hornets', 'Seattle SuperSonics', 'Vancouver Grizzlies'): t['division'] = 'Western'
         if tid in recs: t['rw'], t['rl'] = recs[tid]
         teams.append(t)
-    json.dump({'season': yr_txt, 'source': 'NBA ' + yr_txt + '. Colours are approximations.', 'teams': teams}, open(os.path.join(OUT, 'teams-%s.json' % ERA), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    json.dump({'season': yr_txt, 'league': 'National Basketball Association', 'games': int(lg['games']), 'divisions': ['Eastern', 'Western'], 'source': 'NBA ' + yr_txt + '. Colours are approximations.', 'teams': teams}, open(os.path.join(OUT, 'teams-%s.json' % ERA), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     cnt = {}
     for r in final:
         cnt[r['teamId']] = cnt.get(r['teamId'], 0) + 1

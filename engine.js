@@ -28,11 +28,25 @@
   /* Seasons fitted to real league averages (data/era-params.json) override the two hand-tuned entries. */
   function register(map) { Object.keys(map || {}).forEach(function (y) { PARAMS[y] = map[y]; }); }
 
+  /* Rule changes the manager has made (three-point line, shot clock, whistle) reshape the league's numbers. */
+  var RULES = {}, RCACHE = {};
+  function setRules(r) { RULES = r || {}; RCACHE = {}; }
+
   function params(year) {
     var keys = Object.keys(PARAMS).map(Number).sort(function (a, b) { return a - b; });
     var best = keys[0];
     keys.forEach(function (k) { if (k <= year) best = k; });
-    return PARAMS[best];
+    var base = PARAMS[best], R = RULES;
+    if (!R.three && !R.clock && !R.whistle) return base;
+    var key = best + '|' + (R.three || '') + (R.clock || '') + (R.whistle || '');
+    if (RCACHE[key]) return RCACHE[key];
+    var p = Object.assign({}, base);
+    if (R.three === 'off') p.threes = false;
+    else if (R.three === 'deep' && p.threes) { p.tpBase = p.tpBase * 0.82; p.tpq = p.tpq * 1.04; }
+    else if (R.three === 'short' && p.threes) { p.tpBase = p.tpBase * 1.2; p.tpq = p.tpq * 0.97; }
+    if (R.clock === 'short') p.poss = p.poss * 1.07; else if (R.clock === 'long') p.poss = p.poss * 0.93;
+    if (R.whistle === 'tight') p.foul = p.foul * 1.25; else if (R.whistle === 'loose') p.foul = p.foul * 0.8;
+    return (RCACHE[key] = p);
   }
 
   function columnsFor(year) {
@@ -255,5 +269,5 @@
     return finalize(g);
   }
 
-  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params, register: register, start: start, step: step, finalize: finalize };
+  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
 })(window);
