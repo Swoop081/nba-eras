@@ -1,0 +1,4 @@
+index failed: https://stats.nba.com/stats/commonallplayers The read operation timed out
+index failed: https://stats.nba.com/stats/playerindex The read operation timed out
+players page failed: HTTP Error 403: Forbidden
+Could not load the NBA player list. Open https://www.nba.com/players once in your browser, then retry.
