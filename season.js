@@ -39,7 +39,7 @@
   function create(eraId, year, teams, myId, gamesPerTeam) {
     var ids = teams.map(function (t) { return t.id; });
     var r = rng(Math.floor(Math.random() * 1e9));
-    var copies = Math.max(1, (ids.length % 2 === 0 ? Math.ceil : Math.round)(gamesPerTeam / (ids.length - 1)));
+    var copies = Math.max(1, Math.ceil(gamesPerTeam / (ids.length - 1)));
     var days = [];
     for (var c = 0; c < copies; c++) {
       var base = roundRobin(ids).map(function (g) {
@@ -48,7 +48,8 @@
       shuffle(base, r);
       days = days.concat(base);
     }
-    if (ids.length % 2 === 0 && days.length > gamesPerTeam) days = days.slice(0, gamesPerTeam);
+    var rounds = ids.length % 2 === 0 ? gamesPerTeam : Math.ceil(gamesPerTeam * ids.length / (ids.length - 1));
+    if (days.length > rounds) days = days.slice(0, rounds);
     var division = {}, rec = {};
     teams.forEach(function (t) { division[t.id] = t.division; rec[t.id] = { w: 0, l: 0 }; });
     return {
