@@ -1,238 +1,314 @@
-OK standings 1996 29
-OK https://www.basketball-reference.com/leagues/NBA_1996_per_game.html 546 rows
-OK https://www.basketball-reference.com/leagues/NBA_1996_totals.html 546 rows
-OK https://www.basketball-reference.com/leagues/NBA_1996_per_minute.html 546 rows
-OK https://www.basketball-reference.com/leagues/NBA_1996_per_poss.html 546 rows
-OK https://www.basketball-reference.com/leagues/NBA_1996_advanced.html 546 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1996_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1996_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1996_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1996_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1996_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1996_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1996_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1996_play-by-play.html
-OK standings 1995 27
-OK https://www.basketball-reference.com/leagues/NBA_1995_per_game.html 453 rows
-OK https://www.basketball-reference.com/leagues/NBA_1995_totals.html 453 rows
-OK https://www.basketball-reference.com/leagues/NBA_1995_per_minute.html 453 rows
-OK https://www.basketball-reference.com/leagues/NBA_1995_per_poss.html 453 rows
-OK https://www.basketball-reference.com/leagues/NBA_1995_advanced.html 453 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1995_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1995_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1995_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1995_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1995_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1995_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1995_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1995_play-by-play.html
-OK standings 1994 27
-OK https://www.basketball-reference.com/leagues/NBA_1994_per_game.html 482 rows
-OK https://www.basketball-reference.com/leagues/NBA_1994_totals.html 482 rows
-OK https://www.basketball-reference.com/leagues/NBA_1994_per_minute.html 482 rows
-OK https://www.basketball-reference.com/leagues/NBA_1994_per_poss.html 482 rows
-OK https://www.basketball-reference.com/leagues/NBA_1994_advanced.html 482 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1994_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1994_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1994_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1994_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1994_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1994_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1994_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1994_play-by-play.html
-OK standings 1993 27
-OK https://www.basketball-reference.com/leagues/NBA_1993_per_game.html 450 rows
-OK https://www.basketball-reference.com/leagues/NBA_1993_totals.html 450 rows
-OK https://www.basketball-reference.com/leagues/NBA_1993_per_minute.html 450 rows
-OK https://www.basketball-reference.com/leagues/NBA_1993_per_poss.html 450 rows
-OK https://www.basketball-reference.com/leagues/NBA_1993_advanced.html 450 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1993_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1993_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1993_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1993_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1993_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1993_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1993_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1993_play-by-play.html
-OK standings 1992 27
-OK https://www.basketball-reference.com/leagues/NBA_1992_per_game.html 459 rows
-OK https://www.basketball-reference.com/leagues/NBA_1992_totals.html 459 rows
-OK https://www.basketball-reference.com/leagues/NBA_1992_per_minute.html 459 rows
-OK https://www.basketball-reference.com/leagues/NBA_1992_per_poss.html 459 rows
-OK https://www.basketball-reference.com/leagues/NBA_1992_advanced.html 459 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1992_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1992_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1992_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1992_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1992_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1992_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1992_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1992_play-by-play.html
-OK standings 1991 27
-OK https://www.basketball-reference.com/leagues/NBA_1991_per_game.html 442 rows
-OK https://www.basketball-reference.com/leagues/NBA_1991_totals.html 442 rows
-OK https://www.basketball-reference.com/leagues/NBA_1991_per_minute.html 442 rows
-OK https://www.basketball-reference.com/leagues/NBA_1991_per_poss.html 442 rows
-OK https://www.basketball-reference.com/leagues/NBA_1991_advanced.html 442 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1991_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1991_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1991_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1991_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1991_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1991_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1991_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1991_play-by-play.html
-OK standings 1990 27
-OK https://www.basketball-reference.com/leagues/NBA_1990_per_game.html 460 rows
-OK https://www.basketball-reference.com/leagues/NBA_1990_totals.html 460 rows
-OK https://www.basketball-reference.com/leagues/NBA_1990_per_minute.html 460 rows
-OK https://www.basketball-reference.com/leagues/NBA_1990_per_poss.html 460 rows
-OK https://www.basketball-reference.com/leagues/NBA_1990_advanced.html 460 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1990_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1990_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1990_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1990_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1990_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1990_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1990_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1990_play-by-play.html
-OK standings 1989 25
-OK https://www.basketball-reference.com/leagues/NBA_1989_per_game.html 439 rows
-OK https://www.basketball-reference.com/leagues/NBA_1989_totals.html 439 rows
-OK https://www.basketball-reference.com/leagues/NBA_1989_per_minute.html 439 rows
-OK https://www.basketball-reference.com/leagues/NBA_1989_per_poss.html 439 rows
-OK https://www.basketball-reference.com/leagues/NBA_1989_advanced.html 439 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1989_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1989_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1989_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1989_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1989_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1989_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1989_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1989_play-by-play.html
-OK standings 1988 23
-OK https://www.basketball-reference.com/leagues/NBA_1988_per_game.html 427 rows
-OK https://www.basketball-reference.com/leagues/NBA_1988_totals.html 427 rows
-OK https://www.basketball-reference.com/leagues/NBA_1988_per_minute.html 427 rows
-OK https://www.basketball-reference.com/leagues/NBA_1988_per_poss.html 427 rows
-OK https://www.basketball-reference.com/leagues/NBA_1988_advanced.html 427 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1988_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1988_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1988_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1988_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1988_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1988_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1988_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1988_play-by-play.html
-OK standings 1987 23
-OK https://www.basketball-reference.com/leagues/NBA_1987_per_game.html 379 rows
-OK https://www.basketball-reference.com/leagues/NBA_1987_totals.html 379 rows
-OK https://www.basketball-reference.com/leagues/NBA_1987_per_minute.html 379 rows
-OK https://www.basketball-reference.com/leagues/NBA_1987_per_poss.html 379 rows
-OK https://www.basketball-reference.com/leagues/NBA_1987_advanced.html 379 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1987_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1987_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1987_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1987_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1987_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1987_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1987_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1987_play-by-play.html
-OK standings 1986 23
-OK https://www.basketball-reference.com/leagues/NBA_1986_per_game.html 380 rows
-OK https://www.basketball-reference.com/leagues/NBA_1986_totals.html 380 rows
-OK https://www.basketball-reference.com/leagues/NBA_1986_per_minute.html 380 rows
-OK https://www.basketball-reference.com/leagues/NBA_1986_per_poss.html 380 rows
-OK https://www.basketball-reference.com/leagues/NBA_1986_advanced.html 380 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1986_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1986_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1986_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1986_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1986_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1986_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1986_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1986_play-by-play.html
-OK standings 1985 23
-OK https://www.basketball-reference.com/leagues/NBA_1985_per_game.html 363 rows
-OK https://www.basketball-reference.com/leagues/NBA_1985_totals.html 363 rows
-OK https://www.basketball-reference.com/leagues/NBA_1985_per_minute.html 363 rows
-OK https://www.basketball-reference.com/leagues/NBA_1985_per_poss.html 363 rows
-OK https://www.basketball-reference.com/leagues/NBA_1985_advanced.html 363 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1985_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1985_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1985_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1985_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1985_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1985_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1985_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1985_play-by-play.html
-OK standings 1984 23
-OK https://www.basketball-reference.com/leagues/NBA_1984_per_game.html 344 rows
-OK https://www.basketball-reference.com/leagues/NBA_1984_totals.html 344 rows
-OK https://www.basketball-reference.com/leagues/NBA_1984_per_minute.html 344 rows
-OK https://www.basketball-reference.com/leagues/NBA_1984_per_poss.html 344 rows
-OK https://www.basketball-reference.com/leagues/NBA_1984_advanced.html 344 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1984_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1984_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1984_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1984_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1984_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1984_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1984_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1984_play-by-play.html
-OK standings 1983 23
-OK https://www.basketball-reference.com/leagues/NBA_1983_per_game.html 392 rows
-OK https://www.basketball-reference.com/leagues/NBA_1983_totals.html 392 rows
-OK https://www.basketball-reference.com/leagues/NBA_1983_per_minute.html 392 rows
-OK https://www.basketball-reference.com/leagues/NBA_1983_per_poss.html 392 rows
-OK https://www.basketball-reference.com/leagues/NBA_1983_advanced.html 392 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1983_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1983_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1983_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1983_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1983_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1983_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1983_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1983_play-by-play.html
-OK standings 1982 23
-OK https://www.basketball-reference.com/leagues/NBA_1982_per_game.html 374 rows
-OK https://www.basketball-reference.com/leagues/NBA_1982_totals.html 374 rows
-OK https://www.basketball-reference.com/leagues/NBA_1982_per_minute.html 374 rows
-OK https://www.basketball-reference.com/leagues/NBA_1982_per_poss.html 374 rows
-OK https://www.basketball-reference.com/leagues/NBA_1982_advanced.html 374 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1982_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1982_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1982_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1982_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1982_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1982_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1982_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1982_play-by-play.html
-OK standings 1981 23
-OK https://www.basketball-reference.com/leagues/NBA_1981_per_game.html 364 rows
-OK https://www.basketball-reference.com/leagues/NBA_1981_totals.html 364 rows
-OK https://www.basketball-reference.com/leagues/NBA_1981_per_minute.html 364 rows
-OK https://www.basketball-reference.com/leagues/NBA_1981_per_poss.html 364 rows
-OK https://www.basketball-reference.com/leagues/NBA_1981_advanced.html 364 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1981_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1981_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1981_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1981_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1981_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1981_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1981_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1981_play-by-play.html
-OK standings 1980 22
-OK https://www.basketball-reference.com/leagues/NBA_1980_per_game.html 358 rows
-OK https://www.basketball-reference.com/leagues/NBA_1980_totals.html 358 rows
-OK https://www.basketball-reference.com/leagues/NBA_1980_per_minute.html 358 rows
-OK https://www.basketball-reference.com/leagues/NBA_1980_per_poss.html 358 rows
-OK https://www.basketball-reference.com/leagues/NBA_1980_advanced.html 358 rows
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1980_shooting.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1980_shooting.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1980_shooting.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1980_shooting.html
-  retry 0 https://www.basketball-reference.com/leagues/NBA_1980_play-by-play.html HTTP Error 404: Not Found
-  retry 1 https://www.basketball-reference.com/leagues/NBA_1980_play-by-play.html HTTP Error 404: Not Found
-  retry 2 https://www.basketball-reference.com/leagues/NBA_1980_play-by-play.html HTTP Error 404: Not Found
-FAILED https://www.basketball-reference.com/leagues/NBA_1980_play-by-play.html
+OK standings 1979 22
+OK https://www.basketball-reference.com/leagues/NBA_1979_per_game.html 345 rows
+OK https://www.basketball-reference.com/leagues/NBA_1979_totals.html 345 rows
+OK https://www.basketball-reference.com/leagues/NBA_1979_per_minute.html 345 rows
+OK https://www.basketball-reference.com/leagues/NBA_1979_per_poss.html 345 rows
+OK https://www.basketball-reference.com/leagues/NBA_1979_advanced.html 345 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1979_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1979_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1979_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1979_play-by-play.html
+OK standings 1978 22
+OK https://www.basketball-reference.com/leagues/NBA_1978_per_game.html 375 rows
+OK https://www.basketball-reference.com/leagues/NBA_1978_totals.html 375 rows
+OK https://www.basketball-reference.com/leagues/NBA_1978_per_minute.html 375 rows
+OK https://www.basketball-reference.com/leagues/NBA_1978_per_poss.html 375 rows
+OK https://www.basketball-reference.com/leagues/NBA_1978_advanced.html 375 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1978_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1978_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1978_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1978_play-by-play.html
+OK standings 1977 22
+OK https://www.basketball-reference.com/leagues/NBA_1977_per_game.html 358 rows
+OK https://www.basketball-reference.com/leagues/NBA_1977_totals.html 358 rows
+OK https://www.basketball-reference.com/leagues/NBA_1977_per_minute.html 358 rows
+OK https://www.basketball-reference.com/leagues/NBA_1977_per_poss.html 358 rows
+OK https://www.basketball-reference.com/leagues/NBA_1977_advanced.html 358 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1977_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1977_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1977_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1977_play-by-play.html
+OK standings 1976 18
+OK https://www.basketball-reference.com/leagues/NBA_1976_per_game.html 275 rows
+OK https://www.basketball-reference.com/leagues/NBA_1976_totals.html 275 rows
+OK https://www.basketball-reference.com/leagues/NBA_1976_per_minute.html 275 rows
+OK https://www.basketball-reference.com/leagues/NBA_1976_per_poss.html 275 rows
+OK https://www.basketball-reference.com/leagues/NBA_1976_advanced.html 275 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1976_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1976_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1976_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1976_play-by-play.html
+OK standings 1975 18
+OK https://www.basketball-reference.com/leagues/NBA_1975_per_game.html 277 rows
+OK https://www.basketball-reference.com/leagues/NBA_1975_totals.html 277 rows
+OK https://www.basketball-reference.com/leagues/NBA_1975_per_minute.html 277 rows
+OK https://www.basketball-reference.com/leagues/NBA_1975_per_poss.html 277 rows
+OK https://www.basketball-reference.com/leagues/NBA_1975_advanced.html 277 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1975_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1975_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1975_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1975_play-by-play.html
+OK standings 1974 17
+OK https://www.basketball-reference.com/leagues/NBA_1974_per_game.html 246 rows
+OK https://www.basketball-reference.com/leagues/NBA_1974_totals.html 246 rows
+OK https://www.basketball-reference.com/leagues/NBA_1974_per_minute.html 246 rows
+OK https://www.basketball-reference.com/leagues/NBA_1974_per_poss.html 246 rows
+OK https://www.basketball-reference.com/leagues/NBA_1974_advanced.html 246 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1974_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1974_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1974_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1974_play-by-play.html
+OK standings 1973 17
+OK https://www.basketball-reference.com/leagues/NBA_1973_per_game.html 270 rows
+OK https://www.basketball-reference.com/leagues/NBA_1973_totals.html 270 rows
+OK https://www.basketball-reference.com/leagues/NBA_1973_per_minute.html 270 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1973_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1973_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1973_advanced.html 270 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1973_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1973_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1973_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1973_play-by-play.html
+OK standings 1972 17
+OK https://www.basketball-reference.com/leagues/NBA_1972_per_game.html 266 rows
+OK https://www.basketball-reference.com/leagues/NBA_1972_totals.html 266 rows
+OK https://www.basketball-reference.com/leagues/NBA_1972_per_minute.html 266 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1972_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1972_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1972_advanced.html 266 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1972_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1972_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1972_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1972_play-by-play.html
+OK standings 1971 17
+OK https://www.basketball-reference.com/leagues/NBA_1971_per_game.html 246 rows
+OK https://www.basketball-reference.com/leagues/NBA_1971_totals.html 246 rows
+OK https://www.basketball-reference.com/leagues/NBA_1971_per_minute.html 246 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1971_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1971_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1971_advanced.html 246 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1971_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1971_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1971_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1971_play-by-play.html
+OK standings 1970 14
+OK https://www.basketball-reference.com/leagues/NBA_1970_per_game.html 202 rows
+OK https://www.basketball-reference.com/leagues/NBA_1970_totals.html 202 rows
+OK https://www.basketball-reference.com/leagues/NBA_1970_per_minute.html 202 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1970_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1970_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1970_advanced.html 202 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1970_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1970_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1970_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1970_play-by-play.html
+OK standings 1969 14
+OK https://www.basketball-reference.com/leagues/NBA_1969_per_game.html 207 rows
+OK https://www.basketball-reference.com/leagues/NBA_1969_totals.html 207 rows
+OK https://www.basketball-reference.com/leagues/NBA_1969_per_minute.html 207 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1969_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1969_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1969_advanced.html 207 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1969_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1969_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1969_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1969_play-by-play.html
+OK standings 1968 12
+OK https://www.basketball-reference.com/leagues/NBA_1968_per_game.html 178 rows
+OK https://www.basketball-reference.com/leagues/NBA_1968_totals.html 178 rows
+OK https://www.basketball-reference.com/leagues/NBA_1968_per_minute.html 178 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1968_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1968_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1968_advanced.html 178 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1968_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1968_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1968_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1968_play-by-play.html
+OK standings 1967 10
+OK https://www.basketball-reference.com/leagues/NBA_1967_per_game.html 134 rows
+OK https://www.basketball-reference.com/leagues/NBA_1967_totals.html 134 rows
+OK https://www.basketball-reference.com/leagues/NBA_1967_per_minute.html 134 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1967_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1967_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1967_advanced.html 134 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1967_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1967_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1967_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1967_play-by-play.html
+OK standings 1966 9
+OK https://www.basketball-reference.com/leagues/NBA_1966_per_game.html 136 rows
+OK https://www.basketball-reference.com/leagues/NBA_1966_totals.html 136 rows
+OK https://www.basketball-reference.com/leagues/NBA_1966_per_minute.html 136 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1966_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1966_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1966_advanced.html 136 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1966_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1966_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1966_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1966_play-by-play.html
+OK standings 1965 9
+OK https://www.basketball-reference.com/leagues/NBA_1965_per_game.html 133 rows
+OK https://www.basketball-reference.com/leagues/NBA_1965_totals.html 133 rows
+OK https://www.basketball-reference.com/leagues/NBA_1965_per_minute.html 133 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1965_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1965_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1965_advanced.html 133 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1965_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1965_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1965_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1965_play-by-play.html
+OK standings 1964 9
+OK https://www.basketball-reference.com/leagues/NBA_1964_per_game.html 136 rows
+OK https://www.basketball-reference.com/leagues/NBA_1964_totals.html 136 rows
+OK https://www.basketball-reference.com/leagues/NBA_1964_per_minute.html 136 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1964_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1964_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1964_advanced.html 136 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1964_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1964_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1964_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1964_play-by-play.html
+OK standings 1963 9
+OK https://www.basketball-reference.com/leagues/NBA_1963_per_game.html 134 rows
+OK https://www.basketball-reference.com/leagues/NBA_1963_totals.html 134 rows
+OK https://www.basketball-reference.com/leagues/NBA_1963_per_minute.html 134 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1963_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1963_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1963_advanced.html 134 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1963_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1963_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1963_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1963_play-by-play.html
+OK standings 1962 9
+OK https://www.basketball-reference.com/leagues/NBA_1962_per_game.html 137 rows
+OK https://www.basketball-reference.com/leagues/NBA_1962_totals.html 137 rows
+OK https://www.basketball-reference.com/leagues/NBA_1962_per_minute.html 137 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1962_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1962_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1962_advanced.html 137 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1962_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1962_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1962_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1962_play-by-play.html
+OK standings 1961 8
+OK https://www.basketball-reference.com/leagues/NBA_1961_per_game.html 105 rows
+OK https://www.basketball-reference.com/leagues/NBA_1961_totals.html 105 rows
+OK https://www.basketball-reference.com/leagues/NBA_1961_per_minute.html 105 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1961_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1961_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1961_advanced.html 105 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1961_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1961_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1961_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1961_play-by-play.html
+OK standings 1960 8
+OK https://www.basketball-reference.com/leagues/NBA_1960_per_game.html 124 rows
+OK https://www.basketball-reference.com/leagues/NBA_1960_totals.html 124 rows
+OK https://www.basketball-reference.com/leagues/NBA_1960_per_minute.html 124 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1960_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1960_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1960_advanced.html 124 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1960_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1960_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1960_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1960_play-by-play.html
+OK standings 1959 8
+OK https://www.basketball-reference.com/leagues/NBA_1959_per_game.html 111 rows
+OK https://www.basketball-reference.com/leagues/NBA_1959_totals.html 111 rows
+OK https://www.basketball-reference.com/leagues/NBA_1959_per_minute.html 111 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1959_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1959_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1959_advanced.html 111 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1959_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1959_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1959_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1959_play-by-play.html
+OK standings 1958 8
+OK https://www.basketball-reference.com/leagues/NBA_1958_per_game.html 112 rows
+OK https://www.basketball-reference.com/leagues/NBA_1958_totals.html 112 rows
+OK https://www.basketball-reference.com/leagues/NBA_1958_per_minute.html 112 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1958_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1958_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1958_advanced.html 112 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1958_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1958_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1958_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1958_play-by-play.html
+OK standings 1957 8
+OK https://www.basketball-reference.com/leagues/NBA_1957_per_game.html 116 rows
+OK https://www.basketball-reference.com/leagues/NBA_1957_totals.html 116 rows
+OK https://www.basketball-reference.com/leagues/NBA_1957_per_minute.html 116 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1957_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1957_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1957_advanced.html 116 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1957_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1957_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1957_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1957_play-by-play.html
+OK standings 1956 8
+OK https://www.basketball-reference.com/leagues/NBA_1956_per_game.html 107 rows
+OK https://www.basketball-reference.com/leagues/NBA_1956_totals.html 107 rows
+OK https://www.basketball-reference.com/leagues/NBA_1956_per_minute.html 107 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1956_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1956_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1956_advanced.html 107 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1956_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1956_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1956_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1956_play-by-play.html
+OK standings 1955 8
+OK https://www.basketball-reference.com/leagues/NBA_1955_per_game.html 131 rows
+OK https://www.basketball-reference.com/leagues/NBA_1955_totals.html 131 rows
+OK https://www.basketball-reference.com/leagues/NBA_1955_per_minute.html 131 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1955_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1955_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1955_advanced.html 131 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1955_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1955_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1955_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1955_play-by-play.html
+OK standings 1954 9
+OK https://www.basketball-reference.com/leagues/NBA_1954_per_game.html 136 rows
+OK https://www.basketball-reference.com/leagues/NBA_1954_totals.html 136 rows
+OK https://www.basketball-reference.com/leagues/NBA_1954_per_minute.html 136 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1954_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1954_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1954_advanced.html 136 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1954_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1954_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1954_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1954_play-by-play.html
+OK standings 1953 10
+OK https://www.basketball-reference.com/leagues/NBA_1953_per_game.html 163 rows
+OK https://www.basketball-reference.com/leagues/NBA_1953_totals.html 163 rows
+OK https://www.basketball-reference.com/leagues/NBA_1953_per_minute.html 163 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1953_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1953_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1953_advanced.html 163 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1953_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1953_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1953_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1953_play-by-play.html
+OK standings 1952 10
+OK https://www.basketball-reference.com/leagues/NBA_1952_per_game.html 137 rows
+OK https://www.basketball-reference.com/leagues/NBA_1952_totals.html 137 rows
+OK https://www.basketball-reference.com/leagues/NBA_1952_per_minute.html 137 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1952_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1952_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1952_advanced.html 137 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1952_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1952_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1952_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1952_play-by-play.html
+OK standings 1951 11
+OK https://www.basketball-reference.com/leagues/NBA_1951_per_game.html 190 rows
+OK https://www.basketball-reference.com/leagues/NBA_1951_totals.html 190 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1951_per_minute.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1951_per_minute.html
+  404 https://www.basketball-reference.com/leagues/NBA_1951_per_poss.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1951_per_poss.html
+OK https://www.basketball-reference.com/leagues/NBA_1951_advanced.html 190 rows
+  404 https://www.basketball-reference.com/leagues/NBA_1951_shooting.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1951_shooting.html
+  404 https://www.basketball-reference.com/leagues/NBA_1951_play-by-play.html
+FAILED https://www.basketball-reference.com/leagues/NBA_1951_play-by-play.html
