@@ -127,6 +127,14 @@
         [[1, 8], [4, 5], [2, 7], [3, 6]].forEach(function (p) { round.push(ser(state, t[p[0] - 1], t[p[1] - 1], p[0], p[1], 7, null, d)); });
       });
       names = ['First round', 'Conference semifinals', 'Conference finals', 'Finals'];
+    } else if (kind === 'nba12' && divs.length === 2 && divs.every(function (d) { return st[d].length >= 6; })) {
+      round = [];
+      divs.forEach(function (d) {
+        var t = st[d].map(function (x) { return x.id; });
+        function bye(i) { return { a: t[i - 1], b: t[i - 1], sa: i, sb: i, w: [1, 0], winner: t[i - 1], best: 1, div: d, bye: true }; }
+        round.push(bye(1), ser(state, t[3], t[4], 4, 5, 3, null, d), bye(2), ser(state, t[2], t[5], 3, 6, 3, null, d));
+      });
+      names = ['First round', 'Conference semifinals', 'Conference finals', 'Finals'];
     } else if (kind === 'div4' && divs.length === 2 && divs.every(function (d) { return st[d].length >= 4; })) {
       round = [];
       divs.forEach(function (d) {
@@ -145,7 +153,8 @@
       best = q === 8 ? [3, 5, 7] : [5, 7];
       kind = 'top';
     } else {
-      best = names.length === 4 ? [(root.Rules && root.Rules.get(state.year).firstBest) || 7, 7, 7, 7] : names.length === 3 ? [3, 3, 7] : [7, 7];
+      if (kind === 'nba12') best = [3, 7, 7, 7];
+      else best = names.length === 4 ? [(root.Rules && root.Rules.get(state.year).firstBest) || 7, 7, 7, 7] : names.length === 3 ? [3, 3, 7] : [7, 7];
       if (state.fmt === 'ladder47') best = [3, 3, 7];
       if (state.fmt === 'div4') best = [3, 3, 7];
     }

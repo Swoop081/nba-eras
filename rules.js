@@ -15,6 +15,11 @@
       games: 60, kind: 'div4',
       playoffs: 'Top four clubs in each division qualify. Division semifinals and finals are best-of-three, then a best-of-seven Finals.'
     },
+    1976: {
+      games: 82, kind: 'nba12', firstBest: 3,
+      playoffs: 'Twelve clubs qualify, six from each conference. The top two seeds in each conference get a bye; seeds three to six play a best-of-three first round. Every later round is a best-of-seven.',
+      notes: ['Four 12-minute quarters', '24-second shot clock', 'No three-point line until 1979-80', 'Free agency with compensation']
+    },
     1983: {
       games: 82, kind: 'nba', firstBest: 5,
       playoffs: 'The eight best records in each conference qualify and are seeded one to eight. The first round is a best-of-five; every later round, including the Finals, is a best-of-seven.',

@@ -56,6 +56,7 @@ const ITER = +process.argv[3] || 0, S = +process.argv[4] || 6;
 const P = Object.assign({}, Engine.params(2000), (doc.params || {}));
 if (LG) { P.poss = P.poss && doc.params ? P.poss : LG.poss; P.threes = LG['3pa'] > 1; }
 Engine.register({ [YEAR]: P });
+const HAS = { tov: !LG || LG.tov > 0, orb: !LG || LG.orb > 0, stl: !LG || LG.stl > 0, blk: !LG || LG.blk > 0, tp: !LG || LG['3pa'] > 1 };
 function lgOf(r) {
   const t = {}; let g = 0;
   for (const id in r.st) { const o = r.st[id]; for (const k in o) t[k] = (t[k] || 0) + o[k]; }
@@ -75,13 +76,13 @@ function fitLeague(rounds) {
       P.comp = Math.max(0.35, Math.min(1.2, (P.comp || 1) * Math.pow(sdReal / sdSim, 0.8)));
       console.log('wins SD sim', sdSim.toFixed(1), 'real', sdReal.toFixed(1), 'comp', P.comp.toFixed(3));
     }
-    P.tov *= rr(LG.tov / LG.poss, m.tov / P.poss);
+    if (HAS.tov) P.tov *= rr(LG.tov / LG.poss, m.tov / P.poss);
     P.fg *= rr(LG.fg / LG.fga, m.fg / m.fga);
-    P.tpBase += (LG['3pa'] / LG.fga - m.tpa / m.fga) * 0.9;
-    P.tpq *= rr(LG['3p'] / LG['3pa'], m.tp / Math.max(m.tpa, .01));
+    if (HAS.tp) { P.tpBase += (LG['3pa'] / LG.fga - m.tpa / m.fga) * 0.9;
+    P.tpq *= rr(LG['3p'] / LG['3pa'], m.tp / Math.max(m.tpa, .01)); }
     P.foul *= rr(LG.fta, m.fta);
     P.ftb += (LG.ft / LG.fta - m.ft / m.fta) * 0.9;
-    P.orb *= rr(LG.orb, m.orb);
+    if (HAS.orb) P.orb *= rr(LG.orb, m.orb);
     P.astp *= rr(LG.ast, m.ast);
     console.log('league', i, 'pts', m.pts.toFixed(1), '/', LG.pts, 'fga', m.fga.toFixed(1), '/', LG.fga, '3pa', m.tpa.toFixed(1), '/', LG['3pa'], 'fta', m.fta.toFixed(1), '/', LG.fta, 'tov', m.tov.toFixed(1), '/', LG.tov, 'orb', m.orb.toFixed(1), '/', LG.orb, 'ast', m.ast.toFixed(1), '/', LG.ast, '| fg%', (m.fg/m.fga).toFixed(3), (LG.fg/LG.fga).toFixed(3), '3p%', (m.tp/m.tpa).toFixed(3), (LG['3p']/LG['3pa']).toFixed(3), 'ft%', (m.ft/m.fta).toFixed(3), (LG.ft/LG.fta).toFixed(3));
   }
@@ -109,10 +110,10 @@ for (let it = 1; it <= ITER; it++) {
     k.sco = clamp(k.sco * adj(sim.pts, real.pts), 3, 99);
     k.ply = clamp(k.ply * adj(sim.ast, real.ast), 3, 99);
     const rr = adj(sim.trb, real.trb); k.orb = clamp(k.orb * rr, 3, 99); k.drb = clamp(k.drb * rr, 3, 99);
-    k.stl = clamp(k.stl * adj(sim.stl, real.stl), 3, 99);
-    k.blk = clamp(k.blk * adj(sim.blk, real.blk), 3, 99);
-    k.tov = clamp(k.tov * adj(real.tov, sim.tov), 3, 99);     // more turnovers than real -> better ball security
-    if (s.tpa / g > 0.4 && real.tp !== null && real.tp !== undefined) { const stp = s.tp / s.tpa; k.tpt = clamp(k.tpt * clamp(Math.pow((real.tp + .02) / (stp + .02), .5), .93, 1.08), 3, 99); }
+    if (HAS.stl) k.stl = clamp(k.stl * adj(sim.stl, real.stl), 3, 99);
+    if (HAS.blk) k.blk = clamp(k.blk * adj(sim.blk, real.blk), 3, 99);
+    if (HAS.tov) k.tov = clamp(k.tov * adj(real.tov, sim.tov), 3, 99);     // more turnovers than real -> better ball security
+    if (HAS.tp && s.tpa / g > 0.4 && real.tp !== null && real.tp !== undefined) { const stp = s.tp / s.tpa; k.tpt = clamp(k.tpt * clamp(Math.pow((real.tp + .02) / (stp + .02), .5), .93, 1.08), 3, 99); }
     if (s.fga / g > 3 && real.fg) { const sfg = s.fg / s.fga; k.sht = clamp(k.sht * clamp(Math.pow((real.fg + .02) / (sfg + .02), .6), .94, 1.07), 3, 99); }
     k.ovr = ovrOf(k);
   });
