@@ -190,3 +190,6 @@ body[data-modern="1"] .fc-out{display:grid;gap:2px;padding:12px 14px;border-radi
 body[data-modern="1"] .fc-out b{font-family:var(--disp);font-weight:800;font-size:22px;color:var(--c)}
 body[data-modern="1"] .fc-out span{font-size:14px;line-height:1.35;color:var(--ink)}
 body[data-modern="1"] .rail{align-items:center;padding-top:0;padding-bottom:96px}
+
+/* no instructions: the player knows how to play */
+body[data-modern="1"] .how,body[data-modern="1"] .card.era .meta{display:none!important}

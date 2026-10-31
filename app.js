@@ -821,7 +821,7 @@
       if (lead.pts) bits.push('#' + lead.pts + ' in the league in scoring');
       if (lead.ast) bits.push('#' + lead.ast + ' in assists');
       if (bits.length) body.appendChild(el('p', 'sub', bits.join(' · ')));
-    } else body.appendChild(el('p', 'sub', 'Last season’s real record only lists these figures. Rebounds, steals, blocks and turnovers are tracked once you play.'));
+    } else body.appendChild(el('p', 'sub how', 'Last season’s real record only lists these figures. Rebounds, steals, blocks and turnovers are tracked once you play.'));
   }
 
   function pvLog(body, p, team) {
@@ -864,9 +864,9 @@
       body.appendChild(cmp('Free throw %', ftp, la.fta ? lft : 0, 100));
       var ppS = x.fga ? x.pts / x.fga : 0, ts = (x.fga + 0.44 * x.fta) ? 100 * x.pts / (2 * (x.fga + 0.44 * x.fta)) : 0;
       body.appendChild(boxes([['Shots / game', f1(x.fga, x.g)], ['FT tries / game', f1(x.fta, x.g)], ['Pts per shot', ppS.toFixed(2)], ['True shooting', ts.toFixed(1) + '%']]));
-      body.appendChild(el('p', 'sub', 'The mark on each bar is the league average this season.'));
+      body.appendChild(el('p', 'sub how', 'The mark on each bar is the league average this season.'));
     } else if (mode === 'Trend') {
-      if (log.length < 2) { body.appendChild(el('p', 'sub', 'Trends appear after two games with your club.')); return; }
+      if (log.length < 2) { body.appendChild(el('p', 'sub how', 'Trends appear after two games with your club.')); return; }
       body.appendChild(el('div', 'group-title', 'Points per game'));
       body.appendChild(lineChart(log.map(function (g) { return g[6]; }), x.pts / x.g));
       var roll = [];
@@ -876,7 +876,7 @@
       }
       body.appendChild(el('div', 'group-title', 'FG% over the last five games'));
       body.appendChild(lineChart(roll, x.fga ? 100 * x.fg / x.fga : 0, function (v) { return Math.round(v) + '%'; }));
-      body.appendChild(el('p', 'sub', 'The dashed line is his season average.'));
+      body.appendChild(el('p', 'sub how', 'The dashed line is his season average.'));
     } else {
       var two = x.fg * 2, ft = x.ft, tot = two + ft || 1;
       body.appendChild(el('div', 'group-title', 'Where the points come from'));
@@ -915,8 +915,8 @@
         body.appendChild(row);
       });
     });
-    if (p.prev) body.appendChild(el('p', 'sub', 'Arrows show the change since last season. Overall went from ' + p.prev.ovr + ' to ' + p.ratings.ovr + '.'));
-    body.appendChild(el('p', 'sub', 'The number in brackets is the gap to the average ' + ({ G: 'guard', F: 'forward', C: 'centre' }[grp(p)]) + ' in the league.'));
+    if (p.prev) body.appendChild(el('p', 'sub how', 'Arrows show the change since last season. Overall went from ' + p.prev.ovr + ' to ' + p.ratings.ovr + '.'));
+    body.appendChild(el('p', 'sub how', 'The number in brackets is the gap to the average ' + ({ G: 'guard', F: 'forward', C: 'centre' }[grp(p)]) + ' in the league.'));
   }
 
   function pvContract(body, p) {
@@ -948,7 +948,7 @@
     body.appendChild(dataTable(['Season', 'Game', 'Out', 'Severity'], hist.slice().reverse().map(function (h) {
       return [seasonLabel(h.y), h.d ? 'day ' + h.d : '\u2013', h.n + ' games', h.n < 6 ? 'Minor' : h.n < 13 ? 'Moderate' : h.n < 30 ? 'Serious' : 'Season-threatening'];
     })));
-    body.appendChild(el('p', 'sub', 'Durability is the rating that keeps him on the floor. Lower numbers get hurt more often.'));
+    body.appendChild(el('p', 'sub how', 'Durability is the rating that keeps him on the floor. Lower numbers get hurt more often.'));
   }
 
   function pvAwards(body, p) {
@@ -956,7 +956,7 @@
     var count = function (n) { return aw.filter(function (x) { return x.a === n; }).length; };
     body.appendChild(boxes([['Titles', String(count('League champion'))], ['MVP', String(count('Most Valuable Player'))], ['All-League', String(count('All-League First Team') + count('All-League Second Team'))], ['Leader', String(count('Scoring champion') + count('Assists leader'))]]));
     body.appendChild(el('div', 'group-title', 'Honours'));
-    if (!aw.length) { body.appendChild(el('p', 'sub', 'No honours yet. They are handed out when each season ends: MVP, scoring and assist titles, All-League teams and the championship.')); return; }
+    if (!aw.length) { body.appendChild(el('p', 'sub how', 'No honours yet. They are handed out when each season ends: MVP, scoring and assist titles, All-League teams and the championship.')); return; }
     body.appendChild(dataTable(['Season', 'Honour'], aw.map(function (x) { return [seasonLabel(x.y), x.a]; })));
   }
 
@@ -1026,7 +1026,7 @@
       holder.appendChild(detail);
       list.appendChild(holder);
     });
-    list.appendChild(el('p', 'sub', 'Tap a player for his averages and contract, tap again for the full profile. Salaries are estimates except where the record is known (Joe Fulks earned $8,000).'));
+    list.appendChild(el('p', 'sub how', 'Tap a player for his averages and contract, tap again for the full profile. Salaries are estimates except where the record is known (Joe Fulks earned $8,000).'));
   }
 
   /* ---------- match ---------- */
@@ -1124,7 +1124,7 @@
       }
       bodyEl.appendChild(boxTable(me, res.homeLines, cols));
       bodyEl.appendChild(boxTable(opp, res.awayLines, cols));
-      bodyEl.appendChild(el('p', 'sub', 'This box score only shows what the league recorded in ' + seasonLabel(save.year) + '. Later eras add rebounds, steals, blocks and more.'));
+      bodyEl.appendChild(el('p', 'sub how', 'This box score only shows what the league recorded in ' + seasonLabel(save.year) + '. Later eras add rebounds, steals, blocks and more.'));
       dockEl.hidden = false;
     }
     function step() {
@@ -2038,7 +2038,7 @@
     if (pages.length) bodyEl.appendChild(carousel(pages));
     else {
       bodyEl.appendChild(el('h3', 'box-title', 'League leaders'));
-      bodyEl.appendChild(el('p', 'sub', 'Leaders appear once the season gets going.'));
+      bodyEl.appendChild(el('p', 'sub how', 'Leaders appear once the season gets going.'));
     }
     var wr = (save.lg.wire || []).filter(function (w) { return w.y === save.year; }).slice(-4).reverse();
     if (wr.length) {
@@ -2391,7 +2391,7 @@
       return;
     }
     if (!trade.partner) {
-      body.appendChild(el('p', 'sub', 'Pick a club to trade with.'));
+      body.appendChild(el('p', 'sub how', 'Pick a club to trade with.'));
       save.ids.filter(function (id) { return id !== me.id; }).forEach(function (id) {
         var t = teamById(id), pl = League.rosterOf(save, id);
         var top = pl.map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
@@ -2635,7 +2635,7 @@
       body.appendChild(ow);
       if (r.owner.fired) {
         body.appendChild(el('h3', 'box-title', 'Clubs that want you'));
-        body.appendChild(el('p', 'sub', 'Word travels fast. Three owners want to talk. Your new club starts with its own roster and a fresh start with the owner.'));
+        body.appendChild(el('p', 'sub how', 'Word travels fast. Three owners want to talk. Your new club starts with its own roster and a fresh start with the owner.'));
         if (!r.offers) {
           r.offers = save.ids.filter(function (id) { return id !== me.id; }).sort(function () { return Math.random() - 0.5; }).slice(0, 3);
           persist();
@@ -2832,7 +2832,7 @@
 
   function offNewClub(body, me) {
     offHeader('Choose a new club', 'Your franchise has folded');
-    body.appendChild(el('p', 'sub', 'The league needs GMs. Pick the club you want to take over.'));
+    body.appendChild(el('p', 'sub how', 'The league needs GMs. Pick the club you want to take over.'));
     save.ids.forEach(function (id) {
       var t = teamById(id);
       var pl = League.rosterOf(save, id);
@@ -2864,7 +2864,7 @@
     if (!list.length) {
       body.appendChild(el('p', 'sub', 'No contracts expire this year.'));
     } else {
-      body.appendChild(el('p', 'sub', 'These deals have run out. Re-sign them or let them walk into free agency.'));
+      body.appendChild(el('p', 'sub how', 'These deals have run out. Re-sign them or let them walk into free agency.'));
     }
     list.forEach(function (p) {
       var trust = Events.pm(save, p.id).t;
@@ -2960,7 +2960,7 @@
     if (!list.length) return;
     var n = League.rosterOf(save, me.id).length, pay = League.payroll(save, me.id);
     body.appendChild(el('h3', 'box-title', 'Draft rights (' + list.length + ')'));
-    body.appendChild(el('p', 'sub', 'Players you drafted. They only count against your roster and payroll once you sign them. Unsigned rights are released when the season starts.'));
+    body.appendChild(el('p', 'sub how', 'Players you drafted. They only count against your roster and payroll once you sign them. Unsigned rights are released when the season starts.'));
     var all = el('button', 'btn small', 'Let all go');
     all.type = 'button';
     all.addEventListener('click', function () { list.forEach(function (p) { League.release(save, p); }); persist(); renderOff(); });
@@ -2982,7 +2982,7 @@
     var pay = League.payroll(save, me.id), n = League.rosterOf(save, me.id).length;
     offHeader('Free agency', n + ' players · ' + money(pay) + ' of ' + money(save.lg.cap));
     var fa = League.freeAgents(save).slice(0, 30);
-    body.appendChild(el('p', 'sub', 'Sign anyone you can fit under the cap. Your drafted rookies are under draft rights below.'));
+    body.appendChild(el('p', 'sub how', 'Sign anyone you can fit under the cap. Your drafted rookies are under draft rights below.'));
     rightsSection(body, me);
     fa.forEach(function (p) {
       var ask = League.salaryFor(p.ratings.ovr);
