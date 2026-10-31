@@ -50,7 +50,8 @@
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7];
 
   function prep(players) {
-    var top = players.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, SHARE.length);
+    // the coach's rotation order (slot) wins when it is set; otherwise the best play the most
+    var top = players.slice().sort(function (a, b) { return (a.slot !== undefined && b.slot !== undefined) ? a.slot - b.slot : b.ratings.ovr - a.ratings.ovr; }).slice(0, SHARE.length);
     return top.map(function (p, i) {
       return {
         p: p, share: SHARE[i],

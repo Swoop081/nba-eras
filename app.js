@@ -992,7 +992,7 @@
     bd.textContent = '';
     bd.appendChild(teamBadge(team));
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
-    var squad = League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var squad = team.id === save.myId ? rotOrder(team.id) : League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     var pay = League.payroll(save, team.id);
     document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
     squad.forEach(function (p) {
@@ -1001,7 +1001,7 @@
       card.type = 'button';
       card.appendChild(makeAvatar(p));
       var text = el('span');
-      text.appendChild(el('strong', null, p.name));
+      text.appendChild(el('strong', null, (team.id === save.myId ? (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ' : '') + p.name));
       text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
@@ -1013,6 +1013,15 @@
       detail.appendChild(el('div', 'group-title', s ? 'Averages \u00B7 ' + s.label : 'No games yet'));
       if (s) detail.appendChild(boxes([['PTS', f1(s.x.pts, s.x.g)], ['AST', f1(s.x.ast, s.x.g)], ['FG%', pctS(s.x.fg, s.x.fga)], ['FT%', pctS(s.x.ft, s.x.fta)]]));
       detail.appendChild(el('div', 'quick-k', money(p.salary) + ' \u00B7 ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' year' : ' years') + ' left') + ' \u00B7 potential ' + p.pot));
+      if (team.id === save.myId) {
+        var mv = el('div', 'dock-row');
+        [['Move up', -1], ['Move down', 1]].forEach(function (m) {
+          var mb = el('span', 'btn small', m[0]);
+          mb.addEventListener('click', function (ev) { ev.stopPropagation(); moveRot(team, p, m[1]); });
+          mv.appendChild(mb);
+        });
+        detail.appendChild(mv);
+      }
       detail.appendChild(el('div', 'quick-go', 'Tap for full profile \u203A'));
       detail.addEventListener('click', function () { openPlayer(p, team); });
       card.addEventListener('click', function () {
@@ -1204,6 +1213,12 @@
     });
     return tot ? Math.round(1000 * mine / tot) / 10 : 0;
   }
+  function oddsShift(id, add, drop) {
+    var base = rosterOf(id), list = base.filter(function (q) { return !drop || q.id !== drop.id; });
+    if (add) list = list.concat([add]);
+    var d = Math.round((titleOdds(id, list) - titleOdds(id)) * 10) / 10;
+    return (d > 0 ? '+' : d < 0 ? '\u2212' : '') + Math.abs(d).toFixed(1) + '% title';
+  }
   function pctText(v) { return (v < 10 ? v.toFixed(1) : String(Math.round(v))) + '%'; }
   function sideRating(id, w) {
     var top = rosterOf(id).slice().sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(0, 8);
@@ -1214,9 +1229,29 @@
   }
   function offRating(id) { return sideRating(id, { sco: 0.4, sht: 0.25, ft: 0.1, ply: 0.15, orb: 0.1 }); }
   function defRating(id) { return sideRating(id, { drb: 0.35, stl: 0.25, blk: 0.25, fou: 0.15 }); }
+  /* Your rotation: the order you set, then everyone else by overall. The first five start. */
+  function rotOrder(id) {
+    var all = League.rosterOf(save, id).slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    if (id !== save.myId || !save.rot || !save.rot.length) return all;
+    var out = [];
+    save.rot.forEach(function (pid) { var p = all.filter(function (q) { return q.id === pid; })[0]; if (p) out.push(p); });
+    all.forEach(function (p) { if (out.indexOf(p) < 0) out.push(p); });
+    return out;
+  }
+  function moveRot(team, p, d) {
+    var ord = rotOrder(team.id), i = ord.indexOf(p), j = i + d;
+    if (j < 0 || j >= ord.length) return;
+    ord.splice(i, 1); ord.splice(j, 0, p);
+    save.rot = ord.map(function (q) { return q.id; });
+    persist(); rosterCache = {};
+    renderRoster(team);
+  }
   function rosterFor(id) {
     var h = League.healthy(save, id);
-    return id === save.myId ? Events.moraleRoster(save, h) : h;
+    if (id !== save.myId) return h;
+    var ord = rotOrder(id), pos = {};
+    ord.forEach(function (p, i) { pos[p.id] = i; });
+    return Events.moraleRoster(save, h).map(function (p) { return Object.assign({}, p, { slot: pos[p.id] === undefined ? 99 : pos[p.id] }); });
   }
   function simGame(g) {
     var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year);
@@ -3483,7 +3518,7 @@
       var trust = Events.pm(save, p.id).t;
       var ask = League.ask(save, p, trust);
       var holder = el('div', 'player');
-      holder.appendChild(personRow(p, [(p.pos || '') + ' · Age ' + p.age + ' · potential ' + p.pot, 'Asking ' + money(ask) + ' a year' + (trust < 40 ? ' · unhappy with you' : '')], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr))));
+      holder.appendChild(personRow(p, [(p.pos || '') + ' · Age ' + p.age + ' · potential ' + p.pot, 'Asking ' + money(ask) + ' a year' + (trust < 40 ? ' · unhappy with you' : '') + ' \u00B7 leaving: ' + oddsShift(me.id, null, p)], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr))));
       var row = el('div', 'dock-row');
       [[1, '1 year'], [3, '3 years']].forEach(function (o) {
         var b = el('button', 'btn small', 'Re-sign ' + o[1]);
@@ -3605,7 +3640,7 @@
       b.disabled = !can;
       b.addEventListener('click', function () { League.sign(save, p, me.id, ask, 2); persist(); renderOff(); });
       var right = el('span'); right.style.marginLeft = 'auto'; right.appendChild(b);
-      body.appendChild(personRow(p, [(p.pos || '') + ' · ' + hgtText(p) + ' · age ' + p.age + ' · potential ' + p.pot, 'Overall ' + p.ratings.ovr], right));
+      body.appendChild(personRow(p, [(p.pos || '') + ' · ' + hgtText(p) + ' · age ' + p.age + ' · potential ' + p.pot, 'Overall ' + p.ratings.ovr + ' \u00B7 ' + oddsShift(me.id, p)], right));
     });
     if (!fa.length) body.appendChild(el('p', 'sub', 'Nobody is available.'));
     var tb = el('button', 'btn wide', 'Trades');
