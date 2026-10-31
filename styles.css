@@ -413,9 +413,3 @@ body[data-modern="1"] .card .badge.has-logo,body[data-modern="1"] .badge{backgro
 .phone-feed .ph-who b{font-size:16px}
 body[data-modern="1"] .avatar img{filter:none}
 
-/* smaller players and name pills on the court so all ten fit */
-.pl{width:72px;gap:2px}
-.pl .avatar{width:48px;height:48px;border-width:2px}
-.pl .nm{font-size:10.5px;padding:0 6px;border-radius:7px}
-.pl .pp{min-width:17px;height:17px;font-size:10px;top:-3px;right:6px;padding:0 4px}
-.op{width:36px;height:36px;font-size:11px}
