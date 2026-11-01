@@ -206,6 +206,18 @@
     }
     var rest = (g.rest && g.rest[side]) || {};
     function out(i) { return T[i].s.pf >= 6 || (rest[T[i].p.id] || 0) > g.n; }
+    /* a player you chose to ride stays on the floor while the plan lasts */
+    var gm = g.mods && g.mods[side];
+    if (gm && gm.until > g.n && gm.focus) {
+      var fi = -1;
+      T.forEach(function (x, i) { if (x.p.id === gm.focus) fi = i; });
+      if (fi >= 0 && !out(fi) && base.indexOf(fi) < 0) {
+        base = base.slice();
+        var worst = 0;
+        base.forEach(function (b, k) { if (b > base[worst]) worst = k; });
+        base[worst] = fi;
+      }
+    }
     var res = [];
     base.forEach(function (i) {
       if (!out(i)) { res.push(i); return; }
