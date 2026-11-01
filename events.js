@@ -1,7 +1,14 @@
 /* NBA Eras daily event stack: headlines, radio, fan letters, rumours and conversations.
    Pure functions. Mood lives in save.mood so it is saved with the season. */
 (function (root) {
-  function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+  var recent = [];
+  function rnd(a) {
+    var pool = a;
+    if (a.length > 1 && typeof a[0] === 'string') { pool = a.filter(function (x) { return recent.indexOf(x) < 0; }); if (!pool.length) pool = a; }
+    var v = pool[Math.floor(Math.random() * pool.length)];
+    if (typeof v === 'string' && v.length > 14) { recent.push(v); if (recent.length > 140) recent.shift(); }
+    return v;
+  }
   function clamp(v) { return Math.max(0, Math.min(100, Math.round(v))); }
   function last(name) { var p = name.split(' '); return p[p.length - 1]; }
   function fill(t, d) { return t.replace(/\{(\w+)\}/g, function (m, k) { return d[k] !== undefined ? d[k] : m; }); }

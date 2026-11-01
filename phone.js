@@ -5,7 +5,14 @@
   var src = null, timer = null, allowed = false, last = '', lastApp = '';
   var OK = { 'screen-season': 1, 'screen-events': 1, 'screen-off': 1, 'screen-trade': 1, 'screen-roster': 1, 'screen-records': 1, 'screen-player': 1 };
 
-  function rnd(a) { return a[Math.floor(Math.random() * a.length)]; }
+  var recent = [];
+  function rnd(a) {
+    var pool = a;
+    if (a.length > 1 && typeof a[0] === 'string') { pool = a.filter(function (x) { return recent.indexOf(x) < 0; }); if (!pool.length) pool = a; }
+    var v = pool[Math.floor(Math.random() * pool.length)];
+    if (typeof v === 'string' && v.length > 14) { recent.push(v); if (recent.length > 140) recent.shift(); }
+    return v;
+  }
   function setSource(s) { src = s; }
   function nm(id) { var t = src.team(id); return t ? t.name : id; }
   function last3(name) { return String(name).split(' ').slice(-1)[0]; }
@@ -33,13 +40,13 @@
     var rec = recs[me];
     if (rec) outs.push(function () {
       var gp = rec.w + rec.l, hot = gp > 3 && rec.w / gp >= 0.6, cold = gp > 3 && rec.w / gp <= 0.4;
-      var msg = hot ? rnd(['Bandwagon is full. Sorry, no more seats.', 'OK this team is actually good??', 'Run it back. Do not touch the roster.'])
-        : cold ? rnd(['Fire everybody. Starting with the GM.', 'Is the front office even watching these games', 'Tank or trade. Pick one.'])
-        : rnd(['Honestly cannot tell what this team is yet', 'Need one more shooter. Just one.', 'Defence wins. Offence sells tickets. We have neither.']);
+      var msg = hot ? rnd(['Bandwagon is full. Sorry, no more seats.', 'OK this team is actually good??', 'Run it back. Do not touch the roster.', 'Tell me you are not loving this group. I will wait.', 'The arena was shaking tonight.', 'Playoff basketball in November. I am not ready.'])
+        : cold ? rnd(['Fire everybody. Starting with the GM.', 'Is the front office even watching these games', 'Tank or trade. Pick one.', 'I stayed for the whole game and I want a refund.', 'Somebody explain the rotations to me. Please.', 'This is not a slump, this is who they are.'])
+        : rnd(['Honestly cannot tell what this team is yet', 'Need one more shooter. Just one.', 'Defence wins. Offence sells tickets. We have neither.', 'Good in spurts. Great in none. Fix the middle.', 'Feels like one move away from something real.', 'Eight and eight and I have never felt so average.']);
       return { app: 'Mentions', c: '#F4511E', g: '@', title: rnd(['@section104_', '@hoopsfan88', '@upperbowl_dave', '@courtside_kay', '@lateshiftlarry']), text: msg };
     });
     outs.push(function () {
-      return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(['Film at 10. Bring coffee.', 'Boss, we need to talk about the second unit.', 'Starters look gassed. Thinking about a rest day.', 'Saw the tape. Their bigs hurt us on the glass.']) };
+      return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(['Film at 10. Bring coffee.', 'Boss, we need to talk about the second unit.', 'Starters look gassed. Thinking about a rest day.', 'Saw the tape. Their bigs hurt us on the glass.', 'We are getting beat in transition. Need a minute with you.', 'Thinking about a smaller lineup for the next one. Thoughts?', 'Practice was sharp today. The group is listening.', 'Their guards keep getting to the rim. We can fix it.']) };
     });
     outs.push(function () {
       return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(['Scouting: three names worth a look before the deadline.', 'Ticket sales are up this week.', 'Owner is asking about the cap sheet again.', 'Agent for a free agent called twice. Want me to ping back?']) };

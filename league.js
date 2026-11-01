@@ -466,6 +466,7 @@
     slot.player = p.id;
     if (!byId(save, p.id)) save.lg.players.push(p);
     d.at++;
+    if (root.Social && d.kind !== 'dispersal') root.Social.draftPick(save, p, slot);
     bump(save);
     return slot;
   }
