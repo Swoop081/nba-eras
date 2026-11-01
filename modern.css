@@ -343,7 +343,11 @@ body[data-modern="1"] .fc-name b{font-size:44px}
 body[data-modern="1"] .fc-out{display:inline-flex;justify-self:start;padding:7px 14px;border-radius:999px;background:color-mix(in srgb,var(--c) 38%,#1B1E29);color:#fff;font:700 15px var(--font)}
 
 /* banners sit under the header so the back button is always reachable */
-body[data-modern="1"] #phone-banners{top:calc(max(8px,env(safe-area-inset-top)) + 62px);left:12px;right:12px}
+body[data-modern="1"] #phone-banners{position:static;flex:0 0 100%;order:9;display:block;min-height:50px;margin:2px 0 0;z-index:auto}
+body[data-modern="1"] #phone-banners[hidden]{display:none}
+body[data-modern="1"] .bar{flex-wrap:wrap}
+body[data-modern="1"] #phone-banners .pb{box-shadow:none;background:var(--raised);animation:none}
+body[data-modern="1"] #phone-banners .pb-tx span{-webkit-line-clamp:1}
 
 /* club picker rows (trades): name over details, never stacked on top of each other */
 body[data-modern="1"] .card{flex:none}

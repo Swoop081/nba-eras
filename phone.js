@@ -56,6 +56,12 @@
     if (!h) { h = document.createElement('div'); h.id = 'phone-banners'; document.body.appendChild(h); }
     return h;
   }
+  /* notifications get their own row inside the header of the screen being shown, so they never cover anything */
+  function place(id) {
+    var h = host(), bar = document.querySelector('#' + id + ' .bar');
+    if (bar && h.parentNode !== bar) { h.textContent = ''; bar.appendChild(h); }
+    h.hidden = !bar;
+  }
 
   function buzz(n) {
     if (!n) return;
@@ -95,13 +101,14 @@
     timer = setTimeout(function () { one(); loop(); }, 6000 + Math.random() * 7000);
   }
 
-  function stop() { allowed = false; clearTimeout(timer); var h = document.getElementById('phone-banners'); if (h) h.textContent = ''; }
+  function stop() { allowed = false; clearTimeout(timer); var h = document.getElementById('phone-banners'); if (h) { h.textContent = ''; h.hidden = true; } }
 
   function onScreen(id) {
     var modern = document.body.dataset.modern === '1';
     if (!modern || !OK[id] || !src || !src.save()) { stop(); return; }
     var was = allowed;
     allowed = true;
+    place(id);
     if (!was || id === 'screen-season') {
       setTimeout(one, 1100);
       if (id === 'screen-season') setTimeout(one, 2800);
