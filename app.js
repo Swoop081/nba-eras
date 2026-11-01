@@ -195,25 +195,41 @@
   })();
 
   var eraList = document.getElementById('era-list');
-  // The game is built backwards from the present day: only the current season is shown for now.
-  // The founding-era entries stay in the code and come back as the history is rebuilt.
-  var SHOW_ALL_ERAS = false;
-  ERAS.forEach(function (era) {
-    if (!SHOW_ALL_ERAS && !era.current) return;
-    var card = el('button', 'card era');
-    card.type = 'button';
-    card.appendChild(el('span', 'year', era.years));
-    var text = el('span');
-    text.appendChild(el('strong', null, era.title));
-    text.appendChild(el('span', 'meta', era.blurb));
-    card.appendChild(text);
-    if (era.open) {
+  var eraBlurbs = {};
+  var eraDecade = '2020';
+  var decTabs = el('div', 'dec-tabs');
+  eraList.parentNode.insertBefore(decTabs, eraList);
+  function eraBlurb(era) { return eraBlurbs[era.id] && era.id !== '2026' ? eraBlurbs[era.id] : era.blurb; }
+  function buildEraList() {
+    eraList.textContent = '';
+    ERAS.filter(function (era) { return era.current && String(Math.floor(+era.id / 10) * 10) === eraDecade; }).forEach(function (era) {
+      var card = el('button', 'card era');
+      card.type = 'button';
+      card.appendChild(el('span', 'year', era.years));
+      var text = el('span');
+      text.appendChild(el('strong', null, era.title));
+      text.appendChild(el('span', 'meta', eraBlurb(era)));
+      card.appendChild(text);
       card.addEventListener('click', function () { openTeams(era); });
-    } else {
-      card.disabled = true;
-    }
-    eraList.appendChild(card);
-  });
+      eraList.appendChild(card);
+    });
+  }
+  (function () {
+    var decs = [];
+    ERAS.forEach(function (era) { if (era.current) { var d = String(Math.floor(+era.id / 10) * 10); if (decs.indexOf(d) < 0) decs.push(d); } });
+    decs.forEach(function (d) {
+      var b = el('button', d === eraDecade ? 'on' : '', d + 's');
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        eraDecade = d;
+        Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x === b); });
+        buildEraList();
+      });
+      decTabs.appendChild(b);
+    });
+    buildEraList();
+    fetch('data/era-blurbs.json').then(function (r) { return r.json(); }).then(function (j) { eraBlurbs = j; buildEraList(); }).catch(function () {});
+  })();
 
   /* ---------- team select ---------- */
   var teamList = document.getElementById('team-list');
@@ -323,8 +339,6 @@
     teamList.className = 'rails';
     var ranked = data.teams.slice().sort(function (a, b) { return b.rating - a.rating; });
     ranked.forEach(function (t, i) { t.rank = i + 1; });
-    var conf = 'Eastern';
-    var tabs = el('div', 'seg conf-tabs');
     var count = el('span', 'rail-count');
     var rail = el('div', 'rail');
     var cardEls = [];
@@ -339,7 +353,7 @@
     function build() {
       rail.textContent = '';
       cardEls = [];
-      var list = data.teams.filter(function (t) { return t.division === conf; }).sort(function (a, b) { return a.city < b.city ? -1 : 1; });
+      var list = data.teams.slice().sort(function (a, b) { return a.city < b.city ? -1 : 1; });
       list.forEach(function (team) {
         var c = el('article', 'fcard');
         c.style.setProperty('--c', team.colors ? team.colors[0] : '#888');
@@ -395,18 +409,7 @@
         if (best && best._team !== selected) pick(best, best._team);
       }, 60);
     });
-    ['Eastern', 'Western'].forEach(function (name) {
-      var b = el('button', name === conf ? 'on' : '', name + ' conference');
-      b.type = 'button';
-      b.addEventListener('click', function () {
-        conf = name;
-        Array.prototype.forEach.call(tabs.children, function (x) { x.classList.toggle('on', x === b); });
-        build();
-      });
-      tabs.appendChild(b);
-    });
     var head = el('div', 'rail-head');
-    head.appendChild(tabs);
     head.appendChild(count);
     teamList.appendChild(head);
     teamList.appendChild(rail);

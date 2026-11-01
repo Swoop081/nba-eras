@@ -192,7 +192,7 @@ body[data-modern="1"] .fc-out span{font-size:14px;line-height:1.35;color:var(--i
 body[data-modern="1"] .rail{align-items:center;padding-top:0;padding-bottom:96px}
 
 /* no instructions: the player knows how to play */
-body[data-modern="1"] .how,body[data-modern="1"] .card.era .meta{display:none!important}
+body[data-modern="1"] .how{display:none!important}
 
 /* ---------- the season hub: one screen ---------- */
 body[data-modern="1"] #screen-season{overflow:hidden}
@@ -406,3 +406,12 @@ body[data-modern="1"] .fc-ps b{font-size:16px;margin:0}
 body[data-modern="1"] .fc-ps small{font-size:9.5px;letter-spacing:.04em}
 body[data-modern="1"] .rail{align-items:flex-start;padding-top:6px}
 body[data-modern="1"] .fc-stats div{height:34px}
+
+/* era picker: decade tabs and a blurb under each era */
+body[data-modern="1"] .dec-tabs{display:flex;gap:6px;padding:2px 14px 10px;overflow-x:auto;scrollbar-width:none;flex:none}
+body[data-modern="1"] .dec-tabs::-webkit-scrollbar{display:none}
+body[data-modern="1"] .dec-tabs button{flex:none;padding:8px 14px;border-radius:999px;border:0;background:var(--raised);color:var(--muted);font:600 13.5px var(--font)}
+body[data-modern="1"] .dec-tabs button.on{background:var(--team);color:var(--on)}
+body[data-modern="1"] .card.era{align-items:flex-start}
+body[data-modern="1"] .card.era .meta{display:block;margin-top:4px;font:400 12.5px/1.35 var(--font);color:var(--muted)}
+body[data-modern="1"] .card.era .year{margin-top:2px}
