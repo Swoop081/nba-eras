@@ -1844,6 +1844,46 @@
     return Math.floor(secs / 60) + ':' + ('0' + (secs % 60)).slice(-2);
   }
 
+  /* timers that wait while a player sheet is open, then carry on where they left off */
+  function later(fn, ms) {
+    return setTimeout(function () { if (lv && lv.paused) lv.held = fn; else fn(); }, ms);
+  }
+  function resumeLive() {
+    if (!lv || !lv.paused) return;
+    lv.paused = false;
+    var f = lv.held; lv.held = null;
+    if (f && !lv.skip) f();
+  }
+  function openLivePlayer(p, mine) {
+    if (!lv || lv.skip || lv.g.over || lv.paused) return;
+    var g = lv.g, row = (mine ? g.H : g.A).filter(function (x) { return x.p.id === p.id; })[0], s = row ? row.s : null;
+    lv.paused = true;
+    var done = false;
+    function end() { if (done) return; done = true; resumeLive(); }
+    hubSheet(p.name, function (sh, close) {
+      sh.classList.add('lp');
+      var top = el('div', 'lp-top');
+      top.appendChild(makeAvatar(p));
+      var tx = el('div');
+      tx.appendChild(el('b', null, (p.pos || '') + (p.age ? ' \u00B7 age ' + p.age : '')));
+      tx.appendChild(el('small', null, (mine ? lv.me : lv.opp).city));
+      top.appendChild(tx);
+      sh.appendChild(top);
+      if (s) {
+        var box = el('div', 'lp-grid');
+        [['PTS', s.pts], ['REB', s.orb + s.drb], ['AST', s.ast], ['STL', s.stl], ['BLK', s.blk], ['TO', s.tov], ['FG', s.fg + '-' + s.fga], ['3PT', s.tp + '-' + s.tpa], ['FT', s.ft + '-' + s.fta], ['PF', s.pf]].forEach(function (k) {
+          var c = el('div'); c.appendChild(el('b', null, String(k[1]))); c.appendChild(el('small', null, k[0])); box.appendChild(c);
+        });
+        sh.appendChild(box);
+      }
+      var sa = statOf(p);
+      if (sa) sh.appendChild(el('p', 'sub', (sa.ls ? 'Last season: ' : 'This season: ') + sa.pts.toFixed(1) + ' pts \u00B7 ' + sa.trb.toFixed(1) + ' reb \u00B7 ' + sa.ast.toFixed(1) + ' ast'));
+      var b = el('button', 'btn primary wide', 'Back to the game'); b.type = 'button';
+      b.addEventListener('click', function () { close(); });
+      sh.appendChild(b);
+    }, end);
+  }
+
   function startLive(me, opp, mine, label) {
     var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
     lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
@@ -1889,6 +1929,7 @@
       attachFace(d, o);
       d.style.left = (full ? OP_FULL : OPP_SPOTS)[i][0] + '%';
       d.style.top = (full ? OP_FULL : OPP_SPOTS)[i][1] + '%';
+      (function (i2) { d.addEventListener('click', function () { openLivePlayer(lv.g.onA[slotIdx(lv.g.onA)[i2]].p, false); }); })(i);
       court.appendChild(d); lv.op.push(d);
       var b = el('button', 'pl');
       b.type = 'button';
@@ -1897,6 +1938,7 @@
       b.appendChild(makeAvatar(p));
       b.appendChild(el('span', 'nm', lastName(p.name)));
       var pp = el('span', 'pp', '0'); b.appendChild(pp);
+      (function (i2) { b.addEventListener('click', function () { if (b.classList.contains('pick')) return; openLivePlayer(lv.g.onH[slotIdx(lv.g.onH)[i2]].p, true); }); })(i);
       court.appendChild(b); lv.pl.push({ el: b, pp: pp });
     });
     lv.rank = full;
@@ -1905,7 +1947,7 @@
     document.getElementById('live-dock').textContent = '';
     skipButton();
     show('screen-live');
-    lv.timer = setTimeout(liveTick, 900);
+    lv.timer = later(liveTick, 900);
   }
 
   function skipButton() {
@@ -2135,7 +2177,7 @@
           g.mods.H = { focus: hp.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
           tickerLine('Ball to ' + lastName(hp.name) + '...', 'sys');
           skipButton();
-          lv.timer = setTimeout(liveTick, 700);
+          lv.timer = later(liveTick, 700);
         };
       });
       return;
@@ -2183,7 +2225,7 @@
         lv.plan = { label: o.t, n1: g.n + (built.win || o.win), my0: lv.da, op0: lv.db, tm0: lv.tovM, to0: lv.tovO, q: periodLabel(g) + ' ' + clockText(g), fx: fx0, fpts0: fx0 ? fx0.s.pts : 0, ffg0: fx0 ? fx0.s.fg : 0, ffga0: fx0 ? fx0.s.fga : 0 };
         tickerLine('Plan: ' + o.t + '.', 'sys');
         skipButton();
-        lv.timer = setTimeout(liveTick, 500);
+        lv.timer = later(liveTick, 500);
       });
       dock.appendChild(b);
     });
@@ -2258,15 +2300,15 @@
     showPoss(evs[0], true);
     checkFouledOut();
     updateLive();
-    lv.timer = setTimeout(function () {
+    lv.timer = later(function () {
       showPoss(evs[1], false);
       checkPlan();
       updateLive();
       if (g.over) {
         tickerLine('Final buzzer.', 'sys');
-        lv.timer = setTimeout(finishLive, 1100);
+        lv.timer = later(finishLive, 1100);
       } else {
-        lv.timer = setTimeout(liveTick, reduceMotion ? 60 : 200);
+        lv.timer = later(liveTick, reduceMotion ? 60 : 200);
       }
     }, reduceMotion ? 40 : 170);
   }
@@ -2951,12 +2993,12 @@
   }
   function refreshHub() { try { renderSeason(); } catch (e) {} }
 
-  function hubSheet(title, build) {
+  function hubSheet(title, build, onClose) {
     var ov = el('div', 'sheet-ov');
     var sh = el('div', 'sheet');
     sh.appendChild(el('h3', null, title));
-    build(sh, function () { ov.remove(); });
-    ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+    build(sh, function () { ov.remove(); if (onClose) onClose(); });
+    ov.addEventListener('click', function (e) { if (e.target === ov) { ov.remove(); if (onClose) onClose(); } });
     ov.appendChild(sh);
     document.body.appendChild(ov);
   }

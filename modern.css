@@ -557,3 +557,14 @@ body[data-modern="1"] .hr-row{display:grid;grid-template-columns:26px 1fr auto;g
 body[data-modern="1"] .hr-row i{font:700 9.5px var(--font);opacity:.55;font-style:normal}
 body[data-modern="1"] .hr-row em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body[data-modern="1"] .hr-row b{font-weight:800}
+
+/* live player sheet */
+body[data-modern="1"] .sheet.lp .lp-top{display:flex;align-items:center;gap:14px;margin:4px 0 12px}
+body[data-modern="1"] .sheet.lp .lp-top .avatar{width:104px;height:104px}
+body[data-modern="1"] .sheet.lp .lp-top b{font:700 15px var(--font)}
+body[data-modern="1"] .sheet.lp .lp-top small{display:block;opacity:.6;margin-top:2px}
+body[data-modern="1"] .lp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px 6px;margin-bottom:10px}
+body[data-modern="1"] .lp-grid div{text-align:center;background:rgba(255,255,255,.05);border-radius:12px;padding:8px 2px}
+body[data-modern="1"] .lp-grid b{display:block;font:800 18px var(--font)}
+body[data-modern="1"] .lp-grid small{font:700 9.5px var(--font);opacity:.55;letter-spacing:.08em}
+body[data-modern="1"] .sheet.lp .sub{margin:0 0 10px}
