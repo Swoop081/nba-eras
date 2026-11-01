@@ -287,6 +287,14 @@
     if (regular && ctx.standing) body.push(ctx.standing);
     else if (ctx.seriesLine) body.push(ctx.seriesLine + '.');
     out.story = body;
+    function boxOf(lines, city) {
+      var rows = lines.filter(function (l) { return l.s.pos > 0; }).slice().sort(function (a, b) { return (b.s.pos || 0) - (a.s.pos || 0); }).slice(0, 6).map(function (l) {
+        var s = l.s, mn = 0; return [l.name, s.pts, (s.orb || 0) + (s.drb || 0), s.ast, s.fg + '-' + s.fga];
+      });
+      return { city: city, rows: rows };
+    }
+    out.box = [boxOf(ctx.res.homeLines, ctx.me.city), boxOf(ctx.res.awayLines, ctx.opp.city)];
+    out.slug = (ctx.me.city + '-' + ctx.opp.city).toLowerCase().replace(/[^a-z]+/g, '-');
     out.deck = ctx.seriesLine || (won ? 'Another step forward for the club.' : 'The club will try to bounce back.');
 
     // photo candidates: the day's best performers, whoever they play for

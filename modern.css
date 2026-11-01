@@ -428,3 +428,15 @@ body[data-modern="1"] #phone-banners .pb-tx em{font-style:normal;font-size:12px;
 body[data-modern="1"] #phone-banners .pb-tx span{min-height:0}
 body[data-modern="1"] #phone-banners .pb.act .pb-tx span{-webkit-line-clamp:2}
 body[data-modern="1"] .dec-ctx{margin:0;font-size:12px;color:var(--muted);text-align:center}
+
+/* the recap is a website on your phone: address bar, site tabs, article */
+body[data-modern="1"] #ev-body .site{position:absolute;inset:0;display:flex;flex-direction:column;min-height:0}
+body[data-modern="1"] .site-bar{flex:none;display:flex;align-items:center;gap:8px;margin:0 2px 6px;padding:8px 14px;border-radius:999px;background:var(--raised);color:var(--muted);font:500 13px var(--font)}
+body[data-modern="1"] .site-lock{font-size:8px;color:#34C759}
+body[data-modern="1"] .site-url{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-modern="1"] .site-nav{flex:none;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin:0 0 6px;border-bottom:1px solid rgba(255,255,255,.08)}
+body[data-modern="1"] .site-nav::-webkit-scrollbar{display:none}
+body[data-modern="1"] .site-nav button{flex:none;padding:8px 12px;border:0;border-bottom:2px solid transparent;background:none;color:var(--muted);font:600 13.5px var(--font)}
+body[data-modern="1"] .site-nav button.on{color:var(--ink);border-bottom-color:var(--team)}
+body[data-modern="1"] #ev-body .site .hrail.recap{position:static;flex:1;min-height:0}
+body[data-modern="1"] .hrail.recap .hp-title{display:none}

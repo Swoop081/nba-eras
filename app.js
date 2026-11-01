@@ -3018,9 +3018,32 @@
       if (p4.length) pages.push({ title: 'Breaking', node: wrap(p4) });
       var p5 = secOf('Standings');
       if (p5.length) pages.push({ title: 'Standings', node: wrap(p5.map(function (x) { x.querySelector('h3').remove(); return x; })) });
+      var bx = el('div', 'rc phone-feed');
+      (ev.box || []).forEach(function (t) {
+        bx.appendChild(el('h3', 'box-title', t.city));
+        bx.appendChild(dataTable(['Player', 'PTS', 'REB', 'AST', 'FG'], t.rows));
+      });
+      if (ev.box && ev.box.length) pages.splice(2, 0, { title: 'Box score', node: bx });
       var rail = hubRail(pages);
       rail.classList.add('recap');
-      return rail;
+      var site = el('div', 'site');
+      var sbar = el('div', 'site-bar');
+      sbar.appendChild(el('span', 'site-lock', '\u25CF'));
+      sbar.appendChild(el('span', 'site-url', 'courtside.com/recap/' + (ev.slug || 'game')));
+      site.appendChild(sbar);
+      var snav = el('div', 'site-nav'), strack = rail.querySelector('.hrail-track');
+      pages.forEach(function (pg, i) {
+        var tb = el('button', i === 0 ? 'on' : '', pg.title || 'Recap'); tb.type = 'button';
+        tb.addEventListener('click', function () { strack.scrollTo({ left: i * (strack.firstChild.offsetWidth + 10), behavior: 'smooth' }); });
+        snav.appendChild(tb);
+      });
+      strack.addEventListener('scroll', function () {
+        var i = Math.round(strack.scrollLeft / (strack.firstChild.offsetWidth + 10));
+        Array.prototype.forEach.call(snav.children, function (b, k) { b.classList.toggle('on', k === i); if (k === i) b.scrollIntoView({ inline: 'center', block: 'nearest' }); });
+      });
+      site.appendChild(snav);
+      site.appendChild(rail);
+      return site;
     }
     return pg;
   }
