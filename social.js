@@ -6,7 +6,17 @@
   function lastN(n) { var s = String(n || '').split(' '); return s[s.length - 1]; }
   function fix(t, d) { return t.replace(/\{(\w+)\}/g, function (m, k) { return d[k] !== undefined ? d[k] : m; }); }
 
-  var INSIDER = [{ n: 'League Insider', h: 'leagueinsider' }, { n: 'Hoops Scoop', h: 'hoopsscoop' }, { n: 'Front Office Report', h: 'frontofficerpt' }, { n: 'The Trade Desk', h: 'thetradedesk' }];
+  /* Invented insiders. A veteran scooper owns the early social years and a younger successor takes the top spot later. */
+  var VARGA = { n: 'Dom Varga', h: 'DomVargaHoops' }, OKAFOR = { n: 'Idris Okafor', h: 'IdrisOkaforHoops' };
+  var INSIDER_REST = [{ n: 'Hoops Scoop', h: 'hoopsscoop' }, { n: 'Front Office Report', h: 'frontofficerpt' }, { n: 'The Trade Desk', h: 'thetradedesk' }, { n: 'Marisol Reyes', h: 'MarisolReyesNBA' }];
+  var curY = 2026;
+  function leadInsider(y) { return y >= 2018 ? OKAFOR : VARGA; }
+  var INSIDER = { pick: function () {
+    var r = Math.random(), lead = leadInsider(curY);
+    if (r < 0.62) return lead;
+    if (r < 0.7 && curY >= 2018 && curY <= 2022) return VARGA;
+    return rnd(INSIDER_REST);
+  } };
   var CAP = [{ n: 'Cap Sheet', h: 'capsheet' }, { n: 'Salary Desk', h: 'salarydesk' }];
   var STATS = [{ n: 'Hoops Numbers', h: 'hoopsnumbers' }, { n: 'Box Score Bureau', h: 'boxscorebureau' }];
   var MEDIA = [{ n: 'Courtside', h: 'courtside' }, { n: 'Hardwood Daily', h: 'hardwooddaily' }, { n: 'Nightly Hoops', h: 'nightlyhoops' }];
@@ -24,6 +34,7 @@
   function dayKey(save) { return save.phase === 'regular' ? save.day : 200 + (save.pd || 0); }
 
   function add(save, p) {
+    curY = save.year || curY;
     var f = feed(save);
     p.id = ++save.feedN;
     p.d = dayKey(save); p.dl = dl(save); p.m = 1 + Math.floor(Math.random() * 11); p.u = 1;
@@ -42,15 +53,17 @@
     if (!save || n.fed) return n.feedId || 0;
     n.fed = true;
     var role = n.app === 'Breaking' ? 'insider' : n.app === 'Mentions' ? 'fan' : n.app === 'Messages' ? 'dm' : n.app === 'Scores' ? 'media' : n.app === 'Clips' ? 'media' : n.app === 'Result' ? 'dm' : 'media';
-    var who = n.app === 'Breaking' ? (n.title || 'League Insider') : n.title;
+    curY = save.year || curY;
+    var who = n.app === 'Breaking' ? (n.title && n.title !== 'League Insider' ? n.title : leadInsider(curY).n) : n.title;
     var h = String(who).replace(/^@/, '').toLowerCase().replace(/[^a-z0-9_]+/g, '');
+    if (n.app === 'Breaking') { var known = [VARGA, OKAFOR].concat(INSIDER_REST).filter(function (a) { return a.n === who; })[0]; if (known) h = known.h; }
     if (n.app === 'Result') { who = 'Your decision'; h = 'frontoffice'; }
     n.feedId = add(save, { role: role, who: who, h: h, g: n.g, c: n.c, t: n.text + (n.note ? ' (' + n.note + ')' : ''), v: role === 'insider', act: n.act ? n.act.type : '', banner: 1 });
     return n.feedId;
   }
 
   /* ---------- post makers ---------- */
-  function acct(list) { return rnd(list); }
+  function acct(list) { return list.pick ? list.pick() : rnd(list); }
   function post(save, role, a, t, extra) {
     var p = { role: role, who: a.n, h: a.h, t: t, v: role !== 'fan' && role !== 'player' };
     if (a.tid) p.tid = a.tid;
@@ -231,5 +244,5 @@
   /* the feed only exists in the social-media era */
   function has(year) { return year >= 2009; }
 
-  root.Social = { has: has, add: add, fromBanner: fromBanner, day: day, react: react, capPost: capPost, unread: unread, markRead: markRead, feed: feed };
+  root.Social = { lead: function (y) { return leadInsider(y).n; }, has: has, add: add, fromBanner: fromBanner, day: day, react: react, capPost: capPost, unread: unread, markRead: markRead, feed: feed };
 })(window);

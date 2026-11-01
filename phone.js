@@ -28,7 +28,7 @@
     });
     if (mid.length) outs.push(function () {
       var p = rnd(mid), t = src.team(p.team);
-      return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'Sources: the ' + (t ? t.name : 'club') + ' have been fielding calls about ' + p.name + (/\.$/.test(p.name) ? '' : '.') + ' Nothing close, per league sources.' };
+      return { app: 'Breaking', c: '#D8232A', g: '!', title: lead(), text: 'Sources: the ' + (t ? t.name : 'club') + ' have been fielding calls about ' + p.name + (/\.$/.test(p.name) ? '' : '.') + ' Nothing close, per league sources.' };
     });
     var rec = recs[me];
     if (rec) outs.push(function () {
@@ -93,7 +93,7 @@
       var cand = mid.map(function (p) { return { p: p, why: root.League.shopReason(save, p) }; }).filter(function (c) { return c.why; });
       if (cand.length) outs.push(function () {
         var c = rnd(cand), p = c.p, t = src.team(p.team);
-        return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'The ' + (t ? t.name : 'club') + ' are fielding calls on ' + p.name + ' (' + (p.age || '') + ', ' + p.ratings.ovr + ' overall): ' + c.why + '.', act: { type: 'shop', pid: p.id, tid: p.team } };
+        return { app: 'Breaking', c: '#D8232A', g: '!', title: lead(), text: 'The ' + (t ? t.name : 'club') + ' are fielding calls on ' + p.name + ' (' + (p.age || '') + ', ' + p.ratings.ovr + ' overall): ' + c.why + '.', act: { type: 'shop', pid: p.id, tid: p.team } };
       });
     }
     var cap = save.lg.cap, pay = ros.concat(save.lg.players.filter(function (p) { return p.team === me && p.inj > 0; })).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
@@ -104,6 +104,8 @@
     });
     return outs.length ? rnd(outs)() : null;
   }
+
+  function lead() { return root.Social && root.Social.lead ? (root.Social.has(src.save().year) ? root.Social.lead(src.save().year) : 'League Insider') : 'League Insider'; }
 
   function host() {
     var h = document.getElementById('phone-banners');
