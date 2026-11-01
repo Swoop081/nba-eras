@@ -502,6 +502,25 @@
     return Math.max(1, v);
   }
 
+  /* Star value, 0.5 to 5, on one scale for the whole league: players and picks are ranked by the same trade value the AI uses. */
+  var starCache = { rev: -1, key: '', list: [] };
+  function starsVal(save, v) {
+    var k = save.lg.rev + ':' + save.year;
+    if (starCache.key !== k) {
+      starCache = { key: k, list: save.lg.players.filter(function (p) { return p.status === 'active'; }).map(function (p) { return tradeValue(p); }).sort(function (a, b) { return b - a; }) };
+    }
+    var l = starCache.list, n = 0;
+    while (n < l.length && l[n] > v) n++;
+    var scale = l.length / 450, cuts = [[12, 5], [25, 4.5], [50, 4], [90, 3.5], [150, 3], [220, 2.5], [300, 2], [380, 1.5], [450, 1]];
+    for (var i = 0; i < cuts.length; i++) if (n < cuts[i][0] * scale) return cuts[i][1];
+    return 0.5;
+  }
+  function starsOf(save, p) {
+    var st = starsVal(save, tradeValue(p));
+    if (franchise(p)) st = Math.max(st, (p.age || 26) <= 23 && p.pot >= 74 ? 4 : 3.5);
+    return st;
+  }
+
   function sum(list, f) { return list.reduce(function (a, p) { return a + f(p); }, 0); }
 
   /* me gives `give` players to `them` and gets `get`. Returns { ok, reason, ratio }. */
@@ -839,7 +858,7 @@
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
-    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
+    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,

@@ -488,3 +488,8 @@ body[data-modern="1"] .feedbtn.dot::after{content:attr(data-n);position:absolute
 
 body[data-modern="1"] .kpis{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
 body[data-modern="1"] .kpis .kpi b{font-size:20px}
+
+.stars{display:flex;gap:1px;font-size:11px;line-height:1;margin:1px 0 2px}
+.stars i{font-style:normal;color:#3a3d49}
+.stars i.f{color:#ffc247}
+.stars i.h{background:linear-gradient(90deg,#ffc247 50%,#3a3d49 50%);-webkit-background-clip:text;background-clip:text;color:transparent}

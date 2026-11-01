@@ -812,6 +812,7 @@
     head.appendChild(makeAvatar(p));
     var tx = el('span');
     tx.appendChild(el('strong', null, money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' yr' : ' yrs') + ' left')));
+    tx.appendChild(starsEl(League.starsOf(save, p)));
     tx.appendChild(el('span', 'meta', 'Potential ' + p.pot + (p.inj > 0 ? ' · injured, out ' + p.inj : '')));
     head.appendChild(tx);
     head.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
@@ -1067,6 +1068,7 @@
       card.appendChild(makeAvatar(p));
       var text = el('span');
       text.appendChild(el('strong', null, (team.id === save.myId ? (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ' : '') + p.name));
+      text.appendChild(starsEl(League.starsOf(save, p)));
       text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
@@ -3354,6 +3356,7 @@
     row.type = 'button';
     var tx = el('span');
     tx.appendChild(el('strong', null, League.pickLabel(k, teams)));
+    tx.appendChild(starsEl(League.starsVal(save, League.pickValue(save, k))));
     tx.appendChild(el('span', 'meta', (k.r === 1 ? '1st round' : '2nd round') + ' \u00B7 worth ~' + Math.round(League.pickValue(save, k))));
     row.appendChild(tx);
     row.addEventListener('click', onTap);
@@ -3572,11 +3575,18 @@
     return dock;
   }
 
+  function starsEl(v) {
+    var w = el('span', 'stars');
+    w.title = v + ' of 5';
+    for (var i = 1; i <= 5; i++) w.appendChild(el('i', v >= i ? 'f' : v >= i - 0.5 ? 'h' : '', '\u2605'));
+    return w;
+  }
   function personRow(p, metaLines, right) {
     var row = el('div', 'card');
     row.appendChild(makeAvatar(p));
     var tx = el('span');
     tx.appendChild(el('strong', null, p.name));
+    if (p.ratings && p.status === 'active') tx.appendChild(starsEl(League.starsOf(save, p)));
     metaLines.forEach(function (m) { tx.appendChild(el('span', 'meta', m)); });
     row.appendChild(tx);
     if (right) row.appendChild(right);
