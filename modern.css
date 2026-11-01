@@ -547,3 +547,13 @@ body[data-modern="1"] .court.full svg.lines .key{fill:color-mix(in srgb,var(--ho
 body[data-modern="1"] .court.full .cc-logo{top:11%;opacity:.55;width:44px;height:44px}
 body[data-modern="1"] .court.full .cc-logo .badge,body[data-modern="1"] .court.full .cc-logo .badge.has-logo{width:42px;height:42px}
 body[data-modern="1"] .court.full .op .opn{max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* half time report */
+body[data-modern="1"] .half-rep{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 10px;margin:0 0 4px;border-radius:14px;background:rgba(255,255,255,.05)}
+body[data-modern="1"] .hr-col{display:flex;flex-direction:column;gap:2px;min-width:0}
+body[data-modern="1"] .hr-col>b{font:800 13px var(--font);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .hr-col.r{text-align:left}
+body[data-modern="1"] .hr-row{display:grid;grid-template-columns:26px 1fr auto;gap:5px;align-items:baseline;font-size:12px}
+body[data-modern="1"] .hr-row i{font:700 9.5px var(--font);opacity:.55;font-style:normal}
+body[data-modern="1"] .hr-row em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .hr-row b{font-weight:800}

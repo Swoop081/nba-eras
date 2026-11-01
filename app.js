@@ -2142,6 +2142,23 @@
     }
     var built = buildOptions(spec);
     tickerLine(spec.kind === 'half' ? 'Halftime.' : 'Timeout.', 'sys');
+    if (spec.kind === 'half') {
+      var rep = el('div', 'half-rep');
+      [[lv.me, g.H, g.hs], [lv.opp, g.A, g.as]].forEach(function (t, i) {
+        var col = el('div', 'hr-col' + (i ? ' r' : ''));
+        var hd = el('b', null, t[0].city + ' ' + t[2]); col.appendChild(hd);
+        [['pts', 'PTS', function (s) { return s.pts; }], ['reb', 'REB', function (s) { return s.orb + s.drb; }], ['ast', 'AST', function (s) { return s.ast; }]].forEach(function (k) {
+          var best = t[1].slice().sort(function (u, v) { return k[2](v.s) - k[2](u.s); })[0];
+          var row = el('span', 'hr-row');
+          row.appendChild(el('i', null, k[1]));
+          row.appendChild(el('em', null, best && k[2](best.s) > 0 ? lastName(best.p.name) : '\u2013'));
+          row.appendChild(el('b', null, best ? String(k[2](best.s)) : '0'));
+          col.appendChild(row);
+        });
+        rep.appendChild(col);
+      });
+      dock.appendChild(rep);
+    }
     dock.appendChild(el('p', 'dec-title', built.title + ' ' + (spec.kind === 'half' || spec.kind === 'tempo' ? '' : '(' + when + ')')));
     var stk = stakesLine();
     if (stk) dock.appendChild(el('p', 'dec-ctx', stk));
