@@ -1434,7 +1434,7 @@
       rosterCache = {};
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60);
       Engine.setRules({});
-      League.init(save, pl.players, data.teams);
+      League.init(save, pl.players, data.teams, pl.dead);
       ensureTm();
       persist();
       renderSeason();
@@ -4171,7 +4171,7 @@
   }
 
   function offContracts(body, me) {
-    offHeader('Contracts', money(League.payroll(save, me.id)) + ' payroll · cap ' + money(save.lg.cap));
+    offHeader('Contracts', money(League.payroll(save, me.id)) + ' payroll' + (League.deadOf(save, me.id) ? ' (' + money(League.deadOf(save, me.id)) + ' dead)' : '') + ' · cap ' + money(save.lg.cap));
     var list = League.expiring(save, me.id);
     if (!list.length) {
       body.appendChild(el('p', 'sub', 'No contracts expire this year.'));
@@ -4394,7 +4394,7 @@
         save = data;
         Engine.setRules(save.rules);
         selected = teamById(save.myId);
-        if (!save.lg) League.init(save, res[1].players, res[0].teams);
+        if (!save.lg) League.init(save, res[1].players, res[0].teams, res[1].dead);
         League.tune(save);
         League.realContracts(save, res[1].players);
         ensureTm();

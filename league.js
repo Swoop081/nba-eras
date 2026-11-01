@@ -165,9 +165,9 @@
     return changed;
   }
 
-  function init(save, players, teams) {
+  function init(save, players, teams, dead) {
     setEra(save.year);
-    var lg = { rev: 0, cap: capFor(save.year), players: [], stats: {}, history: [], year: save.year, draft: null, off: null };
+    var lg = { rev: 0, cap: capFor(save.year), dead: dead ? JSON.parse(JSON.stringify(dead)) : {}, players: [], stats: {}, history: [], year: save.year, draft: null, off: null };
     players.forEach(function (p) {
       var q = JSON.parse(JSON.stringify(p));
       q.team = p.teamId; delete q.teamId;
@@ -200,7 +200,8 @@
 
   function active(save) { return save.lg.players.filter(function (p) { return p.status === 'active'; }); }
   function rosterOf(save, id) { return save.lg.players.filter(function (p) { return p.status === 'active' && p.team === id; }); }
-  function payroll(save, id) { return rosterOf(save, id).reduce(function (a, p) { return a + p.salary; }, 0); }
+  function deadOf(save, id) { return ((save.lg.dead || {})[id] || []).reduce(function (a, x) { return a + x.s; }, 0); }
+  function payroll(save, id) { return rosterOf(save, id).reduce(function (a, p) { return a + p.salary; }, 0) + deadOf(save, id); }
   function byId(save, id) { return save.lg.players.filter(function (p) { return p.id === id; })[0]; }
   function bump(save) { save.lg.rev++; }
 
@@ -289,6 +290,8 @@
 
   function newSeasonContracts(save) {
     save.lg.players.forEach(function (p) { if (p.status === 'active' && p.team) p.yrs = Math.max(0, p.yrs - 1); });
+    var dd = save.lg.dead || {};
+    Object.keys(dd).forEach(function (t) { dd[t] = dd[t].map(function (x) { return { n: x.n, s: x.s, y: x.y - 1 }; }).filter(function (x) { return x.y > 0; }); });
   }
 
   function logDeal(save, p, how, teamId) {
@@ -879,7 +882,7 @@
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
-    init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
+    init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
