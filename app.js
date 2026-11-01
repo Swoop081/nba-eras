@@ -1169,7 +1169,10 @@
         var cb = el('div', 'box');
         cb.appendChild(el('h3', 'box-title', 'Your calls'));
         res.calls.forEach(function (c) {
-          var r = el('p', 'sub', '“' + c.label + '”: ' + me.city + ' ' + c.my + ', ' + opp.city + ' ' + c.op + ' over the stretch. ' + c.verdict);
+          var r = el('div', 'call ' + (c.net >= 3 ? 'good' : c.net <= -3 ? 'bad' : 'flat'));
+          r.appendChild(el('b', null, '\u201C' + c.label + '\u201D' + (c.q ? ' \u00B7 ' + c.q : '')));
+          r.appendChild(el('span', null, me.city + ' ' + c.my + ', ' + opp.city + ' ' + c.op + ' over the stretch. ' + c.verdict));
+          if (c.line) r.appendChild(el('small', null, c.line));
           cb.appendChild(r);
         });
         bodyEl.appendChild(cb);
@@ -1820,7 +1823,8 @@
         if (o.extra.rest) { var rm = Events.pm(save, o.extra.rest); rm.m = Math.max(0, rm.m - 2); }
         g.mods.H = m;
         if (o.extra.rest) g.rest.H[o.extra.rest] = g.n + o.extra.restN;
-        lv.plan = { label: o.t, n1: g.n + (built.win || o.win), my0: lv.da, op0: lv.db, tm0: lv.tovM, to0: lv.tovO };
+        var fx0 = m.focus ? g.H.filter(function (x) { return x.p.id === m.focus; })[0] : null;
+        lv.plan = { label: o.t, n1: g.n + (built.win || o.win), my0: lv.da, op0: lv.db, tm0: lv.tovM, to0: lv.tovO, q: periodLabel(g) + ' ' + clockText(g), fx: fx0, fpts0: fx0 ? fx0.s.pts : 0, ffg0: fx0 ? fx0.s.fg : 0, ffga0: fx0 ? fx0.s.fga : 0 };
         tickerLine('Plan: ' + o.t + '.', 'sys');
         skipButton();
         lv.timer = setTimeout(liveTick, 500);
@@ -1863,7 +1867,14 @@
     lv.plan = null;
     var my = lv.da - p.my0, op = lv.db - p.op0, net = my - op;
     var verdict = net >= 3 ? 'It worked.' : net <= -3 ? 'It backfired.' : 'A wash.';
-    lv.calls.push({ label: p.label, my: my, op: op, net: net, verdict: verdict });
+    var fl = '';
+    if (p.fx) {
+      var fp = p.fx.s.pts - p.fpts0, ffg = p.fx.s.fg - p.ffg0, ffa = p.fx.s.fga - p.ffga0;
+      fl = lastName(p.fx.p.name) + ': ' + fp + ' pts on ' + ffg + '-' + ffa + ' shooting' + (fp >= 9 ? ' \u2014 he delivered' : fp <= 3 ? ' \u2014 he did not deliver' : '');
+      if (fp >= 9 && net < 3) verdict = 'He produced, the rest did not follow.';
+      else if (fp <= 3 && net > -3) verdict = 'It did not pay off.';
+    }
+    lv.calls.push({ label: p.label, my: my, op: op, net: net, verdict: verdict, q: p.q, line: fl });
     var cm = Events.mood(save);
     cm.coach = Math.max(0, Math.min(100, cm.coach + (net >= 3 ? 1 : net <= -3 ? -1 : 0)));
     var tm = lv.tovM - p.tm0, to = lv.tovO - p.to0;

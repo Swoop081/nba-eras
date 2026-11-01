@@ -440,3 +440,10 @@ body[data-modern="1"] .site-nav button{flex:none;padding:8px 12px;border:0;borde
 body[data-modern="1"] .site-nav button.on{color:var(--ink);border-bottom-color:var(--team)}
 body[data-modern="1"] #ev-body .site .hrail.recap{position:static;flex:1;min-height:0}
 body[data-modern="1"] .hrail.recap .hp-title{display:none}
+
+body[data-modern="1"] .call{display:grid;gap:3px;padding:12px 14px;margin:8px 0;border-radius:14px;background:var(--card);border-left:4px solid var(--muted)}
+body[data-modern="1"] .call.good{border-left-color:#34C759}
+body[data-modern="1"] .call.bad{border-left-color:#E5484D}
+body[data-modern="1"] .call b{font-size:15px}
+body[data-modern="1"] .call span{font-size:14px;color:var(--ink)}
+body[data-modern="1"] .call small{font-size:13px;color:var(--muted)}
