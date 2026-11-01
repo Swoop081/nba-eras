@@ -1786,6 +1786,8 @@
     var built = buildOptions(spec);
     tickerLine(spec.kind === 'half' ? 'Halftime.' : 'Timeout.', 'sys');
     dock.appendChild(el('p', 'dec-title', built.title + ' ' + (spec.kind === 'half' || spec.kind === 'tempo' ? '' : '(' + when + ')')));
+    var stk = stakesLine();
+    if (stk) dock.appendChild(el('p', 'dec-ctx', stk));
     built.opts.forEach(function (o, i) {
       var b = el('button', 'btn opt' + (i === 0 ? ' primary' : ''));
       b.type = 'button';
@@ -1793,6 +1795,14 @@
       b.appendChild(el('small', null, o.s));
       b.addEventListener('click', function () {
         var m = scaleMods(o.mods); m.until = g.n + (built.win || o.win);
+        /* the room has a say: a happy player is locked in, an unhappy one forces it, and he remembers whether you trusted him */
+        if (m.focus) {
+          var fm = Events.pm(save, m.focus), fp = g.onH.filter(function (x) { return x.p.id === m.focus; })[0];
+          if (fm.m >= 72) { m.fgMul = (m.fgMul || 1) * 1.02; if (fp) tickerLine(lastName(fp.p.name) + ' is locked in.', 'sys'); }
+          else if (fm.m < 42) { m.tovAdd = (m.tovAdd || 0) + 0.03; if (fp) tickerLine(lastName(fp.p.name) + ' is frustrated and may force it.', 'sys'); }
+          fm.m = Math.min(100, fm.m + 2); fm.t = Math.min(100, fm.t + 1);
+        }
+        if (o.extra.rest) { var rm = Events.pm(save, o.extra.rest); rm.m = Math.max(0, rm.m - 2); }
         g.mods.H = m;
         if (o.extra.rest) g.rest.H[o.extra.rest] = g.n + o.extra.restN;
         lv.plan = { label: o.t, n1: g.n + (built.win || o.win), my0: lv.da, op0: lv.db, tm0: lv.tovM, to0: lv.tovO };
@@ -1813,6 +1823,25 @@
     return m;
   }
 
+  /* what is riding on this game, in one line */
+  function stakesLine() {
+    var me = save.myId, rec = save.rec[me];
+    if (save.phase === 'playoffs' && save.playoffs) {
+      var s = save.playoffs.rounds[save.playoffs.round].filter(function (x) { return x.a === me || x.b === me; })[0];
+      if (s) {
+        var mine = s.a === me ? s.w[0] : s.w[1], theirs = s.a === me ? s.w[1] : s.w[0], need = Math.ceil((s.best || 7) / 2);
+        return 'Game ' + (mine + theirs + 1) + ' \u00B7 ' + (mine === theirs ? 'series tied ' + mine + '-' + theirs : mine > theirs ? 'you lead ' + mine + '-' + theirs : 'you trail ' + theirs + '-' + mine) + (theirs === need - 1 ? ' \u00B7 facing elimination' : mine === need - 1 ? ' \u00B7 a win closes it out' : '');
+      }
+    }
+    if (save.phase === 'regular' && rec) {
+      var st = Season.standings(save), dv = save.tm[me].division, rank = 0;
+      (st[dv] || []).forEach(function (t, i) { if (t.id === me) rank = i + 1; });
+      var left = gamesFor(me) - rec.w - rec.l;
+      return rec.w + '-' + rec.l + ' \u00B7 ' + ordinal(rank) + ' in the ' + dv + ' \u00B7 ' + left + ' games left' + (save.owner ? ' \u00B7 owner wants: ' + save.owner.text.toLowerCase() : '');
+    }
+    return '';
+  }
+
   function checkPlan() {
     var g = lv.g, p = lv.plan;
     if (!p || g.n < p.n1) return;
@@ -1820,6 +1849,8 @@
     var my = lv.da - p.my0, op = lv.db - p.op0, net = my - op;
     var verdict = net >= 3 ? 'It worked.' : net <= -3 ? 'It backfired.' : 'A wash.';
     lv.calls.push({ label: p.label, my: my, op: op, net: net, verdict: verdict });
+    var cm = Events.mood(save);
+    cm.coach = Math.max(0, Math.min(100, cm.coach + (net >= 3 ? 1 : net <= -3 ? -1 : 0)));
     var tm = lv.tovM - p.tm0, to = lv.tovO - p.to0;
     tickerLine('"' + p.label + '": ' + lv.me.city + ' ' + my + ', ' + lv.opp.city + ' ' + op + ' since. Giveaways: you ' + tm + ', them ' + to + '. ' + verdict, 'sys');
   }

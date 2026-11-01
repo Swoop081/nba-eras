@@ -427,3 +427,4 @@ body[data-modern="1"] #phone-banners .pb.res{border:1px solid rgba(52,199,89,.5)
 body[data-modern="1"] #phone-banners .pb-tx em{font-style:normal;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body[data-modern="1"] #phone-banners .pb-tx span{min-height:0}
 body[data-modern="1"] #phone-banners .pb.act .pb-tx span{-webkit-line-clamp:2}
+body[data-modern="1"] .dec-ctx{margin:0;font-size:12px;color:var(--muted);text-align:center}

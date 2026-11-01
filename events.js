@@ -279,6 +279,10 @@
       body.push(h1 === h2 ? 'The clubs were level at the half, ' + h1 + ' apiece.' : (h1 > h2 ? ctx.me.city + ' led at the half, ' + h1 + '-' + h2 : ctx.opp.city + ' led at the half, ' + h2 + '-' + h1) + (won === (h1 > h2) ? ' and never let go.' : ', but the second half changed the story.'));
     }
     body.push(star.name + ' paced ' + ctx.me.city + ' with ' + star.s.pts + ' points, hitting ' + star.s.fg + ' of ' + star.s.fga + ' from the floor' + (star.s.fta ? ' and ' + star.s.ft + ' of ' + star.s.fta + ' at the line' : '') + '.' + (oppLines[0].s.pts >= 15 ? ' For ' + ctx.opp.city + ', ' + oppLines[0].name + ' scored ' + oppLines[0].s.pts + '.' : ''));
+    if (ctx.res.calls && ctx.res.calls.length) {
+      var best = ctx.res.calls.slice().sort(function (x, y) { return Math.abs(y.net) - Math.abs(x.net); })[0];
+      body.push('The coach and the front office made a call: "' + best.label + '." ' + (best.net >= 3 ? 'It worked: ' + ctx.me.city + ' outscored ' + ctx.opp.city + ' ' + best.my + '-' + best.op + ' over the stretch.' : best.net <= -3 ? 'It backfired: ' + ctx.opp.city + ' won the stretch ' + best.op + '-' + best.my + '.' : 'It made little difference either way.'));
+    }
     if (regular && ctx.standing) body.push(ctx.standing);
     else if (ctx.seriesLine) body.push(ctx.seriesLine + '.');
     out.story = body;
