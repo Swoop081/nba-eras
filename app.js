@@ -3034,9 +3034,11 @@
       var secs = kids;
       function wrap(list) { var d = el('div', 'rc phone-feed'); list.forEach(function (n) { d.appendChild(n); }); return d; }
       function secOf(name) { return secs.filter(function (k) { var h = k.querySelector('h3'); return h && h.textContent === name; }); }
-      pages.push({ title: '', node: wrap(first) });
+      for (var si = 0; si < 3 && story.length > 1; si++) first.push(story.shift());
+      var pg1 = wrap(first); pg1.classList.add('article');
+      pages.push({ title: '', node: pg1 });
       var p2 = story.concat(secOf('Highlight'));
-      if (p2.length) pages.push({ title: 'The game', node: wrap(p2) });
+      if (p2.length) { var pg2 = wrap(p2); pg2.classList.add('article'); pages.push({ title: 'The game', node: pg2 }); }
       var p3 = secOf('Around the league');
       if (p3.length) pages.push({ title: 'Around the league', node: wrap(p3.map(function (x) { x.querySelector('h3').remove(); return x; })) });
       var p4 = secOf('Breaking').concat(secOf('Injury report'));

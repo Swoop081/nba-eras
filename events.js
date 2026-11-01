@@ -272,18 +272,35 @@
     var myLines = ctx.res.homeLines.slice().sort(function (a, b) { return b.s.pts - a.s.pts; });
     var oppLines = ctx.res.awayLines.slice().sort(function (a, b) { return b.s.pts - a.s.pts; });
     var won = ctx.us > ctx.them, margin = Math.abs(ctx.us - ctx.them), star = myLines[0];
-    var s1 = ctx.me.city + ' (' + recOf(ctx.me.id) + ') ' + (won ? 'defeated' : 'fell to') + ' ' + ctx.opp.city + ' (' + recOf(ctx.opp.id) + '), ' + Math.max(ctx.us, ctx.them) + '-' + Math.min(ctx.us, ctx.them) + ', in front of a ' + (margin <= 4 ? 'roaring' : 'good-sized') + ' crowd at ' + (v.hall || 'the arena') + '.';
+    var C = ctx.me.city, O = ctx.opp.city, hi = Math.max(ctx.us, ctx.them), lo = Math.min(ctx.us, ctx.them), rc = recOf(ctx.me.id), ro = recOf(ctx.opp.id);
+    var cls = margin <= 4 ? 'close' : margin >= 18 ? 'blow' : 'normal';
+    var L = {
+      winclose: [C + ' (' + rc + ') needed every possession to get past ' + O + ' (' + ro + '), ' + hi + '-' + lo + '.', 'It came down to the last few trips, and ' + C + ' (' + rc + ') made just enough to beat ' + O + ', ' + hi + '-' + lo + '.', C + ' held on. ' + O + ' (' + ro + ') pushed all night and still fell, ' + hi + '-' + lo + '.', 'A nervy finish, but ' + C + ' (' + rc + ') walked out with it, ' + hi + '-' + lo + ' over ' + O + '.'],
+      winblow: [C + ' (' + rc + ') were never troubled, running ' + O + ' (' + ro + ') out of the building, ' + hi + '-' + lo + '.', 'This one was over early. ' + C + ' (' + rc + ') cruised past ' + O + ', ' + hi + '-' + lo + '.', O + ' (' + ro + ') had no answers as ' + C + ' ran away with it, ' + hi + '-' + lo + '.'],
+      win: [C + ' (' + rc + ') took care of ' + O + ' (' + ro + '), ' + hi + '-' + lo + '.', C + ' got the job done against ' + O + ', ' + hi + '-' + lo + ', and moved to ' + rc + '.', 'A solid night for ' + C + ' (' + rc + '), who beat ' + O + ' ' + hi + '-' + lo + '.', O + ' (' + ro + ') stayed within reach for a while, but ' + C + ' pulled clear to win ' + hi + '-' + lo + '.'],
+      lossclose: [O + ' (' + ro + ') edged ' + C + ' (' + rc + '), ' + hi + '-' + lo + ', in a game that could have gone either way.', C + ' (' + rc + ') had its chances and could not finish. ' + O + ' won ' + hi + '-' + lo + '.', 'So close. ' + C + ' (' + rc + ') fell to ' + O + ', ' + hi + '-' + lo + ', on the last few possessions.'],
+      lossblow: [O + ' (' + ro + ') made it look easy against ' + C + ' (' + rc + '), ' + hi + '-' + lo + '.', 'A night to forget for ' + C + ' (' + rc + '), run off the floor by ' + O + ', ' + hi + '-' + lo + '.', C + ' never found its legs. ' + O + ' won going away, ' + hi + '-' + lo + '.'],
+      loss: [C + ' (' + rc + ') fell to ' + O + ' (' + ro + '), ' + hi + '-' + lo + '.', O + ' (' + ro + ') got the better of ' + C + ', ' + hi + '-' + lo + ', and the club drops to ' + rc + '.', 'It was not ' + C + '\'s night. ' + O + ' won ' + hi + '-' + lo + '.']
+    };
+    var s1 = rnd(L[(won ? 'win' : 'loss') + (cls === 'close' ? 'close' : cls === 'blow' ? 'blow' : '')]) ;
     var body = [s1];
     var q = ctx.res.quarters;
     if (q && q.length >= 2) {
-      var h1 = q[0][0] + q[1][0], h2 = q[0][1] + q[1][1];
-      body.push(h1 === h2 ? 'The clubs were level at the half, ' + h1 + ' apiece.' : (h1 > h2 ? ctx.me.city + ' led at the half, ' + h1 + '-' + h2 : ctx.opp.city + ' led at the half, ' + h2 + '-' + h1) + (won === (h1 > h2) ? ' and never let go.' : ', but the second half changed the story.'));
+      var h1 = q[0][0] + q[1][0], h2 = q[0][1] + q[1][1], lead = h1 - h2, held = won === (h1 > h2);
+      var hl = h1 === h2 ? rnd(['The clubs went to the break level at ' + h1 + '.', 'Nothing between them at the half, ' + h1 + ' apiece.'])
+        : lead > 0 ? (won ? rnd([C + ' led ' + h1 + '-' + h2 + ' at the half and kept its foot down.', C + ' went into the break up ' + lead + ' and never let go.', 'A ' + h1 + '-' + h2 + ' halftime lead was all ' + C + ' needed.']) : rnd([C + ' led ' + h1 + '-' + h2 + ' at the half, but the second half told a different story.', 'The ' + lead + '-point halftime lead for ' + C + ' did not last.']))
+        : (won ? rnd([C + ' trailed ' + h2 + '-' + h1 + ' at the half and came roaring back.', 'Down ' + (-lead) + ' at the break, ' + C + ' flipped the game in the third quarter.']) : rnd([O + ' led ' + h2 + '-' + h1 + ' at the half and held the edge.', 'A ' + (-lead) + '-point deficit at halftime proved too much for ' + C + '.']));
+      body.push(hl);
     }
-    body.push(star.name + ' paced ' + ctx.me.city + ' with ' + star.s.pts + ' points, hitting ' + star.s.fg + ' of ' + star.s.fga + ' from the floor' + (star.s.fta ? ' and ' + star.s.ft + ' of ' + star.s.fta + ' at the line' : '') + '.' + (oppLines[0].s.pts >= 15 ? ' For ' + ctx.opp.city + ', ' + oppLines[0].name + ' scored ' + oppLines[0].s.pts + '.' : ''));
-    if (ctx.res.calls && ctx.res.calls.length) {
-      var best = ctx.res.calls.slice().sort(function (x, y) { return Math.abs(y.net) - Math.abs(x.net); })[0];
-      body.push('The coach and the front office made a call: "' + best.label + '." ' + (best.net >= 3 ? 'It worked: ' + ctx.me.city + ' outscored ' + ctx.opp.city + ' ' + best.my + '-' + best.op + ' over the stretch.' : best.net <= -3 ? 'It backfired: ' + ctx.opp.city + ' won the stretch ' + best.op + '-' + best.my + '.' : 'It made little difference either way.'));
-    }
+    var sr = star.s, sreb = (sr.orb || 0) + (sr.drb || 0), dd = [sr.pts, sreb, sr.ast, sr.stl, sr.blk].filter(function (x) { return x >= 10; }).length >= 2;
+    var shoot = sr.fg + ' of ' + sr.fga + ' from the floor' + (sr.fta ? ' and ' + sr.ft + ' of ' + sr.fta + ' at the line' : '');
+    var oppTop = oppLines[0], oppS = oppTop.s.pts >= 15 ? rnd([' For ' + O + ', ' + oppTop.name + ' scored ' + oppTop.s.pts + '.', ' ' + oppTop.name + ' kept ' + O + ' alive with ' + oppTop.s.pts + '.', ' ' + oppTop.name + ' answered with ' + oppTop.s.pts + ' for ' + O + '.']) : '';
+    body.push(rnd([
+      star.name + ' paced ' + C + ' with ' + sr.pts + ' points (' + shoot + ').',
+      star.name + ' led the way: ' + sr.pts + ' points on ' + shoot + '.',
+      dd ? star.name + ' filled the stat sheet with ' + sr.pts + ' points, ' + sreb + ' rebounds and ' + sr.ast + ' assists.' : 'It was ' + star.name + ' who carried the scoring, ' + sr.pts + ' points, ' + shoot + '.',
+      sr.pts >= 30 ? star.name + ' was unstoppable, ' + sr.pts + ' points, ' + shoot + '.' : star.name + ' did most of the damage with ' + sr.pts + ' points.'
+    ]) + oppS);
     if (regular && ctx.standing) body.push(ctx.standing);
     else if (ctx.seriesLine) body.push(ctx.seriesLine + '.');
     out.story = body;
@@ -295,7 +312,8 @@
     }
     out.box = [boxOf(ctx.res.homeLines, ctx.me.city), boxOf(ctx.res.awayLines, ctx.opp.city)];
     out.slug = (ctx.me.city + '-' + ctx.opp.city).toLowerCase().replace(/[^a-z]+/g, '-');
-    out.deck = ctx.seriesLine || (won ? 'Another step forward for the club.' : 'The club will try to bounce back.');
+    var stk = regular ? streakOf(save, ctx.me.id) : { n: 0 };
+    out.deck = ctx.seriesLine || (stk.n >= 3 && stk.win ? rnd(['That makes ' + ordinal(stk.n) + ' straight for ' + ctx.me.city + '.', ordinal(stk.n) + ' in a row and the confidence is showing.']) : stk.n >= 3 && stk.win === false ? rnd(['The losing run reaches ' + ordinal(stk.n) + '. Questions are coming.', ordinal(stk.n) + ' straight defeats and the pressure is on.']) : won ? rnd(['A step forward for ' + ctx.me.city + '.', 'The kind of win a club can build on.', 'One more for the ledger.', margin >= 15 ? 'A statement from ' + ctx.me.city + '.' : 'Not pretty, but it counts.']) : rnd(['The club has work to do.', 'Back to the drawing board.', margin <= 4 ? 'Close, but close does not count.' : 'A night the club will want to forget.', 'Time to regroup.']));
 
     // photo candidates: the day's best performers, whoever they play for
     // The photo sits under the lead story, so it must come from that game: our top scorer, then theirs.
@@ -310,10 +328,10 @@
 
     // feat of the day
     if (feat) {
-      var hi = save.lg.high || { pts: 0 };
+      var hiRec = save.lg.high || { pts: 0 };
       var fr = feat.name + ' of ' + names(feat.team) + ' scored ' + feat.pts + ' points, ' + feat.fg + ' of ' + feat.fga + ' from the floor' + (feat.fta ? ' and ' + feat.ft + ' of ' + feat.fta + ' from the line' : '') + '.';
-      if (regular && feat.pts > hi.pts) { fr += hi.pts ? ' It is the best single night of the season, topping ' + hi.name + '’s ' + hi.pts + '.' : ''; save.lg.high = { pts: feat.pts, name: feat.name }; }
-      else if (regular && hi.pts) fr += ' The season high remains ' + hi.pts + ', by ' + hi.name + '.';
+      if (regular && feat.pts > hiRec.pts) { fr += hiRec.pts ? ' It is the best single night of the season, topping ' + hiRec.name + '’s ' + hiRec.pts + '.' : ''; save.lg.high = { pts: feat.pts, name: feat.name }; }
+      else if (regular && hiRec.pts) fr += ' The season high remains ' + hiRec.pts + ', by ' + hiRec.name + '.';
       out.feat = fr;
     }
 
@@ -330,8 +348,8 @@
     day.forEach(function (g) {
       var m = Math.abs(g.hs - g.as), w = g.hs > g.as ? g.home : g.away, l2 = w === g.home ? g.away : g.home;
       if (g.mine) return;
-      if (m <= 3) briefs.push({ h: 'Down to the wire', t: names(w) + ' held off ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + ', in a game decided in the closing seconds.' });
-      else if (m >= 18) briefs.push({ h: 'Rout', t: names(w) + ' ran ' + names(l2) + ' off the floor, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + ', a margin of ' + m + '.' });
+      if (m <= 3) briefs.push(rnd([{ h: 'Down to the wire', t: names(w) + ' held off ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Nail-biter', t: names(l2) + ' had the last look but ' + names(w) + ' survived, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Late drama', t: 'It went to the final possession before ' + names(w) + ' edged ' + names(l2) + '.' }]));
+      else if (m >= 18) briefs.push(rnd([{ h: 'Rout', t: names(w) + ' ran ' + names(l2) + ' off the floor, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Blowout', t: names(l2) + ' never got going in a ' + m + '-point loss to ' + names(w) + '.' }, { h: 'No contest', t: names(w) + ' by ' + m + '. ' + names(l2) + ' will want this one back.' }, { h: 'Statement', t: names(w) + ' made a point against ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }]));
     });
     if (margin <= 3) briefs.unshift({ h: 'Down to the wire', t: 'Our own game was decided by ' + (margin === 1 ? 'a single point' : ordinal(margin) + ' points') + '.' });
     else if (margin >= 18) briefs.unshift({ h: 'Rout', t: (won ? ctx.me.city : ctx.opp.city) + ' won by ' + margin + '.' });
@@ -351,8 +369,8 @@
         [g.home, g.away].forEach(function (id) {
           if (seen[id]) return; seen[id] = 1;
           var s = streakOf(save, id);
-          if (s.win && s.n >= 4) briefs.push({ h: 'Hot streak', t: names(id) + ' have won ' + ordinal(s.n) + ' in a row.' });
-          else if (s.win === false && s.n >= 5) briefs.push({ h: 'Slump', t: names(id) + ' have lost ' + ordinal(s.n) + ' straight.' });
+          if (s.win && s.n >= 4) briefs.push(rnd([{ h: 'Hot streak', t: names(id) + ' have won ' + ordinal(s.n) + ' in a row.' }, { h: 'Rolling', t: names(id) + ' extend their winning streak to ' + ordinal(s.n) + '.' }, { h: 'Who can stop them?', t: ordinal(s.n) + ' straight wins for ' + names(id) + '.' }]));
+          else if (s.win === false && s.n >= 5) briefs.push(rnd([{ h: 'Slump', t: names(id) + ' have lost ' + ordinal(s.n) + ' straight.' }, { h: 'Skid', t: names(id) + ' cannot buy a win: ' + ordinal(s.n) + ' defeats in a row.' }, { h: 'Trouble', t: names(id) + ' are in a freefall after ' + ordinal(s.n) + ' straight losses.' }]));
         });
       });
       var st2 = Season.standings(save);

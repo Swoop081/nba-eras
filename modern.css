@@ -447,3 +447,15 @@ body[data-modern="1"] .call.bad{border-left-color:#E5484D}
 body[data-modern="1"] .call b{font-size:15px}
 body[data-modern="1"] .call span{font-size:14px;color:var(--ink)}
 body[data-modern="1"] .call small{font-size:13px;color:var(--muted)}
+
+/* recap pages read like an article: a small portrait with the text wrapping round it */
+body[data-modern="1"] .rc{padding:2px 14px 12px}
+body[data-modern="1"] .rc.article{display:flow-root}
+body[data-modern="1"] .rc.article .pp-photo{float:left;width:108px;margin:2px 14px 6px 0}
+body[data-modern="1"] .rc.article .pp-photo img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:50% 10%;border-radius:14px}
+body[data-modern="1"] .rc.article .pp-cap{display:none}
+body[data-modern="1"] .rc.article .pp-p{margin:0 0 10px}
+body[data-modern="1"] .rc.article .pp-head{font-size:24px;margin:6px 0 6px}
+body[data-modern="1"] .rc.article .pp-deck{margin:0 0 10px;color:var(--muted)}
+body[data-modern="1"] .rc.article .pp-sec{display:flow-root;margin-top:6px}
+body[data-modern="1"] .rc.article .pp-sec h3{margin:6px 0}
