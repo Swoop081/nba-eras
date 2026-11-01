@@ -1450,7 +1450,249 @@
     var label = save.phase === 'regular'
       ? 'Game ' + (save.rec[me.id].w + save.rec[me.id].l + 1) + ' · ' + (mine.home === me.id ? 'home' : 'away')
       : Season.roundInfo(save, mine.round).name;
-    startLive(me, opp, mine, label);
+    openPregame(me, opp, mine, label);
+  }
+
+
+  /* ---------- tonight: starters and keys to the game ---------- */
+  var KEYTPL = {
+    hot: [
+      function (c) { return c.n + ' is averaging ' + c.a3 + ' points over his last three, against ' + c.pp + ' on the season.'; },
+      function (c) { return c.n + ' has scored ' + c.list + ' in his last three. ' + c.t + ' have not found an answer.'; },
+      function (c) { return c.t + ' come in with ' + c.n + ' on a run, ' + c.a3 + ' a night over his last three.'; },
+      function (c) { return 'Watch ' + c.n + '. ' + c.a3 + ' points a game lately is well above his ' + c.pp + '.'; }
+    ],
+    slump: [
+      function (c) { return c.n + ' is ' + c.fg + '-for-' + c.fga + ' over his last ' + c.gs + ' games. Something has to give.'; },
+      function (c) { return c.n + ' has hit only ' + c.fg + ' of ' + c.fga + ' shots lately, and ' + c.t + ' need him sharper.'; },
+      function (c) { return 'The shot is not falling for ' + c.n + ': ' + c.fg + '/' + c.fga + ' from the floor lately.'; },
+      function (c) { return c.t + ' have a scorer in a hole: ' + c.n + ' is shooting ' + c.pct + '% over his last ' + c.gs + '.'; }
+    ],
+    board: [
+      function (c) { return c.n + ' has averaged ' + c.a3 + ' rebounds over his last three. Box him out.'; },
+      function (c) { return 'The glass belongs to ' + c.n + ' right now, ' + c.a3 + ' boards a night in his last three.'; }
+    ],
+    dime: [
+      function (c) { return c.n + ' is running the show: ' + c.a3 + ' assists a game across his last three.'; },
+      function (c) { return 'Everything goes through ' + c.n + ' lately. ' + c.a3 + ' assists a night over his last three.'; }
+    ],
+    streak: [
+      function (c) { return c.t + ' have ' + (c.w ? 'won ' : 'lost ') + c.k + ' straight' + (c.w ? '.' : ' and need a response.'); },
+      function (c) { return c.k + ' ' + (c.w ? 'wins' : 'losses') + ' in a row for ' + c.t + (c.w ? '. Confidence is high.' : '. The mood is heavy.'); },
+      function (c) { return c.t + ' ' + (c.w ? 'are riding a ' + c.k + '-game winning streak.' : 'have dropped ' + c.k + ' on the bounce.'); }
+    ],
+    hurt: [
+      function (c) { return c.t + ' are without ' + c.n + (c.out > 1 ? ' (out ' + c.out + ' more games)' : '') + '. Expect the rotation to shuffle.'; },
+      function (c) { return c.n + ' is not playing for ' + c.t + ', which changes how they defend and score.'; },
+      function (c) { return 'No ' + c.n + ' tonight. ' + c.t + ' will lean on their bench.'; }
+    ],
+    meet: [
+      function (c) { return c.w + ' took the first meeting ' + c.sc + '. This is the rematch.'; },
+      function (c) { return 'Last time, ' + c.w + ' won ' + c.sc + '. Both sides remember it.'; },
+      function (c) { return 'These two met on ' + c.when + ', and ' + c.w + ' came out on top ' + c.sc + '.'; }
+    ],
+    rank: [
+      function (c) { return c.t + ' ' + c.verb + ' ' + c.v + ' a night, ' + c.ord + ' in the league.'; },
+      function (c) { return 'Numbers to know: ' + c.t + ' ' + c.verb + ' ' + c.v + ' a night, ' + c.ord + ' overall.'; },
+      function (c) { return c.ord + ' in the league in ' + c.what + ': ' + c.t + ' at ' + c.v + '.'; }
+    ],
+    edge: [
+      function (c) { return c.n + ' (' + c.o + ') has a ' + c.d + '-point edge at ' + c.pos + ' over ' + c.m + '. Feed him early.'; },
+      function (c) { return 'The mismatch to attack: ' + c.n + ' against ' + c.m + ', ' + c.d + ' points of overall in his favour.'; },
+      function (c) { return c.n + ' should get his way against ' + c.m + '.'; }
+    ],
+    short: [
+      function (c) { return c.n + ' is the one to stop, rated ' + c.d + ' points above ' + c.m + ', his matchup.'; },
+      function (c) { return c.m + ' draws the tough assignment against ' + c.n + ', who is rated ' + c.d + ' higher.'; }
+    ],
+    home: [
+      function (c) { return c.good ? c.t + ' are ' + c.rec + ' ' + c.where + '. It is a real edge.' : c.t + ' are just ' + c.rec + ' ' + c.where + ' and have not found their feet.'; },
+      function (c) { return c.good ? (c.where === 'at home' ? c.t + ' have been hard to beat in their own building (' + c.rec + ').' : c.t + ' travel well, ' + c.rec + ' on the road.') : (c.where === 'at home' ? 'Home has not been kind to ' + c.t + ' (' + c.rec + ').' : c.t + ' struggle away from home (' + c.rec + ').'); }
+    ],
+    star: [
+      function (c) { return c.n + ' is ' + c.t + '\u2019s engine, ' + c.v + '.'; },
+      function (c) { return 'Everything runs through ' + c.n + ' for ' + c.t + ': ' + c.v + '.'; },
+      function (c) { return c.t + ' will look for ' + c.n + ' early (' + c.v + ').'; },
+      function (c) { return c.n + ' sets the tone for ' + c.t + ', ' + c.v + '.'; }
+    ],
+    stand: [
+      function (c) { return c.line; },
+      function (c) { return c.line + ' Every game moves the line.'; }
+    ],
+    rookie: [
+      function (c) { return c.n + ', ' + c.age + ', is putting up ' + c.line + ' as a rookie. The league is paying attention.'; },
+      function (c) { return 'Rookie watch: ' + c.n + ' is at ' + c.line + ' and starting to look like a problem.'; }
+    ],
+    close: [
+      function (c) { return c.t + ' are ' + c.rec + ' in games decided by five or fewer. Expect one possession to matter.'; },
+      function (c) { return 'Close games have defined ' + c.t + ': ' + c.rec + ' in one-possession finishes.'; }
+    ],
+    last: [
+      function (c) { return c.t + ' come off a ' + c.m + '-point ' + (c.won ? 'win' : 'loss') + (c.won ? ', and the bench was resting by the fourth.' : ' and will want to bounce back.'); },
+      function (c) { return c.t + ' were ' + (c.won ? 'comfortable' : 'beaten up') + ' last time out, a ' + c.m + '-point margin.'; }
+    ],
+    series: [
+      function (c) { return c.line + '.'; },
+      function (c) { return c.line + '. Nothing is settled.'; }
+    ]
+  };
+  var KEYBASE = { star: 3, stand: 3, series: 12, hot: 9, slump: 8, streak: 7, hurt: 8, board: 5, dime: 5, meet: 5, rank: 6, edge: 5, short: 5, home: 4, rookie: 5, close: 3, last: 4 };
+
+  function pregameKeys(me, opp, mine, label, starters) {
+    var pg = save.pg || (save.pg = { n: 0, k: {}, t: {}, s: {} });
+    var f = formAll(), c = [], st = save.lg.stats;
+    function tm(t) { return t.city; }
+    function add(kind, subj, extra) { c.push({ kind: kind, subj: kind + ':' + subj, c: extra, score: (KEYBASE[kind] || 4) + Math.random() * 2.5 }); }
+    function ptsOf(p) { var x = st[p.id]; return x && x.g ? x.pts / x.g : 0; }
+    starters.forEach(function (row) {
+      [[row.p, me], [row.o, opp]].forEach(function (pr) {
+        var p = pr[0], t = pr[1], x = st[p.id];
+        if (!x || !x.rc || x.rc.length < 3 || x.g < 8) return;
+        var l3 = x.rc.slice(-3), pp = x.pts / x.g;
+        var a3 = l3.reduce(function (a, g) { return a + g[0]; }, 0) / 3;
+        if (a3 >= 18 && a3 - pp >= 6 && a3 >= pp * 1.28) add('hot', p.id, { n: lastName(p.name), t: tm(t), a3: a3.toFixed(1), pp: pp.toFixed(1), list: l3.map(function (g) { return g[0]; }).join(', ').replace(/, (\d+)$/, ' and $1') });
+        var l4 = x.rc.slice(-4), fg = l4.reduce(function (a, g) { return a + g[1]; }, 0), fga = l4.reduce(function (a, g) { return a + g[2]; }, 0);
+        if (fga >= 28 && fg / fga <= 0.37 && x.fga && x.fg / x.fga >= 0.42) add('slump', p.id, { n: lastName(p.name), t: tm(t), fg: fg, fga: fga, gs: l4.length, pct: Math.round(100 * fg / fga) });
+        var r3 = l3.reduce(function (a, g) { return a + g[3]; }, 0) / 3;
+        if (r3 >= 11 && r3 - x.trb / x.g >= 2.5) add('board', p.id, { n: lastName(p.name), a3: r3.toFixed(1) });
+        var d3 = l3.reduce(function (a, g) { return a + g[4]; }, 0) / 3;
+        if (d3 >= 8 && d3 - x.ast / x.g >= 2.5) add('dime', p.id, { n: lastName(p.name), a3: d3.toFixed(1) });
+        if ((p.rookie || p.draftedYear === save.year) && x.g >= 6 && pp >= 8) add('rookie', p.id, { n: lastName(p.name), age: p.age, line: pp.toFixed(1) + ' points and ' + (x.trb / x.g).toFixed(1) + ' rebounds' });
+      });
+    });
+    [[me, opp], [opp, me]].forEach(function (pr) {
+      var t = pr[0], res = f[t.id] && f[t.id].res || [];
+      if (res.length >= 3) {
+        var last = res[res.length - 1], k = 0;
+        for (var i = res.length - 1; i >= 0 && res[i] === last; i--) k++;
+        if (k >= 3) add('streak', t.id, { t: tm(t), k: k, w: !!last });
+        var rr = f[t.id], mg = rr.margin && rr.margin[rr.margin.length - 1];
+        if (rr.margin && Math.abs(mg) >= 18) add('last', t.id, { t: tm(t), m: Math.abs(mg), won: mg > 0 });
+        var cl = rr.close || { w: 0, l: 0 };
+        if (cl.w + cl.l >= 6 && Math.abs(cl.w - cl.l) >= 3) add('close', t.id, { t: tm(t), rec: cl.w + '-' + cl.l });
+        var hm = rr.home, aw = rr.away, here = (mine && mine.home === t.id);
+        var sp = here ? hm : aw;
+        if (sp && sp.w + sp.l >= 5 && (sp.w / (sp.w + sp.l) >= 0.75 || sp.w / (sp.w + sp.l) <= 0.25)) add('home', t.id, { t: tm(t), rec: sp.w + '-' + sp.l, where: here ? 'at home' : 'on the road', good: sp.w > sp.l });
+      }
+      var inj = League.rosterOf(save, t.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+      var ph = inj.slice(0, 4).filter(function (p) { return p.inj > 0; })[0];
+      if (ph) add('hurt', ph.id, { t: tm(t), n: ph.name, out: ph.inj });
+    });
+    var teams = save.ids.filter(function (id) { return f[id] && f[id].g >= 6; });
+    [[opp, me], [me, opp]].forEach(function (pr) {
+      var t = pr[0], x = f[t.id]; if (!x || x.g < 6) return;
+      var pa = teams.slice().sort(function (a, b) { return f[a].pa / f[a].g - f[b].pa / f[b].g; }), pf = teams.slice().sort(function (a, b) { return f[b].pf / f[b].g - f[a].pf / f[a].g; });
+      var ip = pa.indexOf(t.id), io = pf.indexOf(t.id), n = teams.length;
+      function ord(i) { var k = i + 1; return k + (k % 10 === 1 && k !== 11 ? 'st' : k % 10 === 2 && k !== 12 ? 'nd' : k % 10 === 3 && k !== 13 ? 'rd' : 'th'); }
+      if (ip <= 3) add('rank', 'd' + t.id, { t: tm(t), verb: 'allow just', v: (x.pa / x.g).toFixed(1), ord: ord(ip), what: 'points allowed' });
+      else if (ip >= n - 4) add('rank', 'd' + t.id, { t: tm(t), verb: 'give up', v: (x.pa / x.g).toFixed(1), ord: ord(ip), what: 'points allowed' });
+      if (io <= 3) add('rank', 'o' + t.id, { t: tm(t), verb: 'score', v: (x.pf / x.g).toFixed(1), ord: ord(io), what: 'scoring' });
+      else if (io >= n - 4) add('rank', 'o' + t.id, { t: tm(t), verb: 'average', v: (x.pf / x.g).toFixed(1), ord: ord(io), what: 'scoring' });
+    });
+    if (save.phase === 'regular') {
+      var prev = (save.results || []).filter(function (r) { return (r.h === me.id && r.a === opp.id) || (r.h === opp.id && r.a === me.id); }).pop();
+      if (prev) { var wn = prev.hs > prev.as ? prev.h : prev.a; add('meet', opp.id, { w: tm(teamById(wn)), sc: Math.max(prev.hs, prev.as) + '-' + Math.min(prev.hs, prev.as), when: 'game ' + (prev.d + 1) }); }
+    } else if (mine && mine.series !== undefined) {
+      var sr = save.playoffs.rounds[mine.round][mine.series], mi = sr.a === me.id ? 0 : 1, mw = sr.w[mi], ow = sr.w[1 - mi];
+      add('series', 'x', { line: (mw === ow ? 'Series tied ' + mw + '-' + ow : mw > ow ? tm(me) + ' lead ' + mw + '-' + ow : tm(opp) + ' lead ' + ow + '-' + mw) });
+    }
+    starters.forEach(function (row) {
+      var d = row.p.ratings.ovr - row.o.ratings.ovr;
+      if (d >= 6) add('edge', row.p.id, { n: lastName(row.p.name), o: row.p.ratings.ovr, d: d, pos: row.p.pos || 'the spot', m: lastName(row.o.name) });
+      else if (d <= -6) add('short', row.o.id, { n: lastName(row.o.name), t: tm(me), d: -d, pos: row.p.pos || 'the spot', m: lastName(row.p.name) });
+    });
+    [[me, 1], [opp, 0]].forEach(function (pr) {
+      var t = pr[0], r = League.rosterOf(save, t.id).filter(function (p) { return !(p.inj > 0); }), best = null, bp = 0;
+      r.forEach(function (p) { var x = st[p.id]; if (x && x.g >= 4 && x.pts / x.g > bp) { bp = x.pts / x.g; best = p; } });
+      if (best) { var xb = st[best.id]; add('star', best.id, { t: tm(t), n: lastName(best.name), v: bp.toFixed(1) + ' points and ' + (xb.trb / xb.g).toFixed(1) + ' rebounds a night' }); }
+      else { var top = r.sort(function (a2, b2) { return b2.ratings.ovr - a2.ratings.ovr; })[0]; if (top) add('star', top.id, { t: tm(t), n: lastName(top.name), v: 'rated ' + top.ratings.ovr + ' overall' }); }
+    });
+    if (save.phase === 'regular') {
+      var stn = Season.standings(save), dv = save.division[me.id], rows = stn[dv], at = 0;
+      rows.forEach(function (r, k) { if (r.id === me.id) at = k; });
+      var rm = save.rec[me.id], gp = rm.w + rm.l;
+      if (gp >= 5) {
+        var lead = rows[0], gap = at ? (lead.w - rm.w + rm.l - lead.l) / 2 : 0;
+        var o2 = save.rec[opp.id], line = at === 0 ? tm(me) + ' sit first in the division at ' + rm.w + '-' + rm.l + ', with ' + opp.city + ' (' + o2.w + '-' + o2.l + ') next on the schedule.' : tm(me) + ' are ' + (at + 1) + (at === 1 ? 'nd' : at === 2 ? 'rd' : 'th') + ' in the division, ' + gap + ' back of ' + teamById(lead.id).city + '.';
+        add('stand', 'x', { line: line });
+      }
+    }
+    pg.n++;
+    var cool = c.filter(function (k) { return pg.s[k.subj] && pg.n - pg.s[k.subj] < 12; }).sort(function (a2, b2) { return pg.s[a2.subj] - pg.s[b2.subj]; });
+    c = c.filter(function (k) { return !(pg.s[k.subj] && pg.n - pg.s[k.subj] < 12); });
+    c.forEach(function (k) { var lastK = pg.k[k.kind]; if (lastK && pg.n - lastK < 4) k.score -= 5; });
+    c.sort(function (a, b) { return b.score - a.score; });
+    var out = [], kinds = {}, subj = {};
+    c.concat(cool).forEach(function (k) { if (out.length < 3 && !kinds[k.kind] && !subj[k.subj]) { kinds[k.kind] = 1; subj[k.subj] = 1; out.push(k); } });
+    return out.map(function (k) {
+      var pool = KEYTPL[k.kind], best = 0, bv = 1e9;
+      pool.forEach(function (fn, i) { var u = pg.t[k.kind + i] || -99, v = u + Math.random(); if (v < bv) { bv = v; best = i; } });
+      pg.t[k.kind + best] = pg.n; pg.k[k.kind] = pg.n; pg.s[k.subj] = pg.n;
+      return pool[best](k.c);
+    });
+  }
+
+  function openPregame(me, opp, mine, label) {
+    var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
+    var starters = g.onH.map(function (m, i) { return { p: m.p, o: g.onA[i].p }; });
+    var keys = pregameKeys(me, opp, mine, label, starters);
+    persist();
+    document.getElementById('pg-title').textContent = me.id === mine.home ? 'Tonight at home' : 'Tonight on the road';
+    document.getElementById('pg-sub').textContent = label + ' · ' + Events.dateFor(save);
+    var body = document.getElementById('pg-body');
+    body.textContent = '';
+    var f = formAll();
+    var vs = el('div', 'pg-vs');
+    [me, opp].forEach(function (t, i) {
+      var box = el('div', 'pg-team' + (i ? ' r' : ''));
+      box.appendChild(teamBadge(t));
+      var tx = el('span');
+      tx.appendChild(el('strong', null, t.city));
+      var rc = save.rec[t.id], res = f[t.id] ? f[t.id].res : [];
+      tx.appendChild(el('span', 'meta', (save.phase === 'regular' ? rc.w + '-' + rc.l + ' · ' : '') + streakOf(res)));
+      box.appendChild(tx);
+      vs.appendChild(box);
+      if (!i) vs.appendChild(el('b', 'pg-at', mine && mine.home === me.id ? 'v' : 'at'));
+    });
+    body.appendChild(vs);
+    var st = save.lg.stats;
+    function side(p, r) {
+      var x = st[p.id], b = el('div', 'pg-p' + (r ? ' r' : ''));
+      var av = makeAvatar(p); b.appendChild(av);
+      var tx = el('span');
+      tx.appendChild(el('strong', null, lastName(p.name)));
+      var line = x && x.g ? (x.pts / x.g).toFixed(1) + ' pts' : (p.pos || '');
+      var hot = x && x.rc && x.rc.length >= 3 && (function () { var a = x.rc.slice(-3).reduce(function (s, g2) { return s + g2[0]; }, 0) / 3; return a - x.pts / x.g >= 6 && a >= 18; })();
+      var cold = x && x.rc && x.rc.length >= 4 && (function () { var l4 = x.rc.slice(-4), fg = 0, fa = 0; l4.forEach(function (g2) { fg += g2[1]; fa += g2[2]; }); return fa >= 28 && fg / fa <= 0.37 && x.fg / x.fga >= 0.42; })();
+      var m = el('span', 'meta' + (hot ? ' hot' : cold ? ' cold' : ''), (p.pos || '') + ' · ' + line + (hot ? ' · hot' : cold ? ' · cold' : ''));
+      tx.appendChild(m);
+      b.appendChild(tx);
+      return b;
+    }
+    starters.forEach(function (row) {
+      var r = el('div', 'pg-row');
+      r.appendChild(side(row.p, false));
+      var d = row.p.ratings.ovr - row.o.ratings.ovr;
+      var mid = el('span', 'pg-mid');
+      mid.appendChild(el('b', 'ovr ' + level(row.p.ratings.ovr), String(row.p.ratings.ovr)));
+      mid.appendChild(el('i', d > 1 ? 'up' : d < -1 ? 'dn' : '', d > 0 ? '+' + d : String(d)));
+      mid.appendChild(el('b', 'ovr ' + level(row.o.ratings.ovr), String(row.o.ratings.ovr)));
+      r.appendChild(mid);
+      r.appendChild(side(row.o, true));
+      body.appendChild(r);
+    });
+    var kt = el('div', 'pg-keys');
+    kt.appendChild(el('h3', 'box-title', 'Keys to the game'));
+    keys.forEach(function (k, i) {
+      var c = el('p', 'pg-key');
+      c.appendChild(el('b', null, String(i + 1)));
+      c.appendChild(el('span', null, k));
+      kt.appendChild(c);
+    });
+    if (!keys.length) { var q = el('p', 'pg-key'); q.appendChild(el('b', null, '1')); q.appendChild(el('span', null, 'Nothing stands out yet. Both sides are still finding their identity.')); kt.appendChild(q); }
+    body.appendChild(kt);
+    document.getElementById('btn-tip').onclick = function () { startLive(me, opp, mine, label); };
+    show('screen-pregame');
   }
 
   /* Records the finished game, plays the rest of the day, and builds the event stack. */

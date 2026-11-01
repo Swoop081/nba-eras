@@ -493,3 +493,27 @@ body[data-modern="1"] .kpis .kpi b{font-size:20px}
 .stars i{font-style:normal;color:#3a3d49}
 .stars i.f{color:#ffc247}
 .stars i.h{background:linear-gradient(90deg,#ffc247 50%,#3a3d49 50%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+#screen-pregame #pg-body{padding:0 14px 8px;display:flex;flex-direction:column;gap:6px;flex:1;min-height:0}
+.pg-vs{display:flex;align-items:center;justify-content:space-between;padding:6px 2px}
+.pg-team{display:flex;align-items:center;gap:10px;min-width:0}
+.pg-team.r{flex-direction:row-reverse;text-align:right}
+.pg-team .badge,.pg-team>.badge{width:42px;height:42px;flex:none}
+.pg-team strong{display:block;font:700 21px/1 var(--display,inherit);text-transform:uppercase}
+.pg-team .meta{font-size:12px;color:var(--mute,#8b8fa0)}
+.pg-at{font-size:12px;color:var(--mute,#8b8fa0);text-transform:uppercase}
+.pg-row{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;align-items:center;padding:5px 8px;border-radius:12px;background:rgba(255,255,255,.04)}
+.pg-p{display:flex;align-items:center;gap:6px;min-width:0}.pg-p>span:last-child{min-width:0}
+.pg-p.r{flex-direction:row-reverse;text-align:right}
+.pg-p .avatar{width:32px;height:32px;flex:none}
+.pg-p strong{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-p .meta{font-size:10.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-p .meta.hot{color:#ff8a4c}.pg-p .meta.cold{color:#6fb4ff}
+.pg-mid{display:flex;align-items:center;gap:4px}
+.pg-mid .ovr{font-size:15px;min-width:24px;text-align:center}
+.pg-mid i{font-style:normal;font-size:10px;min-width:20px;text-align:center;color:#8b8fa0}
+.pg-mid i.up{color:#4cd37b}.pg-mid i.dn{color:#ff6b6b}
+.pg-keys{margin-top:2px}
+.pg-keys h3{margin:4px 2px 6px}
+.pg-key{display:flex;gap:10px;align-items:flex-start;margin:0 0 6px;padding:8px 10px;border-radius:12px;background:rgba(255,255,255,.05);font-size:13px;line-height:1.3}
+.pg-key b{flex:none;width:20px;height:20px;border-radius:50%;background:var(--accent,#e23b3b);color:#fff;display:grid;place-items:center;font-size:11px}

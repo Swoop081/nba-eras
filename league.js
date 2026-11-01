@@ -196,7 +196,7 @@
     lines.forEach(function (l, i) {
       var x = st[l.id] || (st[l.id] = { g: 0, min: 0, pts: 0, ast: 0, trb: 0, stl: 0, blk: 0, tov: 0, pf: 0, fg: 0, fga: 0, ft: 0, fta: 0 });
       var played = l.s.min > 0 || l.s.fga > 0 || l.s.fta > 0 || l.s.pts > 0;
-      if (played) x.g++;
+      if (played) { x.g++; var rc = x.rc || (x.rc = []); rc.push([l.s.pts || 0, l.s.fg || 0, l.s.fga || 0, l.s.trb || 0, l.s.ast || 0]); if (rc.length > 6) rc.shift(); }
       STAT_KEYS.forEach(function (k) { x[k] = (x[k] || 0) + (l.s[k] || 0); });
       if (meta && played) {
         var home = i < meta.nh, tid = home ? meta.h : meta.a;
