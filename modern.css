@@ -419,3 +419,11 @@ body[data-modern="1"] .dec-tabs button.on{background:var(--team);color:var(--on)
 body[data-modern="1"] .card.era{align-items:flex-start}
 body[data-modern="1"] .card.era .meta{display:block;margin-top:4px;font:400 12.5px/1.35 var(--font);color:var(--muted)}
 body[data-modern="1"] .card.era .year{margin-top:2px}
+
+/* pinned posts you can answer */
+body[data-modern="1"] #phone-banners .pb.act{border:1px solid color-mix(in srgb,var(--team) 70%,transparent);cursor:pointer}
+body[data-modern="1"] #phone-banners .pb-act{flex:none;align-self:center;font-style:normal;font:700 11.5px var(--font);padding:5px 10px;border-radius:999px;background:var(--team);color:var(--on)}
+body[data-modern="1"] #phone-banners .pb.res{border:1px solid rgba(52,199,89,.5)}
+body[data-modern="1"] #phone-banners .pb-tx em{font-style:normal;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] #phone-banners .pb-tx span{min-height:0}
+body[data-modern="1"] #phone-banners .pb.act .pb-tx span{-webkit-line-clamp:2}

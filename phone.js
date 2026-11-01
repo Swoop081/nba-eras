@@ -1,5 +1,6 @@
 /* The present day arrives on your phone. Banners drop in while you play: scores, insiders, fans, the group chat.
-   They are flavour only; nothing here changes the save. */
+   Most are colour. The ones built from what is really happening to your club (a slump, a rumour, a free agent,
+   a losing streak) stay pinned in the header until you answer, and what you decide comes back later. */
 (function (root) {
   var src = null, timer = null, allowed = false, last = '', lastApp = '';
   var OK = { 'screen-season': 1, 'screen-events': 1, 'screen-off': 1, 'screen-trade': 1, 'screen-roster': 1, 'screen-records': 1, 'screen-player': 1 };
@@ -51,6 +52,44 @@
     return outs;
   }
 
+  function handle() { return rnd(['@section104_', '@hoopsfan88', '@upperbowl_dave', '@courtside_kay', '@lateshiftlarry', '@hardwood_hank']); }
+
+  /* posts about your own club that you can do something about */
+  function actionable() {
+    var save = src.save(); if (!save || !save.lg || !root.Events || save.phase !== 'regular') return null;
+    var m = root.Events.mood(save);
+    if (m.cool.act > 0 || save.pinned) return null;
+    var me = save.myId, rec = save.rec[me] || { w: 0, l: 0 }, gp = rec.w + rec.l;
+    var ros = save.lg.players.filter(function (p) { return p.team === me && p.status === 'active' && !(p.inj > 0); }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var stats = save.lg.stats || {}, outs = [];
+    function st(p) { return stats[p.id] || { g: 0, fg: 0, fga: 0, pts: 0 }; }
+    var slump = ros.slice(0, 8).filter(function (p) { var s = st(p); return s.g >= 8 && s.fga >= 60 && s.fg / s.fga < 0.39 && p.ratings.ovr >= 58 && !m.tweak[p.id]; });
+    if (slump.length) outs.push(function () {
+      var p = rnd(slump), s = st(p);
+      return { app: 'Mentions', c: '#F4511E', g: '@', title: handle(), text: p.name + ' is ' + s.fg + '-for-' + s.fga + ' this season and still getting starter minutes. What is the front office doing?', act: { type: 'slump', pid: p.id } };
+    });
+    var bench = ros.slice(6, 11).filter(function (p) { var s = st(p); return s.g >= 8 && s.fga >= 40 && s.fg / s.fga >= 0.5 && !m.tweak[p.id]; });
+    if (bench.length) outs.push(function () {
+      var p = rnd(bench), s = st(p);
+      return { app: 'Mentions', c: '#F4511E', g: '@', title: handle(), text: p.name + ' is shooting ' + Math.round(100 * s.fg / s.fga) + '% off the bench. Why is he not playing more?', act: { type: 'bench', pid: p.id } };
+    });
+    if (m.streak <= -3 && gp >= 6) outs.push(function () {
+      return { app: 'Mentions', c: '#F4511E', g: '@', title: handle(), text: 'Another loss. ' + (-m.streak) + ' straight. Somebody has to answer for this.', act: { type: 'pressure' } };
+    });
+    var mid = save.lg.players.filter(function (p) { return p.team && p.team !== me && p.status === 'active' && p.ratings.ovr >= 66 && p.ratings.ovr < 82; });
+    if (mid.length && save.day < save.days.length * 0.7) outs.push(function () {
+      var p = rnd(mid), t = src.team(p.team);
+      return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'The ' + (t ? t.name : 'club') + ' are open to moving ' + p.name + ' (' + p.ratings.ovr + ' overall). Several teams are circling.', act: { type: 'shop', pid: p.id, tid: p.team } };
+    });
+    var cap = save.lg.cap, pay = ros.concat(save.lg.players.filter(function (p) { return p.team === me && p.inj > 0; })).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
+    var floor = ros[7] ? ros[7].ratings.ovr : 50;
+    var fa = (root.League && root.League.freeAgents ? root.League.freeAgents(save) : []).filter(function (p) { return p.ratings.ovr >= floor + 2 && pay + root.League.salaryFor(p.ratings.ovr) <= cap; })[0];
+    if (fa && save.lg.players.filter(function (p) { return p.team === me && p.status === 'active'; }).length < 15) outs.push(function () {
+      return { app: 'Messages', c: '#5E5CE6', g: '\u2605', title: 'Agent', text: fa.name + ' (' + fa.ratings.ovr + ' overall, ' + (fa.pos || '') + ') is available and wants a call back today.', act: { type: 'fa', pid: fa.id } };
+    });
+    return outs.length ? rnd(outs)() : null;
+  }
+
   function host() {
     var h = document.getElementById('phone-banners');
     if (!h) { h = document.createElement('div'); h.id = 'phone-banners'; document.body.appendChild(h); }
@@ -74,20 +113,47 @@
     var t = document.createElement('b'); t.textContent = n.title;
     var p = document.createElement('span'); p.textContent = n.text;
     tx.appendChild(top); tx.appendChild(t); tx.appendChild(p);
+    if (n.note) { var q = document.createElement('em'); q.textContent = n.note; tx.appendChild(q); }
     b.appendChild(ic); b.appendChild(tx);
     var gone = false;
     function go() { if (gone) return; gone = true; b.classList.add('out'); setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 300); }
-    b.addEventListener('click', go);
+    if (n.act) {
+      b.classList.add('act');
+      var tag = document.createElement('i'); tag.className = 'pb-act'; tag.textContent = 'Respond'; b.appendChild(tag);
+      var sv = src.save();
+      if (sv && !n.pinnedAt) { n.pinnedAt = sv.day; sv.pinned = n; if (src.persist) src.persist(); }
+      b.addEventListener('click', function () {
+        if (src.respond) src.respond(n, function () { var s2 = src.save(); if (s2) { s2.pinned = null; if (src.persist) src.persist(); } go(); });
+      });
+    } else if (n.note) {
+      b.classList.add('res');
+      b.addEventListener('click', go);
+    } else b.addEventListener('click', go);
     var y0 = null;
     b.addEventListener('touchstart', function (e) { y0 = e.touches[0].clientY; }, { passive: true });
-    b.addEventListener('touchmove', function (e) { if (y0 !== null && y0 - e.touches[0].clientY > 14) go(); }, { passive: true });
+    b.addEventListener('touchmove', function (e) { if (y0 !== null && y0 - e.touches[0].clientY > 14) { if (b._swipe) b._swipe(); else go(); } }, { passive: true });
     h.appendChild(b);
     try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
-    setTimeout(go, 3600);
+    if (!n.act) setTimeout(go, n.note ? 6500 : 3600);
+    else { var t0 = b; t0._swipe = function () { var s3 = src.save(); if (s3) { s3.pinned = null; if (src.persist) src.persist(); } go(); }; }
   }
 
   function one() {
     if (!allowed || !src) return;
+    if (document.querySelector('#phone-banners .pb.res')) return;
+    var sv = src.save();
+    if (sv && sv.pinned) {
+      if (sv.day > (sv.pinned.pinnedAt || 0) + 8) { sv.pinned = null; if (src.persist) src.persist(); }
+      else { if (!document.querySelector('#phone-banners .pb')) buzz(sv.pinned); return; }
+    }
+    if (sv && root.Events && root.Events.mood) {
+      var mm = root.Events.mood(sv);
+      if (mm.posts.length) { buzz(mm.posts.shift()); if (src.persist) src.persist(); return; }
+      if (sv.phase === 'regular' && Math.random() < 0.55) {
+        var a = actionable();
+        if (a) { mm.cool.act = 4; buzz(a); return; }
+      }
+    }
     var outs = maker(); if (!outs || !outs.length) return;
     var n = null, guard = 0;
     do { n = rnd(outs)(); } while (n && (n.text === last || n.app === lastApp) && guard++ < 8);
@@ -109,6 +175,7 @@
     var was = allowed;
     allowed = true;
     place(id);
+    var sp = src.save(); if (sp && sp.pinned && !document.querySelector('#phone-banners .pb')) setTimeout(function () { if (sp.pinned && !document.querySelector('#phone-banners .pb')) buzz(sp.pinned); }, 400);
     if (!was || id === 'screen-season') {
       setTimeout(one, 1100);
       if (id === 'screen-season') setTimeout(one, 2800);

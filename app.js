@@ -1218,7 +1218,58 @@
   var rosterCache = {};
   var building = false;
   function persist() { if (!building) store.set('save', save); }
-  Phone.setSource({ save: function () { return save; }, team: function (id) { try { return teamById(id); } catch (e) { return null; } } });
+  Phone.setSource({ save: function () { return save; }, team: function (id) { try { return teamById(id); } catch (e) { return null; } }, persist: function () { persist(); }, respond: function (n, done) { respondTo(n, done); } });
+
+  /* A pinned post you can answer. What you pick changes real numbers, and a few games later the fans notice. */
+  function respondTo(n, done) {
+    var a = n.act, m = Events.mood(save), p = a.pid ? League.byId(save, a.pid) : null, ros = rosterOf(save.myId);
+    var st = p && save.lg.stats ? save.lg.stats[p.id] : null;
+    function follow(kind, g, base) {
+      if (!st) return;
+      m.follow.push({ pid: p.id, name: p.name, kind: kind, n: g, g0: st.g, pts0: st.pts, fg0: st.fg, fga0: st.fga, base: base });
+    }
+    function ppg() { return st && st.g ? st.pts / st.g : 8; }
+    function fx(o) { return Events.apply(save, { choices: [{ fx: o }], pid: p ? p.id : null, who: p ? p.name : '' }, 0, ros); }
+    var opts = [], title = n.text;
+    if (a.type === 'slump') {
+      opts.push(['Stand by ' + lastName(p.name), function () { var r = fx({ s: { m: 5, t: 4 }, fans: -1 }); follow('backed', 6, ppg()); return r; }]);
+      opts.push(['Cut his minutes', function () { m.tweak[p.id] = { f: 0.9, g: 6 }; var r = fx({ s: { m: -5, t: -3 }, coach: 2 }); follow('shake', 6, ppg()); return r + ' \u00B7 fewer minutes for 6 games'; }]);
+      opts.push(['Sit him one game', function () { m.tweak[p.id] = { f: 0.55, g: 1 }; return fx({ s: { m: -3, t: -1 }, fans: 1 }) + ' \u00B7 out of the rotation tonight'; }]);
+    } else if (a.type === 'bench') {
+      opts.push(['Give ' + lastName(p.name) + ' more minutes', function () { m.tweak[p.id] = { f: 1.07, g: 8 }; var r = fx({ s: { m: 6, t: 4, promise: true }, fans: 1 }); follow('minutes', 6, ppg()); return r + ' \u00B7 bigger role for 8 games'; }]);
+      opts.push(['Keep the rotation', function () { return fx({ s: { m: -2, t: -1 }, coach: 2 }); }]);
+    } else if (a.type === 'pressure') {
+      opts.push(['Own it publicly', function () { return fx({ fans: 4, team: { m: -1 } }); }]);
+      opts.push(['Back the players', function () { return fx({ team: { m: 4 }, fans: -3 }); }]);
+      opts.push(['Shake up the roster', function () { m.fans = Math.min(100, m.fans + 2); persist(); openTrade('season'); return 'Fans +2 \u00B7 the phones are open'; }]);
+    } else if (a.type === 'shop') {
+      var t = teamById(a.tid);
+      opts.push(['Call the ' + (t ? t.name : 'club') + '\u2019 GM', function () { openTrade('season'); trade.partner = a.tid; renderTrade(); return ''; }]);
+      opts.push(['Not interested', function () { return ''; }]);
+    } else if (a.type === 'fa') {
+      var sal = League.salaryFor(p.ratings.ovr);
+      opts.push(['Sign for ' + money(sal) + ' (1 yr)', function () {
+        if (ros.length >= League.MAX_ROSTER) return 'Roster is full.';
+        League.sign(save, p, save.myId, sal, 1); rosterCache = {}; persist();
+        return fx({ fans: 2, team: { m: 1 } }) + ' \u00B7 ' + p.name + ' signed';
+      }]);
+      opts.push(['Pass', function () { return ''; }]);
+    }
+    hubSheet(n.title, function (sh, close) {
+      sh.appendChild(el('p', 'sub', title));
+      opts.forEach(function (o) {
+        var b = el('button', 'btn wide', o[0]); b.type = 'button';
+        b.addEventListener('click', function () {
+          close(); var note = o[1](); persist(); done();
+          if (note) Phone.buzz({ app: 'Result', c: '#34C759', g: '\u2713', title: o[0], text: '', note: note });
+        });
+        sh.appendChild(b);
+      });
+      var later = el('button', 'btn wide ghost', 'Ignore'); later.type = 'button';
+      later.addEventListener('click', function () { close(); done(); });
+      sh.appendChild(later);
+    });
+  }
   function teamById(id) {
     if (save && save.tm && save.tm[id]) return save.tm[id];
     return seasons[currentEra.id].teams.filter(function (t) { return t.id === id; })[0];

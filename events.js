@@ -15,7 +15,12 @@
 
   function mood(save) {
     if (!save.mood) save.mood = { p: {}, coach: 50, fans: 50, streak: 0, cool: { conv: 0, rumour: 0 }, news: [] };
-    return save.mood;
+    var m = save.mood;
+    if (!m.follow) m.follow = [];
+    if (!m.posts) m.posts = [];
+    if (!m.tweak) m.tweak = {};
+    if (!m.cool.act) m.cool.act = 0;
+    return m;
   }
   function pm(save, id) {
     var m = mood(save);
@@ -26,7 +31,8 @@
   /* Ratings scaled by morale: roughly +/-5% at the extremes. */
   function moraleRoster(save, players) {
     return players.map(function (p) {
-      var f = 1 + (pm(save, p.id).m - 50) * 0.001;
+      var tw = mood(save).tweak[p.id];
+      var f = (1 + (pm(save, p.id).m - 50) * 0.001) * (tw ? tw.f : 1);
       var r = {};
       Object.keys(p.ratings).forEach(function (k) {
         r[k] = (k === 'ovr' || k === 'dur') ? p.ratings[k] : Math.min(99, p.ratings[k] * f);
@@ -82,6 +88,29 @@
     m.cool.period = Math.max(0, (m.cool.period || 0) - 1);
     m.cool.inj = Math.max(0, (m.cool.inj || 0) - 1);
     m.cool.offer = Math.max(0, (m.cool.offer || 0) - 1);
+    m.cool.act = Math.max(0, (m.cool.act || 0) - 1);
+    Object.keys(m.tweak).forEach(function (id) { m.tweak[id].g--; if (m.tweak[id].g <= 0) delete m.tweak[id]; });
+    resolveFollows(save, m);
+  }
+
+  /* what came of the choices you made on your phone: a few games later the fans notice */
+  function resolveFollows(save, m) {
+    var stats = save.lg && save.lg.stats ? save.lg.stats : {};
+    m.follow = m.follow.filter(function (f) {
+      var s = stats[f.pid];
+      if (!s || s.g - f.g0 < f.n) return true;
+      var g = s.g - f.g0, ppg = (s.pts - f.pts0) / g, fa = s.fga - f.fga0, pct = fa > 0 ? (s.fg - f.fg0) / fa : 0;
+      var p = root.League ? root.League.byId(save, f.pid) : null, nm = p ? last(p.name) : f.name;
+      var good = f.kind === 'backed' ? (pct >= 0.44 || ppg >= f.base * 1.1) : f.kind === 'minutes' ? ppg >= f.base * 0.9 && ppg >= 8 : (pct >= 0.44);
+      var x = pm(save, f.pid), t, fx;
+      if (f.kind === 'backed') t = good ? nm + ' answers the doubters: ' + ppg.toFixed(1) + ' a night, ' + Math.round(pct * 100) + '% from the floor since the front office stood by him.' : nm + ' is still ' + Math.round(pct * 100) + '% from the floor. The GM backed him. Was it the right call?';
+      else if (f.kind === 'minutes') t = good ? nm + ' is making the most of the extra minutes: ' + ppg.toFixed(1) + ' a game. The GM was right.' : nm + ' got the minutes and ' + ppg.toFixed(1) + ' a night is not cutting it. Fans are asking questions.';
+      else t = good ? 'The shake-up is paying off. ' + nm + ' is up to ' + Math.round(pct * 100) + '% since the change.' : 'Nothing has changed. ' + nm + ' still cannot buy a bucket.';
+      x.m = clamp(x.m + (good ? 3 : -2)); x.t = clamp(x.t + (good ? 2 : 0)); m.fans = clamp(m.fans + (good ? 3 : -2));
+      fx = (good ? 'Fans +3 \u00B7 ' : 'Fans -2 \u00B7 ') + nm + ' morale ' + (good ? '+3' : '-2');
+      m.posts.push({ app: 'Mentions', c: '#F4511E', g: '@', title: ['@section104_', '@hoopsfan88', '@courtside_kay', '@lateshiftlarry'][Math.floor(Math.random() * 4)], text: t, note: fx, good: good });
+      return false;
+    });
   }
 
 
