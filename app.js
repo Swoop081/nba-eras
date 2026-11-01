@@ -1246,6 +1246,18 @@
       var t = teamById(a.tid);
       opts.push(['Call the ' + (t ? t.name : 'club') + '\u2019 GM', function () { openTrade('season'); trade.partner = a.tid; renderTrade(); return ''; }]);
       opts.push(['Not interested', function () { return ''; }]);
+    } else if (a.type === 'extend') {
+      var ask = Math.round(League.salaryFor(p.ratings.ovr) * 1.1), pay = League.payroll(save, save.myId);
+      opts.push(['Extend 3 years at ' + money(ask), function () {
+        if (pay - p.salary + ask > save.lg.cap * 1.1) return 'The owner will not take the payroll that high.';
+        p.salary = ask; p.yrs = Math.max(p.yrs, 0) + 3; League.bump && League.bump(save); rosterCache = {}; persist();
+        return fx({ s: { m: 8, t: 8 }, fans: 2 }) + ' \u00B7 ' + p.name + ' signs through ' + (save.year + p.yrs);
+      }]);
+      opts.push(['Talk in the summer', function () { return fx({ s: { m: -2, t: -3 } }); }]);
+    } else if (a.type === 'owner') {
+      opts.push(['Promise to turn it around', function () { save.ownerPromise = true; save.ownerTrust = Math.min(100, (save.ownerTrust || 60) + 3); return 'Owner trust +3 \u00B7 he will hold you to it'; }]);
+      opts.push(['Ask for patience', function () { save.ownerTrust = Math.max(0, (save.ownerTrust || 60) - 2); return 'Owner trust -2'; }]);
+      opts.push(['Cut payroll to show good faith', function () { save.ownerTrust = Math.min(100, (save.ownerTrust || 60) + 5); m.coach = Math.max(0, m.coach - 3); return 'Owner trust +5 \u00B7 coach trust -3'; }]);
     } else if (a.type === 'fa') {
       var sal = League.salaryFor(p.ratings.ovr);
       opts.push(['Sign for ' + money(sal) + ' (1 yr)', function () {
@@ -2056,10 +2068,12 @@
     if (got > want) d = 12 + 8 * (got - want);
     else if (got === want) d = 10;
     else d = -(14 + 7 * (want - got));
-    var before = save.ownerTrust;
+    var before = save.ownerTrust, kept = '';
+    if (save.ownerPromise) { d += got >= want ? 6 : -9; kept = got >= want ? ' You kept your promise.' : ' You broke your promise.'; save.ownerPromise = false; }
     save.ownerTrust = Math.max(0, Math.min(100, before + d));
     var fired = save.ownerTrust <= 0 || (save.ownerTrust <= 15 && d < 0 && before <= 30);
     var msg = got > want ? 'The owner is delighted. You beat his goal.' : got === want ? 'The owner is satisfied. You met his goal.' : 'The owner is unhappy. You missed his goal.';
+    msg += kept;
     if (fired) msg = 'The owner has lost patience. You are dismissed.';
     return { goal: save.owner.text, delta: d, trust: save.ownerTrust, fired: fired, msg: msg };
   }
@@ -3923,7 +3937,7 @@
     var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1));
     save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
     next.tm = save.tm; next.ids = save.ids.slice();
-    next.lg = save.lg; next.mood = save.mood; next.plan = save.plan;
+    next.lg = save.lg; next.mood = save.mood; next.plan = save.plan; if (next.mood) next.mood.asked = false;
     next.lg.stats = {}; next.lg.draft = null; next.lg.year = next.year; next.lg.cap = League.capFor(next.year);
     if (next.mood) { next.mood.streak = 0; next.mood.news = next.mood.news.slice(-3); }
     next.pending = [];
