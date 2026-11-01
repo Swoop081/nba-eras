@@ -114,8 +114,21 @@
     h.hidden = !bar;
   }
 
+  function social() { var s = src && src.save(); return !!(s && root.Social && root.Social.has(s.year)); }
+  /* before the social-media era the same news arrives the way it did then */
+  function era(n) {
+    if (!n || social()) return n;
+    var map = { Mentions: ['Fan mail', 'L'], Breaking: ['Wire', 'W'], Clips: ['Highlights', 'H'] }, m = map[n.app];
+    if (m) { n.app = m[0]; n.g = m[1]; }
+    if (n.title && n.title[0] === '@') n.title = 'A season-ticket holder';
+    if (n.title === 'League Insider') n.title = 'The wire';
+    return n;
+  }
+
   function buzz(n) {
     if (!n) return;
+    n = era(n);
+    if (social()) { try { root.Social.fromBanner(src.save(), n); } catch (e) {} }
     var h = host();
     while (h.children.length > 0) h.removeChild(h.firstChild);
     var b = document.createElement('div'); b.className = 'pb';
