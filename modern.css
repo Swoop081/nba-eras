@@ -485,3 +485,6 @@ body[data-modern="1"] .fp-respond{margin:0 0 8px}
 body[data-modern="1"] .feedbtn{position:relative;margin-left:auto;flex:none;width:38px;height:38px;border-radius:12px;border:0;background:var(--raised);color:var(--ink);font-size:17px}
 body[data-modern="1"] .feedbtn+.gear{margin-left:8px}
 body[data-modern="1"] .feedbtn.dot::after{content:attr(data-n);position:absolute;top:-4px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#E5484D;color:#fff;font:700 10.5px/17px var(--font);text-align:center}
+
+body[data-modern="1"] .kpis{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+body[data-modern="1"] .kpis .kpi b{font-size:20px}

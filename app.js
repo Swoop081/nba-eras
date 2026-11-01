@@ -682,6 +682,25 @@
     if (p.g) return { src: 'last', label: 'last season', x: { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0, pf: p.pf || 0 } };
     return null;
   }
+  /* PTS / REB / AST, then the two things this player is best at */
+  function statBoxes(x) {
+    var g = x.g || 1, out = [['PTS', f1(x.pts, x.g)]];
+    if (x.trb !== undefined && (x.trb > 0 || x.src !== 'last')) out.push(['REB', f1(x.trb, x.g)]);
+    out.push(['AST', f1(x.ast, x.g)]);
+    var c = [];
+    if (x.stl > 0) c.push({ s: (x.stl / g) / 1.3, b: ['STL', f1(x.stl, x.g)] });
+    if (x.blk > 0) c.push({ s: (x.blk / g) / 1.2, b: ['BLK', f1(x.blk, x.g)] });
+    if (x.fga / g >= 3) c.push({ s: (x.fg / x.fga) / 0.5, b: ['FG%', pctS(x.fg, x.fga)] });
+    if (x.tpa / g >= 2) c.push({ s: (x.tp / x.tpa) / 0.37, b: ['3P%', pctS(x.tp, x.tpa)] });
+    if (x.fta / g >= 2) c.push({ s: (x.ft / x.fta) / 0.82, b: ['FT%', pctS(x.ft, x.fta)] });
+    if ((x.tp || 0) / g >= 2.2) c.push({ s: ((x.tp || 0) / g) / 2.4, b: ['3PM', f1(x.tp, x.g)] });
+    if (x.trb / g >= 9 || x.ast / g >= 7) c.push({ s: 0.5, b: ['FG%', pctS(x.fg, x.fga)] });
+    c.sort(function (a, b) { return b.s - a.s; });
+    var seen = {};
+    c.forEach(function (k) { if (out.length < 5 && !seen[k.b[0]]) { seen[k.b[0]] = 1; out.push(k.b); } });
+    while (out.length < 4) out.push(['FG%', pctS(x.fg, x.fga)]);
+    return out;
+  }
   function leagueAvg() {
     var t = { fg: 0, fga: 0, ft: 0, fta: 0, pts: 0 }, st = save.lg.stats;
     Object.keys(st).forEach(function (id) { ['fg', 'fga', 'ft', 'fta', 'pts'].forEach(function (k) { t[k] += st[id][k] || 0; }); });
@@ -808,7 +827,7 @@
     body.appendChild(el('div', 'group-title', s ? 'Averages · ' + s.label : 'Averages'));
     if (s) {
       var x = s.x;
-      body.appendChild(boxes([['PTS', f1(x.pts, x.g)], ['AST', f1(x.ast, x.g)], ['FG%', pctS(x.fg, x.fga)], ['FT%', pctS(x.ft, x.fta)]]));
+      body.appendChild(boxes(statBoxes(Object.assign({ src: s.src }, x))));
     } else body.appendChild(el('p', 'sub', 'No games on record yet.'));
     var x2 = save.lg.stats[p.id];
     if (x2 && x2.log && x2.log.length) {
@@ -1057,7 +1076,7 @@
       detail.hidden = true;
       var s = statsOf(p);
       detail.appendChild(el('div', 'group-title', s ? 'Averages \u00B7 ' + s.label : 'No games yet'));
-      if (s) detail.appendChild(boxes([['PTS', f1(s.x.pts, s.x.g)], ['AST', f1(s.x.ast, s.x.g)], ['FG%', pctS(s.x.fg, s.x.fga)], ['FT%', pctS(s.x.ft, s.x.fta)]]));
+      if (s) detail.appendChild(boxes(statBoxes(Object.assign({ src: s.src }, s.x))));
       detail.appendChild(el('div', 'quick-k', money(p.salary) + ' \u00B7 ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' year' : ' years') + ' left') + ' \u00B7 potential ' + p.pot));
       if (team.id === save.myId) {
         var mv = el('div', 'dock-row');
@@ -1389,6 +1408,7 @@
     Season.record(save, results);
     League.aiMoves(save, save.myId, save.ids.map(teamById));
     rosterCache = {};
+    if (League.formCheck(save)) rosterCache = {};
     if (Social.has(save.year)) Social.day(save, results, results.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
   }
@@ -1464,6 +1484,7 @@
     var dayGames = others.map(function (g) { return { home: g.home, away: g.away, hs: g.hs, as: g.as, lines: g.lines }; });
     dayGames.unshift({ home: mine.home, away: mine.away, hs: mineResult.hs, as: mineResult.as, mine: true, lines: mine.home === me.id ? { h: res.homeLines, a: res.awayLines } : { h: res.awayLines, a: res.homeLines } });
     var dayInj = myInj.concat(others.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
+    if (League.formCheck(save)) rosterCache = {};
     if (Social.has(save.year)) Social.day(save, dayGames, dayInj);
     save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, myInj: myInj, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
     persist();
@@ -4074,6 +4095,7 @@
         Engine.setRules(save.rules);
         selected = teamById(save.myId);
         if (!save.lg) League.init(save, res[1].players, res[0].teams);
+        League.tune(save);
         ensureTm();
         continueBtn.disabled = false;
         if (save.pending && save.pending.length) openEvents();

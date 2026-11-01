@@ -74,6 +74,82 @@
     }
   }
 
+  /* How much room a player still has to grow: big for teenagers, small for stars in their mid-twenties. */
+  function potGap(age) { return age <= 19 ? 14 : age === 20 ? 12 : age === 21 ? 10 : age === 22 ? 8 : age === 23 ? 6 : age === 24 ? 4 : age === 25 ? 3 : age === 26 ? 1.5 : 0; }
+  function potFor(ovr, age) { return clamp(Math.round(ovr + potGap(age) * (1 - Math.max(0, ovr - 50) / 100) + rnd(-2, 3)), ovr, 99); }
+
+  /* Older saves had inflated potentials; trim them once, and never raise a rating. */
+  function tune(save) {
+    if (!save.lg || save.lg.tuned) return;
+    save.lg.tuned = 1;
+    save.lg.players.forEach(function (p) {
+      if (p.status !== 'active' || p.pot === undefined) return;
+      var cap = p.ratings.ovr + Math.ceil(potGap(p.age || 26) * (1 - Math.max(0, p.ratings.ovr - 50) / 100)) + 4;
+      if (p.pot > cap) p.pot = Math.max(p.ratings.ovr, cap);
+    });
+  }
+
+  /* Young players with real upside are the foundation of a club and are not shopped or given away. */
+  function franchise(p) {
+    var age = p.age || 26;
+    return (age <= 23 && p.pot >= 74) || (age <= 25 && (p.pot >= 80 || p.ratings.ovr >= 74));
+  }
+  /* A believable reason for a club to move a player, or null when he is not available. */
+  function shopReason(save, p) {
+    if (!p.team || franchise(p)) return null;
+    var age = p.age || 26, mode = clubMode(save, p.team), top = rosterOf(save, p.team).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var rank = top.indexOf(p), over = p.salary > salaryFor(p.ratings.ovr) * 1.25 && p.salary > 0;
+    if (age >= 31 && mode === 'rebuild') return 'a rebuilding club looking to get younger';
+    if (p.yrs <= 1 && age >= 27 && mode !== 'win') return 'an expiring contract on a club not planning to re-sign';
+    if (over && rank >= 1) return 'a contract the club wants off the books';
+    if (rank >= 3 && age >= 26 && p.ratings.ovr >= 66) return 'surplus on a deep roster';
+    if (mode === 'win' && rank >= 2 && age >= 27 && p.ratings.ovr >= 66) return 'a contender shopping depth for a bigger piece';
+    return null;
+  }
+
+  /* In-season form. Every ten games, what a player has really produced nudges his rating, rookies most of all
+     because the game has no earlier NBA numbers for them. */
+  function formCheck(save) {
+    var day = save.day || 0;
+    if (day < 12 || day - (save.lg.formDay || 0) < 10) return 0;
+    save.lg.formDay = day;
+    var st = save.lg.stats, rows = [];
+    save.lg.players.forEach(function (p) {
+      var x = st[p.id];
+      if (p.status !== 'active' || !p.team || !x || x.g < 8 || !x.min || x.min / x.g < 12) return;
+      var eff = (x.pts + x.trb + x.ast + x.stl + x.blk - (x.fga - x.fg) - (x.fta - x.ft) - x.tov) / x.min * 36;
+      rows.push({ p: p, e: eff, o: p.ratings.ovr, w: Math.min(1, x.g / 25) });
+    });
+    if (rows.length < 40) return 0;
+    var n = rows.length, mo = 0, me = 0;
+    rows.forEach(function (r) { mo += r.o; me += r.e; }); mo /= n; me /= n;
+    var sxy = 0, sxx = 0;
+    rows.forEach(function (r) { sxy += (r.o - mo) * (r.e - me); sxx += (r.o - mo) * (r.o - mo); });
+    var slope = sxx ? sxy / sxx : 0.3;
+    if (slope < 0.1) return 0;
+    var changed = 0;
+    rows.forEach(function (r) {
+      var p = r.p, age = p.age || 26, rookie = !!p.rookie || p.draftedYear === save.year;
+      var resid = (r.e - (me + slope * (r.o - mo))) / slope;
+      var step = Math.max(-1.6, Math.min(1.6, resid * 0.12 * r.w * (rookie ? 2 : 1)));
+      step += age <= 22 ? 0.25 : age >= 32 ? -0.2 : 0;
+      var room = rookie ? 10 : 6, used = p.formAdj || 0;
+      if (Math.abs(used + step) > room) step = Math.sign(step) * Math.max(0, room - Math.abs(used)) * (Math.sign(used) === Math.sign(step) ? 1 : 0) || 0;
+      if (Math.abs(step) < 0.35) return;
+      var dr = step / 0.6;
+      SKILLS.forEach(function (k) { if (p.ratings[k] !== undefined) p.ratings[k] = clamp(Math.round(p.ratings[k] + dr + gauss() * 0.6), 12, 99); });
+      var before = p.ratings.ovr;
+      p.ratings.ovr = ovrOf(p.ratings);
+      p.formAdj = used + (p.ratings.ovr - before);
+      if (p.ratings.ovr > p.pot) p.pot = Math.min(99, p.ratings.ovr + (age <= 22 ? 2 : 0));
+      else if (age <= 23 && p.ratings.ovr - before >= 2) p.pot = Math.min(99, p.pot + 1);
+      else if (age <= 23 && p.ratings.ovr - before <= -2) p.pot = Math.max(p.ratings.ovr, p.pot - 1);
+      if (p.ratings.ovr !== before) changed++;
+    });
+    bump(save);
+    return changed;
+  }
+
   function init(save, players, teams) {
     setEra(save.year);
     var lg = { rev: 0, cap: capFor(save.year), players: [], stats: {}, history: [], year: save.year, draft: null, off: null };
@@ -85,7 +161,7 @@
       q.known = !!KNOWN_SALARY[q.id];
       q.yrs = 1 + Math.floor(Math.random() * 3);
       var age = q.age || 26;
-      q.pot = clamp(Math.round(q.ratings.ovr + Math.max(0, 27 - age) * 1.2 + rnd(0, 4)), q.ratings.ovr, 99);
+      q.pot = potFor(q.ratings.ovr, age);
       lg.players.push(q);
       logDeal(save, q, 'Original deal', q.team);
     });
@@ -415,8 +491,10 @@
 
   function tradeValue(p, mode) {
     var o = p.ratings.ovr, age = p.age || 26;
-    var v = Math.pow(Math.max(0, o - 38), 2) / 12;
+    var up = age <= 25 ? Math.max(0, p.pot - o) * (age <= 21 ? 0.7 : age <= 23 ? 0.5 : 0.3) * (mode === 'win' ? 0.7 : mode === 'rebuild' ? 1.3 : 1) : 0;
+    var v = Math.pow(Math.max(0, o + up - 38), 2) / 12;
     if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3 * (mode === 'win' ? 0.4 : mode === 'rebuild' ? 1.6 : 1);
+    if (franchise(p)) v *= (age <= 23 && p.pot >= 74) ? 2.4 : 1.5;
     if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * (mode === 'win' ? 0.05 : mode === 'rebuild' ? 0.16 : 0.1));
     if (mode === 'win' && o >= 70) v *= 1.15;
     v *= 1 + (p.imp || 0) * 1.5;
@@ -442,9 +520,23 @@
     if (mePay > cap && inMe > outMe) return { ok: false, reason: 'That would put you ' + money(mePay - cap, cap) + ' over the ' + money(cap, cap) + ' cap. Send out more salary.', ratio: 0 };
     if (themPay > cap && outMe > inMe) return { ok: false, reason: 'They would be ' + money(themPay - cap, cap) + ' over the cap. Take back more salary.', ratio: 0 };
     var mode = clubMode(save, themId);
+    var core = get.filter(franchise)[0];
     var gain = sum(give, function (p) { return tradeValue(p, mode); }) + ex.gain, loss = sum(get, function (p) { return tradeValue(p, mode); }) + ex.loss;
     var ratio = loss > 0 ? gain / loss : 9;
     var flat = loss > 0 ? (sum(give, function (p) { return tradeValue(p); }) + ex.gain) / (sum(get, function (p) { return tradeValue(p); }) + ex.loss) : 9;
+    if (ratio < 1.1 && core) {
+      var cn = core.name.split(' ').slice(-1)[0], lines = ratio < 0.45 ? [
+        'You are joking. ' + cn + ' is the cornerstone of this franchise, and that is not close.',
+        'We are building around ' + cn + '. Call back with a massive haul, not this.'
+      ] : ratio < 0.8 ? [
+        cn + ' is our franchise player. It would take a massive haul to even have the conversation, and this is not it.',
+        'We do not move a ' + (core.age || 21) + '-year-old like ' + cn + ' for a package like that. Think much bigger.'
+      ] : [
+        'Now you are getting closer, but ' + cn + ' is our cornerstone. We would need a real star and picks to move him.',
+        'Still short. ' + cn + ' is the guy we are building around, so it has to be a massive offer.'
+      ];
+      return { ok: false, reason: lines[Math.floor(Math.random() * lines.length)], ratio: ratio, close: ratio >= 0.9 };
+    }
     if (ratio < 1.1) {
       var why = '';
       if (flat >= 1.1) why = mode === 'win' ? ' They are contending and want players who help now, not prospects.' : mode === 'rebuild' ? ' They are rebuilding and will not take older players.' : '';
@@ -747,7 +839,7 @@
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
-    tradeValue: tradeValue, clubMode: clubMode, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
+    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,

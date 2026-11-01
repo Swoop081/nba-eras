@@ -88,11 +88,14 @@
         return { app: 'Messages', c: '#5E5CE6', g: 'O', title: 'Owner', text: 'We are behind pace for "' + save.owner.text.toLowerCase() + '". What is the plan?', act: { type: 'owner' } };
       });
     }
-    var mid = save.lg.players.filter(function (p) { return p.team && p.team !== me && p.status === 'active' && p.ratings.ovr >= 66 && p.ratings.ovr < 82; });
-    if (mid.length && save.day < save.days.length * 0.7) outs.push(function () {
-      var p = rnd(mid), t = src.team(p.team);
-      return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'The ' + (t ? t.name : 'club') + ' are open to moving ' + p.name + ' (' + p.ratings.ovr + ' overall). Several teams are circling.', act: { type: 'shop', pid: p.id, tid: p.team } };
-    });
+    var mid = save.lg.players.filter(function (p) { return p.team && p.team !== me && p.status === 'active' && p.ratings.ovr >= 62 && p.ratings.ovr < 82; });
+    if (mid.length && save.day < save.days.length * 0.7 && root.League && root.League.shopReason) {
+      var cand = mid.map(function (p) { return { p: p, why: root.League.shopReason(save, p) }; }).filter(function (c) { return c.why; });
+      if (cand.length) outs.push(function () {
+        var c = rnd(cand), p = c.p, t = src.team(p.team);
+        return { app: 'Breaking', c: '#D8232A', g: '!', title: 'League Insider', text: 'The ' + (t ? t.name : 'club') + ' are fielding calls on ' + p.name + ' (' + (p.age || '') + ', ' + p.ratings.ovr + ' overall): ' + c.why + '.', act: { type: 'shop', pid: p.id, tid: p.team } };
+      });
+    }
     var cap = save.lg.cap, pay = ros.concat(save.lg.players.filter(function (p) { return p.team === me && p.inj > 0; })).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
     var floor = ros[7] ? ros[7].ratings.ovr : 50;
     var fa = (root.League && root.League.freeAgents ? root.League.freeAgents(save) : []).filter(function (p) { return p.ratings.ovr >= floor + 2 && pay + root.League.salaryFor(p.ratings.ovr) <= cap; })[0];
