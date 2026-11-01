@@ -1474,6 +1474,33 @@
 
 
   /* ---------- tonight: starters and keys to the game ---------- */
+  var PREVSTATS = {};
+  fetch('data/players-2025.json').then(function (r) { return r.json(); }).then(function (d) { (d.players || []).forEach(function (p) { if (p.prev) PREVSTATS[p.id] = p.prev; }); }).catch(function () {});
+  /* what a player is averaging: this season once he has a few games, otherwise last season (the saved one, then the real one) */
+  function statOf(p) {
+    var x = save && save.lg && save.lg.stats && save.lg.stats[p.id];
+    if (x && x.g >= 4) return { ls: false, g: x.g, pts: x.pts / x.g, trb: x.trb / x.g, ast: x.ast / x.g, stl: (x.stl || 0) / x.g, blk: (x.blk || 0) / x.g };
+    var c = p.career && p.career.length ? p.career[p.career.length - 1] : null;
+    if (c && c.g >= 10) return { ls: true, g: c.g, pts: c.pts / c.g, trb: c.trb / c.g, ast: c.ast / c.g, stl: (c.stl || 0) / c.g, blk: (c.blk || 0) / c.g };
+    var q = p.ls || PREVSTATS[p.id];
+    if (q && q.g >= 10) return { ls: true, g: q.g, pts: q.pts, trb: q.trb, ast: q.ast, stl: q.stl || 0, blk: q.blk || 0 };
+    if (x && x.g) return { ls: false, g: x.g, pts: x.pts / x.g, trb: x.trb / x.g, ast: x.ast / x.g, stl: (x.stl || 0) / x.g, blk: (x.blk || 0) / x.g };
+    return null;
+  }
+  /* the two numbers worth quoting for him, points first */
+  function statPair(s, p) {
+    var big = /C|F/.test(p.pos || '') && !/^G$/.test(p.pos || '');
+    var opts = [['blocks', s.blk, 1.5, 0], ['steals', s.stl, 1.6, 0], ['assists', s.ast, 5, 1], ['rebounds', s.trb, 7, 1]].filter(function (o) { return o[1] >= o[2]; });
+    var pick = opts.sort(function (u, v) { return v[1] / v[2] - u[1] / u[2]; })[0] || (big ? ['rebounds', s.trb] : ['assists', s.ast]);
+    return [['points', s.pts], [pick[0], pick[1]]];
+  }
+  function statText(p, verbs) {
+    var s = statOf(p); if (!s) return null;
+    var pr = statPair(s, p), t = pr[0][1].toFixed(1) + ' ' + pr[0][0] + ' and ' + pr[1][1].toFixed(1) + ' ' + pr[1][0];
+    return { s: s, t: t, now: (s.ls ? 'averaged ' : 'is averaging ') + t + (s.ls ? ' last season' : '') };
+  }
+  var POSV = { 'G': 1.2, 'G-F': 2.4, 'F': 3.4, 'F-C': 4.3, 'C': 5 };
+  function slotRank(p) { return (POSV[p.pos] || 3) - ((p.ratings.ply || 50) - 50) / 200; }
   var KEYTPL = {
     hot: [
       function (c) { return c.n + ' is averaging ' + c.a3 + ' points over his last three, against ' + c.pp + ' on the season.'; },
@@ -1516,13 +1543,13 @@
       function (c) { return c.ord + ' in the league in ' + c.what + ': ' + c.t + ' at ' + c.v + '.'; }
     ],
     edge: [
-      function (c) { return c.n + ' (' + c.o + ') has a ' + c.d + '-point edge at ' + c.pos + ' over ' + c.m + '. Feed him early.'; },
-      function (c) { return 'The mismatch to attack: ' + c.n + ' against ' + c.m + ', ' + c.d + ' points of overall in his favour.'; },
-      function (c) { return c.n + ' should get his way against ' + c.m + '.'; }
+      function (c) { return c.n + ' ' + c.ln + ', while ' + c.m + ' ' + c.lm + '. Feed him early.'; },
+      function (c) { return 'The mismatch to attack: ' + c.n + ' (' + c.ln + ') against ' + c.m + '.'; },
+      function (c) { return c.n + ' should get his way against ' + c.m + ', who ' + c.lm + '.'; }
     ],
     short: [
-      function (c) { return c.n + ' is the one to stop, rated ' + c.d + ' points above ' + c.m + ', his matchup.'; },
-      function (c) { return c.m + ' draws the tough assignment against ' + c.n + ', who is rated ' + c.d + ' higher.'; }
+      function (c) { return c.n + ' is the one to stop: he ' + c.ln + '. ' + c.m + ' draws the assignment.'; },
+      function (c) { return c.m + ' has the tough job against ' + c.n + ', who ' + c.ln + '.'; }
     ],
     home: [
       function (c) { return c.good ? c.t + ' are ' + c.rec + ' ' + c.where + '. It is a real edge.' : c.t + ' are just ' + c.rec + ' ' + c.where + ' and have not found their feet.'; },
@@ -1533,6 +1560,14 @@
       function (c) { return 'Everything runs through ' + c.n + ' for ' + c.t + ': ' + c.v + '.'; },
       function (c) { return c.t + ' will look for ' + c.n + ' early (' + c.v + ').'; },
       function (c) { return c.n + ' sets the tone for ' + c.t + ', ' + c.v + '.'; }
+    ],
+    rim: [
+      function (c) { return c.n + ' ' + c.vb + ' ' + c.b + ' blocks a game' + (c.ls ? ' last season' : '') + '. Think twice before driving the lane.'; },
+      function (c) { return 'The rim belongs to ' + c.n + ' (' + c.b + ' blocks ' + (c.ls ? 'a game last season' : 'a game') + '). Pull him out or go around.'; }
+    ],
+    pest: [
+      function (c) { return c.n + ' ' + c.vb + ' ' + c.s + ' steals a game' + (c.ls ? ' last season' : '') + '. Protect the ball on his side.'; },
+      function (c) { return 'Careful with the pass near ' + c.n + ', who has ' + c.s + ' steals a game' + (c.ls ? ' to his name last season.' : '.'); }
     ],
     stand: [
       function (c) { return c.line; },
@@ -1555,7 +1590,7 @@
       function (c) { return c.line + '. Nothing is settled.'; }
     ]
   };
-  var KEYBASE = { star: 3, stand: 3, series: 12, hot: 9, slump: 8, streak: 7, hurt: 8, board: 5, dime: 5, meet: 5, rank: 6, edge: 5, short: 5, home: 4, rookie: 5, close: 3, last: 4 };
+  var KEYBASE = { star: 3, stand: 3, series: 12, hot: 9, slump: 8, streak: 7, hurt: 8, board: 5, dime: 5, meet: 5, rank: 6, rim: 6, pest: 4, edge: 5, short: 5, home: 4, rookie: 5, close: 3, last: 4 };
 
   function pregameKeys(me, opp, mine, label, starters) {
     var pg = save.pg || (save.pg = { n: 0, k: {}, t: {}, s: {} });
@@ -1616,15 +1651,27 @@
       add('series', 'x', { line: (mw === ow ? 'Series tied ' + mw + '-' + ow : mw > ow ? tm(me) + ' lead ' + mw + '-' + ow : tm(opp) + ' lead ' + ow + '-' + mw) });
     }
     starters.forEach(function (row) {
-      var d = row.p.ratings.ovr - row.o.ratings.ovr;
-      if (d >= 6) add('edge', row.p.id, { n: lastName(row.p.name), o: row.p.ratings.ovr, d: d, pos: row.p.pos || 'the spot', m: lastName(row.o.name) });
-      else if (d <= -6) add('short', row.o.id, { n: lastName(row.o.name), t: tm(me), d: -d, pos: row.p.pos || 'the spot', m: lastName(row.p.name) });
+      var d = row.p.ratings.ovr - row.o.ratings.ovr, sp = statText(row.p), so = statText(row.o);
+      if (!sp || !so) return;
+      if (d >= 6) add('edge', row.p.id, { n: lastName(row.p.name), ln: sp.now, m: lastName(row.o.name), lm: so.now });
+      else if (d <= -6) add('short', row.o.id, { n: lastName(row.o.name), ln: so.now, m: lastName(row.p.name) });
+    });
+    starters.forEach(function (row) {
+      [row.p, row.o].forEach(function (p) {
+        var s = statOf(p); if (!s) return;
+        var nm = lastName(p.name), vb = s.ls ? 'averaged' : 'averages';
+        if (s.blk >= 1.8) add('rim', p.id, { n: nm, b: s.blk.toFixed(1), vb: vb, ls: s.ls });
+        else if (s.stl >= 1.8) add('pest', p.id, { n: nm, s: s.stl.toFixed(1), vb: vb, ls: s.ls });
+      });
     });
     [[me, 1], [opp, 0]].forEach(function (pr) {
       var t = pr[0], r = League.rosterOf(save, t.id).filter(function (p) { return !(p.inj > 0); }), best = null, bp = 0;
       r.forEach(function (p) { var x = st[p.id]; if (x && x.g >= 4 && x.pts / x.g > bp) { bp = x.pts / x.g; best = p; } });
       if (best) { var xb = st[best.id]; add('star', best.id, { t: tm(t), n: lastName(best.name), v: bp.toFixed(1) + ' points and ' + (xb.trb / xb.g).toFixed(1) + ' rebounds a night' }); }
-      else { var top = r.sort(function (a2, b2) { return b2.ratings.ovr - a2.ratings.ovr; })[0]; if (top) add('star', top.id, { t: tm(t), n: lastName(top.name), v: 'rated ' + top.ratings.ovr + ' overall' }); }
+      else {
+        var cands = r.map(function (p) { return { p: p, s: statOf(p) }; }).filter(function (z) { return z.s; }).sort(function (u, v) { return v.s.pts - u.s.pts; })[0];
+        if (cands) add('star', cands.p.id, { t: tm(t), n: lastName(cands.p.name), v: cands.s.pts.toFixed(1) + ' points and ' + cands.s.trb.toFixed(1) + ' rebounds a night' + (cands.s.ls ? ' last season' : '') });
+      }
     });
     if (save.phase === 'regular') {
       var stn = Season.standings(save), dv = save.division[me.id], rows = stn[dv], at = 0;
@@ -1653,7 +1700,8 @@
 
   function openPregame(me, opp, mine, label) {
     var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
-    var starters = g.onH.map(function (m, i) { return { p: m.p, o: g.onA[i].p }; });
+    var sh = g.onH.map(function (m) { return m.p; }).sort(function (u, v) { return slotRank(u) - slotRank(v); }), sa = g.onA.map(function (m) { return m.p; }).sort(function (u, v) { return slotRank(u) - slotRank(v); });
+    var starters = sh.map(function (p, i) { return { p: p, o: sa[i] }; });
     var keys = pregameKeys(me, opp, mine, label, starters);
     persist();
     document.getElementById('pg-title').textContent = me.id === mine.home ? 'Tonight at home' : 'Tonight on the road';
@@ -1668,7 +1716,7 @@
       var tx = el('span');
       tx.appendChild(el('strong', null, t.city));
       var rc = save.rec[t.id], res = f[t.id] ? f[t.id].res : [];
-      tx.appendChild(el('span', 'meta', (save.phase === 'regular' ? rc.w + '-' + rc.l + ' · ' : '') + streakOf(res)));
+      tx.appendChild(el('span', 'meta', (save.phase === 'regular' ? recText(t.id, rc) : '') + (res.length ? ' \u00B7 ' + streakOf(res) : '')));
       box.appendChild(tx);
       vs.appendChild(box);
       if (!i) vs.appendChild(el('b', 'pg-at', mine && mine.home === me.id ? 'v' : 'at'));
@@ -1680,10 +1728,10 @@
       var av = makeAvatar(p); b.appendChild(av);
       var tx = el('span');
       tx.appendChild(el('strong', null, lastName(p.name)));
-      var line = x && x.g ? (x.pts / x.g).toFixed(1) + ' pts' : (p.pos || '');
+      var sx = statOf(p), line = sx ? sx.pts.toFixed(1) + ' pts \u00B7 ' + (statPair(sx, p)[1][1]).toFixed(1) + ' ' + ({ points: 'pts', blocks: 'blk', steals: 'stl', assists: 'ast', rebounds: 'reb' })[statPair(sx, p)[1][0]] : '';
       var hot = x && x.rc && x.rc.length >= 3 && (function () { var a = x.rc.slice(-3).reduce(function (s, g2) { return s + g2[0]; }, 0) / 3; return a - x.pts / x.g >= 6 && a >= 18; })();
       var cold = x && x.rc && x.rc.length >= 4 && (function () { var l4 = x.rc.slice(-4), fg = 0, fa = 0; l4.forEach(function (g2) { fg += g2[1]; fa += g2[2]; }); return fa >= 28 && fg / fa <= 0.37 && x.fg / x.fga >= 0.42; })();
-      var m = el('span', 'meta' + (hot ? ' hot' : cold ? ' cold' : ''), (p.pos || '') + ' · ' + line + (hot ? ' · hot' : cold ? ' · cold' : ''));
+      var m = el('span', 'meta' + (hot ? ' hot' : cold ? ' cold' : ''), (p.pos || '') + (line ? ' · ' + line : '') + (hot ? ' · hot' : cold ? ' · cold' : ''));
       tx.appendChild(m);
       b.appendChild(tx);
       return b;
@@ -1768,12 +1816,11 @@
   var lv = null;
   var COURT_SPOTS = [[50, 41], [15, 52], [85, 52], [30, 80], [70, 80]];
   var OPP_SPOTS = [[50, 12], [29, 27], [71, 27], [36, 59], [64, 59]];
-  var FULL_SVG = (function () {
-    var half = '<rect x="34" y="2" width="32" height="22" class="key"/><circle cx="50" cy="24" r="8"/><path d="M10 2v13a40 26 0 0 0 80 0V2"/><circle cx="50" cy="7" r="1.6"/><path d="M44 4.5h12"/>';
-    return '<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="97"/><path d="M1.5 50h97"/><circle cx="50" cy="50" r="10"/>' + half + '<g transform="translate(0,100) scale(1,-1)">' + half + '</g></svg>';
-  })();
-  var ME_FULL = [[10, 84], [30, 77], [50, 84], [70, 77], [90, 84]];
-  var OP_FULL = [[10, 16], [30, 23], [50, 16], [70, 23], [90, 16]];
+  var FULL_SVG = '<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="97"/><rect x="34" y="60" width="32" height="38.5" class="key"/><circle cx="50" cy="60" r="11"/><path d="M6 98.5V72A47.5 50.6 0 0 1 94 72V98.5"/><path d="M41 91h18"/><circle cx="50" cy="90" r="2"/><path d="M42 82.5a8 8 0 0 0 16 0" stroke-dasharray="1.5 1.5"/></svg>';
+  /* a zone look: guards outside the arc, wings at the elbows of the key, the centre under the ring; the opponent's man sits beside each */
+  var ME_FULL = [[33, 31], [67, 31], [76, 66], [24, 66], [50, 80]];
+  var OP_FULL = [[18, 31], [82, 31], [91, 76], [9, 76], [66, 86]];
+  function rankOrder(list) { return list.map(function (m, i) { return i; }).sort(function (u, v) { return slotRank(list[u].p) - slotRank(list[v].p); }); }
   var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
 
   /* Puts the opponent's portrait inside the little circle when we have one. */
@@ -1790,7 +1837,7 @@
     img.onerror();
   }
 
-  function lastName(n) { var p = n.split(' '); return p[p.length - 1]; }
+  function lastName(n) { var p = n.split(' ').filter(Boolean); while (p.length > 1 && /^(jr|sr|ii|iii|iv|v)\.?$/i.test(p[p.length - 1])) p.pop(); return p[p.length - 1]; }
   function periodLabel(g) { return g.q < 4 ? 'Q' + (g.q + 1) : (g.q === 4 ? 'OT' : 'OT' + (g.q - 3)); }
   function clockText(g) {
     var total = g.q < 4 ? 12 : 5, secs = Math.round((1 - g.k / g.limit) * total * 60);
@@ -1831,16 +1878,14 @@
       var cc = el('div', 'cc-logo');
       cc.appendChild(teamBadge(home));
       court.appendChild(cc);
-      var hm = el('span', 'cc-tag', home.city + ' · home');
-      court.appendChild(hm);
     }
     lv.pl = []; lv.op = [];
     lv.ids = [];
+    var oH = full ? rankOrder(g.onH) : [0, 1, 2, 3, 4], oA = full ? rankOrder(g.onA) : [0, 1, 2, 3, 4];
     COURT_SPOTS.forEach(function (sp, i) {
-      var p = g.onH[i].p, o = g.onA[i].p;
+      var p = g.onH[oH[i]].p, o = g.onA[oA[i]].p;
       lv.ids.push(p.id + '|' + o.id);
       var d = el('div', 'op');
-      if (full) d._pp = el('span', 'pp', '0');
       attachFace(d, o);
       d.style.left = (full ? OP_FULL : OPP_SPOTS)[i][0] + '%';
       d.style.top = (full ? OP_FULL : OPP_SPOTS)[i][1] + '%';
@@ -1854,6 +1899,7 @@
       var pp = el('span', 'pp', '0'); b.appendChild(pp);
       court.appendChild(b); lv.pl.push({ el: b, pp: pp });
     });
+    lv.rank = full;
     document.getElementById('ticker').textContent = '';
     tickerLine('Tip-off. ' + me.city + ' v ' + opp.city + '.', 'sys');
     document.getElementById('live-dock').textContent = '';
@@ -1865,7 +1911,7 @@
   function skipButton() {
     var dock = document.getElementById('live-dock');
     dock.textContent = '';
-    var b = el('button', 'btn ghost wide', 'Skip to the final buzzer');
+    var b = el('button', 'btn primary wide', 'Skip to the final buzzer');
     b.type = 'button';
     b.addEventListener('click', function () {
       clearTimeout(lv.timer);
@@ -1892,10 +1938,11 @@
   }
 
   /* Keeps the court dots in step with whoever the sim has on the floor. */
+  function slotIdx(list) { return lv.rank ? rankOrder(list) : [0, 1, 2, 3, 4]; }
   function syncCourt() {
-    var g = lv.g;
+    var g = lv.g, oH = slotIdx(g.onH), oA = slotIdx(g.onA);
     for (var i = 0; i < 5; i++) {
-      var p = g.onH[i].p, o = g.onA[i].p, key = p.id + '|' + o.id;
+      var p = g.onH[oH[i]].p, o = g.onA[oA[i]].p, key = p.id + '|' + o.id;
       if (lv.ids[i] === key) continue;
       var slot = lv.pl[i], old = lv.ids[i].split('|');
       lv.ids[i] = key;
@@ -1903,7 +1950,7 @@
         slot.el.textContent = '';
         slot.el.appendChild(makeAvatar(p));
         slot.el.appendChild(el('span', 'nm', lastName(p.name)));
-        slot.pp = el('span', 'pp', String(g.onH[i].s.pts));
+        slot.pp = el('span', 'pp', String(g.onH[oH[i]].s.pts));
         slot.el.appendChild(slot.pp);
         slot.el.classList.remove('flash'); void slot.el.offsetWidth; slot.el.classList.add('flash');
       }
@@ -1916,7 +1963,8 @@
     syncCourt();
     var list = mineSide ? g.onH : g.onA;
     var idx = -1;
-    for (var i = 0; i < 5; i++) if (list[i].p.name === ev.who) idx = i;
+    var ord = slotIdx(list);
+    for (var i = 0; i < 5; i++) if (list[i].p.name === ev.who) idx = ord.indexOf(i);
     lv.pl.forEach(function (p) { p.el.classList.remove('ball'); });
     lv.op.forEach(function (o) { o.classList.remove('ball'); });
     if (idx >= 0) (mineSide ? lv.pl[idx].el : lv.op[idx]).classList.add('ball');
@@ -1944,7 +1992,8 @@
     document.getElementById('lv-b').textContent = lv.db;
     document.getElementById('lv-clock').textContent = clockText(g);
     document.getElementById('lv-period').textContent = periodLabel(g);
-    for (var i = 0; i < 5; i++) { lv.pl[i].pp.textContent = g.onH[i].s.pts; if (lv.op[i]._pp) lv.op[i]._pp.textContent = g.onA[i].s.pts; }
+    var oh = slotIdx(g.onH);
+    for (var i = 0; i < 5; i++) { lv.pl[i].pp.textContent = g.onH[oh[i]].s.pts; }
   }
 
   /* ---------- timeout decisions: situational, each with its own trade-off ---------- */
@@ -2082,8 +2131,9 @@
         p.el.classList.add('pick');
         p.el.onclick = function () {
           lv.pl.forEach(function (q) { q.el.classList.remove('pick'); q.el.onclick = null; });
-          g.mods.H = { focus: g.onH[i].p.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
-          tickerLine('Ball to ' + lastName(g.onH[i].p.name) + '...', 'sys');
+          var hp = g.onH[slotIdx(g.onH)[i]].p;
+          g.mods.H = { focus: hp.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
+          tickerLine('Ball to ' + lastName(hp.name) + '...', 'sys');
           skipButton();
           lv.timer = setTimeout(liveTick, 700);
         };

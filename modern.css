@@ -537,3 +537,13 @@ body[data-modern="1"] .coach-row .cr i{font-style:normal;opacity:.7}
 body[data-modern="1"] .coach-row .cr b{color:var(--ink);opacity:1}
 body[data-modern="1"] .coach-row.empty{justify-content:center;opacity:.7;padding:14px}
 body[data-modern="1"] .staff-fx{margin:2px 0 0;font-size:12px;opacity:.65;text-align:center}
+
+/* half court */
+body[data-modern="1"] .court.full .pl{width:60px;transform:translate(-50%,-50%)}
+body[data-modern="1"] .court.full .pl .avatar{width:50px;height:50px}
+body[data-modern="1"] .court.full .op{width:34px;height:34px;border-width:2px}
+body[data-modern="1"] .court.full .op .opn{font-size:9.5px;padding:0 4px;margin-top:1px}
+body[data-modern="1"] .court.full svg.lines .key{fill:color-mix(in srgb,var(--home) 70%,#000)}
+body[data-modern="1"] .court.full .cc-logo{top:11%;opacity:.55;width:44px;height:44px}
+body[data-modern="1"] .court.full .cc-logo .badge,body[data-modern="1"] .court.full .cc-logo .badge.has-logo{width:42px;height:42px}
+body[data-modern="1"] .court.full .op .opn{max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
