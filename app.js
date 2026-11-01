@@ -987,6 +987,7 @@
     body.appendChild(el('div', 'group-title', 'Current deal'));
     body.appendChild(boxes([['Salary', money(p.salary)], ['Years left', p.yrs <= 0 ? 'Expiring' : String(p.yrs)], ['Worth', money(League.salaryFor(p.ratings.ovr))], ['Cap share', Math.round(100 * p.salary / save.lg.cap) + '%']]));
     var diff = p.salary - League.salaryFor(p.ratings.ovr);
+    if (p.opt === 'player' || p.opt === 'team') body.appendChild(el('p', 'sub', (p.opt === 'player' ? 'Player option' : 'Team option') + ' in his final season.'));
     body.appendChild(el('p', 'sub', diff > 400 ? 'Paid about ' + money(diff) + ' above his market value.' : diff < -400 ? 'A bargain: ' + money(-diff) + ' below his market value.' : 'Paid close to his market value.'));
     if (p.team === save.myId) {
       var trust = Events.pm(save, p.id).t;
@@ -1274,7 +1275,7 @@
     } else if (a.type === 'extend') {
       var ask = Math.round(League.salaryFor(p.ratings.ovr) * 1.1), pay = League.payroll(save, save.myId);
       opts.push(['Extend 3 years at ' + money(ask), function () {
-        if (pay - p.salary + ask > save.lg.cap * 1.1) return 'The owner will not take the payroll that high.';
+        if (pay - p.salary + ask > save.lg.cap * 1.3) return 'The owner will not take the payroll that high.';
         p.salary = ask; p.yrs = Math.max(p.yrs, 0) + 3; League.bump && League.bump(save); rosterCache = {}; persist();
         react('extend', { years: 3, salary: money(ask), payroll: money(League.payroll(save, save.myId)) });
         return fx({ s: { m: 8, t: 8 }, fans: 2 }) + ' \u00B7 ' + p.name + ' signs through ' + (save.year + p.yrs);
@@ -4278,7 +4279,7 @@
     all.addEventListener('click', function () { list.forEach(function (p) { League.release(save, p); }); persist(); renderOff(); });
     body.appendChild(all);
     list.forEach(function (p) {
-      var can = pay + p.salary <= save.lg.cap && n < League.MAX_ROSTER;
+      var can = League.canSign(save, me.id, p.salary) && n < League.MAX_ROSTER;
       var sg = el('button', 'btn small primary', can ? 'Sign ' + money(p.salary) : (n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap'));
       sg.type = 'button'; sg.disabled = !can;
       sg.addEventListener('click', function () { League.signRights(save, p); Social.rightsSigned(save, p); persist(); renderOff(); });
@@ -4299,7 +4300,7 @@
     rightsSection(body, me);
     fa.forEach(function (p) {
       var ask = League.salaryFor(p.ratings.ovr);
-      var can = pay + ask <= save.lg.cap && n < League.MAX_ROSTER;
+      var can = League.canSign(save, me.id, ask) && n < League.MAX_ROSTER;
       var b = el('button', 'btn small', can ? 'Sign ' + money(ask) : (n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap'));
       b.type = 'button';
       b.disabled = !can;
@@ -4325,7 +4326,7 @@
     if (problem) card.appendChild(el('p', 'note', problem));
     body.appendChild(card);
     rightsSection(body, me);
-    if (n > League.MAX_ROSTER || pay > save.lg.cap) {
+    if (n > League.MAX_ROSTER) {
       body.appendChild(el('h3', 'box-title', n > League.MAX_ROSTER ? 'Cut down to ' + League.MAX_ROSTER : 'Over the cap'));
       League.rosterOf(save, me.id).sort(function (a, b) { return a.ratings.ovr - b.ratings.ovr; }).slice(0, 12).forEach(function (p) {
         var rel = el('button', 'btn small', 'Release');
@@ -4395,6 +4396,7 @@
         selected = teamById(save.myId);
         if (!save.lg) League.init(save, res[1].players, res[0].teams);
         League.tune(save);
+        League.realContracts(save, res[1].players);
         ensureTm();
         continueBtn.disabled = false;
         if (save.pending && save.pending.length) openEvents();

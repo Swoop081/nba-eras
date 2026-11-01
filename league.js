@@ -89,6 +89,21 @@
     });
   }
 
+  /* Older saves guessed every salary from the rating. Swap in the real contracts once, for players whose deal has not changed since the start. */
+  function realContracts(save, players) {
+    if (!save.lg || save.lg.realC || save.year !== 2026 || save.off || save.phase === 'done') return;
+    save.lg.realC = 1;
+    var map = {};
+    (players || []).forEach(function (p) { if (p.contract) map[p.id] = p.contract; });
+    save.lg.players.forEach(function (p) {
+      var c = map[p.id];
+      if (!c || p.status !== 'active') return;
+      if ((p.deals || []).some(function (d) { return d.h && d.h !== 'Original deal' && d.h !== 'Traded'; })) return;
+      p.salary = c.s; p.yrs = Math.max(1, c.y - (save.year === 2026 ? 0 : 0)); p.opt = c.o; p.known = true;
+    });
+    bump(save);
+  }
+
   /* Young players with real upside are the foundation of a club and are not shopped or given away. */
   function franchise(p) {
     var age = p.age || 26;
@@ -160,6 +175,7 @@
       q.salary = KNOWN_SALARY[q.id] || salaryFor(q.ratings.ovr);
       q.known = !!KNOWN_SALARY[q.id];
       q.yrs = 1 + Math.floor(Math.random() * 3);
+      if (q.contract) { q.salary = q.contract.s; q.yrs = Math.max(1, q.contract.y); q.opt = q.contract.o; q.known = true; delete q.contract; }
       var age = q.age || 26;
       q.pot = potFor(q.ratings.ovr, age);
       lg.players.push(q);
@@ -288,6 +304,9 @@
     bump(save);
   }
 
+  /* Over the cap, a club can still sign players for about the minimum. */
+  function canSign(save, teamId, salary) { return payroll(save, teamId) + salary <= save.lg.cap || salary <= MINSAL * 1.6; }
+
   function release(save, p) { p.team = null; if (p.status === 'rights') p.status = 'active'; bump(save); }
   function rightsOf(save, id) { return save.lg.players.filter(function (p) { return p.status === 'rights' && p.team === id; }); }
   function signRights(save, p) { p.status = 'active'; bump(save); }
@@ -321,7 +340,7 @@
       if (t.id === myId) return;
       var guard = 0;
       while (rosterOf(save, t.id).length < MIN_ROSTER + 2 && guard++ < 10) {
-        var fa = freeAgents(save).filter(function (p) { return payroll(save, t.id) + salaryFor(p.ratings.ovr) <= save.lg.cap; })[0];
+        var fa = freeAgents(save).filter(function (p) { return canSign(save, t.id, salaryFor(p.ratings.ovr)); })[0];
         if (!fa) break;
         sign(save, fa, t.id, salaryFor(fa.ratings.ovr), 1 + Math.floor(Math.random() * 2));
       }
@@ -783,7 +802,7 @@
       var t = others[Math.floor(Math.random() * others.length)];
       var roster = rosterOf(save, t.id), hurt = roster.filter(function (p) { return p.inj > 3; }).length;
       if (roster.length < MAX_ROSTER && (roster.length < 13 || hurt >= 2)) {
-        var fa = freeAgents(save).filter(function (p) { return p.ratings.ovr >= 45 && payroll(save, t.id) + salaryFor(p.ratings.ovr) <= save.lg.cap; })[0];
+        var fa = freeAgents(save).filter(function (p) { return p.ratings.ovr >= 45 && canSign(save, t.id, salaryFor(p.ratings.ovr)); })[0];
         if (fa) {
           sign(save, fa, t.id, salaryFor(fa.ratings.ovr), 1);
           wire(save, t.city + ' sign free agent ' + fa.name + (hurt >= 2 ? ' to cover injuries.' : '.'));
@@ -836,7 +855,7 @@
     }
     if (mode === 'sign') {
       var roster = rosterOf(save, myId);
-      var fa = freeAgents(save).filter(function (q) { return payroll(save, myId) + salaryFor(q.ratings.ovr) <= save.lg.cap; })[0];
+      var fa = freeAgents(save).filter(function (q) { return canSign(save, myId, salaryFor(q.ratings.ovr)); })[0];
       if (roster.length >= MAX_ROSTER) return 'Your roster is full. Release someone first.';
       if (!fa) return 'Nobody affordable is available.';
       sign(save, fa, myId, salaryFor(fa.ratings.ovr), 1);
@@ -859,7 +878,7 @@
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
-    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
+    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,

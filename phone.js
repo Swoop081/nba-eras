@@ -105,7 +105,7 @@
     }
     var cap = save.lg.cap, pay = ros.concat(save.lg.players.filter(function (p) { return p.team === me && p.inj > 0; })).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
     var floor = ros[7] ? ros[7].ratings.ovr : 50;
-    var fa = (root.League && root.League.freeAgents ? root.League.freeAgents(save) : []).filter(function (p) { return p.ratings.ovr >= floor + 2 && pay + root.League.salaryFor(p.ratings.ovr) <= cap; })[0];
+    var fa = (root.League && root.League.freeAgents ? root.League.freeAgents(save) : []).filter(function (p) { return p.ratings.ovr >= floor + 2 && root.League.canSign(save, me, root.League.salaryFor(p.ratings.ovr)); })[0];
     if (fa && save.lg.players.filter(function (p) { return p.team === me && p.status === 'active'; }).length < 15) outs.push(function () {
       return { app: 'Messages', c: '#5E5CE6', g: '\u2605', title: 'Agent', text: fa.name + ' (' + fa.ratings.ovr + ' overall, ' + (fa.pos || '') + ') is available and wants a call back today.', act: { type: 'fa', pid: fa.id } };
     });
