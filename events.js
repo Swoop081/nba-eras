@@ -52,12 +52,12 @@
       desk: 'Sports Desk', paper: 'The Daily Sentinel', announcer: 'The announcer', hall: 'the Garden'
     },
     2026: {
-      win: ['{C} Handle {O}, {us}-{them}', '{star} Drops {pts} As {C} Beat {O}', '{C} Get Past {O}'],
-      close: ['{C} Edge {O}, {us}-{them}, In Thriller', '{star} Leads {C} To Narrow Win Over {O}', '{C} Survive Late Push From {O}'],
-      blow: ['{C} Roll Past {O}, {us}-{them}', '{O} Blown Out By {C}', '{C} Run Away From {O}'],
-      loss: ['{O} Beat {C}, {them}-{us}', '{C} Fall To {O}', '{O} Get The Better Of {C}'],
-      lclose: ['{O} Edge {C}, {them}-{us}', '{C} Come Up Just Short Against {O}', '{star} Scores {pts} In Vain As {C} Drop Close One'],
-      lblow: ['{C} Run Over By {O}, {them}-{us}', '{O} Blow Out {C}'],
+      win: ['{C} Handle {O}, {us}-{them}', '{star} Drops {pts} As {C} Beat {O}', '{C} Get Past {O}', '{star} Leads {C} Past {O}', '{C} Pull Away From {O}', '{C} Take Down {O}, {us}-{them}', '{O} Fall To {C}'],
+      close: ['{C} Edge {O}, {us}-{them}, In Thriller', '{star} Leads {C} To Narrow Win Over {O}', '{C} Survive Late Push From {O}', '{C} Hold Off {O} In Tight One', '{O} Fall Just Short Against {C}', '{star} Delivers In The Clutch As {C} Win'],
+      blow: ['{C} Roll Past {O}, {us}-{them}', '{O} Blown Out By {C}', '{C} Run Away From {O}', '{C} Dominate {O}', '{C} Make A Statement Against {O}', '{O} Never Had A Chance Against {C}'],
+      loss: ['{O} Beat {C}, {them}-{us}', '{C} Fall To {O}', '{O} Get The Better Of {C}', '{C} Stumble Against {O}', '{star} Not Enough As {C} Lose', '{O} Pull Away To Beat {C}'],
+      lclose: ['{O} Edge {C}, {them}-{us}', '{C} Come Up Just Short Against {O}', '{star} Scores {pts} In Vain As {C} Drop Close One', '{C} Let One Slip Against {O}', '{O} Survive {C}, {them}-{us}', '{C} Fall Short In Late Duel With {O}'],
+      lblow: ['{C} Run Over By {O}, {them}-{us}', '{O} Blow Out {C}', '{O} Rout {C}', '{C} Overwhelmed By {O}', '{O} Roll Over {C}'],
       desk: 'Sports Desk', paper: 'The Courtside Report', announcer: 'The broadcast', hall: 'the arena', modern: true, period: PERIOD_M_FLAG(),
       radio: ['{n} hits another! That is {x} points tonight and the building is on its feet!', 'And {n} from the wing, good! {x} for him now and nobody can slow him down!', 'You are watching something special. {n} has {x} points and he is not done!'],
       radioAst: '{n} with another dime, that is {x} assists tonight. He sees the whole floor!',
