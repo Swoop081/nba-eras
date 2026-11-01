@@ -195,10 +195,13 @@
     var base = [0, 1, 2, 3, 4];
     if (n >= 8) {
       var ph = g.k / g.limit, diff = Math.abs(g.hs - g.as), late = g.q >= 3 && diff <= 8;
+      var mn = g.plan && g.plan[side] && g.plan[side].minutes;
       if (g.q < 4 && !late) {
-        if (ph >= 0.35 && ph < 0.65) base = [0, 1, 5, 6, 7];
-        else if ((g.q === 0 || g.q === 2) && ph >= 0.8) base = [5, 6, 2, 3, 4];
-        else if ((g.q === 1 || g.q === 3) && ph < 0.2) base = [5, 6, 2, 3, 4];
+        if (mn === 'heavy') { if (ph >= 0.42 && ph < 0.58) base = [0, 1, 5, 6, 7]; }
+        else if (mn === 'deep' && ph >= 0.25 && ph < 0.75) base = [0, 1, 5, 6, 7];
+        else if (ph >= 0.35 && ph < 0.65) base = [0, 1, 5, 6, 7];
+        else if (mn !== 'heavy' && (g.q === 0 || g.q === 2) && ph >= 0.8) base = [5, 6, 2, 3, 4];
+        else if (mn !== 'heavy' && (g.q === 1 || g.q === 3) && ph < 0.2) base = [5, 6, 2, 3, 4];
       }
     }
     var rest = (g.rest && g.rest[side]) || {};
@@ -218,21 +221,41 @@
   }
 
   /* ---------- stepwise game, so the match screen can pause for decisions ---------- */
-  function start(home, away, year, seed, edges) {
+  function start(home, away, year, seed, edges, plan) {
     var pr = params(year);
     var perQ = pr.poss / 4;
+    plan = plan || {};
+    perQ *= 1 + 0.07 * (((plan.H && plan.H.pace) || 0) + ((plan.A && plan.A.pace) || 0));
     var prep0H = prep(home, pr), prep0A = prep(away, pr);
     var g = {
       pr: pr, r: rng(seed || Math.floor(Math.random() * 1e9)), H: prep0H, A: prep0A, year: year,
       perQ: perQ, limit: 0, q: 0, k: 0, n: 0, qh: 0, qa: 0, hs: 0, as: 0, quarters: [], ot: 0, over: false,
-      mods: { H: {}, A: {} }, rest: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
+      plan: plan, pm: { H: planMods(plan.H), A: planMods(plan.A) }, mods: { H: {}, A: {} }, rest: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
     };
     g.limit = Math.floor(perQ + g.r());
     setLineups(g);
     return g;
   }
 
-  function live(g, side) { var m = g.mods[side]; return m && m.until > g.n ? m : none(); }
+  /* the coach's game plan: pace, style and how hard the starters work. Always on for your side. */
+  function planMods(p) {
+    if (!p) return null;
+    var o = { fgMul: 1, oppFgMul: 1, astMul: 1, tovAdd: 0, foulAdd: 0 }, pc = p.pace || 0;
+    o.tovAdd += 0.012 * pc; o.fgMul *= 1 - 0.01 * pc;
+    if (p.focus === 'inside') { o.fgMul *= 1.012; o.foulAdd += 0.02; o.tovAdd += 0.004; }
+    else if (p.focus === 'ball') { o.astMul *= 1.2; o.fgMul *= 1.008; o.tovAdd += 0.006; }
+    else if (p.focus === 'defence') { o.oppFgMul *= 0.972; o.fgMul *= 0.988; o.foulAdd += 0.012; }
+    return o;
+  }
+  function live(g, side) {
+    var m = g.mods[side], on = m && m.until > g.n, pm = g.pm && g.pm[side];
+    if (!pm) return on ? m : none();
+    if (!on) return pm;
+    var r = Object.assign({}, m);
+    r.fgMul = (m.fgMul || 1) * pm.fgMul; r.oppFgMul = (m.oppFgMul || 1) * pm.oppFgMul; r.astMul = (m.astMul || 1) * pm.astMul;
+    r.tovAdd = (m.tovAdd || 0) + pm.tovAdd; r.foulAdd = (m.foulAdd || 0) + pm.foulAdd;
+    return r;
+  }
 
   /* One exchange: home possession then away possession. Returns both events. */
   function step(g) {
@@ -274,8 +297,8 @@
     return { quarters: g.quarters, home: g.hs, away: g.as, homeLines: lines(g.H), awayLines: lines(g.A) };
   }
 
-  function simulate(home, away, year, seed, edges) {
-    var g = start(home, away, year, seed, edges);
+  function simulate(home, away, year, seed, edges, plan) {
+    var g = start(home, away, year, seed, edges, plan);
     while (!g.over) step(g);
     return finalize(g);
   }

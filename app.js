@@ -1350,10 +1350,13 @@
     ord.forEach(function (p, i) { pos[p.id] = i; });
     return Events.moraleRoster(save, h).map(function (p) { return Object.assign({}, p, { slot: pos[p.id] === undefined ? 99 : pos[p.id] }); });
   }
+  function injMul() { var m = save.plan && save.plan.minutes; return m === 'heavy' ? 1.7 : m === 'deep' ? 0.75 : 1; }
   function simGame(g) {
-    var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year);
+    var pl = {};
+    if (save.plan) { if (g.home === save.myId) pl.H = save.plan; else if (g.away === save.myId) pl.A = save.plan; }
+    var r = Engine.simulate(rosterFor(g.home), rosterFor(g.away), save.year, undefined, undefined, pl);
     if (save.phase === 'regular') League.accumulate(save, r.homeLines.concat(r.awayLines), { h: g.home, a: g.away, hs: r.home, as: r.away, nh: r.homeLines.length, day: save.day });
-    var inj = League.rollInjuries(save, r.homeLines, g.home).concat(League.rollInjuries(save, r.awayLines, g.away));
+    var inj = League.rollInjuries(save, r.homeLines, g.home, g.home === save.myId ? injMul() : 1).concat(League.rollInjuries(save, r.awayLines, g.away, g.away === save.myId ? injMul() : 1));
     League.tickInjuries(save, g.home); League.tickInjuries(save, g.away);
     return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series, lines: { h: r.homeLines, a: r.awayLines }, inj: inj };
   }
@@ -1420,7 +1423,7 @@
     var others = Season.today(save).filter(function (g) {
       return g.home !== me.id && g.away !== me.id;
     }).map(simGame);
-    var myInj = League.rollInjuries(save, res.homeLines, me.id).concat(League.rollInjuries(save, res.awayLines, opp.id));
+    var myInj = League.rollInjuries(save, res.homeLines, me.id, injMul()).concat(League.rollInjuries(save, res.awayLines, opp.id));
     League.tickInjuries(save, me.id); League.tickInjuries(save, opp.id);
     var before = {}, stb = Season.standings(save);
     Object.keys(stb).forEach(function (d) { before[d] = stb[d][0].id; });
@@ -1491,7 +1494,7 @@
   }
 
   function startLive(me, opp, mine, label) {
-    var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year);
+    var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
     lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
     var top = document.getElementById('live-top');
     top.textContent = '';
@@ -2474,6 +2477,30 @@
     document.body.appendChild(ov);
   }
 
+  /* the coach's game plan: style, pace and how hard the starters play. It runs in every game you sim or play. */
+  function openPlan() {
+    hubSheet('Game plan', function (sh, close) {
+      save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
+      var pl = save.plan;
+      [['pace', 'Pace', [[1, 'Run'], [0, 'Balanced'], [-1, 'Grind']]],
+       ['focus', 'Style', [['inside', 'Inside'], ['', 'Balanced'], ['ball', 'Ball movement'], ['defence', 'Lock down']]],
+       ['minutes', 'Starters', [['heavy', 'Heavy minutes'], ['', 'Normal'], ['deep', 'Share the load']]]].forEach(function (rr) {
+        sh.appendChild(el('p', 'sh-l', rr[1]));
+        var row = el('div', 'chips');
+        rr[2].forEach(function (it) {
+          var b = el('button', (pl[rr[0]] || 0) === it[0] || (!pl[rr[0]] && it[0] === '') ? 'on' : '', it[1]); b.type = 'button';
+          b.addEventListener('click', function () {
+            pl[rr[0]] = it[0]; persist();
+            Array.prototype.forEach.call(row.children, function (x) { x.classList.toggle('on', x === b); });
+          });
+          row.appendChild(b);
+        });
+        sh.appendChild(row);
+      });
+      var d = el('button', 'btn primary wide', 'Done'); d.type = 'button'; d.addEventListener('click', close); sh.appendChild(d);
+    });
+  }
+
   function customise() {
     hubSheet('Customise', function (sh, close) {
       var u = ui();
@@ -2663,6 +2690,7 @@
     var row = el('div', 'hd-row');
     function nav(label, fn) { var b = el('button', 'btn', label); b.type = 'button'; b.addEventListener('click', fn); row.appendChild(b); }
     nav('Roster', function () { renderRoster(me); show('screen-roster'); });
+    nav('Plan', openPlan);
     nav('Trades', function () { openTrade('season'); });
     nav('Records', openRecords);
     if (reg) nav('Sim', function () {
@@ -3872,7 +3900,7 @@
     var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1));
     save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
     next.tm = save.tm; next.ids = save.ids.slice();
-    next.lg = save.lg; next.mood = save.mood;
+    next.lg = save.lg; next.mood = save.mood; next.plan = save.plan;
     next.lg.stats = {}; next.lg.draft = null; next.lg.year = next.year; next.lg.cap = League.capFor(next.year);
     if (next.mood) { next.mood.streak = 0; next.mood.news = next.mood.news.slice(-3); }
     next.pending = [];

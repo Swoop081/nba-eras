@@ -79,8 +79,9 @@
     var ranked = rosterMe.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     ranked.forEach(function (p, i) {
       var x = pm(save, p.id);
-      if (i < 5) x.m = clamp(x.m + (won ? 0.8 : -0.8));
-      else if (i < 8) x.m = clamp(x.m + (won ? 0.2 : -0.6) - 0.5);
+      var mn = save.plan && save.plan.minutes;
+      if (i < 5) x.m = clamp(x.m + (won ? 0.8 : -0.8) + (mn === 'heavy' ? -0.2 : mn === 'deep' ? 0.1 : 0));
+      else if (i < 8) x.m = clamp(x.m + (won ? 0.2 : -0.6) - 0.5 + (mn === 'heavy' ? -0.5 : mn === 'deep' ? 0.6 : 0));
       else x.m = clamp(x.m - 0.3);
     });
     m.cool.conv = Math.max(0, m.cool.conv - 1);

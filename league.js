@@ -490,14 +490,14 @@
     return ok.length >= 5 ? ok : all;
   }
   /* Each player who took the floor has a small chance of getting hurt; sturdier players less so. */
-  function rollInjuries(save, lines, teamId) {
+  function rollInjuries(save, lines, teamId, mul) {
     var hurt = [];
     lines.forEach(function (ln) {
       if (!(ln.s.pos > 0)) return;
       var p = byId(save, ln.id);
       if (!p || p.inj > 0) return;
       var dur = p.ratings.dur || 60;
-      if (Math.random() < 0.0055 * (1.6 - dur / 100)) {
+      if (Math.random() < 0.0055 * (mul || 1) * (1.6 - dur / 100)) {
         var r = Math.random();
         var n = r < 0.55 ? 2 + Math.floor(Math.random() * 4) : r < 0.85 ? 6 + Math.floor(Math.random() * 7) : r < 0.97 ? 13 + Math.floor(Math.random() * 13) : 30 + Math.floor(Math.random() * 30);
         p.inj = n;
