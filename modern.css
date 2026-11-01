@@ -524,3 +524,16 @@ body[data-modern="1"] .kpis .kpi b{font-size:20px}
 body[data-modern="1"] #screen-season .bar{flex-wrap:wrap}
 body[data-modern="1"] #screen-season .bar>div:not(#phone-banners){flex:1 1 0;min-width:0}
 body[data-modern="1"] #screen-season .bar .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* coaching staff */
+body[data-modern="1"] .staff{display:flex;flex-direction:column;gap:8px}
+body[data-modern="1"] .coach-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.05);border:0;color:inherit;text-align:left;width:100%;font:inherit}
+body[data-modern="1"] .coach-row .avatar{width:44px;height:44px}
+body[data-modern="1"] .coach-row .cm{display:flex;flex-direction:column;min-width:0;flex:1}
+body[data-modern="1"] .coach-row .cm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+body[data-modern="1"] .coach-row .cm small{opacity:.6;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .coach-row .cr{display:grid;grid-template-columns:repeat(2,auto);gap:0 8px;font-size:10.5px;opacity:.85}
+body[data-modern="1"] .coach-row .cr i{font-style:normal;opacity:.7}
+body[data-modern="1"] .coach-row .cr b{color:var(--ink);opacity:1}
+body[data-modern="1"] .coach-row.empty{justify-content:center;opacity:.7;padding:14px}
+body[data-modern="1"] .staff-fx{margin:2px 0 0;font-size:12px;opacity:.65;text-align:center}

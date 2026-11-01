@@ -252,7 +252,7 @@
       p.prev = JSON.parse(JSON.stringify(p.ratings)); p.prevPot = p.pot;
       (p.ovrHist || (p.ovrHist = [])).push({ y: save.year, o: before, a: age });
       p.age = age + 1;
-      var d = ageDelta(age + 1) + (age + 1 <= 25 ? (p.pot - before) * 0.2 : 0) + gauss() * 1.3;
+      var d = ageDelta(age + 1) + (age + 1 <= 25 ? (p.pot - before) * 0.2 : 0) + gauss() * 1.3 + (p.team && root.Coach && age + 1 <= 27 ? root.Coach.devBonus(save, p.team) * 0.9 : 0);
       var dr = d / 0.6;
       SKILLS.forEach(function (k) {
         if (p.ratings[k] === undefined) return;
@@ -269,6 +269,7 @@
         p.status = 'retired';
         if (p.team === myId) report.retired.push({ p: p, ovr: before });
         else report.leagueRetired++;
+        if (root.Coach) try { root.Coach.fromRetired(save, p); } catch (e) {}
         p.retiredTeam = p.team; p.team = null;
       } else if (p.team === myId) {
         report.mine.push({ p: p, from: before, to: p.ratings.ovr });

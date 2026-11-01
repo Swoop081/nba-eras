@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v109';
+var CACHE = 'nba-eras-v110';
 var SHELL = [
   './',
   'index.html',
@@ -9,6 +9,7 @@ var SHELL = [
   'rules.js', 'season.js',
   'events.js',
   'league.js',
+  'coaches.js',
   'history.js',
   'phone.js',
   'modern.css',
@@ -18,7 +19,8 @@ var SHELL = [
   'data/players-1946.json',
   'data/draft-1947.json',
   'data/teams-2026.json',
-  'data/players-2026.json'
+  'data/players-2026.json',
+  'data/coaches-2026.json'
 ];
 
 self.addEventListener('install', function (event) {

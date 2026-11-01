@@ -46,10 +46,10 @@
       return { app: 'Mentions', c: '#F4511E', g: '@', title: rnd(['@section104_', '@hoopsfan88', '@upperbowl_dave', '@courtside_kay', '@lateshiftlarry']), text: msg };
     });
     outs.push(function () {
-      return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(['Film at 10. Bring coffee.', 'Boss, we need to talk about the second unit.', 'Starters look gassed. Thinking about a rest day.', 'Saw the tape. Their bigs hurt us on the glass.', 'We are getting beat in transition. Need a minute with you.', 'Thinking about a smaller lineup for the next one. Thoughts?', 'Practice was sharp today. The group is listening.', 'Their guards keep getting to the rim. We can fix it.']) };
+      return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(['Film at 10. Bring coffee.', 'Starters look gassed. Thinking about a rest day.', 'Saw the tape. Their bigs hurt us on the glass.', 'Practice was sharp today. The group is listening.', 'Their guards keep getting to the rim. We can fix it.']) };
     });
     outs.push(function () {
-      return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(['Scouting: three names worth a look before the deadline.', 'Ticket sales are up this week.', 'Owner is asking about the cap sheet again.', 'Agent for a free agent called twice. Want me to ping back?']) };
+      return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(['Scouting: three names worth a look before the deadline.', 'Ticket sales are up this week.', 'Agent for a free agent called twice. Want me to ping back?']) };
     });
     var st = null; try { st = root.Season.standings(save); } catch (e) { st = null; }
     if (st) outs.push(function () {
@@ -108,6 +108,22 @@
     var fa = (root.League && root.League.freeAgents ? root.League.freeAgents(save) : []).filter(function (p) { return p.ratings.ovr >= floor + 2 && root.League.canSign(save, me, root.League.salaryFor(p.ratings.ovr)); })[0];
     if (fa && save.lg.players.filter(function (p) { return p.team === me && p.status === 'active'; }).length < 15) outs.push(function () {
       return { app: 'Messages', c: '#5E5CE6', g: '\u2605', title: 'Agent', text: fa.name + ' (' + fa.ratings.ovr + ' overall, ' + (fa.pos || '') + ') is available and wants a call back today.', act: { type: 'fa', pid: fa.id } };
+    });
+    var CT = [
+      { k: 'unit', text: 'Boss, we need to talk about the second unit. They are giving games away.' },
+      { k: 'rest', text: 'The starters look gassed. I want to rest a few of them. Your call.' },
+      { k: 'glass', text: 'Their bigs keep beating us on the glass. I want to change how we play it. Got a minute?' },
+      { k: 'fast', text: 'We are getting beat in transition. I need to talk about our floor balance.' },
+      { k: 'small', text: 'I am thinking about going smaller for a stretch. Thoughts?' }
+    ];
+    if (gp >= 3 && !(save.coachTalked && save.day - save.coachTalked < 14)) outs.push(function () {
+      save.coachTalked = save.day || 1; var c = rnd(CT), s = save.coach && save.coach.staff[me], hc = s && s.hc;
+      return { app: 'Messages', c: '#34C759', g: 'C', title: hc ? hc.n : 'Coach', text: c.text, act: { type: 'coach', topic: c.k } };
+    });
+    var payNow = save.lg.players.filter(function (p) { return p.team === me && p.status === 'active'; }).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
+    if (gp >= 4 && !(save.ownerTalked && save.day - save.ownerTalked < 30) && payNow > cap * 1.05) outs.push(function () {
+      save.ownerTalked = save.day || 1;
+      return { app: 'Messages', c: '#5E5CE6', g: 'O', title: 'Owner', text: 'Payroll is ' + root.League.money(payNow, cap) + ' and the cap is ' + root.League.money(cap, cap) + '. I want to talk about it.', act: { type: 'ownercap' } };
     });
     return outs.length ? rnd(outs)() : null;
   }

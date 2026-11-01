@@ -368,7 +368,7 @@
         nm.appendChild(nb);
         right.appendChild(nm);
         var stats = el('div', 'fc-stats');
-        [['Rating', String(team.rating)], ['Record', '0-0'], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
+        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew ? '\u2013' : (team.w || 0) + '-' + (team.l || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
           var d = el('div');
           d.appendChild(el('small', null, x[0]));
           d.appendChild(el('b', null, x[1]));
@@ -631,6 +631,8 @@
 
   function level(v) { return v >= 75 ? 'hi' : v >= 55 ? 'mid' : 'lo'; }
 
+  var COACHDATA = null;
+  fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACHDATA = d; }).catch(function () {});
   var NBAIDS = {};
   fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = d; }).catch(function () {});
   fetch('data/era-params.json').then(function (r) { return r.json(); }).then(function (d) { Engine.register(d); }).catch(function () {});
@@ -641,7 +643,7 @@
     wrap.setAttribute('aria-hidden', 'true');
     wrap.appendChild(el('span', null, playerInitials(p.name)));
     var exts = [];
-    ['players', 'photos'].forEach(function (d) { ['webp', 'png', 'jpg'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
+    ['players', 'photos', 'coaches'].forEach(function (d) { ['webp', 'png', 'jpg'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
     var i = 0;
     var img = new Image();
     img.onload = function () { wrap.textContent = ''; wrap.appendChild(img); };
@@ -1243,6 +1245,7 @@
   var rosterCache = {};
   var building = false;
   function persist() { if (!building) store.set('save', save); }
+  function recText(id, r, s) { var p = save && save.lastRec && save.lastRec[id]; return r.w + r.l || !p ? r.w + '-' + r.l : (s ? 'LY ' : 'Last year ') + p.w + '-' + p.l; }
   Phone.setSource({ save: function () { return save; }, team: function (id) { try { return teamById(id); } catch (e) { return null; } }, persist: function () { persist(); }, respond: function (n, done) { respondTo(n, done); } });
 
   /* A pinned post you can answer. What you pick changes real numbers, and a few games later the fans notice. */
@@ -1285,6 +1288,19 @@
       opts.push(['Promise to turn it around', function () { react('owner'); save.ownerPromise = true; save.ownerTrust = Math.min(100, (save.ownerTrust || 60) + 3); return 'Owner trust +3 \u00B7 he will hold you to it'; }]);
       opts.push(['Ask for patience', function () { save.ownerTrust = Math.max(0, (save.ownerTrust || 60) - 2); return 'Owner trust -2'; }]);
       opts.push(['Cut payroll to show good faith', function () { save.ownerTrust = Math.min(100, (save.ownerTrust || 60) + 5); m.coach = Math.max(0, m.coach - 3); return 'Owner trust +5 \u00B7 coach trust -3'; }]);
+    } else if (a.type === 'coach') {
+      var CTALK = {
+        unit: [['Give the bench more run', { team: { m: 2 }, coach: 3 }, function () { ros.slice(5, 10).forEach(function (q) { m.tweak[q.id] = { f: 1.04, g: 6 }; }); return 'Bench gets a longer look for 6 games'; }], ['Tighten the rotation', { team: { m: -1 }, coach: -2 }], ['Your call, coach', { coach: 4 }]],
+        rest: [['Rest a few starters', { team: { m: 3 }, coach: 3 }], ['Keep them out there', { team: { m: -2 }, coach: -2, fans: 1 }]],
+        glass: [['Back the coach\u2019s plan', { team: { m: 1 }, coach: 4 }], ['Stay the course', { coach: -2 }]],
+        fast: [['Let him run his system', { team: { m: 1 }, coach: 4 }], ['Keep the current system', { coach: -2, team: { m: 1 } }]],
+        small: [['Try it', { team: { m: 2 }, coach: 3 }], ['Stay big', { coach: -1 }]]
+      }[a.topic] || [];
+      CTALK.forEach(function (o) { opts.push([o[0], function () { var r = fx(o[1]); return (o[2] ? o[2]() + ' \u00B7 ' : '') + r; }]); });
+    } else if (a.type === 'ownercap') {
+      opts.push(['Promise to trim payroll', function () { save.ownerTrust = Math.min(100, (save.ownerTrust || 60) + 3); save.ownerPromise = true; return 'Owner trust +3 \u00B7 he will watch the payroll'; }]);
+      opts.push(['Explain the roster plan', function () { save.ownerTrust = Math.min(100, (save.ownerTrust || 60) + 1); return 'Owner trust +1'; }]);
+      opts.push(['The roster comes first', function () { save.ownerTrust = Math.max(0, (save.ownerTrust || 60) - 2); m.coach = Math.min(100, m.coach + 2); return 'Owner trust -2 \u00B7 coach trust +2'; }]);
     } else if (a.type === 'fa') {
       var sal = League.salaryFor(p.ratings.ovr);
       opts.push(['Sign for ' + money(sal) + ' (1 yr)', function () {
@@ -1385,10 +1401,10 @@
   }
   function rosterFor(id) {
     var h = League.healthy(save, id);
-    if (id !== save.myId) return h;
+    if (id !== save.myId) return Coach.apply(save, id, h);
     var ord = rotOrder(id), pos = {};
     ord.forEach(function (p, i) { pos[p.id] = i; });
-    return Events.moraleRoster(save, h).map(function (p) { return Object.assign({}, p, { slot: pos[p.id] === undefined ? 99 : pos[p.id] }); });
+    return Coach.apply(save, id, Events.moraleRoster(save, h), Events.mood(save).coach).map(function (p) { return Object.assign({}, p, { slot: pos[p.id] === undefined ? 99 : pos[p.id] }); });
   }
   function injMul() { var m = save.plan && save.plan.minutes; return m === 'heavy' ? 1.7 : m === 'deep' ? 0.75 : 1; }
   function simGame(g) {
@@ -1435,6 +1451,8 @@
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60);
       Engine.setRules({});
       League.init(save, pl.players, data.teams, pl.dead);
+      if (currentEra.current) { Coach.build(save, COACHDATA, save.ids); }
+      if (currentEra.current) { save.lastRec = {}; data.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w, l: t.l }; }); }
       ensureTm();
       persist();
       renderSeason();
@@ -2781,6 +2799,7 @@
     ow.appendChild(ratingRow('Team morale', sm.morale));
     if (u.detail !== 'basic') { ow.appendChild(ratingRow('Fan interest', sm.fans)); ow.appendChild(ratingRow('Coach trust', sm.coach)); }
     pages.push({ title: 'The owner', node: ow });
+    if (save.coach) pages.push({ title: 'Coaching staff', node: staffNode() });
     var mo = Events.mood(save);
     var feed = el('div', 'hc feed');
     var items = [];
@@ -2804,6 +2823,66 @@
     pages.push({ title: 'Recent games', node: rg });
     return hubRail(pages);
   }
+
+
+  /* ---------- coaching staff ---------- */
+  function coachRatings(c) {
+    var d = el('span', 'cr');
+    [['OFF', c.off], ['DEF', c.def], ['DEV', c.dev], ['MOT', c.mot]].forEach(function (x) { var s = el('i'); s.appendChild(document.createTextNode(x[0] + ' ')); s.appendChild(el('b', null, String(x[1]))); d.appendChild(s); });
+    return d;
+  }
+  function coachRow(c, label, onTap, extra) {
+    var r = el(onTap ? 'button' : 'div', 'coach-row'); if (onTap) r.type = 'button';
+    r.appendChild(makeAvatar({ id: c.pid || c.id, name: c.n }));
+    var t = el('span', 'cm');
+    t.appendChild(el('b', null, c.n));
+    t.appendChild(el('small', null, (label ? label + ' · ' : '') + (c.ex ? 'ex-player · ' : '') + 'age ' + c.age));
+    r.appendChild(t); r.appendChild(coachRatings(c));
+    if (extra) r.appendChild(extra);
+    if (onTap) r.addEventListener('click', onTap);
+    return r;
+  }
+  function staffNode() {
+    var box = el('div', 'hc staff'), b = Coach.bonus(save, save.myId, Events.mood(save).coach);
+    Coach.owned(save, save.myId).forEach(function (o) {
+      if (o.c) box.appendChild(coachRow(o.c, o.label, function () { openCoachSheet(o.role); }));
+      else { var e = el('button', 'coach-row empty', 'Hire a ' + o.label.toLowerCase()); e.type = 'button'; e.addEventListener('click', function () { openCoachSheet(o.role); }); box.appendChild(e); }
+    });
+    if (b) { var f = function (v) { return (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%'; }; box.appendChild(el('p', 'staff-fx', 'Offence ' + f(b.off) + ' · Defence ' + f(b.def))); }
+    return box;
+  }
+  function openCoachSheet(role) {
+    var label = { hc: 'Head coach', ao: 'Offensive assistant', ad: 'Defensive assistant' }[role], cur = Coach.staff(save, save.myId)[role];
+    hubSheet(label, function (sh, close) {
+      if (cur) {
+        sh.appendChild(coachRow(cur, '', null));
+        var fb = el('button', 'btn small', 'Fire ' + cur.n); fb.type = 'button';
+        fb.addEventListener('click', function () {
+          Coach.fire(save, save.myId, role);
+          if (role === 'hc') Events.apply(save, { choices: [{ fx: { team: { m: -2 } } }], pid: null, who: '' }, 0, rosterOf(save.myId));
+          rosterCache = {}; persist(); close(); openCoachSheet(role); refreshHub();
+        });
+        sh.appendChild(fb);
+      }
+      sh.appendChild(el('h3', 'box-title', cur ? 'Replace with' : 'Available'));
+      var pool = Coach.bestFor ? save.coach.pool.slice().sort(function (x, y) {
+        var k = role === 'ao' ? function (c) { return c.off * 1.4 + c.dev * 0.3 + c.mot * 0.3; } : role === 'ad' ? function (c) { return c.def * 1.4 + c.dev * 0.3 + c.mot * 0.3; } : function (c) { return Coach.score(c) + c.mot * 0.2; };
+        return k(y) - k(x);
+      }).slice(0, 5) : [];
+      pool.forEach(function (c) {
+        var hb = el('button', 'btn small primary', 'Hire'); hb.type = 'button';
+        hb.addEventListener('click', function (e) {
+          e.stopPropagation();
+          Coach.hire(save, save.myId, role, c);
+          if (role === 'hc') Events.mood(save).coach = 50;
+          rosterCache = {}; persist(); close(); refreshHub();
+        });
+        sh.appendChild(coachRow(c, c.role === 'hc' ? 'HC' : c.role === 'ao' ? 'Offence' : 'Defence', null, hb));
+      });
+      if (!pool.length) sh.appendChild(el('p', 'sub', 'No coaches are available right now.'));
+    });
+  }
+  function refreshHub() { try { renderSeason(); } catch (e) {} }
 
   function hubSheet(title, build) {
     var ov = el('div', 'sheet-ov');
@@ -2992,7 +3071,7 @@
     bodyEl.className = 'hub';
     var titleEl = document.getElementById('season-title');
     titleEl.textContent = me.city + ' ' + me.name;
-    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + rec.w + '-' + rec.l + ' · ' + money(League.payroll(save, me.id)) + (save.phase === 'done' ? '' : ' · Title ' + pctText(titleOdds(me.id)));
+    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + (rec.w + rec.l ? rec.w + '-' + rec.l : recText(me.id, rec, 1)) + ' · ' + money(League.payroll(save, me.id)) + (save.phase === 'done' ? '' : ' · Title ' + pctText(titleOdds(me.id)));
     var hdr = document.querySelector('#screen-season .bar');
     var gear = hdr.querySelector('.gear');
     if (!gear) {
@@ -3034,7 +3113,7 @@
         s.appendChild(teamBadge(x[0]));
         var t = el('div');
         t.appendChild(el('b', null, x[0].city));
-        t.appendChild(el('small', null, x[1].w + '-' + x[1].l));
+        t.appendChild(el('small', null, recText(x[0].id, x[1])));
         s.appendChild(t);
         vs.appendChild(s);
       });
@@ -3130,7 +3209,7 @@
     var bodyEl = document.getElementById('season-body');
     bodyEl.textContent = '';
     document.getElementById('season-title').textContent = me.city + ' ' + me.name;
-    var sub = seasonLabel(save.year) + ' · ' + rec.w + '-' + rec.l + ' · payroll ' + money(League.payroll(save, me.id));
+    var sub = seasonLabel(save.year) + ' · ' + recText(me.id, rec) + ' · payroll ' + money(League.payroll(save, me.id));
     document.getElementById('season-sub').textContent = sub;
 
     var next = Season.myNext(save);
@@ -3169,7 +3248,7 @@
           var c = el('div', 'hero-side' + (here ? ' mine' : ''));
           c.appendChild(teamBadge(t));
           c.appendChild(el('b', null, t.city));
-          c.appendChild(el('small', null, r.w + '-' + r.l));
+          c.appendChild(el('small', null, recText(t.id, r)));
           return c;
         }
         vs.appendChild(side(me, rec, true));
@@ -3826,6 +3905,7 @@
     });
     var rep = League.progress(save, me.id);
     League.newSeasonContracts(save);
+    Coach.offseason(save, me.id, save.rec);
     save.off = {
       step: 'review', review: review, leagueRetired: rep.leagueRetired,
       dev: rep.mine.map(function (x) { return { id: x.p.id, name: x.p.name, from: x.from, to: x.to, age: x.p.age }; }),
