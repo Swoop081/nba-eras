@@ -3202,7 +3202,7 @@
         c.appendChild(teamBadge(t));
         var tx = el('span');
         tx.appendChild(el('strong', null, t.city + ' ' + t.name));
-        tx.appendChild(el('span', 'meta', pl.length + ' players · rating ' + avg + ' · payroll ' + money(League.payroll(save, id))));
+        tx.appendChild(el('span', 'meta', ({ win: 'Contending', rebuild: 'Rebuilding', mid: 'In the middle' })[League.clubMode(save, id)] + ' · ' + pl.length + ' players · rating ' + avg + ' · payroll ' + money(League.payroll(save, id))));
         c.appendChild(tx);
         c.addEventListener('click', function () { trade.partner = id; trade.give = {}; trade.get = {}; trade.msg = ''; trade.tab = 'send'; renderTrade(); });
         body.appendChild(c);

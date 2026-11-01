@@ -402,11 +402,23 @@
   }
 
   /* ---------- trades ---------- */
-  function tradeValue(p) {
+  /* A club's mood: contenders want help now, rebuilders want youth and picks. Based on the table once the season is under way, otherwise on the roster. */
+  function clubMode(save, id) {
+    var r = save.rec && save.rec[id], gp = r ? r.w + r.l : 0;
+    if (gp >= 12) { var pc = r.w / gp; return pc >= 0.58 ? 'win' : pc <= 0.38 ? 'rebuild' : 'mid'; }
+    var top = rosterOf(save, id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
+    var avg = top.length ? top.reduce(function (a, b) { return a + b; }, 0) / top.length : 55;
+    var all = save.ids.map(function (t) { var q = rosterOf(save, t).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8); return q.length ? q.reduce(function (a, b) { return a + b; }, 0) / q.length : 0; }).sort(function (a, b) { return b - a; });
+    var rank = all.indexOf(all.filter(function (v) { return v <= avg; })[0]);
+    return rank >= 0 && rank < save.ids.length * 0.3 ? 'win' : rank > save.ids.length * 0.7 ? 'rebuild' : 'mid';
+  }
+
+  function tradeValue(p, mode) {
     var o = p.ratings.ovr, age = p.age || 26;
     var v = Math.pow(Math.max(0, o - 38), 2) / 12;
-    if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3;
-    if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * 0.1);
+    if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3 * (mode === 'win' ? 0.4 : mode === 'rebuild' ? 1.6 : 1);
+    if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * (mode === 'win' ? 0.05 : mode === 'rebuild' ? 0.16 : 0.1));
+    if (mode === 'win' && o >= 70) v *= 1.15;
     v *= 1 + (p.imp || 0) * 1.5;
     v += (salaryFor(o) - p.salary) / (MODERN ? 1000 : 250 * SCALE);
     return Math.max(1, v);
@@ -429,9 +441,17 @@
     var mePay = payroll(save, meId) - outMe + inMe, themPay = payroll(save, themId) + outMe - inMe;
     if (mePay > cap && inMe > outMe) return { ok: false, reason: 'That would put you ' + money(mePay - cap, cap) + ' over the ' + money(cap, cap) + ' cap. Send out more salary.', ratio: 0 };
     if (themPay > cap && outMe > inMe) return { ok: false, reason: 'They would be ' + money(themPay - cap, cap) + ' over the cap. Take back more salary.', ratio: 0 };
-    var gain = sum(give, tradeValue) + ex.gain, loss = sum(get, tradeValue) + ex.loss;
+    var mode = clubMode(save, themId);
+    var gain = sum(give, function (p) { return tradeValue(p, mode); }) + ex.gain, loss = sum(get, function (p) { return tradeValue(p, mode); }) + ex.loss;
     var ratio = loss > 0 ? gain / loss : 9;
-    if (ratio < 1.1) return { ok: false, reason: ratio >= 0.9 ? 'Close, but they want a little more.' : 'They do not think that is fair.', ratio: ratio, close: ratio >= 0.9 };
+    var flat = loss > 0 ? (sum(give, function (p) { return tradeValue(p); }) + ex.gain) / (sum(get, function (p) { return tradeValue(p); }) + ex.loss) : 9;
+    if (ratio < 1.1) {
+      var why = '';
+      if (flat >= 1.1) why = mode === 'win' ? ' They are contending and want players who help now, not prospects.' : mode === 'rebuild' ? ' They are rebuilding and will not take older players.' : '';
+      else if (mode === 'win' && get.some(function (p) { return p.ratings.ovr >= 70; })) why = ' They are in a title race and will not give up a core player cheaply.';
+      else if (mode === 'rebuild' && give.every(function (p) { return (p.age || 26) >= 29; })) why = ' They want youth or picks back.';
+      return { ok: false, reason: (ratio >= 0.9 ? 'Close, but they want a little more.' : 'They do not think that is fair.') + why, ratio: ratio, close: ratio >= 0.9 };
+    }
     return { ok: true, reason: 'They accept.', ratio: ratio };
   }
 
@@ -727,7 +747,7 @@
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
-    tradeValue: tradeValue, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
+    tradeValue: tradeValue, clubMode: clubMode, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
