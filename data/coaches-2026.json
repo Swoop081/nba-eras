@@ -557,6 +557,272 @@
     64,
     56
    ]
+  ],
+  "chicago-bulls": [
+   [
+    "Wes Unseld Jr.",
+    "Wes_Unseld_Jr.",
+    60,
+    64,
+    60,
+    64
+   ],
+   [
+    "Blake Ahearn",
+    "Blake_Ahearn",
+    58,
+    52,
+    66,
+    56
+   ],
+   [
+    "Jamelle McMillan",
+    "Jamelle_McMillan",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Rex Kalamian",
+    "Rex_Kalamian",
+    58,
+    60,
+    58,
+    60
+   ],
+   [
+    "Jonah Herscu",
+    "Jonah_Herscu",
+    56,
+    52,
+    64,
+    56
+   ],
+   [
+    "Taj Gibson",
+    "Taj_Gibson",
+    50,
+    62,
+    60,
+    64
+   ]
+  ],
+  "cleveland-cavaliers": [
+   [
+    "Johnnie Bryant",
+    "Johnnie_Bryant",
+    64,
+    58,
+    70,
+    66
+   ],
+   [
+    "Mike Gerrity",
+    "Mike_Gerrity",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Trevor Hendry",
+    "Trevor_Hendry",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Nate Reinking",
+    "Nate_Reinking",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Omar Cook",
+    "Omar_Cook",
+    56,
+    52,
+    64,
+    56
+   ],
+   [
+    "Jawad Williams",
+    "Jawad_Williams",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Andrew Olson",
+    "Andrew_Olson",
+    60,
+    50,
+    64,
+    54
+   ]
+  ],
+  "detroit-pistons": [
+   [
+    "Luke Walton",
+    "Luke_Walton",
+    58,
+    68,
+    66,
+    68
+   ],
+   [
+    "Fred Vinson",
+    "Fred_Vinson",
+    62,
+    50,
+    70,
+    56
+   ],
+   [
+    "Sidney Lowe",
+    "Sidney_Lowe",
+    54,
+    64,
+    58,
+    62
+   ],
+   [
+    "Vitaly Potapenko",
+    "Vitaly_Potapenko",
+    52,
+    60,
+    68,
+    56
+   ],
+   [
+    "Kevin Burleson",
+    "Kevin_Burleson",
+    56,
+    54,
+    68,
+    56
+   ],
+   [
+    "Jerome Allen",
+    "Jerome_Allen",
+    58,
+    56,
+    60,
+    58
+   ]
+  ],
+  "indiana-pacers": [
+   [
+    "Lloyd Pierce",
+    "Lloyd_Pierce",
+    58,
+    66,
+    62,
+    64
+   ],
+   [
+    "Jenny Boucek",
+    "Jenny_Boucek",
+    64,
+    56,
+    64,
+    62
+   ],
+   [
+    "Jim Boylen",
+    "Jim_Boylen",
+    54,
+    62,
+    56,
+    62
+   ],
+   [
+    "Isaac Yacob",
+    "Isaac_Yacob",
+    56,
+    54,
+    62,
+    56
+   ]
+  ],
+  "milwaukee-bucks": [
+   [
+    "Darvin Ham",
+    "Darvin_Ham",
+    58,
+    62,
+    58,
+    66
+   ],
+   [
+    "Pat St. Andrews",
+    "Pat_St._Andrews",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Vince Legarza",
+    "Vince_Legarza",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Brad Jones",
+    "Brad_Jones",
+    56,
+    54,
+    62,
+    56
+   ],
+   [
+    "Johnny Carpenter",
+    "Johnny_Carpenter",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "T.J. Ford",
+    "T.J._Ford",
+    54,
+    52,
+    62,
+    60
+   ],
+   [
+    "Schuyler Rimmer",
+    "Schuyler_Rimmer",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jack Herum",
+    "Jack_Herum",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "Isaiah Wilkins",
+    "Isaiah_Wilkins",
+    52,
+    56,
+    64,
+    56
+   ]
   ]
  }
 }
