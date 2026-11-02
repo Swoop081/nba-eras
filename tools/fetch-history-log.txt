@@ -3,28 +3,28 @@ boston-celtics champs=[1984, 1986, 2008, 2024] retired=29
 brooklyn-nets champs=[1974, 1976] retired=7
 charlotte-hornets champs=[] retired=3
 chicago-bulls champs=[1993, 1996, 1997, 1998] retired=9
-cleveland-cavaliers FAILED <HTTPError 429: 'Too Many Requests'>
-dallas-mavericks FAILED <HTTPError 429: 'Too Many Requests'>
-denver-nuggets FAILED <HTTPError 429: 'Too Many Requests'>
-detroit-pistons FAILED <HTTPError 429: 'Too Many Requests'>
-golden-state-warriors FAILED <HTTPError 429: 'Too Many Requests'>
-houston-rockets FAILED <HTTPError 429: 'Too Many Requests'>
-indiana-pacers FAILED <HTTPError 429: 'Too Many Requests'>
-la-clippers FAILED <HTTPError 429: 'Too Many Requests'>
-los-angeles-lakers FAILED <HTTPError 429: 'Too Many Requests'>
+cleveland-cavaliers champs=[2016] retired=0
+dallas-mavericks champs=[2011] retired=6
+denver-nuggets champs=[2023] retired=8
+detroit-pistons champs=[1945, 1989, 1990, 2004] retired=14
+golden-state-warriors champs=[2015, 2017, 2018, 2022] retired=8
+houston-rockets champs=[1994, 1995] retired=9
+indiana-pacers champs=[1970, 1972, 1973] retired=5
+la-clippers champs=[] retired=17
+los-angeles-lakers champs=[2002, 2009, 2010, 2020] retired=16
 memphis-grizzlies champs=[] retired=5
 miami-heat champs=[2006, 2012, 2013] retired=8
 milwaukee-bucks champs=[1971, 2021] retired=10
 minnesota-timberwolves champs=[] retired=3
 new-orleans-pelicans champs=[] retired=2
-new-york-knicks FAILED <HTTPError 429: 'Too Many Requests'>
-oklahoma-city-thunder FAILED <HTTPError 429: 'Too Many Requests'>
-orlando-magic FAILED <HTTPError 429: 'Too Many Requests'>
-philadelphia-76ers FAILED <HTTPError 429: 'Too Many Requests'>
-phoenix-suns FAILED <HTTPError 429: 'Too Many Requests'>
-portland-trail-blazers FAILED <HTTPError 429: 'Too Many Requests'>
-sacramento-kings FAILED <HTTPError 429: 'Too Many Requests'>
-san-antonio-spurs FAILED <HTTPError 429: 'Too Many Requests'>
-toronto-raptors FAILED <HTTPError 429: 'Too Many Requests'>
-utah-jazz FAILED <HTTPError 429: 'Too Many Requests'>
-washington-wizards FAILED <HTTPError 429: 'Too Many Requests'>
+new-york-knicks champs=[1970, 1973, 2026] retired=9
+oklahoma-city-thunder champs=[1979, 2025] retired=9
+orlando-magic champs=[] retired=3
+philadelphia-76ers champs=[1955, 1967, 1983] retired=12
+phoenix-suns champs=[] retired=18
+portland-trail-blazers champs=[1977] retired=14
+sacramento-kings champs=[1946, 1951] retired=12
+san-antonio-spurs champs=[2003, 2005, 2007, 2014] retired=12
+toronto-raptors champs=[2019] retired=2
+utah-jazz champs=[] retired=12
+washington-wizards champs=[1978] retired=6
