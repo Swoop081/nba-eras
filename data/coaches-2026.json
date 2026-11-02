@@ -823,6 +823,392 @@
     64,
     56
    ]
+  ],
+  "atlanta-hawks": [
+   [
+    "Bryan Bailey",
+    "Bryan_Bailey",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Mike Brey",
+    "Mike_Brey",
+    58,
+    56,
+    58,
+    66
+   ],
+   [
+    "Steve Klei",
+    "Steve_Klei",
+    58,
+    60,
+    58,
+    58
+   ],
+   [
+    "Antonio Lang",
+    "Antonio_Lang",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jason Love",
+    "Jason_Love",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Sanjay Lumpkin",
+    "Sanjay_Lumpkin",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Reggis Onwukamuche",
+    "Reggis_Onwukamuche",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Ryan Schmidt",
+    "Ryan_Schmidt",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Ashton Smith",
+    "Ashton_Smith",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Ekpe Udoh",
+    "Ekpe_Udoh",
+    52,
+    58,
+    62,
+    56
+   ],
+   [
+    "Jeff Watkinson",
+    "Jeff_Watkinson",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "charlotte-hornets": [
+   [
+    "John Bryant",
+    "John_Bryant",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jordan Sears",
+    "Jordan_Sears",
+    56,
+    52,
+    68,
+    56
+   ],
+   [
+    "Kyle Neptune",
+    "Kyle_Neptune",
+    58,
+    54,
+    60,
+    58
+   ],
+   [
+    "Jermaine Bucknor",
+    "Jermaine_Bucknor",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Ryan Frazier",
+    "Ryan_Frazier",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Matt Hill",
+    "Matt_Hill",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Josh Longstaff",
+    "Josh_Longstaff",
+    54,
+    52,
+    66,
+    56
+   ],
+   [
+    "Blaine Mueller",
+    "Blaine_Mueller",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Lamar Skeeter",
+    "Lamar_Skeeter",
+    58,
+    56,
+    60,
+    60
+   ]
+  ],
+  "miami-heat": [
+   [
+    "Chris Quinn",
+    "Chris_Quinn",
+    66,
+    60,
+    64,
+    68
+   ],
+   [
+    "Malik Allen",
+    "Malik_Allen",
+    54,
+    60,
+    62,
+    62
+   ],
+   [
+    "Caron Butler",
+    "Caron_Butler",
+    56,
+    56,
+    62,
+    64
+   ],
+   [
+    "Wayne Ellington",
+    "Wayne_Ellington",
+    58,
+    52,
+    62,
+    58
+   ],
+   [
+    "Vin Baker",
+    "Vin_Baker",
+    52,
+    56,
+    58,
+    56
+   ],
+   [
+    "Eric Glass",
+    "Eric_Glass",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Octavio De La Grana",
+    "Octavio_De_La_Grana",
+    54,
+    52,
+    68,
+    56
+   ]
+  ],
+  "orlando-magic": [
+   [
+    "Joe Prunty",
+    "Joe_Prunty",
+    58,
+    60,
+    58,
+    62
+   ],
+   [
+    "Greg Buckner",
+    "Greg_Buckner",
+    54,
+    58,
+    58,
+    60
+   ],
+   [
+    "Popeye Jones",
+    "Popeye_Jones",
+    52,
+    58,
+    66,
+    60
+   ],
+   [
+    "Tom Bialaszewski",
+    "Tom_Bialaszewski",
+    54,
+    52,
+    58,
+    54
+   ],
+   [
+    "Riley Crean",
+    "Riley_Crean",
+    56,
+    52,
+    58,
+    54
+   ],
+   [
+    "Jon Harris",
+    "Jon_Harris",
+    60,
+    54,
+    58,
+    56
+   ],
+   [
+    "Ben Johnson",
+    "Ben_Johnson",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jacqlyn Poss",
+    "Jacqlyn_Poss",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Mfon Udofia",
+    "Mfon_Udofia",
+    52,
+    52,
+    66,
+    54
+   ],
+   [
+    "D.J. Bakker",
+    "D.J._Bakker",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "Shannan Lum",
+    "Shannan_Lum",
+    50,
+    50,
+    56,
+    56
+   ],
+   [
+    "Josh Broghamer",
+    "Josh_Broghamer",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "washington-wizards": [
+   [
+    "Adam Caporn",
+    "Adam_Caporn",
+    62,
+    58,
+    62,
+    64
+   ],
+   [
+    "Patrick Ewing",
+    "Patrick_Ewing",
+    50,
+    62,
+    64,
+    66
+   ],
+   [
+    "Cody Toppert",
+    "Cody_Toppert",
+    58,
+    54,
+    62,
+    56
+   ],
+   [
+    "J.J. Outlaw",
+    "J.J._Outlaw",
+    54,
+    54,
+    66,
+    56
+   ],
+   [
+    "Alexis Ajin\u00e7a",
+    "Alexis_Ajin\u00e7a",
+    50,
+    56,
+    62,
+    54
+   ],
+   [
+    "James Fraschilla",
+    "James_Fraschilla",
+    56,
+    54,
+    58,
+    54
+   ],
+   [
+    "T.J. Sorrentine",
+    "T.J._Sorrentine",
+    56,
+    54,
+    58,
+    54
+   ],
+   [
+    "Tevon Saddler",
+    "Tevon_Saddler",
+    54,
+    52,
+    62,
+    56
+   ]
   ]
  }
 }
