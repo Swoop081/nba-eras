@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pip install opencv-python-headless pillow numpy
+      - run: pip install "opencv-python-headless<5" pillow numpy
       - run: python3 tools/fetch_coaches.py 2>&1 | tee tools/fetch-coaches-log.txt
         shell: bash
       - if: always()
