@@ -4,7 +4,7 @@ Writes data/jersey-numbers-extra.json {teamId: {name: number}} and a log of ever
 import json, re, time, urllib.request, urllib.parse, html
 from bs4 import BeautifulSoup
 MISSING = {
- 'toronto-raptors': ['Jakob Poeltl', 'Dailyn Swain'], 'memphis-grizzlies': ['GG Jackson', "D'Angelo Russell", 'Cole Anthony'],
+ 'toronto-raptors': ['Jakob Poeltl'], 'memphis-grizzlies': [],
  'cleveland-cavaliers': ['Kenrich Williams', 'Hannes Steinbach', 'Craig Porter Jr.', 'Jalen Pickett', 'Alex Morales'],
  'minnesota-timberwolves': ['Jordan Hawkins'], 'portland-trail-blazers': ['Yang Hansen'], 'utah-jazz': ['Svi Mykhailiuk'],
  'new-orleans-pelicans': ['Caleb Houstan'], 'charlotte-hornets': ['Rob Dillingham'], 'chicago-bulls': ['Nic Claxton'],
@@ -37,6 +37,7 @@ for tid, names in MISSING.items():
                 th = tr.find('th')
                 if th and clean(th.get_text()).lower() in ('number', 'numbers'):
                     td = tr.find('td'); cand = clean(td.get_text(' ')) if td else None
+            if cand is None: log.append('   labels: ' + ' / '.join(clean(t.get_text()) for t in (info.find_all('th') if info else []))[:600] + ' || text: ' + (clean(info.get_text(' '))[:900] if info else 'NOINFO'))
             nums = re.findall(r'\b(00|\d{1,2})\b', cand or '')
             log.append('%s | %s | page=%s | number row=%r' % (tid, nm, title, cand))
             if nums: out[tid][nm] = nums[-1]
