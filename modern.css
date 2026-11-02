@@ -778,3 +778,5 @@ body[data-modern="1"] .rest-scores .lg-row{font-size:13.5px}
 body[data-modern="1"] .rest-scores .lg-g{white-space:normal;min-width:0}
 body[data-modern="1"] .rest-scores .lg-t{flex:none;white-space:nowrap}
 body[data-modern="1"] #season-title::after{content:"\203A";margin-left:8px;color:#8d92a3;font-weight:400}
+body[data-modern="1"] .jy{width:104px}
+body[data-modern="1"] .jy .jsv{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 10px rgba(0,0,0,.55))}

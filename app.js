@@ -2841,9 +2841,19 @@
     if (!ret.length) row2.appendChild(el('p', 'rf-empty', 'No number has been retired yet.'));
     ret.sort(function (a, b) { return (b.y || 0) - (a.y || 0); }).forEach(function (r) {
       var j = el('div', 'jy'); j.appendChild(el('i', 'rope'));
-      var sh = el('div', 'shirt'); sh.appendChild(el('b', null, String(r.n).replace(/\s*\(.*$/, '').slice(0, 5)));
-      j.appendChild(sh);
-      j.appendChild(el('span', 'jn', r.p.replace(/\s*\(.*$/, '').replace(/\s*\[.*$/, '')));
+      var nm = r.p.replace(/\s*\(.*$/, '').replace(/\s*\[.*$/, '').trim(), sur = nm.split(' ').slice(-1)[0].toUpperCase();
+      if (/^(jr|sr|ii|iii|iv)\.?$/i.test(sur)) sur = nm.split(' ').slice(-2)[0].toUpperCase();
+      var num = String(r.n).replace(/\s*\(.*$/, '').slice(0, 5);
+      var fs = num.length > 2 ? 40 : 54, nf = sur.length > 9 ? 9.5 : sur.length > 7 ? 11.5 : 13.5;
+      j.insertAdjacentHTML('beforeend', '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true">' +
+        '<path d="M34 6 L46 6 Q60 22 74 6 L86 6 L112 30 L98 50 L96 50 L96 142 Q60 148 24 142 L24 50 L22 50 L8 30 Z" fill="var(--c1)"/>' +
+        '<path d="M34 6 L46 6 Q60 22 74 6 L86 6" fill="none" stroke="var(--c2)" stroke-width="4"/>' +
+        '<path d="M8 30 L22 50 M112 30 L98 50" stroke="var(--c2)" stroke-width="4" fill="none"/>' +
+        '<path d="M24 50 L24 142 M96 50 L96 142" stroke="var(--c2)" stroke-width="3" fill="none" opacity=".9"/>' +
+        '<path d="M26 138 Q60 144 94 138" stroke="var(--c2)" stroke-width="5" fill="none"/>' +
+        '<text x="60" y="48" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + nf + '" letter-spacing="1" fill="var(--c2)">' + sur + '</text>' +
+        '<text x="60" y="' + (fs > 45 ? 112 : 106) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + fs + '" fill="var(--c2)">' + num + '</text></svg>');
+      j.appendChild(el('span', 'jn', nm));
       if (r.y) j.appendChild(el('small', null, 'Retired ' + r.y));
       row2.appendChild(j);
     });
