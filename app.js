@@ -6246,7 +6246,7 @@
     wrap.appendChild(ex);
     /* pages */
     var board = el('div', 'dn-board');
-    avail.slice(0, 7).forEach(function (p, i) {
+    avail.slice(0, 40).forEach(function (p, i) {
       var r = el('div', 'dn-row' + (p.id === offSel ? ' sel' : ''));
       r.appendChild(el('i', null, String(dnRank(d, p))));
       r.appendChild(makeAvatar(p));
@@ -6258,7 +6258,7 @@
       board.appendChild(r);
     });
     var picks = el('div', 'dn-board');
-    d.picks.slice(Math.max(0, d.at - 3), d.at + 5).forEach(function (sl) {
+    d.picks.forEach(function (sl) {
       var done = sl.player != null, pl = done ? League.byId(save, sl.player) : null;
       var r = el('div', 'dn-row' + (sl === slot ? ' sel' : '') + (done ? '' : ' wait'));
       r.appendChild(el('i', null, String(sl.pick)));
@@ -6289,6 +6289,8 @@
     });
     wrap.appendChild(hubRail([{ title: 'Big board', node: board }, { title: 'The order', node: picks }, { title: 'Your picks', node: minePg }, { title: 'Around the league', node: around }]));
     body.appendChild(wrap);
+    var bds = wrap.querySelectorAll('.dn-board'), keepY = dn.ys && dn.ys.at === d.at ? dn.ys.v : [];
+    Array.prototype.forEach.call(bds, function (bd, bi) { if (bi === 1) { var sr = bd.querySelector('.sel'); if (sr) bd.scrollTop = Math.max(0, sr.offsetTop - bd.offsetTop - 70); } else if (keepY[bi]) bd.scrollTop = keepY[bi]; bd.addEventListener('scroll', function () { dn.ys = { at: d.at, v: Array.prototype.map.call(wrap.querySelectorAll('.dn-board'), function (x) { return x.scrollTop; }) }; }); });
     if (keepX) { var nt = wrap.querySelector('.hrail-track'); nt.style.scrollBehavior = 'auto'; nt.scrollLeft = keepX; }
     /* clock */
     clearInterval(dn.tick); dn.tick = null;

@@ -1161,3 +1161,7 @@ body[data-modern="1"] .tb-card .fa-by{margin:4px 0 0;text-align:center}
 body[data-modern="1"] .br-t{display:flex;align-items:center;gap:8px}
 body[data-modern="1"] .br-t .br-lg{width:26px;height:26px;flex:none}
 body[data-modern="1"] .br-t .br-n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .dn .hpage{min-height:0}
+body[data-modern="1"] .dn-board{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-width:none;position:relative}
+body[data-modern="1"] .dn-board::-webkit-scrollbar{display:none}
+body[data-modern="1"] .dn-row{flex:none}
