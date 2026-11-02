@@ -25,7 +25,9 @@
       var r = rng(hash(id + 'staff')), row = data && data.hc && data.hc[id], s = {};
       if (row) s.hc = { id: slug(row[0]), n: row[0], wiki: row[1], age: 52, role: 'hc', real: 1, off: row[2], def: row[3], dev: row[4], mot: row[5] };
       else s.hc = made(r, 'hc', id.slice(0, 3));
-      s.ao = made(r, 'ao', id.slice(0, 3) + 'o'); s.ad = made(r, 'ad', id.slice(0, 3) + 'd');
+      var ra = data && data.ao && data.ao[id], rd = data && data.ad && data.ad[id];
+      s.ao = ra ? { id: slug(ra[0]), n: ra[0], wiki: ra[1], age: 48, role: 'ao', real: 1, off: ra[2], def: ra[3], dev: ra[4], mot: ra[5] } : made(r, 'ao', id.slice(0, 3) + 'o');
+      s.ad = rd ? { id: slug(rd[0]), n: rd[0], wiki: rd[1], age: 48, role: 'ad', real: 1, off: rd[2], def: rd[3], dev: rd[4], mot: rd[5] } : made(r, 'ad', id.slice(0, 3) + 'd');
       st[id] = s;
     });
     var pr = rng(hash('pool' + save.year)), pool = [];
