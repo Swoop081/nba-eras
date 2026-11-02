@@ -3611,7 +3611,7 @@
     return u;
   }
   function saveUi(u) { store.set('ui', u); }
-  var TABS = { table: 'Table', leaders: 'Leaders', team: 'Team' };
+  var TABS = { table: 'Standings', leaders: 'Leaders', team: 'Team' };
 
   function formAll() {
     var f = {};
