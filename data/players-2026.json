@@ -15470,7 +15470,7 @@
    "name": "Blake Wesley",
    "age": 23,
    "pos": "G",
-   "teamId": "la-clippers",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 46,
