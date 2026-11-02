@@ -69,6 +69,10 @@
     };
   }
 
+  /* stars take a bigger share of the shots, but their efficiency flattens out above the 60s */
+  var USEADD = 0.2;
+  function soft(v) { return v > 60 ? 60 + (v - 60) * SOFT : v; }
+  var SOFT = 0.8;
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7];
 
   /* Real leagues are tighter than raw ratings suggest: comp pulls every skill toward 55 so rating gaps decide fewer games. */
@@ -138,7 +142,7 @@
     var dbl = cntd(O, 'double') > 0;
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco;
-      return x.share * Math.pow(s, mo.flat ? 0.15 : (pr.use || 2)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
+      return x.share * Math.pow(s, mo.flat ? 0.15 : ((pr.use || 2) + USEADD)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
@@ -148,7 +152,7 @@
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1) * (ni(x).press || ni(x).paint ? 1.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
     }
-    var q = pr.fg * ((pr.fb !== undefined ? pr.fb : 0.62) + (pr.fsh || 0.0095) * shooter.p.ratings.sht + (pr.fsc || 0.0030) * shooter.p.ratings.sco);
+    var q = pr.fg * ((pr.fb !== undefined ? pr.fb : 0.62) + (pr.fsh || 0.0095) * soft(shooter.p.ratings.sht) + (pr.fsc || 0.0030) * soft(shooter.p.ratings.sco));
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
     q *= 1 - 0.02 * D.reduce(function (t, x) { return t + (ni(x).paint ? x.p.ratings.blk / 70 : 0); }, 0);
