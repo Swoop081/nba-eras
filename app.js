@@ -1077,8 +1077,7 @@
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
     var squad = team.id === save.myId ? rotOrder(team.id) : League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     if (team.id === save.myId && modernUI()) {
-      var PO = { G: 0, 'G-F': 1, F: 2, 'F-C': 3, C: 4 };
-      var starters = squad.slice(0, 5).sort(function (a, b) { return (PO[a.pos] === undefined ? 2 : PO[a.pos]) - (PO[b.pos] === undefined ? 2 : PO[b.pos]) || (b.ratings.ply - a.ratings.ply) * (a.pos === 'G' && b.pos === 'G' ? 1 : 0) || (a.hgt || 0) - (b.hgt || 0); });
+      var starters = squad.slice(0, 5).sort(function (u, v) { return slotRank(u) - slotRank(v); });
       squad = starters.concat(squad.slice(5));
     }
     var pay = League.payroll(save, team.id);
@@ -1141,6 +1140,12 @@
     return b;
   }
 
+  /* the five starters read PG to C, then the bench in order */
+  function startersFirst(lines) {
+    if (!lines || lines.length < 6 || lines[0].ply === undefined) return lines;
+    var f = lines.slice(0, 5).sort(function (u, v) { return slotRank({ pos: u.pos, ratings: { ply: u.ply } }) - slotRank({ pos: v.pos, ratings: { ply: v.ply } }); });
+    return f.concat(lines.slice(5));
+  }
   function boxTable(team, lines, cols, won) {
     var wrap = el('div');
     wrap.appendChild(el('h3', 'box-title', team.city + ' ' + team.name));
@@ -1257,8 +1262,8 @@
         card.appendChild(gr);
         bodyEl.appendChild(card);
       })();
-      bodyEl.appendChild(boxTable(me, res.homeLines, cols));
-      bodyEl.appendChild(boxTable(opp, res.awayLines, cols));
+      bodyEl.appendChild(boxTable(me, startersFirst(res.homeLines), cols));
+      bodyEl.appendChild(boxTable(opp, startersFirst(res.awayLines), cols));
       if (cols.length <= 9) bodyEl.appendChild(el('p', 'sub how', 'This box score only shows what the league recorded in ' + seasonLabel(save.year) + '. Later eras add rebounds, steals, blocks and more.'));
       dockEl.hidden = false;
     }
@@ -1490,9 +1495,13 @@
         box.textContent = '';
         var m = cur(), tot = 0;
         ord.forEach(function (p, i) { tot += m[i]; });
-        ord.forEach(function (p, i) {
+        var show = ord.map(function (p, i) { return i; });
+        var five = show.slice(0, 5).sort(function (u, v) { return slotRank(ord[u]) - slotRank(ord[v]); });
+        show = five.concat(show.slice(5));
+        show.forEach(function (i, pos) {
+          var p = ord[i];
           var row = el('div', 'dc-row');
-          row.appendChild(el('span', 'dc-n', String(i + 1)));
+          row.appendChild(el('span', 'dc-n', String(pos + 1)));
           row.appendChild(makeAvatar(p));
           var nm = el('span', 'dc-name'); nm.appendChild(el('strong', null, p.name)); nm.appendChild(el('span', 'meta', (p.pos || '') + ' \u00B7 ' + p.ratings.ovr));
           row.appendChild(nm);

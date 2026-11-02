@@ -349,7 +349,7 @@
         x.s.min = tw ? Math.round(240 * x.s.pos / tw) : 0;
       });
     });
-    function lines(T) { return T.map(function (x) { return { id: x.p.id, name: x.p.name, pos: x.p.pos, s: x.s }; }); }
+    function lines(T) { return T.map(function (x) { return { id: x.p.id, name: x.p.name, pos: x.p.pos, ply: x.p.ratings.ply, s: x.s }; }); }
     return { quarters: g.quarters, home: g.hs, away: g.as, homeLines: lines(g.H), awayLines: lines(g.A) };
   }
 
@@ -359,5 +359,5 @@
     return finalize(g);
   }
 
-  root.Engine = { DEFMIN: DEFMIN, defaultMins: function (ps) { return targets(null, ps.length, ps).map(function (m) { return Math.round(m); }); }, simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
+  root.Engine = { DEFMIN: DEFMIN, defaultMins: function (ps) { var r = targets(null, ps.length, ps).map(function (m) { return Math.round(m); }), d = 240 - r.reduce(function (a, b) { return a + b; }, 0); if (r.length && Math.abs(d) < 6) r[0] += d; return r; }, simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
 })(window);
