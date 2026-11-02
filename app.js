@@ -2018,7 +2018,7 @@
           var tx = el('span'); tx.appendChild(el('b', null, p.name)); if (isRookie(p)) tx.appendChild(el('em', 'rk-tag', 'R'));
           tx.appendChild(el('small', null, (p.pos || '') + ' · ' + p.age + ' · ovr ' + p.ratings.ovr + ' · pot ' + p.pot));
           row.appendChild(tx);
-          var ask = League.salaryFor(p.ratings.ovr), can = n < League.MAX_ROSTER && League.canSign(save, team.id, ask);
+          var ask = League.clampSal(save, p, League.salaryFor(p.ratings.ovr)), can = n < League.MAX_ROSTER && League.canSign(save, team.id, ask, p);
           var b = el('button', 'btn small', can ? money(ask) : (n >= League.MAX_ROSTER ? 'Full' : 'Cap')); b.type = 'button'; b.disabled = !can;
           b.addEventListener('click', function () { League.sign(save, p, team.id, ask, 1); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); draw(); renderRoster(team); });
           row.appendChild(b);
@@ -5177,6 +5177,11 @@
       });
       dock.appendChild(gm);
     }
+    if (ev.act && ev.act.type === 'tradeReq' && ev.pid) {
+      var tb = el('button', 'btn wide act', 'Shop him now'); tb.type = 'button';
+      tb.addEventListener('click', function () { persist(); openTrade(); });
+      dock.appendChild(tb);
+    }
     if (ev.choices) {
       ev.choices.forEach(function (c, i) {
         var b = el('button', 'btn wide' + (i === 0 ? ' primary' : ''), c.label);
@@ -5336,7 +5341,7 @@
         tx.appendChild(el('span', 'meta', (p.pos || '') + ' · ' + p.age + ' · pot ' + p.pot));
         row.appendChild(tx);
         row.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
-        var ask = League.salaryFor(p.ratings.ovr), can = n < League.maxR(save) && League.canSign(save, me.id, ask);
+        var ask = League.clampSal(save, p, League.salaryFor(p.ratings.ovr)), can = n < League.maxR(save) && League.canSign(save, me.id, ask, p);
         var b = el('button', 'btn small', can ? 'Sign ' + money(ask) : (n >= League.maxR(save) ? 'Roster full' : 'Over cap')); b.type = 'button'; b.disabled = !can;
         b.addEventListener('click', function () { League.sign(save, p, me.id, ask, 1); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); trade.msg = 'Signed ' + p.name + ' for ' + money(ask) + '.'; renderTrade(); });
         row.appendChild(b);
@@ -5367,7 +5372,7 @@
     var allT = save.ids.map(teamById);
     var myK = League.picksOf(save, me.id), theirK = League.picksOf(save, trade.partner);
     var giveK = myK.filter(function (k) { return trade.give[League.pickId(k)]; }), getK = theirK.filter(function (k) { return trade.get[League.pickId(k)]; });
-    var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), gainL: giveK.map(function (k) { return League.pickValue(save, k); }), lossL: getK.map(function (k) { return League.pickValue(save, k); }), n: giveK.length + getK.length };
+    var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), gainL: giveK.map(function (k) { return League.pickValue(save, k); }), lossL: getK.map(function (k) { return League.pickValue(save, k); }), n: giveK.length + getK.length, gk: giveK, tk: getK };
     var res = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax(), ex);
     var pct = Math.max(0, Math.min(100, Math.round((give.length || get.length || ex.n ? res.ratio / 1.1 : 0) * 100)));
     var sendN = give.length + giveK.length, getN = get.length + getK.length;
@@ -5488,7 +5493,7 @@
     var myK = League.picksOf(save, me.id), allT = save.ids.map(teamById);
     var cap = save.lg.cap;
     function accept(partner, give, get, giveK, getK, btn) {
-      var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), gainL: giveK.map(function (k) { return League.pickValue(save, k); }), lossL: getK.map(function (k) { return League.pickValue(save, k); }), n: giveK.length + getK.length };
+      var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), gainL: giveK.map(function (k) { return League.pickValue(save, k); }), lossL: getK.map(function (k) { return League.pickValue(save, k); }), n: giveK.length + getK.length, gk: giveK, tk: getK };
       var r = League.evaluateTrade(save, me.id, partner, give, get, tradeMax(), ex);
       if (!r.ok) { trade.msg = r.reason; trade.view = trade.view === 'pkgRes' ? 'pkgRes' : 'shopPick'; renderTrade(); return; }
       var line = commitTrade(partner, give, get, giveK, getK);
@@ -6069,6 +6074,19 @@
     } else {
       body.appendChild(el('p', 'sub how', 'Bird rights let you re-sign your own players over the cap, for up to 5 years, but the player decides too: some want to stay, some want more, and some are done with you. Players who walk can only be moved in a sign-and-trade.'));
     }
+    var tl = (save.lg.taxLast || []).filter(function (o) { return o.id === me.id; })[0];
+    if (tl && tl.bill) body.appendChild(el('p', 'note', 'Luxury tax: your payroll finished over the tax line and the bill is ' + money(tl.bill) + (tl.rep ? ' (repeater rate)' : '') + '.'));
+    else if (tl && tl.floor) body.appendChild(el('p', 'note', 'You finished ' + money(tl.floor) + ' below the salary floor, so the shortfall is paid out to your players.'));
+    League.rosterOf(save, me.id).filter(function (p) { return p.rk && (p.yrs === 2 || p.yrs === 1) && p.rkd !== p.yrs; }).forEach(function (p) {
+      var h = el('div', 'player');
+      h.appendChild(personRow(p, [(p.pos || '') + ' \u00B7 Age ' + p.age + ' \u00B7 potential ' + p.pot, 'Rookie contract \u00B7 team option for year ' + (p.yrs === 2 ? 3 : 4) + ' \u00B7 ' + money(p.salary)], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr))));
+      var r = el('div', 'dock-row');
+      var k = el('button', 'btn small primary', 'Pick up option'); k.type = 'button';
+      k.addEventListener('click', function () { p.rkd = p.yrs; persist(); renderOff(); });
+      var d = el('button', 'btn small', 'Decline'); d.type = 'button';
+      d.addEventListener('click', function () { p.rkd = p.yrs; p.yrs = 0; p.rk = 0; persist(); renderOff(); });
+      r.appendChild(k); r.appendChild(d); h.appendChild(r); body.appendChild(h);
+    });
     var dec = save.off.dec || (save.off.dec = {}), sn = save.off.snt || (save.off.snt = {});
     list.forEach(function (p) {
       var trust = Events.pm(save, p.id).t, mor = Events.pm(save, p.id).m;
@@ -6212,6 +6230,7 @@
     });
     if (isDisp) { offStep('contracts'); return; }
     League.aiRosterPass(save, save.ids.map(teamById), me.id);
+    save.lg.cap = League.capFor(save.year + 1);
     offStep('fa');
   }
   function dnRunTo(d, me, stopAtMine, once) {
@@ -6363,6 +6382,45 @@
     dock.appendChild(row);
   }
 
+  var ROUTE = { cap: 'cap space', min: 'minimum contract', room: 'room exception', mle: 'mid-level exception', tmle: 'taxpayer mid-level', bae: 'bi-annual exception', bird: 'Bird rights' };
+  function capSheet(body, me) {
+    var cb = League.cbaOf(save), pay = League.payroll(save, me.id), holds = League.holdsOf(save, me.id), ly = League.lyear(save);
+    var rep = League.repeater(save, me.id), bill = League.taxBill(save, me.id, rep);
+    var card = el('div', 'stat-card');
+    card.appendChild(el('div', 'group-title', 'Cap sheet \u00B7 ' + seasonLabel(ly)));
+    var rows = [['Salary cap', money(cb.cap)], ['Your payroll', money(pay) + (League.deadOf(save, me.id) ? ' (' + money(League.deadOf(save, me.id)) + ' dead)' : '')]];
+    if (holds) rows.push(['Cap holds', money(holds)]);
+    rows.push(['Cap space', money(Math.max(0, cb.cap - pay - holds))]);
+    if (cb.on) {
+      rows.push(['Salary floor', money(cb.floor) + (pay < cb.floor ? ' (you are ' + money(cb.floor - pay) + ' short)' : '')]);
+      rows.push(['Luxury tax line', money(cb.tax) + (bill ? ' \u00B7 projected bill ' + money(bill) + (rep ? ' (repeater)' : '') : '')]);
+      rows.push(['First apron', money(cb.ap1)]); rows.push(['Second apron', money(cb.ap2)]);
+      var used = League.mleUsed ? League.mleUsed(save, me.id) : false;
+      rows.push(['Room exception', money(cb.room) + (used ? ' \u00B7 used' : holds + pay < cb.cap ? ' \u00B7 after you spend your room' : ' \u00B7 needs cap room')]);
+      rows.push(['Mid-level exception', money(cb.mle) + (used ? ' \u00B7 used' : pay >= cb.ap1 ? ' \u00B7 over the first apron' : ' \u00B7 available')]);
+      rows.push(['Taxpayer mid-level', money(cb.tmle) + (used ? ' \u00B7 used' : pay >= cb.ap1 ? ' \u00B7 available' : ' \u00B7 only above the first apron')]);
+      var b = save.lg.bae && save.lg.bae[me.id];
+      rows.push(['Bi-annual exception', money(cb.bae) + (b !== undefined && b > ly - 2 ? ' \u00B7 used recently' : ' \u00B7 available')]);
+      var hc = League.isHard(save, me.id);
+      if (hc) rows.push(['Hard cap', 'Held at the ' + (hc === 2 ? 'second' : 'first') + ' apron this season']);
+    }
+    rows.push(['Roster', League.rosterOf(save, me.id).length + ' of ' + League.maxR(save)]);
+    rows.forEach(function (r) { var p = el('p', 'sub'); p.appendChild(el('b', null, r[0] + ': ')); p.appendChild(document.createTextNode(r[1])); card.appendChild(p); });
+    card.appendChild(el('p', 'sub how', 'Over the cap you can sign players for the minimum, or use one mid-level exception. Using a mid-level or the bi-annual hard-caps you at an apron for the whole season. Your own free agents carry a cap hold until you re-sign or renounce them.'));
+    body.appendChild(card);
+  }
+  function holdsSection(body, me) {
+    var list = League.freeAgents(save).filter(function (p) { return p.bird === me.id && !p.ren; });
+    if (!list.length) return;
+    body.appendChild(el('h3', 'box-title', 'Your free agents (cap holds)'));
+    body.appendChild(el('p', 'sub how', 'Their holds count against your cap room. Renounce a player to clear his hold, but you lose his Bird rights.'));
+    list.forEach(function (p) {
+      var rn = el('button', 'btn small', 'Renounce'); rn.type = 'button';
+      rn.addEventListener('click', function () { p.ren = true; delete p.bird; delete p.rfa; persist(); renderOff(); });
+      var right = el('span'); right.style.marginLeft = 'auto'; right.appendChild(rn);
+      body.appendChild(personRow(p, [(p.pos || '') + ' \u00B7 age ' + p.age + ' \u00B7 overall ' + p.ratings.ovr, 'Hold ' + money(League.holdOf(save, p))], right));
+    });
+  }
   function rightsSection(body, me) {
     var list = League.rightsOf(save, me.id).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; });
     if (!list.length) return;
@@ -6374,8 +6432,8 @@
     all.addEventListener('click', function () { list.forEach(function (p) { League.release(save, p); }); persist(); renderOff(); });
     body.appendChild(all);
     list.forEach(function (p) {
-      var can = League.canSign(save, me.id, p.salary) && n < League.maxR(save);
-      var sg = el('button', 'btn small primary', can ? 'Sign ' + money(p.salary) : (n >= League.maxR(save) ? 'Roster full' : 'Over the cap'));
+      var can = n < League.maxR(save);
+      var sg = el('button', 'btn small primary', can ? 'Sign ' + money(p.salary) : 'Roster full');
       sg.type = 'button'; sg.disabled = !can;
       sg.addEventListener('click', function () { League.signRights(save, p); Social.rightsSigned(save, p); persist(); renderOff(); });
       var rl = el('button', 'btn small', 'Let go');
@@ -6389,7 +6447,7 @@
   /* ---------- free agency week ---------- */
   var FADAYS = 5;
   function faYears(p, bird) { return (p.age <= 25 ? 4 : p.age <= 29 ? 3 : 2) + (bird ? 1 : 0); }
-  function faAsk(p) { return League.salaryFor(p.ratings.ovr); }
+  function faAsk(p) { return League.clampSal(save, p, League.salaryFor(p.ratings.ovr)); }
   function faState() {
     var f = save.off.fa;
     if (!f) f = save.off.fa = { day: 0, rum: {}, log: [], flash: [] };
@@ -6397,7 +6455,7 @@
   }
   function faSuitors(f, p, me) {
     var ask = faAsk(p);
-    var list = save.ids.filter(function (id) { return id !== me.id && League.rosterOf(save, id).length < League.maxR(save) && League.canSign(save, id, ask); })
+    var list = save.ids.filter(function (id) { return id !== me.id && League.rosterOf(save, id).length < League.maxR(save) && League.canSign(save, id, ask, p); })
       .map(function (id) { return { id: id, v: League.suitScore(save, id, p) }; })
       .sort(function (a, b) { return b.v - a.v; });
     return list.slice(0, 3).map(function (x) { return x.id; });
@@ -6405,7 +6463,7 @@
   function faRumours(me) {
     var f = faState();
     League.freeAgents(save).slice(0, 12).forEach(function (p) {
-      var cur = (f.rum[p.id] || []).filter(function (id) { return League.canSign(save, id, faAsk(p)); });
+      var cur = (f.rum[p.id] || []).filter(function (id) { return League.canSign(save, id, faAsk(p), p); });
       if (cur.length < 3) f.rum[p.id] = faSuitors(f, p, me);
     });
   }
@@ -6431,9 +6489,9 @@
           }
         }
       }
-      if (old && f.day <= 3 && p.ratings.ovr >= 52 && !p.rfa && Math.random() < 0.1 && League.canSign(save, old, ask) && League.rosterOf(save, old).length < League.maxR(save)) { tid = old; re = true; }
+      if (old && f.day <= 3 && p.ratings.ovr >= 52 && !p.rfa && Math.random() < 0.1 && League.canSign(save, old, ask, p) && League.rosterOf(save, old).length < League.maxR(save)) { tid = old; re = true; }
       if (!tid) {
-        var pool = (f.rum[p.id] || []).filter(function (id) { return id !== me.id && League.canSign(save, id, ask) && League.rosterOf(save, id).length < League.maxR(save); });
+        var pool = (f.rum[p.id] || []).filter(function (id) { return id !== me.id && League.canSign(save, id, ask, p) && League.rosterOf(save, id).length < League.maxR(save); });
         if (!pool.length || Math.random() < 0.25) pool = faSuitors(f, p, me);
         if (!pool.length) return;
         tid = pool[Math.floor(Math.random() * Math.min(2, pool.length))];
@@ -6524,9 +6582,10 @@
     var cap = el('div', 'dn-clock mine');
     cap.appendChild(teamBadge(me));
     var who = el('div', 'dn-who');
+    var holds = League.holdsOf(save, me.id);
     who.appendChild(el('small', null, 'YOUR CAP SPACE'));
-    who.appendChild(el('b', null, money(Math.max(0, save.lg.cap - pay))));
-    who.appendChild(el('span', null, n + ' players · payroll ' + money(pay) + ' of ' + money(save.lg.cap)));
+    who.appendChild(el('b', null, money(Math.max(0, save.lg.cap - pay - holds))));
+    who.appendChild(el('span', null, n + ' players \u00B7 payroll ' + money(pay) + (holds ? ' + ' + money(holds) + ' holds' : '') + ' of ' + money(save.lg.cap)));
     cap.appendChild(who);
     wrap.appendChild(cap);
     var fa = League.freeAgents(save).slice(0, 40), sel = offSel;
@@ -6556,8 +6615,9 @@
       logp.appendChild(r);
     });
     if (!f.log.length) logp.appendChild(el('p', 'sub', 'No signings yet. Teams are waiting for the clock.'));
-    var rp = el('div', 'dn-board'); rightsSection(rp, me);
-    wrap.appendChild(hubRail([{ title: 'Top available', node: board }, { title: 'Signed around the league', node: logp }, { title: 'Draft rights', node: rp }]));
+    var rp = el('div', 'dn-board'); rightsSection(rp, me); holdsSection(rp, me);
+    var cs = el('div', 'dn-board'); capSheet(cs, me);
+    wrap.appendChild(hubRail([{ title: 'Top available', node: board }, { title: 'Signed around the league', node: logp }, { title: 'Cap sheet', node: cs }, { title: 'Rights & holds', node: rp }]));
     body.appendChild(wrap);
     var dock = document.getElementById('off-dock'); dock.textContent = '';
     var btn = function (label, fn, cls) { var b = el('button', cls || 'btn', label); b.type = 'button'; b.addEventListener('click', fn); return b; };
@@ -6567,8 +6627,9 @@
       if (f.yrFor !== p0.id) { f.yrFor = p0.id; f.yr = faYears(p0, bird); }
       var it = bird ? { k: 'high', mult: 1 } : League.interest(save, p0, me.id);
       var ask = Math.round(faAsk(p0) * it.mult / 100) * 100, out = bird && ((save.off.dec || {})[p0.id] === 'out');
-      var can = (bird || League.canSign(save, me.id, ask)) && n < League.maxR(save) && !out && it.k !== 'no';
-      var sb = btn(can ? 'Sign ' + p0.name + ' \u00B7 ' + f.yr + ' yrs \u00B7 ' + money(ask) + (it.mult > 1 ? ' (premium)' : '') : n >= League.maxR(save) ? 'Roster full' : out ? 'Wants a fresh start' : it.k === 'no' ? 'Not interested in you' : 'Over the cap', function () {
+      var can = (bird || League.canSign(save, me.id, ask, p0)) && n < League.maxR(save) && !out && it.k !== 'no';
+      var rt = bird ? { via: 'bird' } : League.signRoute(save, me.id, ask, p0);
+      var sb = btn(can ? 'Sign ' + p0.name + ' \u00B7 ' + f.yr + ' yrs \u00B7 ' + money(ask) : n >= League.maxR(save) ? 'Roster full' : out ? 'Wants a fresh start' : it.k === 'no' ? 'Not interested in you' : 'Over the cap', function () {
         var yrs = f.yr; League.sign(save, p0, me.id, ask, yrs); Social.faSigned(save, p0, money(ask), yrs);
         League.wire(save, 'You ' + (bird ? 're-sign ' : 'sign ') + p0.name + ': ' + yrs + ' years, ' + money(ask));
         f.log.unshift({ pid: p0.id, team: me.id, salary: ask, yrs: yrs, day: f.day, ovr: p0.ratings.ovr, re: bird }); persist(); offSel = null; renderOff();
@@ -6577,7 +6638,10 @@
       yrBtn = can ? btn('Years: ' + f.yr, function () { f.yr = f.yr >= maxY ? 1 : f.yr + 1; persist(); renderOff(); }, 'btn ghost') : null;
     }
     var row = el('div', 'dock-row');
-    if (p0 && !(p0.bird === me.id)) { var it2 = League.interest(save, p0, me.id); if (it2.k !== 'high') row.appendChild(el('small', 'sub', it2.k === 'no' ? 'Not interested in joining you' : it2.k === 'low' ? 'Reluctant: wants +18%' : 'Lukewarm: wants +8%')); }
+    if (p0) { var it2 = p0.bird === me.id ? { k: 'high' } : League.interest(save, p0, me.id), hs = [];
+      if (it2.k === 'no') hs.push('Not interested in joining you'); else if (it2.k === 'low') hs.push('Reluctant: wants +18%'); else if (it2.k === 'mid') hs.push('Lukewarm: wants +8%');
+      if (typeof rt !== 'undefined' && rt) hs.push('via ' + ROUTE[rt.via]);
+      if (hs.length) row.appendChild(el('small', 'sub', hs.join(' \u00B7 '))); }
     if (yrBtn) row.appendChild(yrBtn);
     row.appendChild(btn('Trades', function () { openTrade('off'); }, 'btn ghost'));
     if (f.day < FADAYS) {
@@ -6599,6 +6663,10 @@
     card.appendChild(el('p', 'sub', n + ' players · payroll ' + money(pay) + ' of ' + money(save.lg.cap)));
     var problem = n < League.MIN_ROSTER ? 'You need at least ' + League.MIN_ROSTER + ' players. Go back and sign more.' : n > League.MAX_ROSTER ? 'The roster limit is ' + League.MAX_ROSTER + '. Release ' + (n - League.MAX_ROSTER) + ' from the roster screen.' : '';
     if (problem) card.appendChild(el('p', 'note', problem));
+    var cb = League.cbaOf(save), rep = League.repeater(save, me.id), bill = League.taxBill(save, me.id, rep);
+    if (cb.on && bill) card.appendChild(el('p', 'note', 'Over the luxury tax line: a projected tax bill of ' + money(bill) + (rep ? ' at the repeater rate' : '') + '.'));
+    if (cb.on && pay < cb.floor) card.appendChild(el('p', 'note', 'Below the salary floor of ' + money(cb.floor) + ': you will pay the ' + money(cb.floor - pay) + ' difference to your players.'));
+    if (cb.on && League.isHard(save, me.id)) card.appendChild(el('p', 'sub', 'Hard-capped at the ' + (League.isHard(save, me.id) === 2 ? 'second' : 'first') + ' apron this season after using an exception.'));
     body.appendChild(card);
     rightsSection(body, me);
     if (n > League.MAX_ROSTER) {

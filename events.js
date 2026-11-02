@@ -661,6 +661,17 @@
     var topScorer = lines[0];
     var topPlayer = ctx.rosterMe.filter(function (p) { return p.id === topScorer.id; })[0];
 
+    var myRec = save.rec[save.myId], myPc = myRec.w + myRec.l ? myRec.w / (myRec.w + myRec.l) : 0.5;
+    var sr = roster.slice(0, 3).filter(function (p) { var x = pm(save, p.id); return p.ratings.ovr >= 64 && !x.reqd && !p.wantsOut && ((x.m < 40 && x.t < 45) || (myPc < 0.4 && x.m < 52 && x.t < 50)); })[0];
+    if (sr && Math.random() < 0.55) {
+      pm(save, sr.id).reqd = 1;
+      var tev = conv(sr, '"I think it is time for a fresh start. I want to play somewhere I can win, and I am asking you to trade me."', [
+        { label: 'I will find you a new home.', fx: { s: { m: 3, t: 4, req: true } }, say: 'Agreed to trade him' },
+        { label: 'You are not going anywhere.', fx: { s: { m: -10, t: -8 }, coach: 1 }, say: 'Refused' },
+        { label: 'Let us talk after the season.', fx: { s: { m: -3, t: 0 } }, say: 'Put it off' }], sr);
+      tev.act = { type: 'tradeReq' };
+      return tev;
+    }
     if (promised) {
       var x = pm(save, promised.id); x.promise = 0;
       return conv(promised, '"Skipper, you told me I would play more. I am still on the bench. Was that just talk?"', [
@@ -757,6 +768,7 @@
       if (fx.s.m) { x.m = clamp(x.m + fx.s.m); notes.push(last(ev.who) + ' morale ' + (fx.s.m > 0 ? '+' : '') + fx.s.m); }
       if (fx.s.t) { x.t = clamp(x.t + fx.s.t); notes.push('trust ' + (fx.s.t > 0 ? '+' : '') + fx.s.t); }
       if (fx.s.promise) x.promise = save.rec[save.myId].w + save.rec[save.myId].l;
+      if (fx.s.req && root.League) { var wp = root.League.byId(save, ev.pid); if (wp) wp.wantsOut = 1; }
     }
     if (fx.team && fx.team.m) {
       rosterMe.forEach(function (p) { var y = pm(save, p.id); y.m = clamp(y.m + fx.team.m); });
