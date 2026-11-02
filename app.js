@@ -1837,6 +1837,7 @@
     rows.forEach(function (r, k) { if (r.id === id) i = k; });
     var me = rows[i], city = teamById(id).city;
     if (i === 0) return rows.length > 1 && rows[1].gb ? 'The result leaves ' + city + ' alone in first place in the ' + d + ' Division, ' + (rows[1].gb === 1 ? 'a game' : rows[1].gb + ' games') + ' clear.' : 'The result leaves ' + city + ' tied for first in the ' + divTitle(d) + '.';
+    if (!me.gb) return 'The result leaves ' + city + ' level with ' + teamById(rows[0].id).city + ' at the top of the ' + divTitle(d) + '.';
     return 'The result leaves ' + city + ' ' + (me.gb === 1 ? 'a game' : me.gb + ' games') + ' behind ' + teamById(rows[0].id).city + ' in the ' + divTitle(d) + '.';
   }
 
@@ -3040,6 +3041,8 @@
     renderFeed();
     show('screen-feed');
     Social.markRead(save);
+    var fbEl = document.querySelector('#screen-season .feedbtn');
+    if (fbEl) { fbEl.classList.remove('dot'); fbEl.dataset.n = '0'; }
     persist();
   }
   function fmtN(n) { return n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e4 ? Math.round(n / 1e3) + 'K' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(n); }
@@ -3639,26 +3642,127 @@
       function grab(pred) { var out = kids.filter(pred); out.forEach(function (k) { kids.splice(kids.indexOf(k), 1); }); return out; }
       var first = grab(function (k) { return k.classList.contains('pp-mast') || k.classList.contains('pp-head') || k.classList.contains('pp-deck') || k.classList.contains('pp-photo'); });
       var story = grab(function (k) { return k.classList.contains('pp-p'); });
-      var secs = kids;
       function wrap(list) { var d = el('div', 'rc phone-feed'); list.forEach(function (n) { d.appendChild(n); }); return d; }
-      function secOf(name) { return secs.filter(function (k) { var h = k.querySelector('h3'); return h && h.textContent === name; }); }
-      for (var si = 0; si < 3 && story.length > 1; si++) first.push(story.shift());
-      var pg1 = wrap(first); pg1.classList.add('article');
+      function tcol(id) {
+        var t = id ? teamById(id) : null, c = t && t.colors ? t.colors : [];
+        for (var i = 0; i < c.length; i++) { try { if (luminance(c[i]) > 0.3) return c[i]; } catch (e) {} }
+        return '#fff';
+      }
+      function seg(labels, pick) {
+        var w = el('div', 'seg');
+        labels.forEach(function (l, i) {
+          var b = el('button', i ? '' : 'on', l); b.type = 'button';
+          b.addEventListener('click', function () { Array.prototype.forEach.call(w.children, function (x, k) { x.classList.toggle('on', k === i); }); pick(i); });
+          w.appendChild(b);
+        });
+        return w;
+      }
+      function sm(id) { var t = id ? teamById(id) : null; return t ? teamBadge(t) : el('span', 'badge'); }
+      // 1. the story, all of it on the first page
+      var pg1 = wrap(first.concat(story)); pg1.classList.add('article');
       pages.push({ title: '', node: pg1 });
-      var p2 = story.concat(secOf('Highlight'));
-      if (p2.length) { var pg2 = wrap(p2); pg2.classList.add('article'); pages.push({ title: 'The game', node: pg2 }); }
-      var p3 = secOf('Around the league');
-      if (p3.length) pages.push({ title: 'Around the league', node: wrap(p3.map(function (x) { x.querySelector('h3').remove(); return x; })) });
-      var p4 = secOf('Breaking').concat(secOf('Injury report'));
-      if (p4.length) pages.push({ title: 'Breaking', node: wrap(p4) });
-      var p5 = secOf('Standings');
-      if (p5.length) pages.push({ title: 'Standings', node: wrap(p5.map(function (x) { x.querySelector('h3').remove(); return x; })) });
-      var bx = el('div', 'rc phone-feed');
-      (ev.box || []).forEach(function (t) {
-        bx.appendChild(el('h3', 'box-title', t.city));
-        bx.appendChild(dataTable(['Player', 'PTS', 'REB', 'AST', 'FG'], t.rows));
-      });
-      if (ev.box && ev.box.length) pages.splice(2, 0, { title: 'Box score', node: bx });
+      // 2. the night's best performances from every game
+      if (ev.perf && ev.perf.length) {
+        var pf = wrap([]); pf.classList.add('perf');
+        ev.perf.forEach(function (x) {
+          var r = el('div', 'pf-row');
+          r.appendChild(makeAvatar({ id: x.id, name: x.name }));
+          var mid = el('div', 'pf-mid');
+          var nm = el('b', null, x.name); mid.appendChild(nm);
+          var sub = el('small'); sub.appendChild(sm(x.tid)); sub.appendChild(document.createTextNode(x.team + (x.tag ? ' · ' + x.tag : '')));
+          mid.appendChild(sub);
+          r.appendChild(mid);
+          var st = el('div', 'pf-st');
+          st.appendChild(el('b', null, String(x.pts)));
+          st.appendChild(el('small', null, x.reb + ' reb · ' + x.ast + ' ast · ' + x.fg + '-' + x.fga));
+          r.appendChild(st);
+          pf.appendChild(r);
+        });
+        pages.push({ title: 'Top performers', node: pf });
+      }
+      // 3. box score: our club first, tap the other name to switch
+      if (ev.boxFull && ev.boxFull.length) {
+        var bx = wrap([]); bx.classList.add('bxp');
+        var bxBody = el('div', 'bx-body');
+        function showBox(i) {
+          var t = ev.boxFull[i];
+          bxBody.textContent = '';
+          var top = Math.max.apply(null, t.rows.map(function (r) { return r.pts; }));
+          bxBody.appendChild(dataTable(['Player', 'PTS', 'REB', 'AST', 'FG'], t.rows.map(function (r) { return { cls: r.pts === top ? 'me' : '', cells: [r.name, r.pts, r.reb, r.ast, r.fg] }; })));
+        }
+        bx.appendChild(seg(ev.boxFull.map(function (t) { return t.city; }), showBox));
+        bx.appendChild(bxBody);
+        showBox(0);
+        pages.push({ title: 'Box score', node: bx });
+      }
+      // 4. around the league, with the key names and numbers picked out
+      if (ev.scores && ev.scores.length) {
+        var lg = wrap([]); lg.classList.add('lgp');
+        ev.scores.forEach(function (g) {
+          var r = el('div', 'lg-row');
+          var l = el('span', 'lg-g');
+          var wn = el('b', 'lg-w', g.w); wn.style.color = tcol(g.wid);
+          l.appendChild(wn);
+          l.appendChild(el('b', 'lg-n', ' ' + g.ws));
+          l.appendChild(el('span', 'lg-l', ', ' + g.l + ' ' + g.ls));
+          r.appendChild(l);
+          if (g.topName) {
+            var tp = el('span', 'lg-t');
+            var tn = el('i', null, g.topName); tn.style.color = tcol(g.topTid);
+            tp.appendChild(tn);
+            tp.appendChild(el('b', null, ' ' + g.topPts));
+            r.appendChild(tp);
+          }
+          lg.appendChild(r);
+        });
+        pages.push({ title: 'Around the league', node: lg });
+      }
+      // 5. breaking: every entry carries a club logo or a player photo
+      var bk = [];
+      (ev.briefs || []).slice(0, 4).forEach(function (b) { bk.push({ h: b.h, t: b.t, tid: b.tid, pid: b.pid, inj: false }); });
+      (ev.injuries || []).forEach(function (t, i) { var ids = (ev.injIds || [])[i] || {}; if (bk.length < 6) bk.push({ h: 'Injury', t: t, tid: ids.tid, pid: ids.pid, inj: true }); });
+      if (bk.length) {
+        var bp = wrap([]); bp.classList.add('bkp');
+        bk.forEach(function (b) {
+          var r = el('div', 'bk-row' + (b.inj ? ' inj' : ''));
+          var ic;
+          if (b.pid) ic = makeAvatar({ id: b.pid, name: b.t });
+          else if (b.tid) ic = sm(b.tid);
+          else ic = el('span', 'bk-dot');
+          ic.classList.add('bk-ic');
+          r.appendChild(ic);
+          var tx = el('div', 'bk-tx');
+          var hh = el('b', null, b.h); if (b.tid && !b.inj) hh.style.color = tcol(b.tid);
+          tx.appendChild(hh);
+          tx.appendChild(el('span', null, b.t));
+          r.appendChild(tx);
+          bp.appendChild(r);
+        });
+        pages.push({ title: 'Breaking', node: bp });
+      }
+      // 6. standings: our conference in full, tap to see the other
+      var groups = ev.tableFull || [];
+      if (groups.length) {
+        var sp = wrap([]); sp.classList.add('stp');
+        var sBody = el('div', 'st-body');
+        var gname = function (d) { return d.replace(/ern$/, '').replace(/ Division$/, ''); };
+        function showSt(i) {
+          var gr = groups[i]; sBody.textContent = '';
+          gr.rows.forEach(function (r, k) {
+            var row = el('div', 'st-row' + (r.me ? ' me' : ''));
+            row.appendChild(el('span', 'st-k', String(k + 1)));
+            row.appendChild(sm(r.id));
+            row.appendChild(el('span', 'st-c', r.city));
+            row.appendChild(el('span', 'st-w', r.w + '-' + r.l));
+            row.appendChild(el('span', 'st-gb', k === 0 || !r.gb ? '–' : String(r.gb)));
+            sBody.appendChild(row);
+          });
+        }
+        sp.appendChild(seg(groups.map(function (g) { return gname(g.div); }), showSt));
+        sp.appendChild(sBody);
+        showSt(0);
+        pages.push({ title: 'Standings', node: sp });
+      }
       var rail = hubRail(pages);
       rail.classList.add('recap');
       var site = el('div', 'site');

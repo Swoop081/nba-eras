@@ -10,7 +10,11 @@
     return v;
   }
   function clamp(v) { return Math.max(0, Math.min(100, Math.round(v))); }
-  function last(name) { var p = name.split(' '); return p[p.length - 1]; }
+  function last(name) {
+    var p = String(name).split(' ');
+    while (p.length > 1 && /^(jr|sr|ii|iii|iv|v)\.?$/i.test(p[p.length - 1])) p.pop();
+    return p[p.length - 1];
+  }
   function fill(t, d) { return t.replace(/\{(\w+)\}/g, function (m, k) { return d[k] !== undefined ? d[k] : m; }); }
 
   var MONTHS = ['Jan.', 'Feb.', 'March', 'April', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
@@ -266,7 +270,7 @@
     day.forEach(function (g) {
       [['h', g.home], ['a', g.away]].forEach(function (s) {
         g.lines[s[0]].forEach(function (ln) {
-          if (ln.s.pts > 0 || ln.s.fga > 0) all.push({ id: ln.id, name: ln.name, team: s[1], pts: ln.s.pts, fg: ln.s.fg, fga: ln.s.fga, ft: ln.s.ft, fta: ln.s.fta, ast: ln.s.ast, pf: ln.s.pf, game: g });
+          if (ln.s.pts > 0 || ln.s.fga > 0) all.push({ id: ln.id, name: ln.name, team: s[1], pts: ln.s.pts, fg: ln.s.fg, fga: ln.s.fga, ft: ln.s.ft, fta: ln.s.fta, ast: ln.s.ast, pf: ln.s.pf, reb: (ln.s.orb || 0) + (ln.s.drb || 0), game: g });
         });
       });
     });
@@ -308,7 +312,7 @@
       dd ? star.name + ' filled the stat sheet with ' + sr.pts + ' points, ' + sreb + ' rebounds and ' + sr.ast + ' assists.' : 'It was ' + star.name + ' who carried the scoring, ' + sr.pts + ' points, ' + shoot + '.',
       sr.pts >= 30 ? star.name + ' was unstoppable, ' + sr.pts + ' points, ' + shoot + '.' : star.name + ' did most of the damage with ' + sr.pts + ' points.'
     ]) + oppS);
-    if (regular && ctx.standing) body.push(ctx.standing);
+    if (regular && ctx.standing && !v.modern) body.push(ctx.standing);
     else if (ctx.seriesLine) body.push(ctx.seriesLine + '.');
     out.story = body;
     function boxOf(lines, city) {
@@ -318,6 +322,22 @@
       return { city: city, rows: rows };
     }
     out.box = [boxOf(ctx.res.homeLines, ctx.me.city), boxOf(ctx.res.awayLines, ctx.opp.city)];
+    function boxFull(lines, t) {
+      return { id: t.id, city: t.city, rows: lines.filter(function (l) { return l.s.pos > 0; }).slice().sort(function (a, b) { return (b.s.pos || 0) - (a.s.pos || 0); }).slice(0, 10).map(function (l) {
+        var s = l.s; return { id: l.id, name: l.name, pts: s.pts, reb: (s.orb || 0) + (s.drb || 0), ast: s.ast, fg: s.fg + '-' + s.fga };
+      }) };
+    }
+    out.boxFull = [boxFull(ctx.res.homeLines, ctx.me), boxFull(ctx.res.awayLines, ctx.opp)];
+    // the night's best individual performances, from every game
+    var perfSeen = {}, perf = [];
+    function addPerf(x, tag) {
+      if (!x || perfSeen[x.id]) return; perfSeen[x.id] = 1;
+      perf.push({ id: x.id, name: x.name, tid: x.team, team: names(x.team), pts: x.pts, reb: x.reb, ast: x.ast, fg: x.fg, fga: x.fga, tag: tag || '' });
+    }
+    all.slice(0, 3).forEach(function (x) { addPerf(x, ''); });
+    addPerf(all.slice().sort(function (a, b) { return b.reb - a.reb || b.pts - a.pts; })[0], 'Glass');
+    addPerf(all.slice().sort(function (a, b) { return b.ast - a.ast || b.pts - a.pts; })[0], 'Playmaker');
+    out.perf = perf;
     out.slug = (ctx.me.city + '-' + ctx.opp.city).toLowerCase().replace(/[^a-z]+/g, '-');
     var stk = regular ? streakOf(save, ctx.me.id) : { n: 0 };
     out.deck = ctx.seriesLine || (stk.n >= 3 && stk.win ? rnd(['That makes ' + ordinal(stk.n) + ' straight for ' + ctx.me.city + '.', ordinal(stk.n) + ' in a row and the confidence is showing.']) : stk.n >= 3 && stk.win === false ? rnd(['The losing run reaches ' + ordinal(stk.n) + '. Questions are coming.', ordinal(stk.n) + ' straight defeats and the pressure is on.']) : won ? rnd(['A step forward for ' + ctx.me.city + '.', 'The kind of win a club can build on.', 'One more for the ledger.', margin >= 15 ? 'A statement from ' + ctx.me.city + '.' : 'Not pretty, but it counts.']) : rnd(['The club has work to do.', 'Back to the drawing board.', margin <= 4 ? 'Close, but close does not count.' : 'A night the club will want to forget.', 'Time to regroup.']));
@@ -347,19 +367,20 @@
       var all2 = g.lines.h.map(function (x) { return [x, g.home]; }).concat(g.lines.a.map(function (x) { return [x, g.away]; })).sort(function (a, b) { return b[0].s.pts - a[0].s.pts; });
       var top = all2[0] ? last(all2[0][0].name) + ' ' + all2[0][0].s.pts : '';
       var win = g.hs > g.as;
-      return { w: names(win ? g.home : g.away), ws: win ? g.hs : g.as, l: names(win ? g.away : g.home), ls: win ? g.as : g.hs, top: top, at: names(g.home) };
+      return { w: names(win ? g.home : g.away), ws: win ? g.hs : g.as, l: names(win ? g.away : g.home), ls: win ? g.as : g.hs, top: top, at: names(g.home), wid: win ? g.home : g.away, lid: win ? g.away : g.home, topName: all2[0] ? last(all2[0][0].name) : '', topPts: all2[0] ? all2[0][0].s.pts : 0, topTid: all2[0] ? all2[0][1] : null };
     });
 
     // wire briefs: close games, blowouts, rivalry, streaks, milestones, first place
     var briefs = [];
+    function tag(o, tid, pid) { o.tid = tid; if (pid) o.pid = pid; return o; }
     day.forEach(function (g) {
       var m = Math.abs(g.hs - g.as), w = g.hs > g.as ? g.home : g.away, l2 = w === g.home ? g.away : g.home;
       if (g.mine) return;
-      if (m <= 3) briefs.push(rnd([{ h: 'Down to the wire', t: names(w) + ' held off ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Nail-biter', t: names(l2) + ' had the last look but ' + names(w) + ' survived, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Late drama', t: 'It went to the final possession before ' + names(w) + ' edged ' + names(l2) + '.' }]));
-      else if (m >= 18) briefs.push(rnd([{ h: 'Rout', t: names(w) + ' ran ' + names(l2) + ' off the floor, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Blowout', t: names(l2) + ' never got going in a ' + m + '-point loss to ' + names(w) + '.' }, { h: 'No contest', t: names(w) + ' by ' + m + '. ' + names(l2) + ' will want this one back.' }, { h: 'Statement', t: names(w) + ' made a point against ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }]));
+      if (m <= 3) briefs.push(tag(rnd([{ h: 'Down to the wire', t: names(w) + ' held off ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Nail-biter', t: names(l2) + ' had the last look but ' + names(w) + ' survived, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Late drama', t: 'It went to the final possession before ' + names(w) + ' edged ' + names(l2) + '.' }]), w));
+      else if (m >= 18) briefs.push(tag(rnd([{ h: 'Rout', t: names(w) + ' ran ' + names(l2) + ' off the floor, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Blowout', t: names(l2) + ' never got going in a ' + m + '-point loss to ' + names(w) + '.' }, { h: 'No contest', t: names(w) + ' by ' + m + '. ' + names(l2) + ' will want this one back.' }, { h: 'Statement', t: names(w) + ' made a point against ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }]), w));
     });
-    if (margin <= 3) briefs.unshift({ h: 'Down to the wire', t: 'Our own game was decided by ' + (margin === 1 ? 'a single point' : ordinal(margin) + ' points') + '.' });
-    else if (margin >= 18) briefs.unshift({ h: 'Rout', t: (won ? ctx.me.city : ctx.opp.city) + ' won by ' + margin + '.' });
+    if (margin <= 3) briefs.unshift({ h: 'Down to the wire', t: 'Our own game was decided by ' + (margin === 1 ? 'a single point' : ordinal(margin) + ' points') + '.', tid: ctx.me.id });
+    else if (margin >= 18) briefs.unshift({ h: 'Rout', t: (won ? ctx.me.city : ctx.opp.city) + ' won by ' + margin + '.', tid: won ? ctx.me.id : ctx.opp.id });
     if (regular) {
       var riv = null;
       day.forEach(function (g) {
@@ -368,7 +389,7 @@
         var meet = save.results.filter(function (r) { return (r.h === g.home && r.a === g.away) || (r.h === g.away && r.a === g.home); });
         if (meet.length < 2) return;
         var wh = meet.filter(function (r) { return (r.h === g.home) === (r.hs > r.as); }).length;
-        riv = { h: 'Division rivals', t: names(g.home) + ' and ' + names(g.away) + ' have now met ' + ordinal(meet.length) + ' times this season. ' + (wh * 2 === meet.length ? 'The series is level.' : (wh * 2 > meet.length ? names(g.home) : names(g.away)) + ' lead it ' + Math.max(wh, meet.length - wh) + '-' + Math.min(wh, meet.length - wh) + '.') };
+        riv = { tid: g.home, h: 'Division rivals', t: names(g.home) + ' and ' + names(g.away) + ' have now met ' + ordinal(meet.length) + ' times this season. ' + (wh * 2 === meet.length ? 'The series is level.' : (wh * 2 > meet.length ? names(g.home) : names(g.away)) + ' lead it ' + Math.max(wh, meet.length - wh) + '-' + Math.min(wh, meet.length - wh) + '.') };
       });
       if (riv) briefs.push(riv);
       var seen = {};
@@ -376,23 +397,27 @@
         [g.home, g.away].forEach(function (id) {
           if (seen[id]) return; seen[id] = 1;
           var s = streakOf(save, id);
-          if (s.win && s.n >= 4) briefs.push(rnd([{ h: 'Hot streak', t: names(id) + ' have won ' + ordinal(s.n) + ' in a row.' }, { h: 'Rolling', t: names(id) + ' extend their winning streak to ' + ordinal(s.n) + '.' }, { h: 'Who can stop them?', t: ordinal(s.n) + ' straight wins for ' + names(id) + '.' }]));
-          else if (s.win === false && s.n >= 5) briefs.push(rnd([{ h: 'Slump', t: names(id) + ' have lost ' + ordinal(s.n) + ' straight.' }, { h: 'Skid', t: names(id) + ' cannot buy a win: ' + ordinal(s.n) + ' defeats in a row.' }, { h: 'Trouble', t: names(id) + ' are in a freefall after ' + ordinal(s.n) + ' straight losses.' }]));
+          if (s.win && s.n >= 4) briefs.push(tag(rnd([{ h: 'Hot streak', t: names(id) + ' have won ' + ordinal(s.n) + ' in a row.' }, { h: 'Rolling', t: names(id) + ' extend their winning streak to ' + ordinal(s.n) + '.' }, { h: 'Who can stop them?', t: ordinal(s.n) + ' straight wins for ' + names(id) + '.' }]), id));
+          else if (s.win === false && s.n >= 5) briefs.push(tag(rnd([{ h: 'Slump', t: names(id) + ' have lost ' + ordinal(s.n) + ' straight.' }, { h: 'Skid', t: names(id) + ' cannot buy a win: ' + ordinal(s.n) + ' defeats in a row.' }, { h: 'Trouble', t: names(id) + ' are in a freefall after ' + ordinal(s.n) + ' straight losses.' }]), id));
         });
       });
       var st2 = Season.standings(save);
       Object.keys(st2).forEach(function (d) {
         var lead = st2[d][0].id, was = ctx.before && ctx.before[d];
-        if (was && was !== lead) briefs.push({ h: 'New leader', t: names(lead) + ' move into first place in the ' + d + ' Division, replacing ' + names(was) + '.' });
+        if (was && was !== lead) briefs.push({ tid: lead, h: 'New leader', t: names(lead) + ' move into first place in the ' + d + ' Division, replacing ' + names(was) + '.' });
       });
       all.forEach(function (x) {
         var tot = save.lg.stats[x.id] ? save.lg.stats[x.id].pts : 0;
-        [250, 500, 750, 1000, 1250, 1500].forEach(function (M) { if (tot - x.pts < M && tot >= M) briefs.push({ h: 'Milestone', t: x.name + ' of ' + names(x.team) + ' passed ' + commas(M) + ' points for the season.' }); });
+        [250, 500, 750, 1000, 1250, 1500].forEach(function (M) { if (tot - x.pts < M && tot >= M) briefs.push({ pid: x.id, tid: x.team, h: 'Milestone', t: x.name + ' of ' + names(x.team) + ' passed ' + commas(M) + ' points for the season.' }); });
       });
     }
     var tx = (save.lg.wire || []).filter(function (w) { return w.d === save.day && w.y === save.year; });
     out.briefs = briefs.slice(0, tx.length ? 4 : 5);
-    tx.slice(0, 2).forEach(function (w) { out.briefs.push({ h: 'Transactions', t: w.t }); });
+    tx.slice(0, 2).forEach(function (w) {
+      var hit = null, at = 1e9;
+      save.ids.forEach(function (id) { var k = w.t.indexOf(names(id)); if (k >= 0 && k < at) { at = k; hit = id; } });
+      out.briefs.push({ h: 'Transactions', t: w.t, tid: hit });
+    });
 
     // injuries
     var inj = (ctx.day.inj || []).map(function (i) { return i.name + ' (' + names(i.team) + ') was hurt and is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + '.'; });
@@ -400,11 +425,19 @@
       inj.push(p.name + ' (' + ctx.me.city + ') remains on the injured list, ' + p.inj + ' more ' + (p.inj === 1 ? 'game' : 'games') + '.');
     });
     out.injuries = inj.slice(0, 5);
+    var injIds = (ctx.day.inj || []).map(function (i) { return { pid: i.id, tid: i.team }; });
+    ctx.rosterAll.filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) { injIds.push({ pid: p.id, tid: ctx.me.id }); });
+    out.injIds = injIds.slice(0, 5);
 
     // standings box
     var stand = Season.standings(save);
     out.table = Object.keys(stand).map(function (d) {
       return { div: d, rows: stand[d].slice(0, 4).map(function (r) { return { city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === ctx.me.id }; }) };
+    });
+    // every club, grouped, with our group first
+    var myDiv = save.division[ctx.me.id];
+    out.tableFull = Object.keys(stand).sort(function (a, b) { return (b === myDiv) - (a === myDiv); }).map(function (d) {
+      return { div: d, rows: stand[d].map(function (r) { return { id: r.id, city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === ctx.me.id }; }) };
     });
     return out;
   }
@@ -429,7 +462,7 @@
 
     var bigPts = star.s.pts >= 20;
     var topAst = lines.slice().sort(function (a, b) { return b.s.ast - a.s.ast; })[0];
-    if (bigPts || topAst.s.ast >= 7) {
+    if (!v.modern && (bigPts || topAst.s.ast >= 7)) {
       var text = v.modern ? (bigPts ? rnd(v.radio) : v.radioAst) : bigPts
         ? rnd(['And {n} hits again! That is {x} points tonight, folks, and the crowd is on its feet!', '{n} from the corner. Good! He now has {x} points and nobody can stop him!', 'Listeners, you are hearing history. {n} has {x} points and the night is young!'])
         : '{n} threads another pass, that is {x} assists for him tonight. He sees the whole floor!';
