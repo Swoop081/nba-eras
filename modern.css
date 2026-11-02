@@ -909,3 +909,9 @@ body[data-modern="1"] .lg-tx{display:grid;gap:2px;text-align:left}
 body[data-modern="1"] .lg-tx i{font-style:normal;font-weight:700;font-size:12.5px}
 body[data-modern="1"] .lg-tx b{font:800 17px/1 var(--display,var(--font));color:#FFD60A}
 body[data-modern="1"] .lg-tx .pf-rest{font-size:.66em;opacity:.85}
+
+/* league cup group tables: three compact groups per conference on one page */
+body[data-modern="1"] .cupst{display:grid;gap:10px}
+body[data-modern="1"] .ht.cupt td,body[data-modern="1"] .ht.cupt td.tn{height:22px;font-size:12.5px}
+body[data-modern="1"] table.ht.cupt{table-layout:fixed}
+body[data-modern="1"] .ht.cupt th:not(.tn),body[data-modern="1"] .ht.cupt td:not(.tn){width:46px}

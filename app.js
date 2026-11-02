@@ -3664,14 +3664,14 @@
     var pct = function (a, b, min) { return function (x) { return x[b] >= min ? 100 * x[a] / x[b] : -1; }; };
     var all = [
       { id: 'pts', t: 'Points', lvl: 0, f: function (x) { return x.pts / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'ast', t: 'Assists', lvl: 0, f: function (x) { return x.ast / x.g; }, fmt: function (v) { return v.toFixed(1); } },
       { id: 'trb', t: 'Rebounds', lvl: 0, f: function (x) { return x.trb / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'stl', t: 'Steals', lvl: 1, f: function (x) { return x.stl / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'blk', t: 'Blocks', lvl: 1, f: function (x) { return x.blk / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'fgp', t: 'Field goal %', lvl: 1, f: pct('fg', 'fga', qual * 3), fmt: function (v) { return v.toFixed(1) + '%'; } },
-      { id: 'ftp', t: 'Free throw %', lvl: 1, f: pct('ft', 'fta', qual), fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'ast', t: 'Assists', lvl: 0, f: function (x) { return x.ast / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'stl', t: 'Steals', lvl: 0, f: function (x) { return x.stl / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'blk', t: 'Blocks', lvl: 0, f: function (x) { return x.blk / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'fgp', t: 'Field goal %', lvl: 0, f: pct('fg', 'fga', qual * 3), fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'tpp', t: 'Three-point %', lvl: 0, f: pct('tp', 'tpa', qual * 2), fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'ftp', t: 'Free throw %', lvl: 0, f: pct('ft', 'fta', qual), fmt: function (v) { return v.toFixed(1) + '%'; } },
       { id: 'tpm', t: 'Threes made', lvl: 2, f: function (x) { return (x.tp || 0) / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'tpp', t: 'Three-point %', lvl: 2, f: pct('tp', 'tpa', qual * 2), fmt: function (v) { return v.toFixed(1) + '%'; } },
       { id: 'ts', t: 'True shooting %', lvl: 2, f: function (x) { var d = 2 * (x.fga + 0.44 * x.fta); return x.fga >= qual * 3 && d ? 100 * x.pts / d : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
       { id: 'min', t: 'Minutes', lvl: 2, f: function (x) { return x.min / x.g; }, fmt: function (v) { return v.toFixed(1); } },
       { id: 'tov', t: 'Turnovers', lvl: 2, f: function (x) { return x.tov / x.g; }, fmt: function (v) { return v.toFixed(1); } },
@@ -3761,6 +3761,38 @@
       tb.appendChild(body);
       pages.push({ title: divTitle(d), node: tb });
     });
+    var cv = save.cup ? Season.cupView(save) : null;
+    if (cv && cv.groups.length) {
+      var confs = [];
+      cv.groups.forEach(function (g) { if (confs.indexOf(g.conf) < 0) confs.push(g.conf); });
+      confs.sort(function (a, b) {
+        var ma = cv.groups.some(function (g) { return g.conf === a && g.rows.some(function (r) { return r.id === me; }); }), mb = cv.groups.some(function (g) { return g.conf === b && g.rows.some(function (r) { return r.id === me; }); });
+        return ma === mb ? 0 : ma ? -1 : 1;
+      });
+      confs.forEach(function (cf) {
+        var wrapC = el('div', 'cupst');
+        cv.groups.filter(function (g) { return g.conf === cf; }).forEach(function (g, gi) {
+          var tb2 = el('table', 'ht cupt');
+          var hr2 = el('tr'); ['Group ' + 'ABC'.charAt(gi), 'W', 'L', 'PD'].forEach(function (h, i) { hr2.appendChild(el('th', i === 0 ? 'tn' : null, h)); });
+          var th2 = el('thead'); th2.appendChild(hr2); tb2.appendChild(th2);
+          var bd2 = el('tbody');
+          g.rows.forEach(function (t, i) {
+            var team = teamById(t.id), tr = el('tr', t.id === me ? 'me' : null);
+            var tdn = el('td', 'tn');
+            tdn.appendChild(el('span', 'pos', String(i + 1)));
+            var sb = teamBadge(team); sb.className += ' sm'; tdn.appendChild(sb);
+            tdn.appendChild(document.createTextNode(team.city + (cv.q.indexOf(t.id) >= 0 ? ' \u2713' : '')));
+            tr.appendChild(tdn);
+            tr.appendChild(el('td', null, String(t.w)));
+            tr.appendChild(el('td', null, String(t.l)));
+            tr.appendChild(el('td', null, (t.pd > 0 ? '+' : '') + t.pd));
+            bd2.appendChild(tr);
+          });
+          tb2.appendChild(bd2); wrapC.appendChild(tb2);
+        });
+        pages.push({ title: 'Cup \u00B7 ' + String(cf).replace('ern', ''), node: wrapC });
+      });
+    }
     return hubRail(pages);
   }
 
