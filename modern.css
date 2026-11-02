@@ -734,3 +734,43 @@ body[data-modern="1"] #screen-live #court.full+#ticker .tk{font-size:13.5px;line
 body[data-modern="1"] #screen-live #court.full+#ticker .tk:first-child{font-size:15.5px}
 
 body[data-modern="1"] #screen-live #court.full{flex:none;height:calc(94vw + 60px);max-height:calc(94vw + 60px)}
+
+body[data-modern="1"] .cup-champ{display:flex;align-items:center;gap:14px;margin:6px 14px 10px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,#3b2f10,#171410);border:1px solid rgba(240,190,70,.55)}
+body[data-modern="1"] .cup-champ .badge{width:52px;height:52px;border:0;background:transparent}
+body[data-modern="1"] .cup-champ small{display:block;color:#E8C46A;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase}
+body[data-modern="1"] .cup-champ b{font:800 22px var(--font);color:#fff}
+body[data-modern="1"] .cup-games{display:grid;gap:8px;margin:0 14px 10px}
+body[data-modern="1"] .cup-g{display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.08)}
+body[data-modern="1"] .cup-g .cs{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#14161d;color:#aab}
+body[data-modern="1"] .cup-g .cs span{flex:1;font:600 13px var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .cup-g .cs b{font:800 17px var(--font)}
+body[data-modern="1"] .cup-g .cs.w{color:#fff}
+body[data-modern="1"] .cup-g .cs.me{box-shadow:inset 3px 0 0 var(--team,#E03A3E)}
+
+/* team page: arena rafters */
+body[data-modern="1"] #season-title{cursor:pointer}
+body[data-modern="1"] .teampage{padding:0 0 24px}
+body[data-modern="1"] .rafters{position:relative;margin:0;padding:10px 0 18px;background:linear-gradient(#05060a,#0d0f16 60%,#10131b);border-bottom:1px solid rgba(255,255,255,.06)}
+body[data-modern="1"] .rf-beam{height:12px;margin:0 0 4px;background:linear-gradient(#2a2e3a,#14161d);box-shadow:0 6px 14px rgba(0,0,0,.55)}
+body[data-modern="1"] .rf-beam.low{margin-top:14px}
+body[data-modern="1"] .rf-label{margin:8px 16px 6px;font:700 11px var(--font);letter-spacing:.14em;text-transform:uppercase;color:#8d92a3}
+body[data-modern="1"] .rf-row{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x proximity;padding:0 16px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+body[data-modern="1"] .rf-row::-webkit-scrollbar{display:none}
+body[data-modern="1"] .rf-empty{margin:10px 0;color:#8d92a3;font:500 13px var(--font)}
+body[data-modern="1"] .bn,body[data-modern="1"] .jy{position:relative;flex:none;scroll-snap-align:start;padding-top:22px}
+body[data-modern="1"] .rope{position:absolute;top:0;left:50%;width:2px;height:24px;margin-left:-1px;background:linear-gradient(#555a68,#2a2e3a)}
+body[data-modern="1"] .bn{width:96px}
+body[data-modern="1"] .bn .cloth{height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--c1);color:var(--c2);border:2px solid var(--c2);border-top-width:4px;clip-path:polygon(0 0,100% 0,100% 100%,50% 88%,0 100%);box-shadow:0 10px 18px rgba(0,0,0,.5)}
+body[data-modern="1"] .bn .cloth small{font:800 10px var(--font);letter-spacing:.16em}
+body[data-modern="1"] .bn .cloth b{font:800 28px var(--font);line-height:1}
+body[data-modern="1"] .bn.aba .cloth{filter:saturate(.7) brightness(.9)}
+body[data-modern="1"] .bn.new .cloth{box-shadow:0 0 0 2px #E8C46A,0 10px 24px rgba(232,196,106,.45)}
+body[data-modern="1"] .jy{width:84px;text-align:center}
+body[data-modern="1"] .jy .shirt{height:92px;display:flex;align-items:center;justify-content:center;background:var(--c1);color:var(--c2);clip-path:polygon(18% 0,38% 0,50% 12%,62% 0,82% 0,100% 22%,86% 36%,86% 100%,14% 100%,14% 36%,0 22%);box-shadow:0 8px 14px rgba(0,0,0,.5)}
+body[data-modern="1"] .jy .shirt b{font:800 30px var(--font);margin-top:10px}
+body[data-modern="1"] .jy .jn{display:block;margin-top:6px;font:700 11px var(--font);color:#e8eaf2;line-height:1.2}
+body[data-modern="1"] .jy small{display:block;color:#8d92a3;font:500 10px var(--font)}
+body[data-modern="1"] .tp-info{padding:14px 16px}
+
+body[data-modern="1"] #court.loading .cfield{opacity:0}
+body[data-modern="1"] #court .cfield{transition:opacity .18s}

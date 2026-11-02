@@ -52,6 +52,7 @@
     target.classList.add('active');
     target.scrollTop = 0;
     body.dataset.screen = id;
+    if (id !== 'screen-title') { body.classList.remove('flicker'); if (body.dataset.menu !== 'show') finishIntro(); }
     pageifyScreen(id);
   }
 
@@ -129,13 +130,17 @@
   var timers = [];
   function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
   function setPhase(p) { body.dataset.phase = p; }
+  var flickT = null;
   function flick() {
+    if (body.dataset.screen !== 'screen-title') return;
     body.classList.add('flicker');
-    setTimeout(function () { body.classList.remove('flicker'); }, 700);
+    clearTimeout(flickT);
+    flickT = setTimeout(function () { body.classList.remove('flicker'); }, 700);
   }
   function finishIntro() {
     for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
     timers = [];
+    clearTimeout(flickT);
     body.classList.remove('flicker');
     setPhase('modern');
     body.dataset.menu = 'show';
@@ -1487,6 +1492,24 @@
     if (League.formCheck(save)) rosterCache = {};
     if (Social.has(save.year)) Social.day(save, results, results.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
+    cupNews();
+  }
+  /* NBA Cup headlines: who made the eight, each round, the champion */
+  function cupNews() {
+    var c = save && save.cup; if (!c || save.phase === 'done') return;
+    var m = Events.mood(save), me = save.myId, mine = function (ids) { return ids && ids.indexOf(me) >= 0; };
+    var nm = function (id) { var t = teamById(id); return t ? t.city : id; };
+    c.news = c.news || {};
+    function post(k, text, good) {
+      if (c.news[k]) return; c.news[k] = 1;
+      (m.posts || (m.posts = [])).push({ app: 'Breaking', c: '#C9A227', g: '\u2605', title: 'NBA Cup', text: text, good: good });
+      (save.lg.wire || (save.lg.wire = [])).push({ d: save.day, y: save.year, t: text });
+    }
+    var w2 = function (list) { return list.map(nm).join(', ').replace(/, ([^,]*)$/, ' and $1'); };
+    if (c.q && save.day >= c.at && !c.news.q) post('q', mine(c.q) ? 'You are in. ' + nm(me) + ' are through to the Cup quarterfinals.' : 'The Cup field is set: ' + w2(c.q) + '. ' + nm(me) + ' are out.', mine(c.q));
+    if (c.sf && save.day >= c.at + 2) post('sf', 'Cup semifinals: ' + c.sf.map(function (x) { return nm(x[0]) + ' v ' + nm(x[1]); }).join(' and ') + '.', mine(c.sf.reduce(function (a, x) { return a.concat(x); }, [])));
+    if (c.final && save.day >= c.at + 2 && !c.champ) post('f', 'The Cup final is set: ' + nm(c.final[0]) + ' v ' + nm(c.final[1]) + ' in Indianapolis.', mine(c.final));
+    if (c.champ) post('c', nm(c.champ) + ' win the NBA Cup.', c.champ === me);
   }
   function eraStart(id) { return ERAS.filter(function (e) { return e.id === id; })[0]; }
 
@@ -1860,6 +1883,7 @@
     var dayInj = myInj.concat(others.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
     if (League.formCheck(save)) rosterCache = {};
     if (Social.has(save.year)) Social.day(save, dayGames, dayInj);
+    cupNews();
     save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, myInj: myInj, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
     persist();
     renderMatch(me, opp, res, save.year, label, true);
@@ -2181,19 +2205,20 @@
       // a full-length floor at true proportions: the live action is the top half, the far end fades out
       court.textContent = '';
       field = el('div', 'cfield');
+      court.classList.remove('real', 'whole'); court.classList.add('loading');
       court.appendChild(field);
       // one picture of the whole floor, border and all; the old two-halves build is the fallback
       (function () {
         var im = new Image();
-        im.onload = function () { field.style.backgroundImage = 'url(' + im.src + ')'; court.classList.add('real', 'whole'); };
+        im.onload = function () { field.style.backgroundImage = 'url(' + im.src + ')'; court.classList.add('real', 'whole'); court.classList.remove('loading'); };
         im.onerror = function () {
           ['t', 'b'].forEach(function (k) { var h = el('div', 'ch ' + k); h.innerHTML = FULL_SVG; field.appendChild(h); });
           var h2 = new Image(), k2 = 0, exts = ['webp', 'png', 'jpg'];
           h2.onload = function () {
             Array.prototype.forEach.call(field.querySelectorAll('.ch'), function (h) { h.style.backgroundImage = 'url(' + h2.src + ')'; });
-            court.classList.add('real');
+            court.classList.add('real'); court.classList.remove('loading');
           };
-          h2.onerror = function () { k2++; if (k2 < exts.length) h2.src = 'assets/courts/' + home.id + '.' + exts[k2]; };
+          h2.onerror = function () { k2++; if (k2 < exts.length) h2.src = 'assets/courts/' + home.id + '.' + exts[k2]; else court.classList.remove('loading'); };
           h2.src = 'assets/courts/' + home.id + '.' + exts[0];
         };
         // the City Edition floor goes down for about a quarter of the home dates between November and March
@@ -2208,7 +2233,7 @@
         }
         if (kind === 'city' || kind === 'cup') {
           var im2 = new Image();
-          im2.onload = function () { field.style.backgroundImage = 'url(' + im2.src + ')'; court.classList.add('real', 'whole'); };
+          im2.onload = function () { field.style.backgroundImage = 'url(' + im2.src + ')'; court.classList.add('real', 'whole'); court.classList.remove('loading'); };
           im2.onerror = function () { im.src = 'assets/courts/full/' + home.id + '.webp'; };
           im2.src = 'assets/courts/' + kind + '/' + home.id + '.webp';
         } else im.src = 'assets/courts/full/' + home.id + '.webp';
@@ -2724,10 +2749,93 @@
     return wrap;
   }
 
+
+  /* ---------- team page: banners and retired numbers in the rafters ---------- */
+  var FRANCHISE = { 'minneapolis-lakers': 'los-angeles-lakers', 'syracuse-nationals': 'philadelphia-76ers', 'philadelphia-warriors': 'golden-state-warriors', 'san-francisco-warriors': 'golden-state-warriors', 'rochester-royals': 'sacramento-kings', 'cincinnati-royals': 'sacramento-kings', 'kansas-cityomaha-kings': 'sacramento-kings', 'kansas-city-kings': 'sacramento-kings', 'fort-wayne-pistons': 'detroit-pistons', 'milwaukee-hawks': 'atlanta-hawks', 'st-louis-hawks': 'atlanta-hawks', 'tri-cities-blackhawks': 'atlanta-hawks', 'baltimore-bullets': 'washington-wizards', 'capital-bullets': 'washington-wizards', 'washington-bullets': 'washington-wizards', 'chicago-packers': 'washington-wizards', 'chicago-zephyrs': 'washington-wizards', 'buffalo-braves': 'la-clippers', 'san-diego-clippers': 'la-clippers', 'san-diego-rockets': 'houston-rockets', 'seattle-supersonics': 'oklahoma-city-thunder', 'new-jersey-nets': 'brooklyn-nets', 'new-york-nets': 'brooklyn-nets', 'new-orleans-jazz': 'utah-jazz', 'charlotte-bobcats': 'charlotte-hornets', 'new-orleans-hornets': 'new-orleans-pelicans', 'vancouver-grizzlies': 'memphis-grizzlies' };
+  var LINEAGE = {
+    'los-angeles-lakers': 'Minneapolis Lakers 1948–60 · Los Angeles Lakers 1960–',
+    'atlanta-hawks': 'Tri-Cities Blackhawks 1949–51 · Milwaukee Hawks 1951–55 · St. Louis Hawks 1955–68 · Atlanta Hawks 1968–',
+    'golden-state-warriors': 'Philadelphia Warriors 1946–62 · San Francisco Warriors 1962–71 · Golden State Warriors 1971–',
+    'philadelphia-76ers': 'Syracuse Nationals 1949–63 · Philadelphia 76ers 1963–',
+    'sacramento-kings': 'Rochester Royals 1948–57 · Cincinnati Royals 1957–72 · Kansas City Kings 1972–85 · Sacramento Kings 1985–',
+    'detroit-pistons': 'Fort Wayne Pistons 1948–57 · Detroit Pistons 1957–',
+    'washington-wizards': 'Chicago Packers 1961–63 · Baltimore Bullets 1963–73 · Washington Bullets 1973–97 · Washington Wizards 1997–',
+    'la-clippers': 'Buffalo Braves 1970–78 · San Diego Clippers 1978–84 · Los Angeles Clippers 1984–',
+    'houston-rockets': 'San Diego Rockets 1967–71 · Houston Rockets 1971–',
+    'oklahoma-city-thunder': 'Seattle SuperSonics 1967–2008 · Oklahoma City Thunder 2008–',
+    'brooklyn-nets': 'New Jersey Americans 1967 · New York Nets 1968–77 · New Jersey Nets 1977–2012 · Brooklyn Nets 2012–',
+    'utah-jazz': 'New Orleans Jazz 1974–79 · Utah Jazz 1979–',
+    'charlotte-hornets': 'Charlotte Hornets 1988–2002 · Charlotte Bobcats 2004–14 · Charlotte Hornets 2014–',
+    'new-orleans-pelicans': 'New Orleans Hornets 2002–13 · New Orleans Pelicans 2013–',
+    'memphis-grizzlies': 'Vancouver Grizzlies 1995–2001 · Memphis Grizzlies 2001–'
+  };
+  var FHIST = null;
+  function loadFHist(cb) {
+    if (FHIST) { cb(FHIST); return; }
+    fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { FHIST = d; cb(d); }).catch(function () { FHIST = {}; cb(FHIST); });
+  }
+  function modernId(id) { return FRANCHISE[id] || id; }
+  function openTeamPage() {
+    if (!save) return;
+    loadFHist(function () { renderTeamPage(); show('screen-team'); });
+  }
+  function renderTeamPage() {
+    var me = teamById(save.myId), mid = modernId(save.myId), fh = (FHIST && FHIST[mid]) || { champs: [], retired: [] };
+    var body = document.getElementById('team-body'); body.textContent = '';
+    document.getElementById('team-title').textContent = me.city + ' ' + me.name;
+    var c1 = (me.colors && me.colors[0]) || '#C8102E', c2 = (me.colors && me.colors[1]) || '#FFFFFF';
+    var abaYrs = (mid === 'brooklyn-nets' || mid === 'indiana-pacers') ? 1976 : 0;
+    var titles = (fh.champs || []).filter(function (y) { return y <= save.year; }).map(function (y) { return { y: y, aba: abaYrs && y <= abaYrs }; });
+    (save.lg.history || []).forEach(function (h) { if (h.champion === save.myId && h.year >= save.year) titles.push({ y: h.year + 1, you: true }); });
+    titles.sort(function (a, b) { return b.y - a.y; });
+    var nba = titles.filter(function (t) { return !t.aba; }).length;
+    document.getElementById('team-sub').textContent = titles.length ? (nba + ' championship' + (nba === 1 ? '' : 's') + (titles.length > nba ? ' + ' + (titles.length - nba) + ' ABA' : '')) : 'Still chasing the first banner';
+    var rafters = el('div', 'rafters');
+    rafters.style.setProperty('--c1', c1); rafters.style.setProperty('--c2', c2);
+    rafters.appendChild(el('div', 'rf-beam'));
+    var lab1 = el('h3', 'rf-label', 'Championship banners'); rafters.appendChild(lab1);
+    var row1 = el('div', 'rf-row banners');
+    if (!titles.length) row1.appendChild(el('p', 'rf-empty', 'The rafters are bare. Hang the first one.'));
+    titles.forEach(function (t) {
+      var b = el('div', 'bn' + (t.aba ? ' aba' : '') + (t.you ? ' new' : ''));
+      b.appendChild(el('i', 'rope'));
+      var cl = el('div', 'cloth');
+      cl.appendChild(el('small', null, t.aba ? 'ABA' : 'NBA'));
+      cl.appendChild(el('b', null, String(t.y)));
+      cl.appendChild(el('small', null, 'CHAMPIONS'));
+      b.appendChild(cl); row1.appendChild(b);
+    });
+    rafters.appendChild(row1);
+    rafters.appendChild(el('div', 'rf-beam low'));
+    rafters.appendChild(el('h3', 'rf-label', 'Retired numbers'));
+    var ret = (fh.retired || []).filter(function (r) { return !r.y || r.y <= save.year; });
+    var row2 = el('div', 'rf-row jerseys');
+    if (!ret.length) row2.appendChild(el('p', 'rf-empty', 'No number has been retired yet.'));
+    ret.sort(function (a, b) { return (b.y || 0) - (a.y || 0); }).forEach(function (r) {
+      var j = el('div', 'jy'); j.appendChild(el('i', 'rope'));
+      var sh = el('div', 'shirt'); sh.appendChild(el('b', null, String(r.n).replace(/\s*\(.*$/, '').slice(0, 5)));
+      j.appendChild(sh);
+      j.appendChild(el('span', 'jn', r.p.replace(/\s*\(.*$/, '').replace(/\s*\[.*$/, '')));
+      if (r.y) j.appendChild(el('small', null, 'Retired ' + r.y));
+      row2.appendChild(j);
+    });
+    rafters.appendChild(row2);
+    body.appendChild(rafters);
+    var info = el('div', 'tp-info');
+    info.appendChild(el('h3', 'box-title', 'Franchise'));
+    var lin = LINEAGE[mid];
+    info.appendChild(el('p', 'sub', lin || (me.city + ' ' + me.name)));
+    var yrs = (save.lg.history || []).length;
+    var mine = (save.lg.history || []).filter(function (h) { return h.champion === save.myId; }).length;
+    info.appendChild(el('p', 'sub', 'Your tenure: ' + yrs + ' season' + (yrs === 1 ? '' : 's') + ' completed, ' + mine + ' title' + (mine === 1 ? '' : 's') + '.'));
+    body.appendChild(info);
+  }
+  document.getElementById('season-title').addEventListener('click', openTeamPage);
+
   /* ---------- records and history ---------- */
   var RV = { tab: 'Champions' };
-  var RTABS = ['Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
-  function openRecords() { RV.tab = RV.tab || 'Champions'; renderRecords(); show('screen-records'); }
+  var RTABS = ['Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
+  function openRecords() { RV.tab = RV.tab || 'Champions'; if (save.cup && save.dates && save.day >= save.cup.at - 14 && save.day <= save.cup.at + 10) RV.tab = 'Cup'; renderRecords(); show('screen-records'); }
   function renderRecords() {
     var v = League.recordsView(save), body = document.getElementById('records-body'), tabs = document.getElementById('records-tabs');
     tabs.textContent = ''; body.textContent = '';
@@ -2743,6 +2851,40 @@
       body.appendChild(dataTable(heads, rows));
     }
     function plr(p) { return p.name; }
+    if (RV.tab === 'Cup') {
+      var cv = Season.cupView(save);
+      if (!cv) { body.appendChild(el('p', 'sub', 'There is no NBA Cup in this season.')); return; }
+      var tm2 = function (id) { var t = teamById(id); return t ? t.city : id; };
+      if (cv.champ) {
+        var cc = el('div', 'cup-champ'); var cb = teamBadge(teamById(cv.champ)); cc.appendChild(cb);
+        var ct = el('div', 'cct'); ct.appendChild(el('small', null, 'NBA Cup champions')); ct.appendChild(el('b', null, tm2(cv.champ))); cc.appendChild(ct);
+        body.appendChild(cc);
+      }
+      cv.rounds.slice().reverse().forEach(function (r) {
+        body.appendChild(el('h3', 'box-title', r.name));
+        var wrap = el('div', 'cup-games');
+        r.games.forEach(function (g) {
+          var row = el('div', 'cup-g');
+          [[g.a, g.as, g.bs], [g.b, g.bs, g.as]].forEach(function (x) {
+            var side = el('div', 'cs' + (x[1] != null && x[1] > x[2] ? ' w' : '') + (x[0] === save.myId ? ' me' : ''));
+            var bd = teamBadge(teamById(x[0])); bd.className += ' sm'; side.appendChild(bd);
+            side.appendChild(el('span', null, tm2(x[0]) + (cv.seed[x[0]] ? ' (' + cv.seed[x[0]] + ')' : '')));
+            side.appendChild(el('b', null, x[1] != null ? String(x[1]) : ''));
+            row.appendChild(side);
+          });
+          wrap.appendChild(row);
+        });
+        body.appendChild(wrap);
+      });
+      cv.groups.forEach(function (g) {
+        body.appendChild(el('h3', 'box-title', g.conf.replace('ern', '') + ' Group ' + ((g.n - 1) % 3 + 1)));
+        body.appendChild(dataTable(['Club', 'W', 'L', 'PD'], g.rows.map(function (t, i) {
+          var r2 = [tm2(t.id) + (cv.q.indexOf(t.id) >= 0 ? ' \u2713' : ''), t.w, t.l, (t.pd > 0 ? '+' : '') + t.pd]; if (t.id === save.myId) r2.cls = 'me'; return r2;
+        })));
+      });
+      body.appendChild(el('p', 'sub', 'Group winners and the best runner-up in each conference reach the quarterfinals.'));
+      return;
+    }
     if (RV.tab === 'Champions') {
       section('Most championships', ['#', 'Club', 'Titles', 'Years'], v.teamTitles.map(function (x, i) { return [i + 1, city(x.id), x.n, x.years.map(function (y) { return seasonLabel(y).slice(-5); }).join(', ')]; }), 'No champions yet. The first one is crowned at the end of this season.');
       section('Most titles by a player', ['#', 'Player', 'Titles'], v.playerTitles.map(function (x, i) { return [i + 1, plr(x.p), x.n]; }), 'No player has won a title yet.');

@@ -125,8 +125,8 @@ body[data-screen="screen-title"][data-phase="bw"] #scan{opacity:.35}
   15%{opacity:1}
   100%{transform:translateY(130vh);opacity:0}
 }
-body.flicker #screen-title .title-stack{animation:flick .7s linear}
-body.flicker #sweep{animation:sweepmove .7s ease-in}
+body[data-screen="screen-title"].flicker #screen-title .title-stack{animation:flick .7s linear}
+body[data-screen="screen-title"].flicker #sweep{animation:sweepmove .7s ease-in}
 
 @media (prefers-reduced-motion:reduce){
   body.flicker #screen-title .title-stack,body.flicker #sweep{animation:none}
