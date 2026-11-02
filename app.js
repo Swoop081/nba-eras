@@ -3772,12 +3772,13 @@
   function ui() {
     var u = store.get('ui', null) || {};
     if (DETAILS.indexOf(u.detail) < 0) u.detail = 'standard';
-    if (!u.tabs || !u.tabs.length) u.tabs = ['table', 'leaders', 'team'];
+    if (!u.tabs || !u.tabs.length) u.tabs = ['news', 'table', 'leaders', 'team'];
+    if (!u.newsTab) { u.newsTab = 1; if (u.tabs.indexOf('news') < 0) u.tabs.unshift('news'); store.set('ui', u); }
     if (!u.cats) u.cats = null;
     return u;
   }
   function saveUi(u) { store.set('ui', u); }
-  var TABS = { table: 'Standings', leaders: 'Leaders', team: 'Team' };
+  var TABS = { news: 'News', table: 'Standings', leaders: 'Leaders', team: 'Team' };
 
   function formAll() {
     var f = {};
@@ -3858,6 +3859,23 @@
     return { all: all, qual: qual, level: DETAILS.indexOf(detail) };
   }
 
+  function hubNews() {
+    var all = (save.lg.wire || []).filter(function (w) { return w.y === save.year; }).slice().reverse();
+    var box = el('div', 'news');
+    if (!all.length) { box.appendChild(el('p', 'sub', 'Signings, trades and cuts show up here.')); return box; }
+    var pages = [];
+    for (var i = 0; i < all.length; i += 7) {
+      var pg = el('div', 'news-page');
+      all.slice(i, i + 7).forEach(function (w) {
+        var d = el('div', 'fi', w.t);
+        d.appendChild(el('small', null, w.d ? 'Game day ' + w.d : 'Off-season'));
+        pg.appendChild(d);
+      });
+      pages.push({ title: 'League news', node: pg });
+    }
+    box.appendChild(carousel(pages));
+    return box;
+  }
   function hubLeaders(u) {
     var d = leaderDefs(u.detail);
     var show = d.all.filter(function (c) { return u.cats ? u.cats.indexOf(c.id) >= 0 : c.lvl <= d.level; });
@@ -4068,7 +4086,6 @@
     var mo = Events.mood(save);
     var feed = el('div', 'hc feed');
     var items = [];
-    (save.lg.wire || []).filter(function (w) { return w.y === save.year; }).slice(-3).reverse().forEach(function (w) { items.push([w.t, 'Game day ' + w.d]); });
     mo.news.slice(-3).reverse().forEach(function (n) { items.push([n.text, n.date]); });
     items.slice(0, 5).forEach(function (it) { var d = el('div', 'fi', it[0]); d.appendChild(el('small', null, it[1])); feed.appendChild(d); });
     if (!items.length) feed.appendChild(el('p', 'sub', 'Quiet so far.'));
@@ -4448,7 +4465,7 @@
       hubTab = k;
       Array.prototype.forEach.call(tabBar.children, function (b) { b.classList.toggle('on', b.dataset.k === k); });
       panel.textContent = '';
-      var node = k === 'table' ? hubTable(u, f) : k === 'leaders' ? hubLeaders(u) : hubTeam(u, f);
+      var node = k === 'news' ? hubNews() : k === 'table' ? hubTable(u, f) : k === 'leaders' ? hubLeaders(u) : hubTeam(u, f);
       panel.appendChild(node);
       requestAnimationFrame(fitRows);
     }
@@ -4652,13 +4669,6 @@
     else {
       bodyEl.appendChild(el('h3', 'box-title', 'League leaders'));
       bodyEl.appendChild(el('p', 'sub how', 'Leaders appear once the season gets going.'));
-    }
-    var wr = (save.lg.wire || []).filter(function (w) { return w.y === save.year; }).slice(-4).reverse();
-    if (wr.length) {
-      bodyEl.appendChild(el('h3', 'box-title', 'League wire'));
-      var wc = el('div', 'stat-card headlines');
-      wr.forEach(function (w) { var d = el('div', null, w.t); d.appendChild(el('small', null, 'Game day ' + w.d)); wc.appendChild(d); });
-      bodyEl.appendChild(wc);
     }
     var mo = Events.mood(save), sm = Events.summary(save, rosterOf(me.id));
     bodyEl.appendChild(el('h3', 'box-title', 'Clubhouse'));
@@ -5216,12 +5226,6 @@
       tool('▲', 'Find upgrades', 'Players better than your starters, with deals that work', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: true, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
       tool('★', 'Young talent', 'Players 24 and under to build around', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: false, young: true, q: '' }; trade.fromTarget = true; renderTrade(); });
       tool('$', 'Teams with cap space', 'Teams that can absorb salary', function () { trade.home = 'clubs'; trade.sort = 'cap'; renderTrade(); });
-      var deals = (save.lg.wire || []).filter(function (w) { return /\btrade\b/i.test(w.t) && w.y === save.year; }).slice(-4).reverse();
-      if (deals.length) {
-        var rd = el('div', 'recent-deals'); rd.appendChild(el('h3', 'box-title', 'Around the league'));
-        deals.forEach(function (w) { rd.appendChild(el('p', 'rd', w.t)); });
-        list.appendChild(rd);
-      }
     } else if (mode === 'clubs') {
       body.appendChild(chipRow([['rating', 'Best'], ['cap', 'Cap space'], ['win', 'Contending'], ['rebuild', 'Rebuilding']], trade.sort, function (v) { trade.sort = v; renderTrade(); }));
       var clubs = save.ids.filter(function (id) { return id !== me.id; }).map(function (id) {

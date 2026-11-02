@@ -1071,3 +1071,5 @@ body[data-modern="1"] .card .slot.st{color:var(--team)}
 body[data-modern="1"] .dc-n{min-width:34px;font-family:var(--disp);font-weight:800;letter-spacing:.04em}
 body[data-modern="1"] .card .slot{width:44px;min-width:44px;text-align:left}
 body[data-modern="1"] .paper .site-logo{display:block;width:100%;height:46px;object-fit:contain;object-position:left center;margin:2px 0 4px -6px}
+body[data-modern="1"] .news .fi{padding:9px 12px;margin-bottom:6px;background:var(--card);font:500 14px/1.3 var(--font)}
+body[data-modern="1"] .news .fi small{display:block;margin-top:3px;color:var(--muted);font:600 11px var(--font);letter-spacing:.04em;text-transform:uppercase}
