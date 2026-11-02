@@ -517,6 +517,8 @@
     var o = p.ratings.ovr, age = p.age || 26;
     var up = age <= 25 ? Math.max(0, p.pot - o) * (age <= 21 ? 0.7 : age <= 23 ? 0.5 : 0.3) * (mode === 'win' ? 0.7 : mode === 'rebuild' ? 1.3 : 1) : 0;
     var v = Math.pow(Math.max(0, o + up - 38), 2) / 12;
+    var eff = o + up;
+    if (eff > 72) v *= 1 + Math.pow(eff - 72, 2) / 25;
     if (age <= 25) v += Math.max(0, p.pot - o) * (26 - age) * 0.3 * (mode === 'win' ? 0.4 : mode === 'rebuild' ? 1.6 : 1);
     if (franchise(p)) v *= (age <= 23 && p.pot >= 74) ? 2.4 : 1.5;
     if (age >= 29) v *= Math.max(0.35, 1 - (age - 28) * (mode === 'win' ? 0.05 : mode === 'rebuild' ? 0.16 : 0.1));
@@ -545,6 +547,8 @@
     return st;
   }
 
+  /* Clubs pay for quality, not quantity: each extra piece in a package counts for less than the one before. */
+  function bundle(vals) { return vals.slice().sort(function (a, b) { return b - a; }).reduce(function (s, v, i) { return s + v * Math.pow(0.8, i); }, 0); }
   function sum(list, f) { return list.reduce(function (a, p) { return a + f(p); }, 0); }
 
   /* me gives `give` players to `them` and gets `get`. Returns { ok, reason, ratio }. */
@@ -564,9 +568,10 @@
     if (themPay > cap && !matchOk(outMe, inMe, cap)) return { ok: false, reason: 'They would be ' + money(themPay - cap, cap) + ' over the cap. Take back more salary so it matches within 125%.', ratio: 0 };
     var mode = clubMode(save, themId);
     var core = get.filter(franchise)[0];
-    var gain = sum(give, function (p) { return tradeValue(p, mode); }) + ex.gain, loss = sum(get, function (p) { return tradeValue(p, mode); }) + ex.loss;
+    var gain = bundle(give.map(function (p) { return tradeValue(p, mode); }).concat(ex.gainL || (ex.gain ? [ex.gain] : [])));
+    var loss = bundle(get.map(function (p) { return tradeValue(p, mode); }).concat(ex.lossL || (ex.loss ? [ex.loss] : [])));
     var ratio = loss > 0 ? gain / loss : 9;
-    var flat = loss > 0 ? (sum(give, function (p) { return tradeValue(p); }) + ex.gain) / (sum(get, function (p) { return tradeValue(p); }) + ex.loss) : 9;
+    var flat = loss > 0 ? bundle(give.map(function (p) { return tradeValue(p); }).concat(ex.gainL || (ex.gain ? [ex.gain] : []))) / bundle(get.map(function (p) { return tradeValue(p); }).concat(ex.lossL || (ex.loss ? [ex.loss] : []))) : 9;
     if (ratio < 1.1 && core) {
       var cn = core.name.split(' ').slice(-1)[0], lines = ratio < 0.45 ? [
         'You are joking. ' + cn + ' is the cornerstone of this franchise, and that is not close.',
@@ -630,8 +635,8 @@
     var gn = d.give.length, tn = d.get.length;
     var meN = c.meN - gn + tn, themN = c.themN + gn - tn;
     var inMe = sum(d.get, function (p) { return p.salary; }), outMe = sum(d.give, function (p) { return p.salary; });
-    var gain = sum(d.give, function (p) { return tradeValue(p, c.mode); }) + sum(d.giveK, function (k) { return pickValue(save, k); });
-    var loss = sum(d.get, function (p) { return tradeValue(p, c.mode); }) + sum(d.getK, function (k) { return pickValue(save, k); });
+    var gain = bundle(d.give.map(function (p) { return tradeValue(p, c.mode); }).concat(d.giveK.map(function (k) { return pickValue(save, k); })));
+    var loss = bundle(d.get.map(function (p) { return tradeValue(p, c.mode); }).concat(d.getK.map(function (k) { return pickValue(save, k); })));
     var r = loss > 0 ? gain / loss : 9, why = '';
     if (meN < Math.min(12, c.meN)) why = 'meMin';
     else if (themN < Math.min(12, c.themN)) why = 'themMin';
@@ -797,7 +802,7 @@
   function ensurePicks(save, teams) {
     var L = save.lg;
     L.picks = (L.picks || []).filter(function (k) { return k.y > save.year; });
-    for (var y = save.year + 1; y <= save.year + 2; y++) {
+    for (var y = save.year + 1; y <= save.year + 4; y++) {
       for (var r = 1; r <= 2; r++) {
         teams.forEach(function (t) {
           if (!L.picks.some(function (k) { return k.y === y && k.r === r && k.o === t.id; })) L.picks.push({ y: y, r: r, o: t.id, t: t.id });
@@ -814,7 +819,7 @@
     var soon = k.y === save.year + 1;
     if (!soon) wp = 0.5 + (wp - 0.5) * 0.4;
     var base = k.r === 1 ? 55 : 14;
-    return base * (1.5 - wp) * (soon ? 1 : 0.8);
+    return base * (1.5 - wp) * (soon ? 1 : k.y >= save.year + 3 ? 0.65 : 0.8);
   }
   function pickId(k) { return 'pk-' + k.y + '-' + k.r + '-' + k.o; }
   function pickLabel(k, teams) { return k.y + ' round ' + k.r + ' pick' + (k.o !== k.t ? ' (from ' + cityOf(teams, k.o) + ')' : ''); }

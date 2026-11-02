@@ -37,8 +37,8 @@
       var p = rnd(mid), t = src.team(p.team);
       return { app: 'Breaking', c: '#D8232A', g: '!', title: lead(), text: 'Sources: the ' + (t ? t.name : 'club') + ' have been fielding calls about ' + p.name + (/\.$/.test(p.name) ? '' : '.') + ' Nothing close, per league sources.' };
     });
-    var rec = recs[me];
-    if (rec) outs.push(function () {
+    var rec = recs[me], gp0 = rec ? rec.w + rec.l : 0;
+    if (rec && gp0 >= 3) outs.push(function () {
       var gp = rec.w + rec.l, hot = gp > 3 && rec.w / gp >= 0.6, cold = gp > 3 && rec.w / gp <= 0.4;
       var msg = hot ? rnd(['Bandwagon is full. Sorry, no more seats.', 'OK this team is actually good??', 'Run it back. Do not touch the roster.', 'Tell me you are not loving this group. I will wait.', 'The arena was shaking tonight.', 'Playoff basketball in November. I am not ready.'])
         : cold ? rnd(['Fire everybody. Starting with the GM.', 'Is the front office even watching these games', 'Tank or trade. Pick one.', 'I stayed for the whole game and I want a refund.', 'Somebody explain the rotations to me. Please.', 'This is not a slump, this is who they are.'])
@@ -46,13 +46,13 @@
       return { app: 'Mentions', c: '#F4511E', g: '@', title: rnd(['@section104_', '@hoopsfan88', '@upperbowl_dave', '@courtside_kay', '@lateshiftlarry']), text: msg };
     });
     outs.push(function () {
-      return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(['Film at 10. Bring coffee.', 'Starters look gassed. Thinking about a rest day.', 'Saw the tape. Their bigs hurt us on the glass.', 'Practice was sharp today. The group is listening.', 'Their guards keep getting to the rim. We can fix it.']) };
+      return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(gp0 < 3 ? ['Film at 10. Bring coffee.', 'Practice was sharp today. The group is listening.', 'Good energy in camp. Everyone is healthy.'] : ['Film at 10. Bring coffee.', 'Saw the tape. Their bigs hurt us on the glass.', 'Practice was sharp today. The group is listening.', 'Their guards keep getting to the rim. We can fix it.']) };
     });
     outs.push(function () {
-      return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(['Scouting: three names worth a look before the deadline.', 'Ticket sales are up this week.', 'Agent for a free agent called twice. Want me to ping back?']) };
+      return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(gp0 >= 3 ? ['Ticket sales are up this week.', 'Agent for a free agent called twice. Want me to ping back?'] : ['Agent for a free agent called twice. Want me to ping back?', 'Season ticket renewals are ahead of last year.']) };
     });
     var st = null; try { st = root.Season.standings(save); } catch (e) { st = null; }
-    if (st) outs.push(function () {
+    if (st && (save.results || []).length >= 8) outs.push(function () {
       var d = rnd(Object.keys(st)), row = st[d][0];
       return { app: 'Scores', c: '#34C759', g: 'F', title: d + ' standings', text: nm(row.id) + ' lead at ' + row.w + '-' + row.l + '.' };
     });
@@ -101,6 +101,15 @@
       if (cand.length) outs.push(function () {
         var c = rnd(cand), p = c.p, t = src.team(p.team);
         return { app: 'Breaking', c: '#D8232A', g: '!', title: lead(), text: 'The ' + (t ? t.name : 'club') + ' are fielding calls on ' + p.name + ' (' + (p.age || '') + ', ' + p.ratings.ovr + ' overall): ' + c.why + '.', act: { type: 'shop', pid: p.id, tid: p.team } };
+      });
+    }
+    if (save.day < save.days.length * 0.7 && root.League && root.League.tradeValue) {
+      var floor6 = ros[5] ? ros[5].ratings.ovr : 55, seenT = {}, scout = save.lg.players.filter(function (p) { return p.team && p.team !== me && p.status === 'active' && !(p.inj > 0) && p.ratings.ovr >= floor6 + 3 && p.ratings.ovr <= 80 && (p.age || 26) <= 32; })
+        .sort(function (a, b) { return (b.ratings.ovr + (b.pot || 0) * 0.2) - (a.ratings.ovr + (a.pot || 0) * 0.2); }).filter(function (p) { if (seenT[p.team]) return false; seenT[p.team] = 1; return true; });
+      var pickS = scout.slice(8, 40);
+      if (pickS.length >= 3) outs.push(function () {
+        var three = []; while (three.length < 3 && pickS.length) three.push(pickS.splice(Math.floor(Math.random() * pickS.length), 1)[0]);
+        return { app: 'Group chat', c: '#5E5CE6', g: '\u2605', title: 'Front office', text: 'Scouting: three names worth a look before the deadline. ' + three.map(function (p) { var t = src.team(p.team); return p.name + ' (' + (t ? t.name : '') + ', ' + p.ratings.ovr + ')'; }).join(', ') + '.', act: { type: 'scout', pids: three.map(function (p) { return p.id; }) } };
       });
     }
     var cap = save.lg.cap, pay = ros.concat(save.lg.players.filter(function (p) { return p.team === me && p.inj > 0; })).reduce(function (a, p) { return a + (p.salary || 0); }, 0);

@@ -1303,6 +1303,12 @@
       var t = teamById(a.tid);
       opts.push(['Call the ' + (t ? t.name : 'club') + '\u2019 GM', function () { openTrade('season'); trade.partner = a.tid; renderTrade(); return ''; }]);
       opts.push(['Not interested', function () { return ''; }]);
+    } else if (a.type === 'scout') {
+      (a.pids || []).forEach(function (id) {
+        var q = League.byId(save, id); if (!q) return;
+        var tq = teamById(q.team);
+        opts.push([q.name + ' (' + q.ratings.ovr + ', ' + (tq ? tq.city : '') + ')', function () { openTrade('season'); trade.partner = q.team; trade.view = 'pkgRes'; trade.want = { p: [q], k: [] }; renderTrade(); return ''; }]);
+      });
     } else if (a.type === 'extend') {
       var ask = Math.round(League.salaryFor(p.ratings.ovr) * 1.1), pay = League.payroll(save, save.myId);
       opts.push(['Extend 3 years at ' + money(ask), function () {
@@ -4016,7 +4022,7 @@
     var allT = save.ids.map(teamById);
     var myK = League.picksOf(save, me.id), theirK = League.picksOf(save, trade.partner);
     var giveK = myK.filter(function (k) { return trade.give[League.pickId(k)]; }), getK = theirK.filter(function (k) { return trade.get[League.pickId(k)]; });
-    var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), n: giveK.length + getK.length };
+    var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), gainL: giveK.map(function (k) { return League.pickValue(save, k); }), lossL: getK.map(function (k) { return League.pickValue(save, k); }), n: giveK.length + getK.length };
     var res = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax(), ex);
     var pct = Math.max(0, Math.min(100, Math.round((give.length || get.length || ex.n ? res.ratio / 1.1 : 0) * 100)));
     var sendN = give.length + giveK.length, getN = get.length + getK.length;
@@ -4137,7 +4143,7 @@
     var myK = League.picksOf(save, me.id), allT = save.ids.map(teamById);
     var cap = save.lg.cap;
     function accept(partner, give, get, giveK, getK, btn) {
-      var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), n: giveK.length + getK.length };
+      var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), gainL: giveK.map(function (k) { return League.pickValue(save, k); }), lossL: getK.map(function (k) { return League.pickValue(save, k); }), n: giveK.length + getK.length };
       var r = League.evaluateTrade(save, me.id, partner, give, get, tradeMax(), ex);
       if (!r.ok) { trade.msg = r.reason; trade.view = trade.view === 'pkgRes' ? 'pkgRes' : 'shopPick'; renderTrade(); return; }
       var line = commitTrade(partner, give, get, giveK, getK);
