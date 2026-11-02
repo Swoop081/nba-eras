@@ -3606,12 +3606,12 @@
   function ui() {
     var u = store.get('ui', null) || {};
     if (DETAILS.indexOf(u.detail) < 0) u.detail = 'standard';
-    if (!u.tabs || !u.tabs.length) u.tabs = ['table', 'leaders', 'team', 'club'];
+    if (!u.tabs || !u.tabs.length) u.tabs = ['table', 'leaders', 'team'];
     if (!u.cats) u.cats = null;
     return u;
   }
   function saveUi(u) { store.set('ui', u); }
-  var TABS = { table: 'Table', leaders: 'Leaders', team: 'Team', club: 'Office' };
+  var TABS = { table: 'Table', leaders: 'Leaders', team: 'Team' };
 
   function formAll() {
     var f = {};
@@ -3812,7 +3812,7 @@
     var ids = save.ids;
     [['Overall', teamRating], ['Offence', offRating], ['Defence', defRating]].forEach(function (c) {
       var vals = ids.map(function (id) { return c[1](id); }), mine = c[1](me), avg = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
-      var row = el('div', 'hr-row');
+      var row = el('div', 'rt-row');
       row.appendChild(el('span', null, c[0]));
       var tr = el('span', 'track');
       var fl = el('span', 'fill ' + level(mine)); fl.style.width = Math.min(100, mine) + '%';
@@ -3823,7 +3823,7 @@
       row.appendChild(el('small', null, '#' + rankOf(vals, mine, true)));
       rt.appendChild(row);
     });
-    pages.push({ title: 'Ratings', node: rt });
+    form.appendChild(rt);
 
     if (lvl >= 1) {
       var sc = el('div', 'hs-grid');
@@ -3840,7 +3840,7 @@
       }
       pages.push({ title: 'Scoring', node: sc });
     }
-    return hubRail(pages);
+    return hubRail(pages.concat(hubClub(u)));
   }
 
   function hubClub(u) {
@@ -3877,7 +3877,7 @@
     });
     if (!mine.length) rg.appendChild(el('p', 'sub', 'No games yet.'));
     pages.push({ title: 'Recent games', node: rg });
-    return hubRail(pages);
+    return pages;
   }
 
 
@@ -4201,7 +4201,7 @@
       hubTab = k;
       Array.prototype.forEach.call(tabBar.children, function (b) { b.classList.toggle('on', b.dataset.k === k); });
       panel.textContent = '';
-      var node = k === 'table' ? hubTable(u, f) : k === 'leaders' ? hubLeaders(u) : k === 'team' ? hubTeam(u, f) : hubClub(u);
+      var node = k === 'table' ? hubTable(u, f) : k === 'leaders' ? hubLeaders(u) : hubTeam(u, f);
       panel.appendChild(node);
       requestAnimationFrame(fitRows);
     }
