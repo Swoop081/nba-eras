@@ -1209,6 +1209,328 @@
     62,
     56
    ]
+  ],
+  "denver-nuggets": [
+   [
+    "Dave Joerger",
+    "Dave_Joerger",
+    64,
+    60,
+    60,
+    68
+   ],
+   [
+    "Jared Dudley",
+    "Jared_Dudley",
+    52,
+    68,
+    60,
+    66
+   ],
+   [
+    "J.J. Barea",
+    "J.J._Barea",
+    58,
+    52,
+    66,
+    64
+   ],
+   [
+    "Mike Moser",
+    "Mike_Moser",
+    52,
+    64,
+    62,
+    56
+   ],
+   [
+    "Andrew Munson",
+    "Andrew_Munson",
+    60,
+    54,
+    58,
+    54
+   ],
+   [
+    "Ognjen Stojakovic",
+    "Ognjen_Stojakovic",
+    60,
+    52,
+    64,
+    54
+   ],
+   [
+    "Chase Buford",
+    "Chase_Buford",
+    58,
+    56,
+    58,
+    54
+   ],
+   [
+    "John Beckett",
+    "John_Beckett",
+    58,
+    58,
+    58,
+    54
+   ]
+  ],
+  "minnesota-timberwolves": [
+   [
+    "Pablo Prigioni",
+    "Pablo_Prigioni",
+    68,
+    52,
+    62,
+    62
+   ],
+   [
+    "Elston Turner",
+    "Elston_Turner",
+    54,
+    62,
+    60,
+    62
+   ],
+   [
+    "Kevin Hanson",
+    "Kevin_Hanson",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Chris Hines",
+    "Chris_Hines",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jeff Newton",
+    "Jeff_Newton",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "James White",
+    "James_White",
+    54,
+    52,
+    66,
+    56
+   ],
+   [
+    "Daniel Brady",
+    "Daniel_Brady",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Tim Lewis",
+    "Tim_Lewis",
+    54,
+    60,
+    58,
+    58
+   ],
+   [
+    "Max Lefevre",
+    "Max_Lefevre",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Nathan Bubes",
+    "Nathan_Bubes",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Joey Dorsey",
+    "Joey_Dorsey",
+    50,
+    56,
+    58,
+    54
+   ]
+  ],
+  "oklahoma-city-thunder": [
+   [
+    "Dave Bliss",
+    "Dave_Bliss",
+    58,
+    58,
+    62,
+    64
+   ],
+   [
+    "Chip Engelland",
+    "Chip_Engelland",
+    66,
+    50,
+    66,
+    60
+   ],
+   [
+    "David Akinyooye",
+    "David_Akinyooye",
+    56,
+    52,
+    66,
+    56
+   ],
+   [
+    "Mike Wilks",
+    "Mike_Wilks",
+    58,
+    54,
+    60,
+    60
+   ],
+   [
+    "Grant Gibbs",
+    "Grant_Gibbs",
+    60,
+    52,
+    64,
+    56
+   ],
+   [
+    "Kameron Woods",
+    "Kameron_Woods",
+    54,
+    54,
+    62,
+    56
+   ],
+   [
+    "Eric Maynor",
+    "Eric_Maynor",
+    56,
+    52,
+    64,
+    56
+   ]
+  ],
+  "portland-trail-blazers": [
+   [
+    "Jay Triano",
+    "Jay_Triano",
+    60,
+    60,
+    60,
+    64
+   ],
+   [
+    "Mike Williams",
+    "Mike_Williams",
+    56,
+    56,
+    62,
+    58
+   ],
+   [
+    "Quinton Crawford",
+    "Quinton_Crawford",
+    56,
+    54,
+    62,
+    56
+   ],
+   [
+    "Gilbert Abraham",
+    "Gilbert_Abraham",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Leron Black",
+    "Leron_Black",
+    52,
+    54,
+    60,
+    54
+   ]
+  ],
+  "utah-jazz": [
+   [
+    "Sean Sheldon",
+    "Sean_Sheldon",
+    54,
+    68,
+    60,
+    60
+   ],
+   [
+    "Chad Forcier",
+    "Chad_Forcier",
+    58,
+    56,
+    58,
+    56
+   ],
+   [
+    "Steve Wojciechowski",
+    "Steve_Wojciechowski",
+    58,
+    56,
+    60,
+    60
+   ],
+   [
+    "Andrew Warren",
+    "Andrew_Warren",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Chris Jones",
+    "Chris_Jones",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Scott Morrison",
+    "Scott_Morrison",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Evan Bradds",
+    "Evan_Bradds",
+    54,
+    52,
+    62,
+    54
+   ],
+   [
+    "Jason Terry",
+    "Jason_Terry",
+    56,
+    52,
+    60,
+    66
+   ]
   ]
  }
 }
