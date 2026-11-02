@@ -197,14 +197,14 @@
     }
     var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250) + 0.014 * cnt(O, 'crash') - 0.01 * cnt(D, 'crash');
     if (r() < offRebP) {
-      var reb = pick(r, O, function (x) { return x.share * Math.pow(x.p.ratings.orb, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); });
+      var reb = pick(r, O, function (x) { return x.share * Math.pow(x.p.ratings.orb + 22, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); });
       reb.s.orb++;
       var first = ev;
       var more = possession(r, O, D, pr, st, mo, md);
       st.ev.second = true;
       return pts + more;
     }
-    pick(r, D, function (x) { return x.share * Math.pow(x.p.ratings.drb, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); }).s.drb++;
+    pick(r, D, function (x) { return x.share * Math.pow(x.p.ratings.drb + 22, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); }).s.drb++;
     return pts;
   }
 
