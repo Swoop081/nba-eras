@@ -10,11 +10,20 @@ src, team = sys.argv[1], sys.argv[2]
 side = sys.argv[3] if len(sys.argv) > 3 else 'right'
 im = Image.open(src).convert('RGB')
 a = np.array(im).astype(int)
-m = (a[..., 0] > 150) & (a[..., 1] > 110) & (a[..., 2] < 190) & (a[..., 0] - a[..., 2] > 35)
-cols, rows = m.sum(0), m.sum(1)
-xs = np.where(cols > rows.max() * 0.3)[0]
-ys = np.where(rows > cols.max() * 0.3)[0]
-x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+w = (a.min(2) > 225)
+rows, cols = w.sum(1), w.sum(0)
+ry = np.where(rows > a.shape[1] * 0.5)[0]
+cx = np.where(cols > a.shape[0] * 0.5)[0]
+if len(ry) >= 2 and len(cx) >= 2:
+    y0, y1, x0, x1 = ry.min(), ry.max(), cx.min(), cx.max()
+else:
+    m = (a[..., 0] > 150) & (a[..., 1] > 110) & (a[..., 2] < 190) & (a[..., 0] - a[..., 2] > 35)
+    cols, rows = m.sum(0), m.sum(1)
+    xs = np.where(cols > rows.max() * 0.3)[0]
+    ys = np.where(rows > cols.max() * 0.3)[0]
+    x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+if len(sys.argv) > 4:
+    x0, y0, x1, y1 = [int(v) for v in sys.argv[4].split(',')]
 mid = (x0 + x1) // 2
 if side == 'right':
     h = im.crop((mid, y0, x1 + 1, y1 + 1)).transpose(Image.ROTATE_270)
