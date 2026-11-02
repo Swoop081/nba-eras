@@ -639,7 +639,8 @@
   var COACHDATA = null;
   fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACHDATA = d; }).catch(function () {});
   var NBAIDS = {};
-  fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = d; }).catch(function () {});
+  fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(d, NBAIDS); }).catch(function () {});
+  fetch('data/nba-ids-extra.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(NBAIDS, d); }).catch(function () {});
   fetch('data/era-params.json').then(function (r) { return r.json(); }).then(function (d) { Engine.register(d); }).catch(function () {});
 
   /* Uses assets/players/<player-id>.jpg (or .png / .webp) when present; assets/photos works too. */
