@@ -1077,7 +1077,7 @@
       var text = el('span');
       text.appendChild(el('strong', null, (team.id === save.myId ? (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ' : '') + p.name));
       text.appendChild(starsEl(League.starsOf(save, p)));
-      text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?')));
+      text.appendChild(el('span', 'meta', (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?') + (isRookie(p) ? ' \u00B7 Rookie' : '')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
@@ -1560,6 +1560,8 @@
 
 
   /* ---------- power rankings: form first, standings kept as a factor ---------- */
+  var bulk = false;
+  function dateText(d) { var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], p = String(d).split('-'); return p.length === 3 ? m[+p[1] - 1] + ' ' + (+p[2]) : String(d); }
   function powerRank() {
     var d = save.day, ids = save.ids.slice(), l10 = {};
     ids.forEach(function (id) { l10[id] = { n: 0, w: 0, m: 0 }; });
@@ -1600,7 +1602,11 @@
 
   /* ---------- weekly and monthly awards ---------- */
   function confOf(tid) { var d = save.division[tid] || ''; return /east/i.test(d) ? 'East' : /west/i.test(d) ? 'West' : 'League'; }
-  function isRookie(p) { return !!(p.rookie || p.draftedYear === save.year || (save.eraId === '2026' && p.age <= 20)); }
+  var ROOK26 = {}; ['AJ Dybantsa', 'Darryn Peterson', 'Cameron Boozer', 'Caleb Wilson', 'Keaton Wagler', 'Mikel Brown Jr.', 'Darius Acuff Jr.', 'Kingston Flemings', 'Morez Johnson Jr.', 'Brayden Burries', 'Yaxel Lendeborg', 'Aday Mara', 'Nate Ament', 'Hannes Steinbach', 'Dailyn Swain', 'Bennett Stirtz', 'Ebuka Okorie', 'Christian Anderson Jr.', 'Allen Graves', 'Jayden Quaintance', 'Karim Lopez', 'Labaron Philon Jr.', 'Zuby Ejiofor', 'Cameron Carr', 'Sergio De Larrea', 'Tarris Reed Jr.', 'Chris Cenac Jr.', 'Joshua Jefferson', 'Alex Karaban', 'Koa Peat'].forEach(function (n) { ROOK26[n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()] = 1; });
+  function isRookie(p) {
+    if (p.rookie || p.draftedYear === save.year) return true;
+    return save.eraId === '2026' && save.year === 2026 && !!ROOK26[String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()];
+  }
   function pickAwards(bucket, minG, rookieOnly) {
     var best = {};
     Object.keys(bucket).forEach(function (id) {
@@ -1612,27 +1618,33 @@
     });
     return ['East', 'West', 'League'].filter(function (c) { return best[c]; }).map(function (c) { var b = best[c], o = b.o; return { conf: c, p: b.p, tid: o.tid, line: (o.pts / o.g).toFixed(1) + ' pts · ' + (o.trb / o.g).toFixed(1) + ' reb · ' + (o.ast / o.g).toFixed(1) + ' ast', rec: o.w + '-' + (o.g - o.w) }; });
   }
+  function award(title, cards, per) {
+    var h = save.lg.awh || (save.lg.awh = []);
+    for (var i = h.length - 1; i >= 0; i--) if (h[i].y !== save.year) h.splice(i, 1);
+    h.push({ y: save.year, day: save.day, date: (save.dates && save.dates[save.day - 1]) || '', title: title, cards: cards.map(function (c) { return { conf: c.conf, id: c.p.id, name: c.p.name, tid: c.tid, line: c.line, rec: c.rec }; }) });
+    if (!bulk) (save.lg.awq || (save.lg.awq = [])).push({ title: title, cards: cards });
+  }
   function awardsCheck() {
     if (!save || save.phase !== 'regular' || !save.lg.aw) return;
     var aw = save.lg.aw, last = save.lg.awLast || (save.lg.awLast = { wk: 0, mo: '' }), q = save.lg.awq || (save.lg.awq = []), d = save.day;
     if (d >= 7 && d - last.wk >= 7) {
       last.wk = d;
       var wk = pickAwards(aw.wk, 2, false);
-      if (wk.length) q.push({ title: 'Players of the Week', cards: wk });
+      if (wk.length) award('Players of the Week', wk, 'Week');
       aw.wk = {};
     }
     if (d >= 10 && d % 7 === 3 && last.pr !== d) {
       last.pr = d;
       var pr = powerRank(); save.lg.pr = { d: pr.d, rows: pr.rows, rank: pr.rank };
-      q.push({ kind: 'pr' });
+      if (!bulk) q.push({ kind: 'pr' });
     }
     var dt = save.dates && save.dates[d], pd = save.dates && save.dates[d - 1];
     var newMonth = dt && pd ? dt.slice(0, 7) !== pd.slice(0, 7) : (!dt && d >= 30 && d - (last.moDay || 0) >= 30);
     if (newMonth && d - (last.moDay || 0) >= 10) {
       last.moDay = d;
       var mo = pickAwards(aw.mo, 5, false), rk = pickAwards(aw.mo, 4, true);
-      if (mo.length) q.push({ title: 'Players of the Month', cards: mo });
-      if (rk.length) q.push({ title: 'Rookies of the Month', cards: rk });
+      if (mo.length) award('Players of the Month', mo, 'Month');
+      if (rk.length) award('Rookies of the Month', rk, 'Month');
       aw.mo = {};
     }
   }
@@ -2838,7 +2850,9 @@
   function simDays(n) {
     var guard = 0;
     save.pending = [];
+    bulk = n > 1;
     while (save.phase === 'regular' && n-- > 0 && guard++ < 200) simDay();
+    bulk = false;
     persist();
     renderSeason();
   }
@@ -2846,7 +2860,9 @@
   function simPlayoffs() {
     var guard = 0;
     save.pending = [];
+    bulk = true;
     while (save.phase === 'playoffs' && guard++ < 100) simDay();
+    bulk = false;
     persist();
     renderSeason();
   }
@@ -3034,7 +3050,7 @@
 
   /* ---------- records and history ---------- */
   var RV = { tab: 'Champions' };
-  var RTABS = ['Power', 'Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
+  var RTABS = ['Power', 'Awards', 'Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
   function openRecords() { RV.tab = RV.tab || 'Champions'; if (save.cup && save.dates && save.day >= save.cup.at - 14 && save.day <= save.cup.at + 10) RV.tab = 'Cup'; renderRecords(); show('screen-records'); }
   function renderRecords() {
     var v = League.recordsView(save), body = document.getElementById('records-body'), tabs = document.getElementById('records-tabs');
@@ -3054,6 +3070,22 @@
     if (RV.tab === 'Power') {
       if (!save.lg.pr) { body.appendChild(el('p', 'sub', 'The first power rankings come out after a few games.')); return; }
       body.appendChild(prList(save.lg.pr)); return;
+    }
+    if (RV.tab === 'Awards') {
+      var ah = (save.lg.awh || []).filter(function (x) { return x.y === save.year; }).reverse();
+      if (!ah.length) { body.appendChild(el('p', 'sub', 'Weekly and monthly awards will be listed here as the season goes on.')); return; }
+      var lastT = '';
+      ah.forEach(function (x) {
+        body.appendChild(el('h3', 'box-title', x.title + (x.date ? ' \u00B7 ' + dateText(x.date) : '')));
+        x.cards.forEach(function (c) {
+          var t = teamById(c.tid), row = el('div', 'aw-row');
+          row.appendChild(makeAvatar({ id: c.id, name: c.name }));
+          var tx = el('span'); tx.appendChild(el('b', null, c.name)); tx.appendChild(el('small', null, (t ? t.city : '') + ' \u00B7 ' + (c.conf === 'League' ? 'League' : c.conf))); row.appendChild(tx);
+          row.appendChild(el('em', null, c.line));
+          body.appendChild(row);
+        });
+      });
+      return;
     }
     if (RV.tab === 'Cup') {
       var cv = Season.cupView(save);
@@ -4987,6 +5019,7 @@
     var tx = el('span');
     tx.appendChild(el('strong', null, p.name));
     if (p.ratings && p.status === 'active') tx.appendChild(starsEl(League.starsOf(save, p)));
+    if (p.status === 'active' && isRookie(p)) tx.appendChild(el('em', 'rk-tag', 'R'));
     metaLines.forEach(function (m) { tx.appendChild(el('span', 'meta', m)); });
     row.appendChild(tx);
     if (right) row.appendChild(right);
