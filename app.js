@@ -3699,6 +3699,7 @@
   }
   function pageify(box) {
     if (!modernUI() || box._busy || !box.offsetParent) return;
+    if (box.id === 'off-body' && box.querySelector(':scope > .dn')) return;
     var tl = box.id === 'trade-body' ? box.querySelector(':scope > .tlist') : null;
     if (tl) { pageify(tl); return; }
     var kids = Array.prototype.slice.call(box.children).filter(function (k) { return !k.classList.contains('pgr'); });
@@ -5991,59 +5992,227 @@
     });
   }
 
+  /* ---------- draft night broadcast ---------- */
+  var dn = { run: 0, timer: null, clock: 0, brk: '', brkT: null, tick: null, feed: [] };
+  function dnStop() { dn.run = 0; clearTimeout(dn.timer); clearInterval(dn.tick); dn.tick = null; }
+  function dnLive() { return save && save.off && (save.off.step === 'draft') && document.getElementById('screen-off').classList.contains('active'); }
+  function dnTime(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
+  function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
+  function dnRank(d, p) { return d.pool.filter(function (q) { return q.board > p.board; }).length + 1; }
+  function dnNote(d, p, slot) {
+    var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = lastName(p.name);
+    var gap = n - r;
+    if (gap >= 6) return 'Steal. ' + w + ' was a top-' + (r + 3) + ' talent on my board and ' + t + ' got him at ' + n + '.';
+    if (gap <= -6) return 'Reach at ' + n + '. ' + t + ' fell in love with ' + w + ' and passed on better names.';
+    if (n <= 3) return 'The right call. ' + w + ' is the best prospect in the class and ' + t + ' did not overthink it.';
+    return w + ' to ' + t + ' fits. ' + (p.age <= 19 ? 'Young, with a long runway.' : 'Closer to ready than most of this class.');
+  }
+  function lastName(n) { var s = String(n).split(' '); return s.length > 1 ? s.slice(1).join(' ') : n; }
+  function dnBreak(text) {
+    dn.brk = text; dn.feed.unshift(text); if (dn.feed.length > 14) dn.feed.pop();
+    var b = document.querySelector('#off-body .dn-break');
+    if (b) { b.textContent = ''; b.appendChild(el('b', null, 'BREAKING')); b.appendChild(el('span', null, text)); b.classList.add('on'); }
+    clearTimeout(dn.brkT);
+    dn.brkT = setTimeout(function () { dn.brk = ''; var x = document.querySelector('#off-body .dn-break'); if (x) x.classList.remove('on'); }, 3400);
+  }
+  /* a trade involving upcoming picks (never the user's) or a player deal */
+  function dnTrade(d, me) {
+    var teams = save.ids.map(teamById), i = d.at + 1;
+    var near = [];
+    for (var k = d.at; k < Math.min(d.picks.length, d.at + 14); k++) if (d.picks[k].team !== me.id && !d.picks[k].player) near.push(k);
+    if (near.length && Math.random() < 0.6) {
+      var a = near[Math.floor(Math.random() * near.length)], later = [];
+      for (var j = a + 3; j < Math.min(d.picks.length, a + 22); j++) if (d.picks[j].team !== me.id && d.picks[j].team !== d.picks[a].team && !d.picks[j].player) later.push(j);
+      if (later.length) {
+        var b = later[Math.floor(Math.random() * later.length)], A = d.picks[a], B = d.picks[b];
+        var ta = A.team, tb = B.team;
+        A.orig = A.orig || ta; B.orig = B.orig || tb;
+        A.team = tb; B.team = ta;
+        var extra = '';
+        var pk = League.picksOf(save, tb).filter(function (x) { return x.y > d.year - 1 && x.r === 2 && x.o === tb; })[0];
+        if (b - a >= 5 && pk) { pk.t = ta; extra = ' and a ' + pk.y + ' second-round pick'; }
+        var text = teamById(tb).city + ' move up to No. ' + A.pick + ', sending No. ' + B.pick + extra + ' to ' + teamById(ta).city;
+        League.wire(save, text);
+        dnBreak(text);
+        return true;
+      }
+    }
+    var n0 = (save.lg.wire || []).length, last = (save.lg.wire || [])[n0 - 1];
+    if (League.aiTrade && League.aiTrade(save, me.id, teams)) {
+      var w = save.lg.wire || [], t = w[w.length - 1];
+      if (t && t !== last) { dnBreak(t.t); return true; }
+    }
+    return false;
+  }
+  function dnOne(d, me, auto) {
+    var slot = d.picks[d.at], mine = slot.team === me.id;
+    var avail = League.draftAvailable(save);
+    var chosen = null;
+    if (mine && !auto) chosen = avail.filter(function (p) { return p.id === offSel; })[0] || avail[0];
+    if (chosen) { League.makePick(save, chosen); } else League.aiPick(save);
+    var made = d.picks[d.at - 1], pl = League.byId(save, made.player);
+    d.expert = { pick: made.pick, text: dnNote(d, pl, made), who: pl.name };
+    dn.feed.unshift('No. ' + made.pick + ' ' + teamById(made.team).city + ' take ' + pl.name);
+    if (dn.feed.length > 14) dn.feed.pop();
+    offSel = null;
+    persist();
+  }
+  function dnFinish(me) {
+    var d = save.lg.draft, isDisp = d.kind === 'dispersal';
+    d.pool.forEach(function (p) {
+      if (p.status !== 'prospect') return;
+      p.status = 'active'; p.team = null; p.salary = League.salaryFor(p.ratings.ovr); p.yrs = 1;
+      if (!League.byId(save, p.id)) save.lg.players.push(p);
+    });
+    if (isDisp) { offStep('contracts'); return; }
+    League.aiRosterPass(save, save.ids.map(teamById), me.id);
+    offStep('fa');
+  }
+  function dnRunTo(d, me, stopAtMine, once) {
+    dnStop(); dn.run = 1;
+    var step = function () {
+      if (!dnLive() || d.at >= d.picks.length) { dnStop(); return; }
+      var slot = d.picks[d.at];
+      if (stopAtMine && slot.team === me.id) { dnStop(); renderOff(); return; }
+      if (Math.random() < 0.3 && dnTrade(d, me)) { drawDraft(); dn.timer = setTimeout(step, 1900); return; }
+      dnOne(d, me, true);
+      drawDraft();
+      if (once || d.at >= d.picks.length) { dnStop(); renderOff(); return; }
+      dn.timer = setTimeout(step, 750);
+    };
+    drawDraft();
+    dn.timer = setTimeout(step, 450);
+  }
+  var dnBody = null, dnMe = null;
+  function drawDraft() { if (dnBody && dnLive()) offDraftUI(dnBody, dnMe, true); }
   function offDraft(body, me) {
     var d = save.lg.draft;
     Social.draftOpen(save);
-    while (d.at < d.picks.length && d.picks[d.at].team !== me.id) League.aiPick(save);
-    persist();
-    var isDisp = d.kind === 'dispersal';
-    if (d.at >= d.picks.length) {
-      d.pool.forEach(function (p) {
-        if (p.status !== 'prospect') return;
-        p.status = 'active'; p.team = null; p.salary = League.salaryFor(p.ratings.ovr); p.yrs = 1;
-        if (!League.byId(save, p.id)) save.lg.players.push(p);
-      });
-      if (isDisp) { offStep('contracts'); return; }
-      League.aiRosterPass(save, save.ids.map(teamById), me.id);
-      offStep('fa');
+    if (d.at >= d.picks.length) { dnStop(); dnFinish(me); return; }
+    dnBody = body; dnMe = me;
+    offDraftUI(body, me);
+  }
+  function offDraftUI(body, me, keep) {
+    var d = save.lg.draft, isDisp = d.kind === 'dispersal';
+    if (d.at >= d.picks.length) { dnStop(); dnFinish(me); return; }
+    var oldT = body.querySelector('.hrail-track'), keepX = oldT ? oldT.scrollLeft : 0;
+    body.textContent = '';
+    document.getElementById('off-dock').textContent = '';
+    var slot = d.picks[d.at], mine = slot.team === me.id, team = teamById(slot.team);
+    var avail = League.draftAvailable(save);
+    if (!offSel || !avail.some(function (p) { return p.id === offSel; })) offSel = avail[0].id;
+    offHeader(isDisp ? 'Dispersal draft' : d.year + ' NBA Draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length);
+    var wrap = el('div', 'dn');
+    var top = el('div', 'dn-top');
+    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    top.appendChild(lg);
+    top.appendChild(el('strong', null, isDisp ? 'DISPERSAL DRAFT' : 'NBA DRAFT ' + d.year));
+    top.appendChild(el('em', null, 'LIVE'));
+    wrap.appendChild(top);
+    var clock = el('div', 'dn-clock' + (mine ? ' mine' : ''));
+    clock.appendChild(teamBadge(team));
+    var who = el('div', 'dn-who');
+    who.appendChild(el('small', null, mine ? 'YOU ARE ON THE CLOCK' : 'ON THE CLOCK'));
+    who.appendChild(el('b', null, team.city + ' ' + team.name));
+    who.appendChild(el('span', null, 'Round ' + slot.round + ' · Pick ' + slot.pick + (slot.orig ? ' · via ' + teamById(slot.orig).city : '')));
+    clock.appendChild(who);
+    var tm = el('div', 'dn-time', dnTime(dn.clock || dnSecs(d)));
+    clock.appendChild(tm);
+    wrap.appendChild(clock);
+    var brk = el('div', 'dn-break' + (dn.brk ? ' on' : ''));
+    if (dn.brk) { brk.appendChild(el('b', null, 'BREAKING')); brk.appendChild(el('span', null, dn.brk)); }
+    wrap.appendChild(brk);
+    /* the expert */
+    var ex = el('div', 'dn-exp');
+    var av = el('span', 'dn-av', 'DE');
+    var im = new Image(); im.alt = '';
+    im.onload = function () { av.textContent = ''; av.appendChild(im); };
+    im.src = 'assets/photos/draft-expert.png';
+    ex.appendChild(av);
+    var et = el('div', 'dn-et');
+    var hd = el('small'); hd.appendChild(el('b', null, 'Draft Expert')); hd.appendChild(document.createTextNode(' @DraftExpert'));
+    et.appendChild(hd);
+    var bp = avail[0];
+    var line = d.expert && d.expert.pick === slot.pick - 1 ? d.expert.text : 'Best available: ' + bp.name + ', ' + (bp.pos || '') + (bp.college ? ' out of ' + bp.college : '') + '. ' + (bp.pot - bp.ratings.ovr >= 12 ? 'Huge upside.' : 'Ready to help right away.');
+    et.appendChild(el('p', null, line));
+    ex.appendChild(et);
+    wrap.appendChild(ex);
+    /* pages */
+    var board = el('div', 'dn-board');
+    avail.slice(0, 7).forEach(function (p, i) {
+      var r = el('div', 'dn-row' + (p.id === offSel ? ' sel' : ''));
+      r.appendChild(el('i', null, String(dnRank(d, p))));
+      r.appendChild(makeAvatar(p));
+      var t = el('span'); t.appendChild(el('b', null, p.name));
+      t.appendChild(el('small', null, (p.pos || '') + ' · ' + (isDisp ? 'from ' + (teamById(p.formerTeam) || { city: 'a folded club' }).city : (p.college || '')) + ' · ' + p.age));
+      r.appendChild(t);
+      r.appendChild(el('em', null, (p.scout ? p.scout.ovr : p.ratings.ovr) + '/' + (p.scout ? p.scout.pot : p.pot)));
+      if (mine && !dn.run) r.addEventListener('click', function () { offSel = p.id; drawDraft(); });
+      board.appendChild(r);
+    });
+    var picks = el('div', 'dn-board');
+    d.picks.slice(Math.max(0, d.at - 3), d.at + 5).forEach(function (sl) {
+      var done = sl.player != null, pl = done ? League.byId(save, sl.player) : null;
+      var r = el('div', 'dn-row' + (sl === slot ? ' sel' : '') + (done ? '' : ' wait'));
+      r.appendChild(el('i', null, String(sl.pick)));
+      r.appendChild(teamBadge(teamById(sl.team)));
+      var t = el('span'); t.appendChild(el('b', null, done ? pl.name : teamById(sl.team).city));
+      t.appendChild(el('small', null, done ? teamById(sl.team).city + ' · ' + (pl.pos || '') : (sl.team === me.id ? 'Your pick' : teamById(sl.team).name) + (sl.orig ? ' · via ' + teamById(sl.orig).city : '')));
+      r.appendChild(t);
+      if (done) r.appendChild(el('em', null, (pl.scout ? pl.scout.ovr : pl.ratings.ovr) + '/' + (pl.scout ? pl.scout.pot : pl.pot)));
+      picks.appendChild(r);
+    });
+    var minePg = el('div', 'dn-board');
+    var mp = d.picks.filter(function (sl) { return sl.team === me.id; });
+    mp.slice(0, 6).forEach(function (sl) {
+      var done = sl.player != null, pl = done ? League.byId(save, sl.player) : null;
+      var r = el('div', 'dn-row' + (done ? '' : ' wait'));
+      r.appendChild(el('i', null, String(sl.pick)));
+      if (done) r.appendChild(makeAvatar(pl)); else r.appendChild(teamBadge(me));
+      var t = el('span'); t.appendChild(el('b', null, done ? pl.name : 'Round ' + sl.round + ' · pick ' + sl.pick));
+      t.appendChild(el('small', null, done ? (pl.pos || '') + ' · ' + (pl.college || '') : 'On the board'));
+      r.appendChild(t);
+      if (done) r.appendChild(el('em', null, pl.ratings.ovr + '/' + pl.pot));
+      minePg.appendChild(r);
+    });
+    if (!mp.length) minePg.appendChild(el('p', 'sub', 'You have no picks in this draft.'));
+    var around = el('div', 'dn-board');
+    (dn.feed.length ? dn.feed : ['The first pick is about to be made']).slice(0, 7).forEach(function (s) {
+      var r = el('div', 'dn-row feed'); r.appendChild(el('span', null, s)); around.appendChild(r);
+    });
+    wrap.appendChild(hubRail([{ title: 'Big board', node: board }, { title: 'The order', node: picks }, { title: 'Your picks', node: minePg }, { title: 'Around the league', node: around }]));
+    body.appendChild(wrap);
+    if (keepX) { var nt = wrap.querySelector('.hrail-track'); nt.style.scrollBehavior = 'auto'; nt.scrollLeft = keepX; }
+    /* clock */
+    clearInterval(dn.tick); dn.tick = null;
+    if (!dn.clock || dn.slotAt !== d.at) { dn.clock = dnSecs(d); dn.slotAt = d.at; }
+    if (mine && !dn.run) {
+      dn.tick = setInterval(function () {
+        if (!dnLive()) { dnStop(); return; }
+        dn.clock--;
+        var t = document.querySelector('#off-body .dn-time');
+        if (t) { t.textContent = dnTime(dn.clock); if (dn.clock <= 10) t.classList.add('hot'); }
+        if (dn.clock <= 0) { clearInterval(dn.tick); dnOne(d, me, false); dn.clock = 0; renderOff(); }
+      }, 1000);
+    }
+    /* controls */
+    var dock = document.getElementById('off-dock'), row = el('div', 'dock-row');
+    var btn = function (label, fn, cls) { var b = el('button', cls || 'btn', label); b.type = 'button'; b.addEventListener('click', fn); return b; };
+    if (dn.run) {
+      dock.appendChild(btn('Stop', function () { dnStop(); renderOff(); }, 'btn primary wide'));
       return;
     }
-    var slot = d.picks[d.at];
-    offHeader(isDisp ? 'Dispersal draft' : d.year + ' draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length + (slot.orig ? ' · via ' + teamById(slot.orig).city : ''));
-    var clock = el('div', 'stat-card');
-    clock.appendChild(el('div', 'group-title', 'You are on the clock'));
-    var recent = d.picks.slice(Math.max(0, d.at - 4), d.at).reverse();
-    if (recent.length) {
-      var rc = el('div', 'headlines');
-      recent.forEach(function (sl) {
-        var p = League.byId(save, sl.player);
-        var line = el('div', null, '#' + sl.pick + ' ' + teamById(sl.team).city + ': ' + p.name);
-        line.appendChild(el('small', null, (p.pos || '') + ' · ' + (p.college || '')));
-        rc.appendChild(line);
-      });
-      clock.appendChild(rc);
+    if (mine) {
+      var sel = avail.filter(function (p) { return p.id === offSel; })[0];
+      dock.appendChild(btn('Draft ' + sel.name, function () { dnStop(); dnOne(d, me, false); dn.clock = 0; renderOff(); }, 'btn primary wide'));
+      row.appendChild(btn('Auto-pick', function () { dnStop(); dnOne(d, me, true); dn.clock = 0; renderOff(); }, 'btn ghost'));
+      row.appendChild(btn('Sim 1 pick', function () { dnStop(); dnOne(d, me, true); dn.clock = 0; renderOff(); }, 'btn ghost'));
+    } else {
+      dock.appendChild(btn('Sim to my pick', function () { dnRunTo(d, me, true, false); }, 'btn primary wide'));
+      row.appendChild(btn('Sim 1 pick', function () { dnRunTo(d, me, false, true); }, 'btn ghost'));
+      row.appendChild(btn('Sim the rest', function () { dnRunTo(d, me, false, false); }, 'btn ghost'));
     }
-    body.appendChild(clock);
-    var avail = League.draftAvailable(save).slice(0, 40);
-    if (!offSel || !avail.some(function (p) { return p.id === offSel; })) offSel = avail[0].id;
-    avail.forEach(function (p) {
-      var holder = el('div', 'player');
-      var row = personRow(p, [(p.pos || '') + ' · ' + hgtText(p) + ' · ' + (isDisp ? 'from ' + (teamById(p.formerTeam) || { city: 'a folded club' }).city : p.college) + ' · age ' + p.age + (p.realPick ? ' · real pick ' + p.realPick : ''), isDisp ? 'Overall ' + p.scout.ovr + ' · potential ' + p.scout.pot : 'Scouts: ' + p.scout.ovr + ' now · up to ' + p.scout.pot], el('span', 'ovr ' + level(p.scout.ovr), String(p.scout.ovr)));
-      row.className += ' pickable';
-      if (p.id === offSel) row.classList.add('selected');
-      row.style.cursor = 'pointer';
-      row.addEventListener('click', function () { offSel = p.id; renderOff(); });
-      holder.appendChild(row);
-      body.appendChild(holder);
-    });
-    var dock = offDock('Draft ' + League.draftAvailable(save).filter(function (p) { return p.id === offSel; })[0].name, function () {
-      League.makePick(save, avail.filter(function (p) { return p.id === offSel; })[0]);
-      persist(); offSel = null; renderOff();
-    });
-    var auto = el('button', 'btn ghost wide', 'Auto-pick for me');
-    auto.type = 'button';
-    auto.addEventListener('click', function () { League.aiPick(save); persist(); offSel = null; renderOff(); });
-    dock.appendChild(auto);
+    dock.appendChild(row);
   }
 
   function rightsSection(body, me) {
