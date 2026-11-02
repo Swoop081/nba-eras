@@ -65,7 +65,7 @@
         if (list.length >= OPENING_ROSTER) return;
         short = true;
         var pay = list.reduce(function (a, p) { return a + p.salary; }, 0);
-        var fa = lg.players.filter(function (p) { return !p.team && p.status === 'active'; })
+        var fa = lg.players.filter(function (p) { return !p.team && p.status === 'active' && !p.free; })
           .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
         if (!fa) { short = false; return; }
         fa.team = t.id; fa.yrs = 1 + Math.floor(Math.random() * 2);
