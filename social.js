@@ -17,11 +17,11 @@
   var VARGA = { n: 'Dom Varga', h: 'DomVargaHoops' }, OKAFOR = { n: 'Idris Okafor', h: 'IdrisOkaforHoops' };
   var INSIDER_REST = [{ n: 'Hoops Scoop', h: 'hoopsscoop' }, { n: 'Front Office Report', h: 'frontofficerpt' }, { n: 'The Trade Desk', h: 'thetradedesk' }, { n: 'Marisol Reyes', h: 'MarisolReyesNBA' }];
   var curY = 2026;
-  function leadInsider(y) { return y >= 2018 ? OKAFOR : VARGA; }
+  var ESPN = { n: 'ESPN Insider', h: 'ESPNInsider' };
+  function leadInsider(y) { return ESPN; }
   var INSIDER = { pick: function () {
     var r = Math.random(), lead = leadInsider(curY);
     if (r < 0.62) return lead;
-    if (r < 0.7 && curY >= 2018 && curY <= 2022) return VARGA;
     return rnd(INSIDER_REST);
   } };
   var SCOUT = [{ n: 'Draft Room', h: 'draftroom_hoops' }, { n: 'Prospect Ledger', h: 'prospectledger' }, { n: 'Hoops Futures', h: 'hoopsfutures' }];
@@ -66,7 +66,7 @@
     curY = save.year || curY;
     var who = n.app === 'Breaking' ? (n.title && n.title !== 'League Insider' ? n.title : leadInsider(curY).n) : n.title;
     var h = String(who).replace(/^@/, '').toLowerCase().replace(/[^a-z0-9_]+/g, '');
-    if (n.app === 'Breaking') { var known = [VARGA, OKAFOR].concat(INSIDER_REST).filter(function (a) { return a.n === who; })[0]; if (known) h = known.h; }
+    if (n.app === 'Breaking') { var known = [ESPN].concat(INSIDER_REST).filter(function (a) { return a.n === who; })[0]; if (known) h = known.h; }
     if (n.app === 'Result') { who = 'Your decision'; h = 'frontoffice'; }
     n.feedId = add(save, { role: role, who: who, h: h, g: n.g, c: n.c, t: n.text + (n.note ? ' (' + n.note + ')' : ''), v: role === 'insider', act: n.act ? n.act.type : '', banner: 1 });
     return n.feedId;

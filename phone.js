@@ -170,6 +170,7 @@
     while (h.children.length > 0) h.removeChild(h.firstChild);
     var b = document.createElement('div'); b.className = 'pb';
     var ic = document.createElement('span'); ic.className = 'pb-ic'; ic.style.background = n.c; ic.textContent = n.g;
+    if (n.title === 'ESPN Insider') { ic.textContent = ''; ic.classList.add('photo'); }
     var tx = document.createElement('div'); tx.className = 'pb-tx';
     var top = document.createElement('small'); top.textContent = n.app.toUpperCase() + ' · now';
     var t = document.createElement('b'); t.textContent = n.title;

@@ -4184,6 +4184,8 @@
       a = pl ? makeAvatar(pl) : el('span', 'avatar', '?');
     } else if (p.tid && save.tm[p.tid]) {
       a = teamBadge(save.tm[p.tid]);
+    } else if (p.who === 'ESPN Insider') {
+      a = el('span', 'avatar fa photo');
     } else {
       a = el('span', 'avatar fa', (p.g || (p.who || '?')[0]).toString().slice(0, 2));
       if (p.c) a.style.background = p.c;
@@ -4966,6 +4968,7 @@
   function phoneHead(card, app, color, glyph, who, sub) {
     var h = el('div', 'ph-head');
     var ic = el('span', 'ph-ic', glyph); ic.style.background = color;
+    if (who === 'ESPN Insider') { ic.textContent = ''; ic.classList.add('photo'); }
     h.appendChild(ic);
     var w = el('div', 'ph-who');
     w.appendChild(el('b', null, who));
@@ -5001,7 +5004,7 @@
       card.appendChild(el('p', 'ph-text', ev.text));
       engage(card, seed);
     } else if (ev.kind === 'rumour') {
-      phoneHead(card, 'Breaking', '#D8232A', '!', 'League Insider', '@leagueinsider');
+      phoneHead(card, 'Breaking', '#D8232A', '!', Social.has(save.year) ? 'ESPN Insider' : 'League Insider', Social.has(save.year) ? '@ESPNInsider' : '@leagueinsider');
       card.appendChild(el('p', 'ph-text', ev.text));
       engage(card, seed + 5);
     } else {
