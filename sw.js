@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v279';
+var CACHE = 'nba-eras-v280';
 var SHELL = [
   './',
   'index.html',
@@ -18,6 +18,7 @@ var SHELL = [
   'data/teams-1946.json',
   'data/players-1946.json',
   'data/draft-1947.json',
+  'data/draft-2027.json',
   'data/teams-2026.json',
   'data/players-2026.json',
   'data/coaches-2026.json'

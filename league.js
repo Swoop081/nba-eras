@@ -16,7 +16,7 @@
     MODERN = year >= 1979;
     SCALE = MODERN ? capFor(year) / 165000 : capFor(year) / 55000;
     MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : Math.round(1000 * SCALE / 100) * 100;
-    MIN_ROSTER = MODERN ? (year >= 1996 ? 13 : 11) : 9;
+    MIN_ROSTER = MODERN ? (year >= 2023 ? 14 : year >= 1996 ? 13 : 11) : 9;
     OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
     if (root.League) { root.League.MIN_ROSTER = MIN_ROSTER; root.League.MAX_ROSTER = MAX_ROSTER; }
   }
@@ -101,7 +101,7 @@
       var c = map[p.id];
       if (!c || p.status !== 'active') return;
       if ((p.deals || []).some(function (d) { return d.h && d.h !== 'Original deal' && d.h !== 'Traded'; })) return;
-      p.salary = c.s; p.yrs = Math.max(1, c.y - (save.year === 2026 ? 0 : 0)); p.opt = c.o; p.known = true;
+      p.salary = c.s; p.yrs = Math.max(1, c.y - (save.year === 2026 ? 0 : 0)); p.opt = c.o; p.known = true; p.s0 = c.s; p.rz = 0.05;
     });
     bump(save);
   }
@@ -335,8 +335,33 @@
     var t = y >= 10 ? 3876 : y >= 7 ? 3286 : y >= 5 ? 2846 : y >= 3 ? 2538 : y >= 2 ? 2449 : y >= 1 ? 2185 : 1358;
     return Math.round(t * k / 10) * 10;
   }
-  function maxFor(save, p) { var y = yosOf(p); return Math.round(save.lg.cap * (y >= 10 ? 0.35 : y >= 7 ? 0.30 : 0.25) / 10) * 10; }
-  function clampSal(save, p, s) { return MODERN && save.year >= 1996 ? Math.max(minFor(save, p) * (aprons(save) ? 1 : 0.7), Math.min(maxFor(save, p), s)) : s; }
+  /* All-League and MVP honours in the last three seasons. */
+  function honours(save, p) { return (p.awards || []).filter(function (a) { return a.y >= save.year - 2 && (a.a === 'Most Valuable Player' || /^All-League/.test(a.a)); }).length; }
+  function maxFor(save, p, own) {
+    var y = yosOf(p), pc = y >= 10 ? 0.35 : y >= 7 ? 0.30 : 0.25;
+    if (own && aprons(save)) {
+      var h = honours(save, p);
+      if (y >= 7 && y <= 9 && h >= 2) pc = 0.35;        /* designated veteran (supermax) */
+      else if (y <= 6 && p.rkEnd && h >= 2) pc = 0.30;   /* Rose rule on a rookie extension */
+    }
+    return Math.round(save.lg.cap * pc / 10) * 10;
+  }
+  /* Bird (3+ years with the club), Early Bird (2) or non-Bird, from when he last signed as a free agent. */
+  function rightsLevel(save, p) {
+    var d = (p.deals || []).slice().reverse().filter(function (x) { return /^(Signed|Drafted|Dispersal)/.test(x.h || ''); })[0];
+    if (!d) return 'bird';
+    var t = save.year - d.y;
+    return t >= 3 ? 'bird' : t >= 2 ? 'early' : 'non';
+  }
+  /* The most a club can re-sign him for when it has no room under the cap. */
+  function reSignLimit(save, p, tid) {
+    var lv = rightsLevel(save, p), cb = cbaOf(save);
+    if (lv === 'bird' || !cb.on) return maxFor(save, p, true);
+    if (payroll(save, tid) - (p.team === tid ? p.salary : 0) + p.salary * 1.2 <= cb.cap) return maxFor(save, p, true);
+    var avg = save.lg.cap * 0.0919;
+    return Math.min(maxFor(save, p, true), lv === 'early' ? Math.max(p.salary * 1.75, avg * 1.05) : Math.max(p.salary * 1.2, minFor(save, p) * 1.2));
+  }
+  function clampSal(save, p, s, own) { return MODERN && save.year >= 1996 ? Math.max(minFor(save, p) * (aprons(save) ? 1 : 0.7), Math.min(maxFor(save, p, own), s)) : s; }
   /* Rookie scale: first-round picks sign four-year deals, two guaranteed plus two team options. */
   function scaleFor(save, pick) {
     var K = [[1, 0.0903], [5, 0.058], [10, 0.039], [20, 0.0235], [30, 0.0182]], v = K[K.length - 1][1];
@@ -406,12 +431,18 @@
     var tier = out <= cb.add ? 2 * out + 250 * (cb.cap / 164961) : out <= cb.add * 3.867 ? out + cb.add : 1.25 * out + 250 * (cb.cap / 164961);
     return tier;
   }
+  /* Trade exceptions: sending out more salary than you take back leaves a credit, good for a year, to absorb a player later. */
+  function tpeList(save, id) { var L = save.lg; L.tpe = L.tpe || {}; var ly = lyear(save); return (L.tpe[id] = (L.tpe[id] || []).filter(function (t) { return t.y >= ly; })); }
+  function tpeFor(save, id, inn) { var k = 100 * (save.lg.cap / 164961); return tpeList(save, id).filter(function (t) { return t.a + k >= inn; }).sort(function (a, b) { return a.a - b.a; })[0] || null; }
   function tradeIssue(save, id, give, get, giveK, getK, who) {
     var cb = cbaOf(save), out = sum(give, function (p) { return p.salary; }), inn = sum(get, function (p) { return p.salary; });
     var pay = payroll(save, id) - out + inn, nm = who || 'They';
+    var key = lyear(save) * 1000 + (save.phase === 'regular' && !save.off ? save.day || 0 : 0), lk = give.concat(get).filter(function (p) { return p.lk && p.lk > key; })[0];
+    if (lk) return lk.name + ' signed recently and cannot be traded until mid-December.';
     var hc = isHard(save, id);
     if (hc && pay > (hc === 2 ? cb.ap2 : cb.ap1) && inn > out) return nm + ' used an exception that hard-caps the club at the ' + (hc === 2 ? 'second' : 'first') + ' apron.';
-    if (pay > cb.cap && inn > out) {
+    if (pay > cb.cap && inn > out && !give.length && tpeFor(save, id, inn) && pay <= cb.ap1) {}
+    else if (pay > cb.cap && inn > out) {
       if (!cb.on) { if (inn > out * 1.25 + cb.cap * 0.0006) return nm + ' would be over the cap. Over the cap you can take back at most 125% of the salary you send, plus a little.'; }
       else if (pay > cb.ap1) return nm + ' would be over the ' + (pay > cb.ap2 ? 'second' : 'first') + ' apron, so ' + (nm === 'You' ? 'you' : 'they') + ' must send out at least as much salary as ' + (nm === 'You' ? 'you' : 'they') + ' take back.';
       else if (inn > matchLimit(cb, out)) return nm + ' would be over the cap and ' + (nm === 'You' ? 'you' : 'they') + ' can take back at most ' + money(matchLimit(cb, out)) + ' for ' + money(out) + ' going out.';
@@ -440,11 +471,11 @@
   }
 
   function expiring(save, teamId) {
-    return rosterOf(save, teamId).filter(function (p) { return p.yrs <= 0; });
+    return rosterOf(save, teamId).filter(function (p) { if (p.yrs <= 0 && p.rk) p.rkEnd = 1; return p.yrs <= 0; });
   }
 
   function newSeasonContracts(save) {
-    save.lg.players.forEach(function (p) { if (p.status === 'active' && p.team) p.yrs = Math.max(0, p.yrs - 1); });
+    save.lg.players.forEach(function (p) { if (p.status === 'active' && p.team) { p.yrs = Math.max(0, p.yrs - 1); if (p.yrs > 0 && p.rz && p.s0) p.salary = Math.round((p.salary + p.s0 * p.rz) / 10) * 10; } });
     var dd = save.lg.dead || {};
     Object.keys(dd).forEach(function (t) { dd[t] = dd[t].map(function (x) { return { n: x.n, s: x.s, y: x.y - 1 }; }).filter(function (x) { return x.y > 0; }); });
   }
@@ -457,20 +488,41 @@
 
   function sign(save, p, teamId, salary, years) {
     var how = p.team === teamId && p.status === 'active' ? 'Re-signed' : (p.bird === teamId ? 'Re-signed' : 'Signed');
-    salary = clampSal(save, p, salary);
+    salary = clampSal(save, p, salary, how === 'Re-signed');
     if (how === 'Signed') {
       var rt = signRoute(save, teamId, salary, p), ly = lyear(save), cb = cbaOf(save);
       if (rt && (rt.via === 'mle' || rt.via === 'room' || rt.via === 'tmle')) (save.lg.mle || (save.lg.mle = {}))[teamId] = ly;
       if (rt && rt.via === 'bae') (save.lg.bae || (save.lg.bae = {}))[teamId] = ly;
       if (rt && rt.a && cb.on) { var h = save.lg.hard || (save.lg.hard = {}); if (!h[teamId] || h[teamId].y !== ly || h[teamId].a > rt.a) h[teamId] = { y: ly, a: rt.a }; }
     }
-    delete p.bird; delete p.rfa; delete p.ren; delete p.pend;
-    p.team = teamId; p.salary = salary; p.yrs = years; p.status = 'active';
+    delete p.bird; delete p.rfa; delete p.ren; delete p.pend; delete p.wantsOut;
+    p.team = teamId; p.salary = salary; p.yrs = Math.min(years, how === 'Re-signed' && rightsLevel(save, p) === 'bird' ? 5 : 4); p.status = 'active';
+    p.s0 = salary; p.rz = how === 'Re-signed' && p.yrs > 1 ? 0.08 : 0.05;
+    if (aprons(save)) p.lk = lyear(save) * 1000 + 55;
     logDeal(save, p, how);
     bump(save);
   }
 
-  function release(save, p) { p.team = null; if (p.status === 'rights') p.status = 'active'; bump(save); }
+  /* Waiving a player leaves his salary on the books. Mode: 'stretch' spreads it over twice the years plus one, 'buyout' settles for 75%. A useful, fairly paid player may be claimed on waivers. Returns a note. */
+  function release(save, p, mode) {
+    var tid = p.team, note = '';
+    if (tid && p.status === 'active' && p.yrs > 0 && p.salary > 0 && aprons(save) && mode !== 'free') {
+      var dd = save.lg.dead || (save.lg.dead = {}), list = dd[tid] || (dd[tid] = []), ent;
+      if (mode === 'stretch') ent = { n: p.name, s: Math.round(p.salary * p.yrs / (2 * p.yrs + 1) / 10) * 10, y: 2 * p.yrs + 1 };
+      else if (mode === 'buyout') ent = { n: p.name, s: Math.round(p.salary * 0.75 / 10) * 10, y: p.yrs };
+      else ent = { n: p.name, s: p.salary, y: p.yrs };
+      var claimer = null;
+      if (mode !== 'buyout' && p.ratings.ovr >= 50 && p.salary <= salaryFor(p.ratings.ovr) * 1.3) {
+        claimer = save.ids.filter(function (id) { return id !== tid && rosterOf(save, id).length < MAX_ROSTER && payroll(save, id) + p.salary <= save.lg.cap && !(id === save.myId); })
+          .sort(function (a, b) { return winPct(save, a) - winPct(save, b); })[0];
+        if (claimer && Math.random() > 0.6) claimer = null;
+      }
+      if (claimer) { p.team = claimer; logDeal(save, p, 'Claimed on waivers', claimer); note = p.name + ' was claimed on waivers by ' + claimer.replace(/-/g, ' ') + '. No dead money.'; bump(save); return note; }
+      list.push(ent); note = 'Dead money: ' + money(ent.s) + ' a year for ' + ent.y + (ent.y === 1 ? ' year' : ' years') + '.';
+    }
+    p.team = null; if (p.status === 'rights') p.status = 'active'; bump(save);
+    return note;
+  }
   function rightsOf(save, id) { return save.lg.players.filter(function (p) { return p.status === 'rights' && p.team === id; }); }
   function signRights(save, p) { p.status = 'active'; bump(save); }
 
@@ -498,7 +550,7 @@
   /* ---------- player decisions & free-agency model ---------- */
   function winPct(save, id) { var r = save.rec && save.rec[id]; return r && r.w + r.l ? r.w / (r.w + r.l) : 0.5; }
   function loyalty(p) { if (p.loy == null) p.loy = Math.round(15 + Math.random() * 70); return p.loy; }
-  function isRFA(p) { return p.age <= 24 && p.ratings.ovr >= 52; }
+  function isRFA(p) { return (p.rkEnd || p.age <= 24) && p.ratings.ovr >= 52; }
   function mleOf(save) { return Math.round(save.lg.cap * 0.0912); }
   function mleUsed(save, id) { return !!(save.lg.mle && save.lg.mle[id] === lyear(save)); }
   /* How much a player wants to be at a club, 0-100: loyalty, the relationship, winning, his role, his age and the stage of his career. */
@@ -570,6 +622,7 @@
       var exp = rosterOf(save, t.id).filter(function (p) { return p.yrs <= 0; }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
       var kept = rosterOf(save, t.id).length - exp.length, committed = payroll(save, t.id) - exp.reduce(function (a, p) { return a + p.salary; }, 0), mode = clubMode(save, t.id);
       exp.forEach(function (p) {
+        if (p.rk) p.rkEnd = 1;
         var o = p.ratings.ovr, price = salaryFor(o);
         var want = o >= 72 ? 0.96 : o >= 64 ? 0.74 : o >= 55 ? 0.5 : o >= 47 ? 0.3 : 0.12;
         if (p.age >= 31) want *= mode === 'rebuild' ? 0.3 : 0.65;
@@ -634,7 +687,8 @@
     if (o.pk) { pk = picksOf(save, o.tid).filter(function (x) { return x.o === o.tid && x.y === o.pk.y && x.r === o.pk.r; })[0]; if (!pk) return null; pk.t = fromId; }
     back.forEach(function (q) { q.team = fromId; });
     delete p.bird; delete p.rfa;
-    p.team = o.tid; p.salary = o.X; p.yrs = o.yrs; p.status = 'active';
+    p.team = o.tid; p.salary = o.X; p.yrs = o.yrs; p.status = 'active'; p.s0 = o.X; p.rz = 0.05;
+    if (aprons(save)) { (save.lg.hard || (save.lg.hard = {}))[o.tid] = { y: lyear(save), a: 1 }; }
     logDeal(save, p, 'Sign-and-trade');
     bump(save);
     return { back: back, pk: pk ? pk.y + ' ' + (pk.r === 1 ? 'first' : 'second') + '-round pick' : null };
@@ -655,7 +709,7 @@
     teams.forEach(function (t) {
       if (t.id === myId) return;
       var guard = 0;
-      while (rosterOf(save, t.id).length < MIN_ROSTER + 2 && guard++ < 10) {
+      while (rosterOf(save, t.id).length < Math.min(MAX_ROSTER, MIN_ROSTER + 1) && guard++ < 10) {
         var fa = freeAgents(save).filter(function (p) { return canSign(save, t.id, clampSal(save, p, salaryFor(p.ratings.ovr)), p); })[0];
         if (!fa) break;
         sign(save, fa, t.id, salaryFor(fa.ratings.ovr), 1 + Math.floor(Math.random() * 2));
@@ -697,9 +751,9 @@
   function makeClass(year, real, total) {
     var seen = {}, list = [];
     (real || []).forEach(function (rp) {
-      var target = clamp(Math.round(62 - (rp.realPick - 1) * 0.28 + gauss() * 2), 44, 66);
-      var age = Math.round(rnd(21, 24));
-      var pot = rp.pot !== undefined ? rp.pot : target + Math.round(rnd(4, 14));
+      var target = MODERN && rp.age ? clamp(Math.round(68 - (rp.realPick - 1) * 0.42 + gauss() * 2), 42, 70) : clamp(Math.round(62 - (rp.realPick - 1) * 0.28 + gauss() * 2), 44, 66);
+      var age = rp.age || Math.round(rnd(21, 24));
+      var pot = rp.pot !== undefined ? rp.pot : target + (rp.age ? Math.round((age <= 18 ? 17 : age <= 19 ? 14 : age <= 20 ? 11 : age <= 22 ? 7 : 4) * (1.15 - rp.realPick / 120) + gauss() * 2) : Math.round(rnd(4, 14)));
       list.push(makePlayer(rp, target, age, pot));
       seen[rp.id] = 1;
     });
@@ -711,9 +765,9 @@
       seen[id] = 1;
       var rank = list.length - k0, target, age, pot;
       if (MODERN) {
-        target = rank < 14 ? clamp(Math.round(71 - rank * 1.1 + gauss() * 2), 54, 73) : clamp(Math.round(rnd(42, 55) + gauss() * 2), 38, 58);
+        target = k0 >= 30 ? clamp(Math.round(rnd(38, 47) + gauss() * 2), 34, 50) : rank < 14 ? clamp(Math.round(71 - rank * 1.1 + gauss() * 2), 54, 73) : clamp(Math.round(rnd(42, 55) + gauss() * 2), 38, 58);
         age = Math.round(rnd(19, 22));
-        pot = target + Math.round(rank < 14 ? rnd(8, 17) : rnd(3, 12));
+        pot = target + Math.round(k0 < 30 && rank < 14 ? rnd(8, 17) : rnd(3, 10));
       } else {
         target = clamp(Math.round(rnd(40, 56) + gauss() * 2), 38, 60);
         age = Math.round(rnd(21, 24));
@@ -796,7 +850,7 @@
     var d = save.lg.draft, slot = d.picks[d.at];
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
-    else if (aprons(save) && slot.pick <= 30) { p.salary = scaleFor(save, slot.pick); p.yrs = 4; p.rk = 1; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    else if (aprons(save) && slot.pick <= 30) { p.salary = scaleFor(save, slot.pick); p.yrs = 4; p.rk = 1; p.s0 = p.salary; p.rz = 0.05; p.draftedYear = d.year; p.draftPick = slot.pick; }
     else if (aprons(save)) { p.salary = minFor(save, null) ; p.salary = Math.round(save.lg.cap * 1358 / 164961 / 10) * 10; p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? Math.round(1000 * SCALE) : Math.round(500 * SCALE))); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     logDeal(save, p, d.kind === 'dispersal' ? 'Dispersal pick' : 'Drafted, pick ' + slot.pick, slot.team);
@@ -909,7 +963,14 @@
     return { ok: true, reason: 'They accept.', ratio: ratio };
   }
 
+  function tpeSettle(save, id, out, inn, nOut) {
+    if (!aprons(save)) return;
+    if (!nOut && inn > 0) { var t = tpeFor(save, id, inn); if (t) { var L = tpeList(save, id); L.splice(L.indexOf(t), 1); } return; }
+    if (out > inn + 100) tpeList(save, id).push({ a: out - inn, y: lyear(save) + 1 });
+  }
   function executeTrade(save, meId, themId, give, get, giveK, getK) {
+    var so = sum(give, function (p) { return p.salary; }), si = sum(get, function (p) { return p.salary; });
+    tpeSettle(save, meId, so, si, give.length); tpeSettle(save, themId, si, so, get.length);
     (giveK || []).forEach(function (k) { k.t = themId; });
     (getK || []).forEach(function (k) { k.t = meId; });
     give.forEach(function (p) { p.team = themId; delete p.wantsOut; logDeal(save, p, 'Traded', themId); });
@@ -1399,7 +1460,7 @@
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
-    aiReSign: aiReSign, aiTrade: aiTrade, starMoves: starMoves, cbaOf: cbaOf, signRoute: signRoute, tradeIssue: tradeIssue, taxBill: taxBill, repeater: repeater, settleTax: settleTax, holdOf: holdOf, holdsOf: holdsOf, minFor: minFor, maxFor: maxFor, clampSal: clampSal, scaleFor: scaleFor, yosOf: yosOf, lyear: lyear, isHard: isHard, sntOffers: sntOffers, sntDo: sntDo, committedPay: committedPay, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
+    aiReSign: aiReSign, rightsLevel: rightsLevel, reSignLimit: reSignLimit, tpeList: tpeList, honours: honours, aiTrade: aiTrade, starMoves: starMoves, cbaOf: cbaOf, signRoute: signRoute, tradeIssue: tradeIssue, taxBill: taxBill, repeater: repeater, settleTax: settleTax, holdOf: holdOf, holdsOf: holdsOf, minFor: minFor, maxFor: maxFor, clampSal: clampSal, scaleFor: scaleFor, yosOf: yosOf, lyear: lyear, isHard: isHard, sntOffers: sntOffers, sntDo: sntDo, committedPay: committedPay, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     maxR: maxR, makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);

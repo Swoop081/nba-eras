@@ -920,16 +920,30 @@
     if (team && team.id === save.myId) {
       var rel = el('button', 'btn ghost wide', 'Release ' + p.name);
       rel.type = 'button';
-      var armed = false;
       rel.addEventListener('click', function () {
         if (League.rosterOf(save, team.id).length <= 5) { rel.textContent = 'You need at least 5 players'; return; }
-        if (!armed) { armed = true; rel.textContent = 'Tap again to release ' + p.name; return; }
-        League.release(save, p); persist(); renderRoster(team); show('screen-roster');
+        releaseSheet(p, function () { renderRoster(team); show('screen-roster'); });
       });
       body.appendChild(rel);
     }
   }
 
+  /* Waive, stretch or buy out: guaranteed money stays on your books. */
+  function releaseSheet(p, done) {
+    hubSheet('Release ' + p.name, function (sh, close) {
+      var g = p.yrs > 0 && p.salary > 0;
+      sh.appendChild(el('p', 'sub', g ? money(p.salary) + ' a year for ' + p.yrs + (p.yrs === 1 ? ' more year' : ' more years') + ' is guaranteed. Releasing him leaves it on your payroll as dead money unless another club claims him.' : 'His contract is up, so there is nothing to pay.'));
+      function opt(label, sub, mode) {
+        var b = el('button', 'btn wide', label); b.type = 'button';
+        b.addEventListener('click', function () { var n = League.release(save, p, mode); if (n) League.wire(save, n); persist(); close(); if (done) done(); });
+        sh.appendChild(b); if (sub) sh.appendChild(el('p', 'sub how', sub));
+      }
+      opt(g ? 'Waive him' : 'Release him', g ? 'Full amount stays as dead money. A fairly paid useful player may be claimed on waivers and cost you nothing.' : '', undefined);
+      if (g) opt('Waive and stretch', 'Spread over ' + (2 * p.yrs + 1) + ' years: ' + money(Math.round(p.salary * p.yrs / (2 * p.yrs + 1))) + ' a year.', 'stretch');
+      if (g && (p.age || 25) >= 27) opt('Negotiate a buyout', 'He agrees to 75% of what is left, ' + money(Math.round(p.salary * 0.75)) + ' a year. He cannot be claimed.', 'buyout');
+      var c = el('button', 'btn ghost wide', 'Cancel'); c.type = 'button'; c.addEventListener('click', close); sh.appendChild(c);
+    });
+  }
   function pvExtras(body, p) {
     var c = (p.career || []).slice(), cur = save.lg.stats[p.id], tot = { g: 0, pts: 0, trb: 0, ast: 0 };
     c.forEach(function (x) { Object.keys(tot).forEach(function (k) { tot[k] += x[k] || 0; }); });
@@ -6094,22 +6108,25 @@
       var d = dec[p.id], team = p.opt === 'team';
       var ask = League.ask(save, p, trust) * (d === 'open' ? 1.12 : 1);
       ask = Math.round(ask / 100) * 100;
+      var lv = League.rightsLevel(save, p), lim = League.reSignLimit(save, p, me.id), maxY = lv === 'bird' ? 5 : 4;
+      var offer = Math.min(ask, lim), can = offer >= ask * 0.92;
       var rfa = League.isRFA(p);
       var holder = el('div', 'player');
-      var meta = (p.pos || '') + ' \u00B7 Age ' + p.age + ' \u00B7 potential ' + p.pot + (rfa ? ' \u00B7 restricted' : '');
+      var meta = (p.pos || '') + ' \u00B7 Age ' + p.age + ' \u00B7 potential ' + p.pot + (rfa ? ' \u00B7 restricted' : '') + ' \u00B7 ' + (lv === 'bird' ? 'Bird rights' : lv === 'early' ? 'Early Bird rights' : 'Non-Bird rights');
       var mood = team ? 'Team option \u00B7 ' + money(p.salary) + ' for one more year' : d === 'out' ? 'Wants out \u00B7 has decided to test the market' : d === 'open' ? 'Undecided \u00B7 wants ' + money(ask) + ' (+12%) to stay' : 'Wants to stay \u00B7 asking ' + money(ask);
+      if (!team && d !== 'out' && !can) mood = 'Wants ' + money(ask) + ', but you can only offer ' + money(lim) + ' over the cap with ' + (lv === 'early' ? 'Early Bird' : 'non-Bird') + ' rights. Clear cap room to keep him.';
       holder.appendChild(personRow(p, [meta, mood], el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr))));
       var row = el('div', 'dock-row');
       if (team) {
         var pk = el('button', 'btn small primary', 'Pick up option'); pk.type = 'button';
         pk.addEventListener('click', function () { p.yrs = 1; p.opt = null; persist(); renderOff(); });
         row.appendChild(pk);
-      } else if (d !== 'out') {
-        [2, 3, 4, 5].forEach(function (yrs) {
+      } else if (d !== 'out' && can) {
+        for (var yy = 2; yy <= maxY; yy++) (function (yrs) {
           var b = el('button', 'btn small', yrs + ' yrs'); b.type = 'button';
-          b.addEventListener('click', function () { League.sign(save, p, me.id, ask, yrs); persist(); renderOff(); });
+          b.addEventListener('click', function () { League.sign(save, p, me.id, offer, yrs); persist(); renderOff(); });
           row.appendChild(b);
-        });
+        })(yy);
       }
       holder.appendChild(row);
       if (d === 'out' && !team) {
@@ -6404,6 +6421,7 @@
       var hc = League.isHard(save, me.id);
       if (hc) rows.push(['Hard cap', 'Held at the ' + (hc === 2 ? 'second' : 'first') + ' apron this season']);
     }
+    var tp = League.tpeList(save, me.id); if (tp.length) rows.push(['Trade exceptions', tp.map(function (t) { return money(t.a); }).join(', ')]);
     rows.push(['Roster', League.rosterOf(save, me.id).length + ' of ' + League.maxR(save)]);
     rows.forEach(function (r) { var p = el('p', 'sub'); p.appendChild(el('b', null, r[0] + ': ')); p.appendChild(document.createTextNode(r[1])); card.appendChild(p); });
     card.appendChild(el('p', 'sub how', 'Over the cap you can sign players for the minimum, or use one mid-level exception. Using a mid-level or the bi-annual hard-caps you at an apron for the whole season. Your own free agents carry a cap hold until you re-sign or renounce them.'));
@@ -6674,7 +6692,7 @@
       League.rosterOf(save, me.id).sort(function (a, b) { return a.ratings.ovr - b.ratings.ovr; }).slice(0, 12).forEach(function (p) {
         var rel = el('button', 'btn small', 'Release');
         rel.type = 'button';
-        rel.addEventListener('click', function () { League.release(save, p); persist(); renderOff(); });
+        rel.addEventListener('click', function () { releaseSheet(p, function () { renderOff(); }); });
         var right = el('span'); right.style.marginLeft = 'auto'; right.appendChild(rel);
         body.appendChild(personRow(p, [(p.pos || '') + ' \u00B7 age ' + p.age + ' \u00B7 ' + money(p.salary) + ' \u00B7 overall ' + p.ratings.ovr, 'Potential ' + p.pot], right));
       });
