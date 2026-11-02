@@ -183,7 +183,7 @@
       shooter.s.fg++; if (three) shooter.s.tp++;
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
-      if (r() < (pr.astp || 0.72) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
+      if (r() < (pr.astp || 0.72) * (pr.threes ? 0.84 : 1) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
         var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply * (ni(x).pass || 1); });
         passer.s.ast++; ev.ast = passer.p.name;
       }
