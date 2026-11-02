@@ -3687,6 +3687,11 @@
 
   /* ---------- no vertical scrolling: long lists become swipeable pages ---------- */
   var PAGED = ['roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
+  var PGMEM = {};
+  function pgKey(box) {
+    var tb = document.getElementById('trade-body');
+    return !box.id && tb && tb.contains(box) ? 'trade|' + (tb.dataset.pk || '') : box.id;
+  }
   function pageify(box) {
     if (!modernUI() || box._busy || !box.offsetParent) return;
     var tl = box.id === 'trade-body' ? box.querySelector(':scope > .tlist') : null;
@@ -3694,6 +3699,7 @@
     var kids = Array.prototype.slice.call(box.children).filter(function (k) { return !k.classList.contains('pgr'); });
     if (!kids.length) return;
     box._busy = true;
+    if (box._pi == null) box._pi = PGMEM[pgKey(box)] || 0;
     var gap = 8, avail = box.clientHeight - 48;
     var units = [], carry = [];
     kids.forEach(function (k) {
@@ -3721,7 +3727,7 @@
       var tick = null;
       function mark() {
         var w = track.firstChild ? track.firstChild.offsetWidth : 1, i = Math.round(track.scrollLeft / (w + 10));
-        box._pi = i;
+        box._pi = i; PGMEM[pgKey(box)] = i;
         Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === i); });
       }
       track.addEventListener('scroll', function () { clearTimeout(tick); tick = setTimeout(mark, 40); });
@@ -5175,7 +5181,7 @@
   function renderTradeHome(body, dock, me) {
     var mode = trade.home || 'finder';
     var seg = el('div', 'ttabs');
-    [['finder', 'Finder'], ['clubs', 'Clubs'], ['fa', 'Free agents']].forEach(function (t) {
+    [['finder', 'Finder'], ['clubs', 'Teams'], ['fa', 'Free agents']].forEach(function (t) {
       var bt = el('button', mode === t[0] ? 'on' : '', t[1]); bt.type = 'button';
       bt.addEventListener('click', function () { trade.home = t[0]; renderTrade(); });
       seg.appendChild(bt);
@@ -5200,10 +5206,10 @@
         list.appendChild(c);
       }
       tool('⇄', 'Shop my players and picks', 'Put assets on the block and see what every club would give', function () { trade.view = 'shopPick'; trade.give = {}; trade.msg = ''; renderTrade(); });
-      tool('◎', 'Target a player', 'Pick anyone in the league and find packages that land him', function () { trade.view = 'target'; trade.tf = { pos: '', up: false, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
-      tool('▲', 'Find upgrades', 'Players better than your starters, with deals that work', function () { trade.view = 'target'; trade.tf = { pos: '', up: true, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
-      tool('★', 'Young talent', 'Players 24 and under to build around', function () { trade.view = 'target'; trade.tf = { pos: '', up: false, young: true, q: '' }; trade.fromTarget = true; renderTrade(); });
-      tool('$', 'Clubs with cap space', 'Teams that can absorb salary', function () { trade.home = 'clubs'; trade.sort = 'cap'; renderTrade(); });
+      tool('◎', 'Target a player', 'Pick anyone in the league and find packages that land him', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: false, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
+      tool('▲', 'Find upgrades', 'Players better than your starters, with deals that work', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: true, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
+      tool('★', 'Young talent', 'Players 24 and under to build around', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: false, young: true, q: '' }; trade.fromTarget = true; renderTrade(); });
+      tool('$', 'Teams with cap space', 'Teams that can absorb salary', function () { trade.home = 'clubs'; trade.sort = 'cap'; renderTrade(); });
       var deals = (save.lg.wire || []).filter(function (w) { return /\btrade\b/i.test(w.t) && w.y === save.year; }).slice(-4).reverse();
       if (deals.length) {
         var rd = el('div', 'recent-deals'); rd.appendChild(el('h3', 'box-title', 'Around the league'));
@@ -5252,6 +5258,7 @@
 
   function renderTrade() {
     var body = document.getElementById('trade-body'), dock = document.getElementById('trade-dock');
+    body.dataset.pk = trade.view + '|' + JSON.stringify(trade.tf || {}) + '|' + (trade.visit || 0) + '|' + (trade.partner || '');
     body.textContent = '';
     dock.textContent = '';
     var me = teamById(save.myId);
@@ -5686,7 +5693,7 @@
       ow.appendChild(ratingRow('Owner trust', r.owner.trust));
       body.appendChild(ow);
       if (r.owner.fired) {
-        body.appendChild(el('h3', 'box-title', 'Clubs that want you'));
+        body.appendChild(el('h3', 'box-title', 'Teams that want you'));
         body.appendChild(el('p', 'sub how', 'Word travels fast. Three owners want to talk. Your new club starts with its own roster and a fresh start with the owner.'));
         if (!r.offers) {
           r.offers = save.ids.filter(function (id) { return id !== me.id; }).sort(function () { return Math.random() - 0.5; }).slice(0, 3);
@@ -5770,7 +5777,7 @@
       var tag = el('span', 'ovr ' + (diff > 0 ? 'hi' : diff < 0 ? 'lo' : 'mid'), (diff > 0 ? '+' : '') + diff);
       body.appendChild(personRow(p, ['Age ' + p.age + ' · ' + x.from + ' → ' + x.to + ' overall', 'Potential ' + p.pot], tag));
     });
-    body.appendChild(el('p', 'sub', d.leagueRetired + ' players on other clubs retired.'));
+    body.appendChild(el('p', 'sub', d.leagueRetired + ' players on other teams retired.'));
     offDock(save.off.fates ? 'League news' : 'Contracts', function () { offStep(save.off.fates ? 'fates' : 'contracts'); });
   }
 
