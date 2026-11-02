@@ -213,6 +213,8 @@
   function hashNo(id) { var h = 7; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 997; return h; }
   function fixNumbers(save) {
     var lg = save.lg, by = {};
+    /* a starter's place belongs to his club: once he moves, the flag goes */
+    lg.players.forEach(function (p) { if (!p.st) return; if (p.stT === undefined) p.stT = p.team; else if (p.stT !== p.team) { delete p.st; delete p.stT; } });
     lg.players.forEach(function (p) { if (p.team && p.status !== 'prospect') (by[p.team] = by[p.team] || []).push(p); });
     Object.keys(by).forEach(function (t) {
       var ret = {}; (RETIRED ? RETIRED(t) : []).forEach(function (n) { ret[String(n)] = 1; });
