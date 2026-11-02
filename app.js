@@ -390,7 +390,7 @@
           var cell = el('div', 'fc-p' + (i === 0 ? ' lead' : ''));
           cell.appendChild(makeAvatar(p));
           cell.appendChild(el('b', null, String(p.ovr)));
-          cell.appendChild(el('span', null, p.name.split(' ').slice(-1)[0]));
+          cell.appendChild(el('span', null, lastName(p.name)));
           cell.appendChild(el('small', null, (p.pos || '') + ' \u00B7 ' + (p.age || '')));
           var ss = el('div', 'fc-ps');
           (p.best || []).forEach(function (x) { var q = el('div'); q.appendChild(el('b', null, x[1])); q.appendChild(el('small', null, x[0])); ss.appendChild(q); });
@@ -439,7 +439,7 @@
       return out;
     };
   }
-  function fallbackBest(p) { return [['OVR', String(p.ovr)]]; }
+  function fallbackBest(p) { return [['OVR', String(p.ratings ? p.ratings.ovr : p.ovr)]]; }
   function renderTeams(data) {
     if (data.current) { renderRails(data); return; }
     teamList.className = 'list';
@@ -1568,7 +1568,7 @@
       save.rest = { tok: save.day + '|' + (save.pd || 0) + '|' + save.phase, games: results.map(function (g) {
         var all = (g.lines.h || []).map(function (x) { return [x, g.home]; }).concat((g.lines.a || []).map(function (x) { return [x, g.away]; })).sort(function (p, q) { return q[0].s.pts - p[0].s.pts; });
         var win = g.hs > g.as, w = win ? g.home : g.away, l = win ? g.away : g.home, top = all[0];
-        return { wid: w, lid: l, ws: win ? g.hs : g.as, ls: win ? g.as : g.hs, tn: top ? top[0].name.split(' ').slice(-1)[0] : '', tp: top ? top[0].s.pts : 0, tt: top ? top[1] : null };
+        return { wid: w, lid: l, ws: win ? g.hs : g.as, ls: win ? g.as : g.hs, tn: top ? lastName(top[0].name) : '', tp: top ? top[0].s.pts : 0, tt: top ? top[1] : null };
       }) };
     }
   }
@@ -4740,7 +4740,7 @@
         var hch = el('div', 'ph-head');
         hch.appendChild(makeAvatar({ id: ev.cslug, name: ev.who }));
         var hw = el('div', 'ph-who');
-        hw.appendChild(el('b', null, 'Coach ' + ev.who.split(' ').slice(-1)[0]));
+        hw.appendChild(el('b', null, 'Coach ' + lastName(ev.who)));
         hw.appendChild(el('small', null, 'Messages \u00B7 Head coach \u00B7 now'));
         hch.appendChild(hw);
         card.appendChild(hch);

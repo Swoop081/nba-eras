@@ -610,7 +610,7 @@
     var ratio = loss > 0 ? gain / loss : 9;
     var flat = loss > 0 ? bundle(give.map(function (p) { return tradeValue(p); }).concat(ex.gainL || (ex.gain ? [ex.gain] : []))) / bundle(get.map(function (p) { return tradeValue(p); }).concat(ex.lossL || (ex.loss ? [ex.loss] : []))) : 9;
     if (ratio < 1.1 && core) {
-      var cn = core.name.split(' ').slice(-1)[0], lines = ratio < 0.45 ? [
+      var cn = lastOf(core.name), lines = ratio < 0.45 ? [
         'You are joking. ' + cn + ' is the cornerstone of this franchise, and that is not close.',
         'We are building around ' + cn + '. Call back with a massive haul, not this.'
       ] : ratio < 0.8 ? [
@@ -961,7 +961,7 @@
     if (w.length > 40) w.shift();
   }
   function cityOf(teams, id) { var t = teams.filter(function (x) { return x.id === id; })[0]; return t ? t.city : id; }
-  function lastOf(n) { var a = n.split(' '); return a[a.length - 1]; }
+  function lastOf(n) { var a = n.split(' ').filter(Boolean); while (a.length > 1 && /^(jr|sr|ii|iii|iv|v)\.?$/i.test(a[a.length - 1])) a.pop(); return a[a.length - 1]; }
 
   /* One day of league business between the other clubs. */
   function aiMoves(save, myId, teams) {

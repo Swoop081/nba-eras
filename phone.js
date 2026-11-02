@@ -15,7 +15,7 @@
   }
   function setSource(s) { src = s; }
   function nm(id) { var t = src.team(id); return t ? t.name : id; }
-  function last3(name) { return String(name).split(' ').slice(-1)[0]; }
+  function last3(name) { var a = String(name).split(' ').filter(Boolean); while (a.length > 1 && /^(jr|sr|ii|iii|iv|v)\.?$/i.test(a[a.length - 1])) a.pop(); return a[a.length - 1]; }
 
   function maker() {
     var save = src.save(); if (!save || !save.lg) return null;
