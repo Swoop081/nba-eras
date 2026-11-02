@@ -1036,3 +1036,9 @@ body[data-modern="1"] #era-list .card.era .meta{font-size:11px;line-height:1.28}
 body[data-modern="1"] #era-list .card.era.e1 .year,body[data-modern="1"] #era-list .card.era.e2 .year,body[data-modern="1"] #era-list .card.era.e3 .year{font-size:27px}
 body[data-modern="1"] #era-list .card.era.e1,body[data-modern="1"] #era-list .card.era.e2,body[data-modern="1"] #era-list .card.era.e3{padding:7px 14px}
 body[data-modern="1"] #era-list .pg.era-pg{gap:6px}
+body[data-modern="1"] #era-list .pg.era-pg{grid-template-rows:1fr auto auto auto}
+body[data-modern="1"] #era-list .era-photo{grid-row:1 / 3}
+body[data-modern="1"] #era-list .card.era.e1{grid-column:1;grid-row:2;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;padding:10px 14px}
+body[data-modern="1"] #era-list .card.era.e1 .year{font-size:30px}
+body[data-modern="1"] #era-list .card.era.e2{grid-row:3}
+body[data-modern="1"] #era-list .card.era.e3{grid-row:4}
