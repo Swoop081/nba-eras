@@ -1443,7 +1443,7 @@
     } else if (a.type === 'fa') {
       var sal = League.salaryFor(p.ratings.ovr);
       opts.push(['Sign for ' + money(sal) + ' (1 yr)', function () {
-        if (ros.length >= League.MAX_ROSTER) return 'Roster is full.';
+        if (ros.length >= League.maxR(save)) return 'Roster is full.';
         League.sign(save, p, save.myId, sal, 1); rosterCache = {}; persist();
         react('sign', { salary: money(sal) });
         return fx({ fans: 2, team: { m: 1 } }) + ' \u00B7 ' + p.name + ' signed';
@@ -5336,8 +5336,8 @@
         tx.appendChild(el('span', 'meta', (p.pos || '') + ' · ' + p.age + ' · pot ' + p.pot));
         row.appendChild(tx);
         row.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
-        var ask = League.salaryFor(p.ratings.ovr), can = n < League.MAX_ROSTER && League.canSign(save, me.id, ask);
-        var b = el('button', 'btn small', can ? 'Sign ' + money(ask) : (n >= League.MAX_ROSTER ? 'Roster full' : 'Over cap')); b.type = 'button'; b.disabled = !can;
+        var ask = League.salaryFor(p.ratings.ovr), can = n < League.maxR(save) && League.canSign(save, me.id, ask);
+        var b = el('button', 'btn small', can ? 'Sign ' + money(ask) : (n >= League.maxR(save) ? 'Roster full' : 'Over cap')); b.type = 'button'; b.disabled = !can;
         b.addEventListener('click', function () { League.sign(save, p, me.id, ask, 1); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); trade.msg = 'Signed ' + p.name + ' for ' + money(ask) + '.'; renderTrade(); });
         row.appendChild(b);
         list.appendChild(row);
@@ -6341,8 +6341,8 @@
     all.addEventListener('click', function () { list.forEach(function (p) { League.release(save, p); }); persist(); renderOff(); });
     body.appendChild(all);
     list.forEach(function (p) {
-      var can = League.canSign(save, me.id, p.salary) && n < League.MAX_ROSTER;
-      var sg = el('button', 'btn small primary', can ? 'Sign ' + money(p.salary) : (n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap'));
+      var can = League.canSign(save, me.id, p.salary) && n < League.maxR(save);
+      var sg = el('button', 'btn small primary', can ? 'Sign ' + money(p.salary) : (n >= League.maxR(save) ? 'Roster full' : 'Over the cap'));
       sg.type = 'button'; sg.disabled = !can;
       sg.addEventListener('click', function () { League.signRights(save, p); Social.rightsSigned(save, p); persist(); renderOff(); });
       var rl = el('button', 'btn small', 'Let go');
@@ -6364,7 +6364,7 @@
   }
   function faSuitors(f, p, me) {
     var ask = faAsk(p);
-    var list = save.ids.filter(function (id) { return id !== me.id && League.rosterOf(save, id).length < League.MAX_ROSTER && League.canSign(save, id, ask); })
+    var list = save.ids.filter(function (id) { return id !== me.id && League.rosterOf(save, id).length < League.maxR(save) && League.canSign(save, id, ask); })
       .map(function (id) { return { id: id, v: (save.lg.cap - League.payroll(save, id)) / save.lg.cap * 100 + Math.random() * 40 + (League.clubMode(save, id) === 'win' ? 10 : 0) }; })
       .sort(function (a, b) { return b.v - a.v; });
     return list.slice(0, 3).map(function (x) { return x.id; });
@@ -6381,7 +6381,7 @@
     var n = [0, 6, 4, 3, 3, 99][Math.min(f.day, 5)];
     var fas = League.freeAgents(save).filter(function (p) { return p.ratings.ovr >= 40; }).slice(0, n), made = [];
     fas.forEach(function (p) {
-      var ask = faAsk(p), pool = (f.rum[p.id] || []).filter(function (id) { return id !== me.id && League.canSign(save, id, ask) && League.rosterOf(save, id).length < League.MAX_ROSTER; });
+      var ask = faAsk(p), pool = (f.rum[p.id] || []).filter(function (id) { return id !== me.id && League.canSign(save, id, ask) && League.rosterOf(save, id).length < League.maxR(save); });
       if (!pool.length || Math.random() < 0.25) pool = faSuitors(f, p, me);
       if (!pool.length) return;
       var tid = pool[Math.floor(Math.random() * Math.min(2, pool.length))], yrs = faYears(p);
@@ -6440,7 +6440,7 @@
     who.appendChild(el('span', null, n + ' players · payroll ' + money(pay) + ' of ' + money(save.lg.cap)));
     cap.appendChild(who);
     wrap.appendChild(cap);
-    var fa = League.freeAgents(save).slice(0, 7), sel = offSel;
+    var fa = League.freeAgents(save).slice(0, 40), sel = offSel;
     if (!sel || !fa.some(function (p) { return p.id === sel; })) sel = offSel = fa[0] && fa[0].id;
     var board = el('div', 'dn-board');
     fa.forEach(function (p) {
@@ -6474,8 +6474,8 @@
     var btn = function (label, fn, cls) { var b = el('button', cls || 'btn', label); b.type = 'button'; b.addEventListener('click', fn); return b; };
     var p0 = fa.filter(function (p) { return p.id === sel; })[0];
     if (p0) {
-      var ask = faAsk(p0), can = League.canSign(save, me.id, ask) && n < League.MAX_ROSTER;
-      var sb = btn(can ? 'Sign ' + p0.name + ' · ' + money(ask) : n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap', function () {
+      var ask = faAsk(p0), can = League.canSign(save, me.id, ask) && n < League.maxR(save);
+      var sb = btn(can ? 'Sign ' + p0.name + ' · ' + money(ask) : n >= League.maxR(save) ? 'Roster full' : 'Over the cap', function () {
         var yrs = faYears(p0); League.sign(save, p0, me.id, ask, yrs); Social.faSigned(save, p0, money(ask), yrs);
         League.wire(save, 'You sign ' + p0.name + ': ' + yrs + ' years, ' + money(ask));
         f.log.unshift({ pid: p0.id, team: me.id, salary: ask, yrs: yrs, day: f.day, ovr: p0.ratings.ovr }); persist(); offSel = null; renderOff();
