@@ -1493,6 +1493,7 @@
     if (Social.has(save.year)) Social.day(save, results, results.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     cupNews();
+    return results;
     // a day without our game still gets its scores, shown on the hub until the next day is played
     var mineToday = results.some(function (g) { return g.home === save.myId || g.away === save.myId; });
     save.rest = null;
@@ -1555,6 +1556,19 @@
     });
   }
 
+  /* a night without our game: the front page leads with the marquee matchup between the best clubs playing */
+  function restPage(rs) {
+    var pct = function (id) { var r = save.rec[id]; return r.w + r.l ? r.w / (r.w + r.l) : 0.5; };
+    var best = null, bs = -1;
+    rs.forEach(function (g) { var s = pct(g.home) + pct(g.away) + (teamRating(g.home) + teamRating(g.away)) / 1000; if (s > bs) { bs = s; best = g; } });
+    if (!best) return;
+    var hw = best.hs > best.as, wid = hw ? best.home : best.away, lid = hw ? best.away : best.home;
+    var me = teamById(wid), opp = teamById(lid);
+    var dayGames = rs.map(function (g) { return { home: g.home, away: g.away, hs: g.hs, as: g.as, lines: g.lines }; });
+    var inj = rs.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []);
+    var before = {};
+    save.pending = [Events.restPaper(save, { me: me, opp: opp, res: { homeLines: hw ? best.lines.h : best.lines.a, awayLines: hw ? best.lines.a : best.lines.h }, us: Math.max(best.hs, best.as), them: Math.min(best.hs, best.as), label: 'Marquee game', seriesLine: '', day: { games: dayGames, inj: inj }, before: before, teamOf: teamById, standing: '' })];
+  }
   /* the scoreboard for a day our club did not play */
   function restScores() {
     var r = save.rest; if (!r || !r.games || !r.games.length) return;
@@ -1576,7 +1590,13 @@
   function playNext() {
     if (save.pending && save.pending.length) { openEvents(); return; }
     var mine = Season.myNext(save);
-    if (!mine) { simDay(); persist(); renderSeason(); if (modernUI()) restScores(); return; }
+    if (!mine) {
+      var rs = simDay();
+      if (modernUI() && rs && rs.length) { try { restPage(rs); } catch (err) { save.pending = []; } }
+      persist();
+      if (save.pending && save.pending.length) openEvents(); else renderSeason();
+      return;
+    }
     var oppId = mine.home === save.myId ? mine.away : mine.home;
     var me = teamById(save.myId), opp = teamById(oppId);
     var label = save.phase === 'regular'

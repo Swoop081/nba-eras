@@ -327,7 +327,7 @@
         var s = l.s; return { id: l.id, name: l.name, pts: s.pts, reb: (s.orb || 0) + (s.drb || 0), ast: s.ast, fg: s.fg + '-' + s.fga };
       }) };
     }
-    out.boxFull = [boxFull(ctx.res.homeLines, ctx.me), boxFull(ctx.res.awayLines, ctx.opp)];
+    out.boxFull = ctx.rest ? [] : [boxFull(ctx.res.homeLines, ctx.me), boxFull(ctx.res.awayLines, ctx.opp)];
     // the night's best individual performances, from every game
     var perfSeen = {}, perf = [];
     function addPerf(x, tag) {
@@ -379,8 +379,8 @@
       if (m <= 3) briefs.push(tag(rnd([{ h: 'Down to the wire', t: names(w) + ' held off ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Nail-biter', t: names(l2) + ' had the last look but ' + names(w) + ' survived, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Late drama', t: 'It went to the final possession before ' + names(w) + ' edged ' + names(l2) + '.' }]), w));
       else if (m >= 18) briefs.push(tag(rnd([{ h: 'Rout', t: names(w) + ' ran ' + names(l2) + ' off the floor, ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }, { h: 'Blowout', t: names(l2) + ' never got going in a ' + m + '-point loss to ' + names(w) + '.' }, { h: 'No contest', t: names(w) + ' by ' + m + '. ' + names(l2) + ' will want this one back.' }, { h: 'Statement', t: names(w) + ' made a point against ' + names(l2) + ', ' + Math.max(g.hs, g.as) + '-' + Math.min(g.hs, g.as) + '.' }]), w));
     });
-    if (margin <= 3) briefs.unshift({ h: 'Down to the wire', t: 'Our own game was decided by ' + (margin === 1 ? 'a single point' : ordinal(margin) + ' points') + '.', tid: ctx.me.id });
-    else if (margin >= 18) briefs.unshift({ h: 'Rout', t: (won ? ctx.me.city : ctx.opp.city) + ' won by ' + margin + '.', tid: won ? ctx.me.id : ctx.opp.id });
+    if (ctx.rest) {} else if (margin <= 3) briefs.unshift({ h: 'Down to the wire', t: 'Our own game was decided by ' + (margin === 1 ? 'a single point' : ordinal(margin) + ' points') + '.', tid: ctx.me.id });
+    else if (ctx.rest) {} else if (margin >= 18) briefs.unshift({ h: 'Rout', t: (won ? ctx.me.city : ctx.opp.city) + ' won by ' + margin + '.', tid: won ? ctx.me.id : ctx.opp.id });
     if (regular) {
       var riv = null;
       day.forEach(function (g) {
@@ -421,25 +421,38 @@
 
     // injuries
     var inj = (ctx.day.inj || []).map(function (i) { return i.name + ' (' + names(i.team) + ') was hurt and is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + '.'; });
-    ctx.rosterAll.filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) {
+    (ctx.rest ? [] : ctx.rosterAll).filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) {
       inj.push(p.name + ' (' + ctx.me.city + ') remains on the injured list, ' + p.inj + ' more ' + (p.inj === 1 ? 'game' : 'games') + '.');
     });
     out.injuries = inj.slice(0, 5);
     var injIds = (ctx.day.inj || []).map(function (i) { return { pid: i.id, tid: i.team }; });
-    ctx.rosterAll.filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) { injIds.push({ pid: p.id, tid: ctx.me.id }); });
+    (ctx.rest ? [] : ctx.rosterAll).filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) { injIds.push({ pid: p.id, tid: ctx.me.id }); });
     out.injIds = injIds.slice(0, 5);
 
     // standings box
     var stand = Season.standings(save);
     out.table = Object.keys(stand).map(function (d) {
-      return { div: d, rows: stand[d].slice(0, 4).map(function (r) { return { city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === ctx.me.id }; }) };
+      return { div: d, rows: stand[d].slice(0, 4).map(function (r) { return { city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === save.myId }; }) };
     });
     // every club, grouped, with our group first
-    var myDiv = save.division[ctx.me.id];
+    var myDiv = save.division[save.myId];
     out.tableFull = Object.keys(stand).sort(function (a, b) { return (b === myDiv) - (a === myDiv); }).map(function (d) {
-      return { div: d, rows: stand[d].map(function (r) { return { id: r.id, city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === ctx.me.id }; }) };
+      return { div: d, rows: stand[d].map(function (r) { return { id: r.id, city: names(r.id), w: r.w, l: r.l, gb: r.gb, me: r.id === save.myId }; }) };
     });
     return out;
+  }
+
+  /* A day without our game: the front page covers the marquee game and the rest of the night. */
+  function restPaper(save, ctx) {
+    var v = voice(save.year);
+    ctx.rest = true; ctx.rosterAll = [];
+    var margin = Math.abs(ctx.us - ctx.them), won = ctx.us > ctx.them;
+    var star = ctx.res.homeLines.slice().sort(function (a, b) { return b.s.pts - a.s.pts; })[0];
+    var pool = won ? (margin >= 15 ? v.blow : margin <= 3 ? v.close : v.win) : (margin >= 15 ? v.lblow : margin <= 3 ? v.lclose : v.loss);
+    var headline = fill(rnd(pool), { C: ctx.me.city, O: ctx.opp.city, us: ctx.us, them: ctx.them, star: last(star.name), pts: star.s.pts });
+    var pp = paper(save, ctx, headline, v);
+    pp.deck = 'The marquee game of the night.';
+    return pp;
   }
 
   /* ---------- generation ---------- */
@@ -630,5 +643,5 @@
     return { morale: clamp(avg), fans: m.fans, coach: m.coach };
   }
 
-  root.Events = { generate: generate, afterGame: afterGame, apply: apply, moraleRoster: moraleRoster, summary: summary, mood: mood, pm: pm, dateFor: dateFor };
+  root.Events = { generate: generate, restPaper: restPaper, afterGame: afterGame, apply: apply, moraleRoster: moraleRoster, summary: summary, mood: mood, pm: pm, dateFor: dateFor };
 })(window);
