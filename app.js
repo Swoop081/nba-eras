@@ -2856,8 +2856,8 @@
         else if (!isNum) st = { bg: '#E03A3E', fg: '#FFFFFF', trim: '#FFFFFF', mark: '', nm: '#FFFFFF' };
         else st = { bg: '#FFFFFF', fg: '#E03A3E', trim: '#E03A3E', mark: 'ATLANTA HAWKS' };
       } else if (!isNum) st = { bg: c1, fg: c2, trim: c2, mark: '', nm: c2 };
-      var JS = JERSEYS[mid];
-      if (JS && isNum) {
+      var JS = JERSEYS[mid] || { body: c1, trim: c2, ink: c2, num: c2 };
+      if (isNum) {
         var gid = 'ar' + Math.floor(Math.random() * 1e9), s2 = sur.replace('&', '&amp;'), fz = s2.length > 10 ? 10 : s2.length > 7 ? 12 : 14;
         var yrs = JS.years && JS.years[sur + num] || '', hof = yrs && /\*$/.test(yrs), ytxt = yrs.replace(/\*$/, '');
         var svg = '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true"><defs><path id="' + gid + '" d="M30 52 Q60 36 90 52"/></defs>' +
@@ -2870,6 +2870,12 @@
           '<text x="60" y="' + (ytxt ? 94 : num.length > 1 ? 106 : 108) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + (num.length > 1 ? 46 : 54) + '" fill="' + JS.num + '"' + (JS.numStroke ? ' stroke="' + JS.numStroke + '" stroke-width="3" paint-order="stroke"' : '') + '>' + num + '</text>';
         if (ytxt) svg += '<text x="60" y="116" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="11" fill="' + JS.ink + '">' + ytxt + '</text>' + (hof ? '<text x="60" y="128" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="700" font-size="6.5" letter-spacing=".5" fill="' + JS.ink + '">HALL OF FAME</text>' : '');
         j.insertAdjacentHTML('beforeend', svg + '</svg>');
+        // a real photographed jersey, once supplied, replaces the drawn one: assets/jerseys/<team>/<number>.webp
+        (function (jj) {
+          var im = new Image(); im.className = 'jim';
+          im.onload = function () { var sv = jj.querySelector('.jsv'); if (sv) sv.remove(); jj.appendChild(im); };
+          im.src = 'assets/jerseys/' + mid + '/' + num + '.webp';
+        })(j);
         row2.appendChild(j); return;
       }
       var bn = el('div', 'rb');
