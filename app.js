@@ -4591,8 +4591,9 @@
           mid.appendChild(sub);
           r.appendChild(mid);
           var st = el('div', 'pf-st');
-          st.appendChild(el('b', null, String(x.pts)));
-          st.appendChild(el('small', null, x.reb + ' reb · ' + x.ast + ' ast · ' + x.fg + '-' + x.fga));
+          var sb = el('b', null, String(x.pts)); sb.appendChild(el('span', 'pf-rest', '/' + x.reb + '/' + x.ast));
+          st.appendChild(sb);
+          st.appendChild(el('small', null, x.fg + '-' + x.fga + ' FG'));
           r.appendChild(st);
           pf.appendChild(r);
         });

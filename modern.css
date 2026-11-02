@@ -889,3 +889,4 @@ body[data-modern="1"] #screen-live #live-dock{padding-bottom:calc(4px + env(safe
 /* roster: depth chart and free agents share one slim row so the five starters fit on the first page */
 body[data-modern="1"] .roster-btns{display:flex;gap:8px}
 body[data-modern="1"] .roster-btns .btn{flex:1;min-height:0;padding:9px 8px;font-size:14px;margin:0}
+body[data-modern="1"] .pf-st .pf-rest{font-size:.62em;opacity:.85;margin-left:1px;letter-spacing:0}
