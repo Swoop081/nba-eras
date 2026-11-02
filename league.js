@@ -52,12 +52,13 @@
   /* ---------- creation ---------- */
   /* Opening night: every club carries the same number of players. Extras go to the free-agent pool; short clubs sign from it. */
   function openingRosters(lg, teams) {
+    var real = lg.year === 2026;   /* the present day: every club already carries its real 14-16 players, nobody is trimmed or topped up */
     teams.forEach(function (t) {
       lg.players.filter(function (p) { return p.team === t.id && p.status === 'active'; })
         .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })
-        .slice(OPENING_ROSTER).forEach(function (p) { p.team = null; });
+        .slice(real ? MAX_ROSTER : OPENING_ROSTER).forEach(function (p) { p.team = null; });
     });
-    var guard = 0, short = true;
+    var guard = 0, short = !real;
     while (short && guard++ < 40) {
       short = false;
       teams.forEach(function (t) {
@@ -985,7 +986,8 @@
       var t = others[Math.floor(Math.random() * others.length)];
       var roster = rosterOf(save, t.id), hurt = roster.filter(function (p) { return p.inj > 3; }).length;
       if (roster.length < MAX_ROSTER && (roster.length < 13 || hurt >= 2)) {
-        var fa = freeAgents(save).filter(function (p) { return p.ratings.ovr >= 45 && canSign(save, t.id, salaryFor(p.ratings.ovr)); })[0];
+        var fas = freeAgents(save).filter(function (p) { return (p.ratings.ovr >= 45 || p.tw === t.id) && canSign(save, t.id, salaryFor(p.ratings.ovr)); });
+        var fa = fas.filter(function (p) { return p.tw === t.id; })[0] || fas.filter(function (p) { return !p.tw || p.tw === t.id; })[0] || fas[0];   /* a club calls up its own two-way player first */
         if (fa) {
           sign(save, fa, t.id, salaryFor(fa.ratings.ovr), 1);
           wire(save, t.city + ' sign free agent ' + fa.name + (hurt >= 2 ? ' to cover injuries.' : '.'));

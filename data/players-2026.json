@@ -3442,8 +3442,7 @@
     "s": 5679,
     "y": 4,
     "o": "none"
-   },
-   "st": 1
+   }
   },
   {
    "id": "tari-eason",
@@ -4297,8 +4296,7 @@
     "s": 8787,
     "y": 4,
     "o": "team"
-   },
-   "inj": 3
+   }
   },
   {
    "id": "max-christie",
@@ -5145,8 +5143,7 @@
     "y": 4,
     "o": "team"
    },
-   "st": 1,
-   "inj": 5
+   "st": 1
   },
   {
    "id": "moussa-diabate",
@@ -5742,8 +5739,7 @@
     "s": 4630,
     "y": 3,
     "o": "player"
-   },
-   "st": 1
+   }
   },
   {
    "id": "terrence-shannon-jr",
@@ -6397,7 +6393,7 @@
    "name": "Josh Dix",
    "age": 22,
    "pos": "G",
-   "teamId": "oklahoma-city-thunder",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
     "ovr": 55,
@@ -6413,7 +6409,8 @@
     "drb": 17,
     "tov": 43,
     "fou": 43
-   }
+   },
+   "tw": "oklahoma-city-thunder"
   },
   {
    "id": "sidy-cissoko",
@@ -6533,7 +6530,7 @@
    "name": "Chaney Johnson",
    "age": 24,
    "pos": "G-F",
-   "teamId": "brooklyn-nets",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 54,
@@ -6554,7 +6551,8 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "brooklyn-nets"
   },
   {
    "id": "tre-jones",
@@ -7262,7 +7260,7 @@
    "name": "Bryce Hopkins",
    "age": 24,
    "pos": "F",
-   "teamId": "denver-nuggets",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 52,
@@ -7278,7 +7276,8 @@
     "drb": 26,
     "tov": 17,
     "fou": 36
-   }
+   },
+   "tw": "denver-nuggets"
   },
   {
    "id": "brandon-williams",
@@ -7313,7 +7312,7 @@
    "name": "Graham Ike",
    "age": 24,
    "pos": "F-C",
-   "teamId": "golden-state-warriors",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
     "ovr": 52,
@@ -7329,7 +7328,8 @@
     "drb": 34,
     "tov": 39,
     "fou": 13
-   }
+   },
+   "tw": "golden-state-warriors"
   },
   {
    "id": "larry-nance-jr",
@@ -8008,7 +8008,7 @@
    "name": "Tobe Awaka",
    "age": 22,
    "pos": "F",
-   "teamId": "chicago-bulls",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 50,
@@ -8029,7 +8029,8 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "chicago-bulls"
   },
   {
    "id": "morez-johnson-jr",
@@ -8064,7 +8065,7 @@
    "name": "Walter Clayton Jr.",
    "age": 23,
    "pos": "G",
-   "teamId": "dallas-mavericks",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 50,
@@ -8085,7 +8086,8 @@
     "s": 4191,
     "y": 3,
     "o": "team"
-   }
+   },
+   "tw": "dallas-mavericks"
   },
   {
    "id": "gary-payton-ii",
@@ -8372,7 +8374,7 @@
    "name": "Jonathan Mogbo",
    "age": 24,
    "pos": "F",
-   "teamId": "sacramento-kings",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
     "ovr": 50,
@@ -8388,7 +8390,8 @@
     "drb": 28,
     "tov": 33,
     "fou": 25
-   }
+   },
+   "tw": "sacramento-kings"
   },
   {
    "id": "allen-graves",
@@ -8591,7 +8594,7 @@
    "name": "Oscar Tshiebwe",
    "age": 26,
    "pos": "F-C",
-   "teamId": "houston-rockets",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 49,
@@ -8612,14 +8615,15 @@
     "s": 2449,
     "y": 2,
     "o": "none"
-   }
+   },
+   "tw": "houston-rockets"
   },
   {
    "id": "jalen-slawson",
    "name": "Jalen Slawson",
    "age": 26,
    "pos": "F",
-   "teamId": "indiana-pacers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 49,
@@ -8640,7 +8644,8 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "indiana-pacers"
   },
   {
    "id": "ben-sheppard",
@@ -8815,7 +8820,7 @@
    "name": "Jaylin Sellers",
    "age": 23,
    "pos": "G",
-   "teamId": "chicago-bulls",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 48,
@@ -8836,7 +8841,8 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "chicago-bulls"
   },
   {
    "id": "baba-miller",
@@ -9347,7 +9353,7 @@
    "name": "PJ Hall",
    "age": 24,
    "pos": "C",
-   "teamId": "charlotte-hornets",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
     "ovr": 46,
@@ -9368,14 +9374,15 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "charlotte-hornets"
   },
   {
    "id": "jordan-hawkins",
    "name": "Jordan Hawkins",
    "age": 24,
    "pos": "G",
-   "teamId": "chicago-bulls",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
     "ovr": 46,
@@ -9396,14 +9403,15 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "chicago-bulls"
   },
   {
    "id": "cam-whitmore",
    "name": "Cam Whitmore",
    "age": 22,
    "pos": "F",
-   "teamId": "denver-nuggets",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 46,
@@ -9424,7 +9432,8 @@
     "s": 1819,
     "y": 3,
     "o": "none"
-   }
+   },
+   "tw": "denver-nuggets"
   },
   {
    "id": "taurean-prince",
@@ -9487,7 +9496,7 @@
    "name": "LJ Cryer",
    "age": 24,
    "pos": "G",
-   "teamId": "golden-state-warriors",
+   "teamId": null,
    "hgt": 72,
    "ratings": {
     "ovr": 46,
@@ -9503,7 +9512,8 @@
     "drb": 3,
     "tov": 19,
     "fou": 23
-   }
+   },
+   "tw": "golden-state-warriors"
   },
   {
    "id": "steven-adams",
@@ -9650,7 +9660,7 @@
    "name": "Duop Reath",
    "age": 30,
    "pos": "C",
-   "teamId": "phoenix-suns",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
     "ovr": 46,
@@ -9666,7 +9676,8 @@
     "drb": 37,
     "tov": 12,
     "fou": 3
-   }
+   },
+   "tw": "phoenix-suns"
   },
   {
    "id": "nique-clifford",
@@ -9813,7 +9824,7 @@
    "name": "Jalen Pickett",
    "age": 26,
    "pos": "G",
-   "teamId": "la-clippers",
+   "teamId": null,
    "hgt": 74,
    "ratings": {
     "ovr": 45,
@@ -9829,7 +9840,8 @@
     "drb": 3,
     "tov": 16,
     "fou": 17
-   }
+   },
+   "tw": "la-clippers"
   },
   {
    "id": "jaden-hardy",
@@ -9892,7 +9904,7 @@
    "name": "Colin Castleton",
    "age": 26,
    "pos": "C",
-   "teamId": "orlando-magic",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
     "ovr": 45,
@@ -9908,14 +9920,15 @@
     "drb": 37,
     "tov": 10,
     "fou": 3
-   }
+   },
+   "tw": "orlando-magic"
   },
   {
    "id": "alex-morales",
    "name": "Alex Morales",
    "age": 28,
    "pos": "G",
-   "teamId": "orlando-magic",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
     "ovr": 45,
@@ -9931,7 +9944,8 @@
     "drb": 3,
     "tov": 19,
     "fou": 20
-   }
+   },
+   "tw": "orlando-magic"
   },
   {
    "id": "rasheer-fleming",
@@ -9966,7 +9980,7 @@
    "name": "Yang Hansen",
    "age": 21,
    "pos": "C",
-   "teamId": "portland-trail-blazers",
+   "teamId": null,
    "hgt": 85,
    "ratings": {
     "ovr": 45,
@@ -10185,7 +10199,7 @@
    "name": "Jett Howard",
    "age": 23,
    "pos": "G",
-   "teamId": "dallas-mavericks",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
     "ovr": 44,
@@ -10201,7 +10215,8 @@
     "drb": 3,
     "tov": 13,
     "fou": 13
-   }
+   },
+   "tw": "dallas-mavericks"
   },
   {
    "id": "zeke-nnaji",
@@ -10236,7 +10251,7 @@
    "name": "Cam Christie",
    "age": 21,
    "pos": "G",
-   "teamId": "la-clippers",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
     "ovr": 44,
@@ -10257,7 +10272,8 @@
     "s": 2296,
     "y": 3,
     "o": "team"
-   }
+   },
+   "tw": "la-clippers"
   },
   {
    "id": "bryce-mcgowens",
@@ -10292,7 +10308,7 @@
    "name": "Brooks Barnhizer",
    "age": 24,
    "pos": "G",
-   "teamId": "oklahoma-city-thunder",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
     "ovr": 44,
@@ -10308,14 +10324,15 @@
     "drb": 3,
     "tov": 20,
     "fou": 21
-   }
+   },
+   "tw": "oklahoma-city-thunder"
   },
   {
    "id": "micah-peavy",
    "name": "Micah Peavy",
    "age": 25,
    "pos": "G-F",
-   "teamId": "oklahoma-city-thunder",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 44,
@@ -10336,7 +10353,8 @@
     "s": 2151,
     "y": 4,
     "o": "team"
-   }
+   },
+   "tw": "oklahoma-city-thunder"
   },
   {
    "id": "labaron-philon-jr",
@@ -10399,7 +10417,7 @@
    "name": "Pat Spencer",
    "age": 30,
    "pos": "G",
-   "teamId": "phoenix-suns",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 44,
@@ -10415,14 +10433,15 @@
     "drb": 3,
     "tov": 15,
     "fou": 17
-   }
+   },
+   "tw": "phoenix-suns"
   },
   {
    "id": "jayson-kent",
    "name": "Jayson Kent",
    "age": 24,
    "pos": "F",
-   "teamId": "portland-trail-blazers",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 44,
@@ -10438,14 +10457,15 @@
     "drb": 13,
     "tov": 19,
     "fou": 11
-   }
+   },
+   "tw": "portland-trail-blazers"
   },
   {
    "id": "john-tonje",
    "name": "John Tonje",
    "age": 25,
    "pos": "G",
-   "teamId": "portland-trail-blazers",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 44,
@@ -10461,14 +10481,15 @@
     "drb": 3,
     "tov": 15,
     "fou": 15
-   }
+   },
+   "tw": "portland-trail-blazers"
   },
   {
    "id": "leaky-black",
    "name": "Leaky Black",
    "age": 27,
    "pos": "F",
-   "teamId": "sacramento-kings",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
     "ovr": 44,
@@ -10484,7 +10505,8 @@
     "drb": 13,
     "tov": 17,
     "fou": 11
-   }
+   },
+   "tw": "sacramento-kings"
   },
   {
    "id": "jordan-mclaughlin",
@@ -10771,7 +10793,7 @@
    "name": "Ryan Nembhard",
    "age": 23,
    "pos": "G",
-   "teamId": "denver-nuggets",
+   "teamId": null,
    "hgt": 71,
    "ratings": {
     "ovr": 43,
@@ -10792,7 +10814,8 @@
     "s": 2151,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "denver-nuggets"
   },
   {
    "id": "tolu-smith",
@@ -10827,7 +10850,7 @@
    "name": "Elijah Harkless",
    "age": 26,
    "pos": "G",
-   "teamId": "detroit-pistons",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 43,
@@ -10843,7 +10866,8 @@
     "drb": 3,
     "tov": 13,
     "fou": 13
-   }
+   },
+   "tw": "detroit-pistons"
   },
   {
    "id": "jaesean-tate",
@@ -10906,7 +10930,7 @@
    "name": "Braden Smith",
    "age": 23,
    "pos": "G",
-   "teamId": "indiana-pacers",
+   "teamId": null,
    "hgt": 71,
    "ratings": {
     "ovr": 43,
@@ -10927,14 +10951,15 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "indiana-pacers"
   },
   {
    "id": "nick-martinelli",
    "name": "Nick Martinelli",
    "age": 22,
    "pos": "F",
-   "teamId": "la-clippers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 43,
@@ -10950,14 +10975,15 @@
     "drb": 12,
     "tov": 15,
     "fou": 9
-   }
+   },
+   "tw": "la-clippers"
   },
   {
    "id": "chris-manon",
    "name": "Chris Mañon",
    "age": 24,
    "pos": "G",
-   "teamId": "los-angeles-lakers",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 43,
@@ -10973,7 +10999,8 @@
     "drb": 3,
     "tov": 12,
     "fou": 12
-   }
+   },
+   "tw": "los-angeles-lakers"
   },
   {
    "id": "taylor-hendricks",
@@ -11092,7 +11119,7 @@
    "name": "Zyon Pullin",
    "age": 25,
    "pos": "G",
-   "teamId": "minnesota-timberwolves",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 43,
@@ -11108,7 +11135,8 @@
     "drb": 3,
     "tov": 7,
     "fou": 7
-   }
+   },
+   "tw": "minnesota-timberwolves"
   },
   {
    "id": "koa-peat",
@@ -11143,7 +11171,7 @@
    "name": "Ja'Kobi Gillespie",
    "age": 22,
    "pos": "G",
-   "teamId": "san-antonio-spurs",
+   "teamId": null,
    "hgt": 72,
    "ratings": {
     "ovr": 43,
@@ -11164,7 +11192,8 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "san-antonio-spurs"
   },
   {
    "id": "jaxson-hayes",
@@ -11227,7 +11256,7 @@
    "name": "Felix Okpara",
    "age": 22,
    "pos": "C",
-   "teamId": "washington-wizards",
+   "teamId": null,
    "hgt": 83,
    "ratings": {
     "ovr": 43,
@@ -11243,7 +11272,8 @@
     "drb": 28,
     "tov": 3,
     "fou": 3
-   }
+   },
+   "tw": "washington-wizards"
   },
   {
    "id": "ben-saraf",
@@ -11334,7 +11364,7 @@
    "name": "Malevy Leons",
    "age": 27,
    "pos": "F",
-   "teamId": "golden-state-warriors",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
     "ovr": 42,
@@ -11350,7 +11380,8 @@
     "drb": 9,
     "tov": 16,
     "fou": 8
-   }
+   },
+   "tw": "golden-state-warriors"
   },
   {
    "id": "isaiah-crawford",
@@ -11525,7 +11556,7 @@
    "name": "Jaden Akins",
    "age": 23,
    "pos": "G",
-   "teamId": "new-york-knicks",
+   "teamId": null,
    "hgt": 74,
    "ratings": {
     "ovr": 42,
@@ -11541,7 +11572,8 @@
     "drb": 3,
     "tov": 6,
     "fou": 6
-   }
+   },
+   "tw": "new-york-knicks"
   },
   {
    "id": "isaiah-collier",
@@ -11688,7 +11720,7 @@
    "name": "Tobi Lawal",
    "age": 23,
    "pos": "F",
-   "teamId": "dallas-mavericks",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 41,
@@ -11704,14 +11736,15 @@
     "drb": 6,
     "tov": 8,
     "fou": 4
-   }
+   },
+   "tw": "dallas-mavericks"
   },
   {
    "id": "isaac-jones",
    "name": "Isaac Jones",
    "age": 26,
    "pos": "F",
-   "teamId": "detroit-pistons",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
     "ovr": 41,
@@ -11727,14 +11760,15 @@
     "drb": 4,
     "tov": 5,
     "fou": 3
-   }
+   },
+   "tw": "detroit-pistons"
   },
   {
    "id": "kobe-brown",
    "name": "Kobe Brown",
    "age": 26,
    "pos": "F",
-   "teamId": "indiana-pacers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 41,
@@ -11755,7 +11789,8 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "indiana-pacers"
   },
   {
    "id": "isaiah-evans",
@@ -11846,7 +11881,7 @@
    "name": "Caleb Love",
    "age": 25,
    "pos": "G",
-   "teamId": "philadelphia-76ers",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 41,
@@ -11862,14 +11897,15 @@
     "drb": 3,
     "tov": 5,
     "fou": 5
-   }
+   },
+   "tw": "philadelphia-76ers"
   },
   {
    "id": "maliq-brown",
    "name": "Maliq Brown",
    "age": 22,
    "pos": "F",
-   "teamId": "san-antonio-spurs",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 41,
@@ -11890,14 +11926,15 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "san-antonio-spurs"
   },
   {
    "id": "david-jones-garcia",
    "name": "David Jones Garcia",
    "age": 24,
    "pos": "F",
-   "teamId": "san-antonio-spurs",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 41,
@@ -11918,14 +11955,15 @@
     "s": 679,
     "y": 1,
     "o": "none"
-   }
+   },
+   "tw": "san-antonio-spurs"
   },
   {
    "id": "reece-beekman",
    "name": "Reece Beekman",
    "age": 24,
    "pos": "G",
-   "teamId": "washington-wizards",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 41,
@@ -11941,7 +11979,8 @@
     "drb": 3,
     "tov": 4,
     "fou": 4
-   }
+   },
+   "tw": "washington-wizards"
   },
   {
    "id": "anthony-gill",
@@ -12632,8 +12671,7 @@
     "y": 1,
     "o": "none"
    },
-   "src": "est",
-   "inj": 12
+   "src": "est"
   },
   {
    "id": "henri-veesaar",
@@ -12662,8 +12700,7 @@
     "y": 4,
     "o": "team"
    },
-   "src": "est",
-   "inj": 75
+   "src": "est"
   },
   {
    "id": "coby-white",
@@ -12775,7 +12812,7 @@
    "name": "Rob Dillingham",
    "age": 22,
    "pos": "G",
-   "teamId": "charlotte-hornets",
+   "teamId": null,
    "hgt": 74,
    "ratings": {
     "ovr": 56,
@@ -13025,8 +13062,7 @@
     "y": 1,
     "o": "none"
    },
-   "src": "est",
-   "inj": 75
+   "src": "est"
   },
   {
    "id": "johni-broome",
@@ -13178,7 +13214,7 @@
    "name": "Otega Oweh",
    "age": 23,
    "pos": "G-F",
-   "teamId": "oklahoma-city-thunder",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 51,
@@ -13207,7 +13243,7 @@
    "name": "Milos Uzan",
    "age": 23,
    "pos": "G",
-   "teamId": "boston-celtics",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 47,
@@ -13236,7 +13272,7 @@
    "name": "Tucker DeVries",
    "age": 25,
    "pos": "F",
-   "teamId": "boston-celtics",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 45,
@@ -13265,7 +13301,7 @@
    "name": "Dalton Knecht",
    "age": 25,
    "pos": "G-F",
-   "teamId": "new-york-knicks",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
     "ovr": 58,
@@ -13287,7 +13323,8 @@
     "y": 1,
     "o": "none"
    },
-   "src": "est"
+   "src": "est",
+   "tw": "new-york-knicks"
   },
   {
    "id": "cameron-carr",
@@ -13389,7 +13426,7 @@
    "name": "Drew Timme",
    "age": 25,
    "pos": "C",
-   "teamId": "phoenix-suns",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
     "ovr": 50,
@@ -13411,7 +13448,8 @@
     "y": 1,
     "o": "none"
    },
-   "src": "est"
+   "src": "est",
+   "tw": "phoenix-suns"
   },
   {
    "id": "ej-liddell",
@@ -14282,7 +14320,7 @@
    "name": "Harrison Ingram",
    "age": 23,
    "pos": "F",
-   "teamId": "utah-jazz",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 46,
@@ -14306,7 +14344,8 @@
     0.0,
     0.0,
     0.0
-   ]
+   ],
+   "tw": "utah-jazz"
   },
   {
    "id": "curtis-jones",
@@ -14902,7 +14941,7 @@
    "name": "Julian Phillips",
    "age": 22,
    "pos": "F",
-   "teamId": "houston-rockets",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 46,
@@ -14926,7 +14965,8 @@
     0.0,
     0.0,
     0.0
-   ]
+   ],
+   "tw": "houston-rockets"
   },
   {
    "id": "mason-plumlee",
@@ -15119,7 +15159,7 @@
    "name": "Malachi Smith",
    "age": 26,
    "pos": "G",
-   "teamId": "toronto-raptors",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
     "ovr": 46,
@@ -15143,7 +15183,8 @@
     0.0,
     0.0,
     0.0
-   ]
+   ],
+   "tw": "toronto-raptors"
   },
   {
    "id": "nick-smith-jr",
@@ -15582,258 +15623,276 @@
   {
    "id": "rayj-dennis",
    "name": "RayJ Dennis",
-   "age": 24,
+   "age": 25,
    "pos": "G",
-   "teamId": "atlanta-hawks",
+   "teamId": null,
    "hgt": 73,
    "ratings": {
-    "ovr": 50,
-    "sco": 13,
-    "sht": 66,
-    "ply": 38,
-    "dur": 65,
-    "stl": 24,
-    "blk": 5,
-    "ft": 35,
-    "tpt": 57,
-    "orb": 5,
-    "drb": 5,
-    "tov": 27,
-    "fou": 37
-   }
+    "ovr": 51,
+    "sco": 18,
+    "sht": 3,
+    "ply": 56,
+    "dur": 78,
+    "stl": 26,
+    "blk": 13,
+    "ft": 62,
+    "tpt": 37,
+    "orb": 13,
+    "drb": 14,
+    "tov": 25,
+    "fou": 39
+   },
+   "stats": "2025-26",
+   "tw": "atlanta-hawks"
   },
   {
    "id": "keshon-gilbert",
    "name": "Keshon Gilbert",
-   "age": 24,
+   "age": 23,
    "pos": "G",
-   "teamId": "atlanta-hawks",
+   "teamId": null,
    "hgt": 75,
    "ratings": {
-    "ovr": 48,
-    "sco": 14,
-    "sht": 9,
-    "ply": 43,
-    "dur": 79,
-    "stl": 23,
-    "blk": 5,
-    "ft": 29,
-    "tpt": 39,
-    "orb": 5,
-    "drb": 5,
-    "tov": 30,
-    "fou": 23
-   }
+    "ovr": 53,
+    "sco": 21,
+    "sht": 33,
+    "ply": 54,
+    "dur": 75,
+    "stl": 38,
+    "blk": 13,
+    "ft": 59,
+    "tpt": 9,
+    "orb": 4,
+    "drb": 11,
+    "tov": 3,
+    "fou": 51
+   },
+   "stats": "2025-26",
+   "tw": "atlanta-hawks"
   },
   {
    "id": "jalen-wilson",
    "name": "Jalen Wilson",
    "age": 25,
    "pos": "F",
-   "teamId": "atlanta-hawks",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
-    "ovr": 52,
-    "sco": 18,
-    "sht": 46,
+    "ovr": 53,
+    "sco": 24,
+    "sht": 22,
     "ply": 17,
-    "dur": 82,
-    "stl": 25,
-    "blk": 20,
-    "ft": 25,
-    "tpt": 26,
-    "orb": 24,
-    "drb": 27,
-    "tov": 30,
-    "fou": 24
-   }
+    "dur": 79,
+    "stl": 27,
+    "blk": 11,
+    "ft": 37,
+    "tpt": 45,
+    "orb": 18,
+    "drb": 33,
+    "tov": 57,
+    "fou": 40
+   },
+   "stats": "2025-26",
+   "tw": "atlanta-hawks"
   },
   {
    "id": "devin-carter",
    "name": "Devin Carter",
    "age": 24,
    "pos": "G",
-   "teamId": "boston-celtics",
+   "teamId": null,
    "hgt": 74,
    "ratings": {
     "ovr": 56,
-    "sco": 33,
-    "sht": 6,
-    "ply": 66,
-    "dur": 79,
-    "stl": 53,
+    "sco": 30,
+    "sht": 3,
+    "ply": 57,
+    "dur": 88,
+    "stl": 50,
     "blk": 12,
-    "ft": 30,
-    "tpt": 49,
-    "orb": 16,
-    "drb": 23,
-    "tov": 22,
-    "fou": 45
+    "ft": 31,
+    "tpt": 13,
+    "orb": 26,
+    "drb": 26,
+    "tov": 34,
+    "fou": 56
    },
-   "inj": 5
+   "stats": "2025-26",
+   "tw": "boston-celtics"
   },
   {
    "id": "dillon-mitchell",
    "name": "Dillon Mitchell",
    "age": 23,
    "pos": "F",
-   "teamId": "boston-celtics",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
-    "ovr": 50,
-    "sco": 16,
-    "sht": 18,
-    "ply": 13,
-    "dur": 79,
-    "stl": 27,
-    "blk": 24,
-    "ft": 37,
-    "tpt": 8,
-    "orb": 25,
-    "drb": 28,
-    "tov": 33,
-    "fou": 25
-   }
+    "ovr": 44,
+    "sco": 6,
+    "sht": 15,
+    "ply": 3,
+    "dur": 83,
+    "stl": 11,
+    "blk": 9,
+    "ft": 23,
+    "tpt": 13,
+    "orb": 11,
+    "drb": 13,
+    "tov": 19,
+    "fou": 11
+   },
+   "stats": "none",
+   "tw": "boston-celtics"
   },
   {
    "id": "amari-williams",
    "name": "Amari Williams",
-   "age": 23,
+   "age": 24,
    "pos": "F-C",
-   "teamId": "boston-celtics",
+   "teamId": null,
    "hgt": 83,
    "ratings": {
-    "ovr": 50,
-    "sco": 11,
-    "sht": 38,
-    "ply": 5,
-    "dur": 73,
-    "stl": 8,
-    "blk": 29,
-    "ft": 40,
-    "tpt": 5,
+    "ovr": 47,
+    "sco": 3,
+    "sht": 27,
+    "ply": 4,
+    "dur": 87,
+    "stl": 4,
+    "blk": 38,
+    "ft": 36,
+    "tpt": 3,
     "orb": 37,
-    "drb": 33,
-    "tov": 19,
-    "fou": 21
-   }
+    "drb": 39,
+    "tov": 3,
+    "fou": 8
+   },
+   "stats": "2025-26",
+   "tw": "boston-celtics"
   },
   {
    "id": "tyler-bilodeau",
    "name": "Tyler Bilodeau",
-   "age": 23,
+   "age": 22,
    "pos": "F",
-   "teamId": "brooklyn-nets",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
-    "ovr": 50,
-    "sco": 19,
-    "sht": 5,
-    "ply": 17,
-    "dur": 77,
-    "stl": 21,
-    "blk": 28,
-    "ft": 35,
-    "tpt": 28,
-    "orb": 32,
-    "drb": 34,
-    "tov": 21,
-    "fou": 37
+    "ovr": 43,
+    "sco": 4,
+    "sht": 13,
+    "ply": 3,
+    "dur": 83,
+    "stl": 9,
+    "blk": 7,
+    "ft": 21,
+    "tpt": 11,
+    "orb": 9,
+    "drb": 11,
+    "tov": 17,
+    "fou": 9
    },
-   "inj": 4
+   "stats": "none",
+   "tw": "brooklyn-nets"
   },
   {
    "id": "joshua-jefferson",
    "name": "Joshua Jefferson",
-   "age": 23,
+   "age": 22,
    "pos": "F",
    "teamId": "brooklyn-nets",
    "hgt": 80,
    "ratings": {
-    "ovr": 50,
-    "sco": 17,
-    "sht": 26,
-    "ply": 17,
-    "dur": 80,
-    "stl": 21,
-    "blk": 16,
-    "ft": 36,
-    "tpt": 5,
-    "orb": 31,
-    "drb": 27,
-    "tov": 9,
-    "fou": 5
-   }
+    "ovr": 45,
+    "sco": 8,
+    "sht": 17,
+    "ply": 5,
+    "dur": 72,
+    "stl": 13,
+    "blk": 11,
+    "ft": 25,
+    "tpt": 15,
+    "orb": 13,
+    "drb": 15,
+    "tov": 21,
+    "fou": 13
+   },
+   "stats": "none"
   },
   {
    "id": "grant-nelson",
    "name": "Grant Nelson",
    "age": 24,
    "pos": "F",
-   "teamId": "brooklyn-nets",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
-    "ovr": 51,
-    "sco": 17,
-    "sht": 37,
-    "ply": 15,
-    "dur": 85,
-    "stl": 21,
-    "blk": 20,
-    "ft": 45,
-    "tpt": 15,
-    "orb": 28,
-    "drb": 25,
-    "tov": 16,
-    "fou": 35
-   }
+    "ovr": 47,
+    "sco": 11,
+    "sht": 28,
+    "ply": 12,
+    "dur": 73,
+    "stl": 17,
+    "blk": 19,
+    "ft": 24,
+    "tpt": 3,
+    "orb": 16,
+    "drb": 20,
+    "tov": 9,
+    "fou": 16
+   },
+   "stats": "2025-26",
+   "tw": "brooklyn-nets"
   },
   {
    "id": "michael-ajayi",
    "name": "Michael Ajayi",
-   "age": 24,
+   "age": 23,
    "pos": "G",
-   "teamId": "charlotte-hornets",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
-    "ovr": 48,
-    "sco": 13,
-    "sht": 11,
-    "ply": 43,
-    "dur": 86,
-    "stl": 23,
-    "blk": 5,
-    "ft": 33,
-    "tpt": 17,
-    "orb": 5,
-    "drb": 5,
-    "tov": 27,
-    "fou": 29
-   }
+    "ovr": 43,
+    "sco": 3,
+    "sht": 10,
+    "ply": 28,
+    "dur": 81,
+    "stl": 11,
+    "blk": 3,
+    "ft": 18,
+    "tpt": 15,
+    "orb": 3,
+    "drb": 3,
+    "tov": 14,
+    "fou": 14
+   },
+   "stats": "none",
+   "tw": "charlotte-hornets"
   },
   {
    "id": "kylan-boswell",
    "name": "Kylan Boswell",
-   "age": 23,
+   "age": 21,
    "pos": "G",
-   "teamId": "charlotte-hornets",
+   "teamId": null,
    "hgt": 73,
    "ratings": {
-    "ovr": 52,
-    "sco": 21,
-    "sht": 30,
-    "ply": 48,
-    "dur": 89,
-    "stl": 31,
-    "blk": 5,
-    "ft": 38,
-    "tpt": 35,
-    "orb": 5,
-    "drb": 11,
-    "tov": 34,
-    "fou": 34
+    "ovr": 43,
+    "sco": 3,
+    "sht": 7,
+    "ply": 25,
+    "dur": 83,
+    "stl": 8,
+    "blk": 3,
+    "ft": 15,
+    "tpt": 12,
+    "orb": 3,
+    "drb": 3,
+    "tov": 11,
+    "fou": 11
    },
-   "inj": 8
+   "stats": "none",
+   "tw": "charlotte-hornets"
   },
   {
    "id": "thomas-bryant",
@@ -15843,158 +15902,169 @@
    "teamId": "cleveland-cavaliers",
    "hgt": 81,
    "ratings": {
-    "ovr": 57,
-    "sco": 30,
-    "sht": 39,
-    "ply": 20,
-    "dur": 73,
-    "stl": 27,
-    "blk": 47,
-    "ft": 47,
-    "tpt": 28,
-    "orb": 53,
-    "drb": 51,
-    "tov": 43,
-    "fou": 27
-   }
+    "ovr": 55,
+    "sco": 19,
+    "sht": 56,
+    "ply": 3,
+    "dur": 76,
+    "stl": 10,
+    "blk": 46,
+    "ft": 44,
+    "tpt": 34,
+    "orb": 52,
+    "drb": 52,
+    "tov": 51,
+    "fou": 22
+   },
+   "stats": "2025-26"
   },
   {
    "id": "khalifa-diop",
    "name": "Khalifa Diop",
-   "age": 23,
+   "age": 24,
    "pos": "C",
    "teamId": "cleveland-cavaliers",
    "hgt": 82,
    "ratings": {
-    "ovr": 47,
-    "sco": 5,
-    "sht": 23,
-    "ply": 5,
-    "dur": 74,
-    "stl": 5,
-    "blk": 35,
-    "ft": 43,
-    "tpt": 7,
-    "orb": 39,
-    "drb": 38,
-    "tov": 13,
-    "fou": 5
-   }
+    "ovr": 45,
+    "sco": 3,
+    "sht": 9,
+    "ply": 3,
+    "dur": 83,
+    "stl": 3,
+    "blk": 30,
+    "ft": 17,
+    "tpt": 3,
+    "orb": 35,
+    "drb": 35,
+    "tov": 9,
+    "fou": 3
+   },
+   "stats": "none"
   },
   {
    "id": "tristan-enaruna",
    "name": "Tristan Enaruna",
    "age": 25,
    "pos": "F",
-   "teamId": "cleveland-cavaliers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
-    "ovr": 47,
-    "sco": 8,
-    "sht": 41,
-    "ply": 7,
-    "dur": 76,
-    "stl": 18,
-    "blk": 17,
-    "ft": 28,
-    "tpt": 18,
-    "orb": 19,
-    "drb": 21,
-    "tov": 23,
-    "fou": 16
-   }
+    "ovr": 48,
+    "sco": 10,
+    "sht": 24,
+    "ply": 11,
+    "dur": 72,
+    "stl": 24,
+    "blk": 10,
+    "ft": 30,
+    "tpt": 7,
+    "orb": 24,
+    "drb": 15,
+    "tov": 37,
+    "fou": 52
+   },
+   "stats": "2025-26",
+   "tw": "cleveland-cavaliers"
   },
   {
    "id": "riley-minix",
    "name": "Riley Minix",
-   "age": 23,
+   "age": 26,
    "pos": "F",
-   "teamId": "cleveland-cavaliers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
     "ovr": 46,
-    "sco": 10,
-    "sht": 25,
-    "ply": 7,
-    "dur": 84,
-    "stl": 16,
-    "blk": 12,
-    "ft": 5,
-    "tpt": 5,
-    "orb": 15,
-    "drb": 16,
-    "tov": 22,
-    "fou": 15
-   }
+    "sco": 6,
+    "sht": 43,
+    "ply": 4,
+    "dur": 74,
+    "stl": 11,
+    "blk": 9,
+    "ft": 30,
+    "tpt": 19,
+    "orb": 10,
+    "drb": 8,
+    "tov": 24,
+    "fou": 24
+   },
+   "stats": "2025-26",
+   "tw": "cleveland-cavaliers"
   },
   {
-   "id": "nae-qwan-tomlin",
+   "id": "naeqwan-tomlin",
    "name": "Nae'Qwan Tomlin",
    "age": 25,
    "pos": "F",
    "teamId": "cleveland-cavaliers",
    "hgt": 80,
    "ratings": {
-    "ovr": 46,
-    "sco": 8,
-    "sht": 18,
-    "ply": 6,
-    "dur": 85,
-    "stl": 12,
-    "blk": 14,
-    "ft": 26,
-    "tpt": 5,
-    "orb": 15,
-    "drb": 17,
-    "tov": 21,
-    "fou": 14
-   }
+    "ovr": 54,
+    "sco": 18,
+    "sht": 22,
+    "ply": 14,
+    "dur": 72,
+    "stl": 44,
+    "blk": 56,
+    "ft": 34,
+    "tpt": 3,
+    "orb": 63,
+    "drb": 26,
+    "tov": 69,
+    "fou": 19
+   },
+   "stats": "2025-26"
   },
   {
    "id": "ernest-udeh-jr",
    "name": "Ernest Udeh Jr.",
-   "age": 23,
+   "age": 22,
    "pos": "C",
-   "teamId": "cleveland-cavaliers",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
-    "ovr": 50,
-    "sco": 12,
-    "sht": 46,
-    "ply": 5,
-    "dur": 66,
-    "stl": 5,
-    "blk": 45,
-    "ft": 24,
-    "tpt": 5,
-    "orb": 48,
-    "drb": 50,
-    "tov": 25,
-    "fou": 39
-   }
+    "ovr": 44,
+    "sco": 3,
+    "sht": 5,
+    "ply": 3,
+    "dur": 84,
+    "stl": 3,
+    "blk": 26,
+    "ft": 13,
+    "tpt": 3,
+    "orb": 31,
+    "drb": 31,
+    "tov": 5,
+    "fou": 3
+   },
+   "stats": "none",
+   "tw": "cleveland-cavaliers"
   },
   {
    "id": "ugonna-onyenso",
    "name": "Ugonna Onyenso",
-   "age": 23,
+   "age": 22,
    "pos": "C",
-   "teamId": "detroit-pistons",
+   "teamId": null,
    "hgt": 83,
    "ratings": {
-    "ovr": 47,
-    "sco": 8,
-    "sht": 16,
-    "ply": 5,
-    "dur": 83,
-    "stl": 5,
-    "blk": 40,
-    "ft": 26,
-    "tpt": 5,
-    "orb": 44,
-    "drb": 42,
+    "ovr": 44,
+    "sco": 3,
+    "sht": 5,
+    "ply": 3,
+    "dur": 84,
+    "stl": 3,
+    "blk": 26,
+    "ft": 13,
+    "tpt": 3,
+    "orb": 31,
+    "drb": 31,
     "tov": 5,
-    "fou": 24
-   }
+    "fou": 3
+   },
+   "stats": "none",
+   "tw": "detroit-pistons"
   },
   {
    "id": "jimmy-butler",
@@ -16004,26 +16074,22 @@
    "teamId": "golden-state-warriors",
    "hgt": 78,
    "ratings": {
-    "ovr": 71,
-    "sco": 57,
-    "sht": 64,
-    "ply": 52,
-    "dur": 83,
-    "stl": 58,
-    "blk": 47,
-    "ft": 60,
-    "tpt": 69,
-    "orb": 55,
-    "drb": 56,
-    "tov": 70,
-    "fou": 76
+    "ovr": 75,
+    "sco": 70,
+    "sht": 94,
+    "ply": 66,
+    "dur": 58,
+    "stl": 61,
+    "blk": 24,
+    "ft": 77,
+    "tpt": 37,
+    "orb": 66,
+    "drb": 34,
+    "tov": 73,
+    "fou": 91
    },
-   "contract": {
-    "s": 54126,
-    "y": 2,
-    "o": "player"
-   },
-   "inj": 35
+   "stats": "2025-26",
+   "st": 1
   },
   {
    "id": "moses-moody",
@@ -16033,26 +16099,21 @@
    "teamId": "golden-state-warriors",
    "hgt": 77,
    "ratings": {
-    "ovr": 61,
-    "sco": 38,
-    "sht": 25,
-    "ply": 62,
-    "dur": 84,
-    "stl": 50,
-    "blk": 20,
-    "ft": 65,
-    "tpt": 48,
-    "orb": 20,
-    "drb": 34,
-    "tov": 54,
-    "fou": 55
+    "ovr": 62,
+    "sco": 43,
+    "sht": 56,
+    "ply": 25,
+    "dur": 81,
+    "stl": 47,
+    "blk": 42,
+    "ft": 52,
+    "tpt": 69,
+    "orb": 26,
+    "drb": 19,
+    "tov": 68,
+    "fou": 57
    },
-   "contract": {
-    "s": 12000,
-    "y": 2,
-    "o": "player"
-   },
-   "inj": 22
+   "stats": "2025-26"
   },
   {
    "id": "kristaps-porzingis",
@@ -16062,302 +16123,322 @@
    "teamId": "golden-state-warriors",
    "hgt": 86,
    "ratings": {
-    "ovr": 68,
-    "sco": 45,
-    "sht": 63,
-    "ply": 41,
-    "dur": 71,
-    "stl": 39,
-    "blk": 62,
-    "ft": 80,
-    "tpt": 35,
-    "orb": 76,
-    "drb": 74,
-    "tov": 40,
-    "fou": 53
+    "ovr": 72,
+    "sco": 66,
+    "sht": 56,
+    "ply": 47,
+    "dur": 75,
+    "stl": 33,
+    "blk": 76,
+    "ft": 77,
+    "tpt": 54,
+    "orb": 61,
+    "drb": 67,
+    "tov": 77,
+    "fou": 33
    },
-   "contract": {
-    "s": 30731,
-    "y": 2,
-    "o": "player"
-   },
-   "inj": 14
+   "stats": "2025-26",
+   "st": 1
   },
   {
    "id": "quadir-copeland",
    "name": "Quadir Copeland",
-   "age": 22,
+   "age": 23,
    "pos": "G",
-   "teamId": "houston-rockets",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
-    "ovr": 47,
-    "sco": 10,
-    "sht": 15,
-    "ply": 36,
-    "dur": 78,
-    "stl": 19,
-    "blk": 5,
-    "ft": 27,
-    "tpt": 37,
-    "orb": 5,
-    "drb": 5,
-    "tov": 23,
-    "fou": 23
-   }
+    "ovr": 44,
+    "sco": 4,
+    "sht": 13,
+    "ply": 31,
+    "dur": 81,
+    "stl": 14,
+    "blk": 3,
+    "ft": 21,
+    "tpt": 18,
+    "orb": 3,
+    "drb": 3,
+    "tov": 17,
+    "fou": 17
+   },
+   "stats": "none",
+   "tw": "houston-rockets"
   },
   {
    "id": "arthur-kaluma",
    "name": "Arthur Kaluma",
    "age": 24,
    "pos": "F",
-   "teamId": "los-angeles-lakers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
-    "ovr": 49,
-    "sco": 13,
-    "sht": 37,
-    "ply": 8,
-    "dur": 84,
-    "stl": 18,
-    "blk": 14,
-    "ft": 29,
-    "tpt": 43,
-    "orb": 18,
-    "drb": 18,
-    "tov": 22,
-    "fou": 34
-   }
+    "ovr": 44,
+    "sco": 6,
+    "sht": 15,
+    "ply": 3,
+    "dur": 75,
+    "stl": 11,
+    "blk": 9,
+    "ft": 23,
+    "tpt": 13,
+    "orb": 11,
+    "drb": 13,
+    "tov": 19,
+    "fou": 11
+   },
+   "stats": "none",
+   "tw": "los-angeles-lakers"
   },
   {
    "id": "lawson-lovering",
    "name": "Lawson Lovering",
-   "age": 24,
+   "age": 23,
    "pos": "C",
-   "teamId": "los-angeles-lakers",
+   "teamId": null,
    "hgt": 84,
    "ratings": {
-    "ovr": 49,
-    "sco": 12,
-    "sht": 29,
-    "ply": 5,
-    "dur": 73,
-    "stl": 5,
-    "blk": 49,
-    "ft": 31,
-    "tpt": 5,
-    "orb": 53,
-    "drb": 49,
-    "tov": 5,
-    "fou": 9
-   }
+    "ovr": 57,
+    "sco": 27,
+    "sht": 37,
+    "ply": 15,
+    "dur": 71,
+    "stl": 24,
+    "blk": 58,
+    "ft": 26,
+    "tpt": 17,
+    "orb": 65,
+    "drb": 64,
+    "tov": 38,
+    "fou": 35
+   },
+   "stats": "2025-26",
+   "tw": "los-angeles-lakers"
   },
   {
    "id": "carson-cooper",
    "name": "Carson Cooper",
    "age": 22,
    "pos": "C",
-   "teamId": "memphis-grizzlies",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
-    "ovr": 49,
-    "sco": 12,
-    "sht": 29,
-    "ply": 5,
+    "ovr": 44,
+    "sco": 3,
+    "sht": 10,
+    "ply": 3,
     "dur": 73,
-    "stl": 5,
-    "blk": 49,
-    "ft": 31,
-    "tpt": 5,
-    "orb": 53,
-    "drb": 49,
-    "tov": 5,
-    "fou": 9
-   }
+    "stl": 3,
+    "blk": 31,
+    "ft": 18,
+    "tpt": 3,
+    "orb": 36,
+    "drb": 36,
+    "tov": 10,
+    "fou": 3
+   },
+   "stats": "none",
+   "tw": "memphis-grizzlies"
   },
   {
    "id": "jahmai-mashack",
    "name": "Jahmai Mashack",
-   "age": 24,
+   "age": 23,
    "pos": "G",
-   "teamId": "memphis-grizzlies",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
-    "ovr": 50,
-    "sco": 17,
-    "sht": 15,
-    "ply": 43,
-    "dur": 88,
-    "stl": 27,
-    "blk": 5,
-    "ft": 42,
-    "tpt": 17,
-    "orb": 5,
-    "drb": 8,
-    "tov": 39,
-    "fou": 50
-   }
+    "ovr": 55,
+    "sco": 24,
+    "sht": 3,
+    "ply": 58,
+    "dur": 79,
+    "stl": 67,
+    "blk": 42,
+    "ft": 17,
+    "tpt": 13,
+    "orb": 27,
+    "drb": 24,
+    "tov": 19,
+    "fou": 47
+   },
+   "stats": "2025-26",
+   "tw": "memphis-grizzlies"
   },
   {
    "id": "javon-small",
    "name": "Javon Small",
    "age": 23,
    "pos": "G",
-   "teamId": "memphis-grizzlies",
+   "teamId": null,
    "hgt": 73,
    "ratings": {
-    "ovr": 51,
-    "sco": 20,
-    "sht": 19,
-    "ply": 49,
-    "dur": 75,
-    "stl": 37,
-    "blk": 5,
-    "ft": 41,
-    "tpt": 12,
-    "orb": 8,
-    "drb": 9,
-    "tov": 5,
-    "fou": 41
-   }
+    "ovr": 59,
+    "sco": 31,
+    "sht": 59,
+    "ply": 62,
+    "dur": 85,
+    "stl": 40,
+    "blk": 9,
+    "ft": 58,
+    "tpt": 58,
+    "orb": 24,
+    "drb": 17,
+    "tov": 26,
+    "fou": 49
+   },
+   "stats": "2025-26",
+   "tw": "memphis-grizzlies"
   },
   {
    "id": "tre-donaldson",
    "name": "Tre Donaldson",
-   "age": 23,
+   "age": 22,
    "pos": "G",
-   "teamId": "miami-heat",
+   "teamId": null,
    "hgt": 73,
    "ratings": {
-    "ovr": 49,
-    "sco": 16,
-    "sht": 21,
-    "ply": 40,
-    "dur": 86,
-    "stl": 27,
-    "blk": 5,
-    "ft": 24,
-    "tpt": 25,
-    "orb": 5,
-    "drb": 13,
-    "tov": 28,
-    "fou": 29
-   }
+    "ovr": 43,
+    "sco": 3,
+    "sht": 10,
+    "ply": 28,
+    "dur": 80,
+    "stl": 11,
+    "blk": 3,
+    "ft": 18,
+    "tpt": 15,
+    "orb": 3,
+    "drb": 3,
+    "tov": 14,
+    "fou": 14
+   },
+   "stats": "none",
+   "tw": "miami-heat"
   },
   {
    "id": "vladislav-goldin",
    "name": "Vladislav Goldin",
-   "age": 24,
+   "age": 25,
    "pos": "C",
-   "teamId": "miami-heat",
-   "hgt": 85,
+   "teamId": null,
+   "hgt": 84,
    "ratings": {
-    "ovr": 50,
-    "sco": 12,
-    "sht": 21,
-    "ply": 5,
-    "dur": 75,
-    "stl": 5,
-    "blk": 42,
-    "ft": 29,
-    "tpt": 5,
-    "orb": 47,
-    "drb": 47,
-    "tov": 21,
-    "fou": 5
-   }
+    "ovr": 44,
+    "sco": 3,
+    "sht": 19,
+    "ply": 3,
+    "dur": 72,
+    "stl": 3,
+    "blk": 24,
+    "ft": 16,
+    "tpt": 3,
+    "orb": 29,
+    "drb": 29,
+    "tov": 3,
+    "fou": 3
+   },
+   "stats": "2025-26",
+   "tw": "miami-heat"
   },
   {
    "id": "keshad-johnson",
    "name": "Keshad Johnson",
    "age": 25,
    "pos": "F",
-   "teamId": "miami-heat",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
-    "ovr": 50,
-    "sco": 17,
-    "sht": 26,
-    "ply": 17,
-    "dur": 80,
-    "stl": 21,
-    "blk": 16,
-    "ft": 36,
-    "tpt": 5,
-    "orb": 31,
-    "drb": 27,
-    "tov": 9,
-    "fou": 5
-   }
+    "ovr": 52,
+    "sco": 16,
+    "sht": 32,
+    "ply": 4,
+    "dur": 78,
+    "stl": 38,
+    "blk": 36,
+    "ft": 37,
+    "tpt": 15,
+    "orb": 40,
+    "drb": 26,
+    "tov": 45,
+    "fou": 29
+   },
+   "stats": "2025-26",
+   "tw": "miami-heat"
   },
   {
    "id": "kam-jones",
    "name": "Kam Jones",
    "age": 24,
    "pos": "G",
-   "teamId": "milwaukee-bucks",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
-    "ovr": 52,
-    "sco": 21,
-    "sht": 30,
-    "ply": 48,
-    "dur": 89,
-    "stl": 31,
-    "blk": 5,
-    "ft": 38,
-    "tpt": 35,
-    "orb": 5,
+    "ovr": 51,
+    "sco": 13,
+    "sht": 3,
+    "ply": 71,
+    "dur": 88,
+    "stl": 38,
+    "blk": 4,
+    "ft": 31,
+    "tpt": 21,
+    "orb": 14,
     "drb": 11,
-    "tov": 34,
-    "fou": 34
-   }
+    "tov": 21,
+    "fou": 66
+   },
+   "stats": "2025-26",
+   "tw": "milwaukee-bucks"
   },
   {
    "id": "pete-nance",
    "name": "Pete Nance",
-   "age": 25,
+   "age": 26,
    "pos": "F",
-   "teamId": "milwaukee-bucks",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
-    "ovr": 47,
-    "sco": 11,
-    "sht": 24,
-    "ply": 8,
-    "dur": 82,
-    "stl": 18,
-    "blk": 14,
-    "ft": 5,
-    "tpt": 46,
-    "orb": 16,
-    "drb": 17,
-    "tov": 26,
-    "fou": 18
-   }
+    "ovr": 54,
+    "sco": 12,
+    "sht": 76,
+    "ply": 19,
+    "dur": 84,
+    "stl": 17,
+    "blk": 38,
+    "ft": 22,
+    "tpt": 61,
+    "orb": 33,
+    "drb": 39,
+    "tov": 43,
+    "fou": 49
+   },
+   "stats": "2025-26",
+   "tw": "milwaukee-bucks"
   },
   {
    "id": "cormac-ryan",
    "name": "Cormac Ryan",
-   "age": 26,
+   "age": 27,
    "pos": "G",
-   "teamId": "milwaukee-bucks",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
-    "ovr": 47,
-    "sco": 6,
-    "sht": 39,
-    "ply": 37,
-    "dur": 88,
-    "stl": 19,
-    "blk": 5,
-    "ft": 22,
-    "tpt": 22,
-    "orb": 5,
-    "drb": 5,
-    "tov": 5,
-    "fou": 5
-   }
+    "ovr": 60,
+    "sco": 37,
+    "sht": 80,
+    "ply": 38,
+    "dur": 81,
+    "stl": 39,
+    "blk": 10,
+    "ft": 64,
+    "tpt": 70,
+    "orb": 7,
+    "drb": 8,
+    "tov": 39,
+    "fou": 35
+   },
+   "stats": "2025-26",
+   "tw": "milwaukee-bucks"
   },
   {
    "id": "donte-divincenzo",
@@ -16367,398 +16448,420 @@
    "teamId": "minnesota-timberwolves",
    "hgt": 76,
    "ratings": {
-    "ovr": 66,
-    "sco": 52,
-    "sht": 11,
-    "ply": 80,
-    "dur": 85,
-    "stl": 55,
-    "blk": 34,
+    "ovr": 62,
+    "sco": 40,
+    "sht": 40,
+    "ply": 62,
+    "dur": 74,
+    "stl": 57,
+    "blk": 32,
     "ft": 52,
-    "tpt": 60,
-    "orb": 37,
-    "drb": 44,
-    "tov": 71,
-    "fou": 58
+    "tpt": 70,
+    "orb": 22,
+    "drb": 28,
+    "tov": 57,
+    "fou": 60
    },
-   "contract": {
-    "s": 12000,
-    "y": 2,
-    "o": "player"
-   },
-   "inj": 78
+   "stats": "2025-26"
   },
   {
    "id": "enrique-freeman",
    "name": "Enrique Freeman",
-   "age": 25,
+   "age": 26,
    "pos": "F",
-   "teamId": "minnesota-timberwolves",
+   "teamId": null,
    "hgt": 80,
    "ratings": {
     "ovr": 48,
-    "sco": 11,
-    "sht": 18,
-    "ply": 10,
-    "dur": 88,
-    "stl": 18,
-    "blk": 14,
-    "ft": 29,
-    "tpt": 5,
-    "orb": 17,
-    "drb": 19,
-    "tov": 23,
-    "fou": 17
-   }
+    "sco": 10,
+    "sht": 31,
+    "ply": 7,
+    "dur": 84,
+    "stl": 19,
+    "blk": 19,
+    "ft": 30,
+    "tpt": 16,
+    "orb": 18,
+    "drb": 22,
+    "tov": 17,
+    "fou": 22
+   },
+   "stats": "2025-26",
+   "tw": "minnesota-timberwolves"
   },
   {
    "id": "rocco-zikarsky",
    "name": "Rocco Zikarsky",
-   "age": 21,
+   "age": 20,
    "pos": "C",
-   "teamId": "minnesota-timberwolves",
+   "teamId": null,
    "hgt": 87,
    "ratings": {
-    "ovr": 47,
-    "sco": 8,
+    "ovr": 45,
+    "sco": 3,
     "sht": 16,
-    "ply": 5,
-    "dur": 83,
-    "stl": 5,
-    "blk": 40,
-    "ft": 26,
-    "tpt": 5,
-    "orb": 44,
-    "drb": 42,
-    "tov": 5,
-    "fou": 24
-   }
+    "ply": 3,
+    "dur": 87,
+    "stl": 3,
+    "blk": 25,
+    "ft": 20,
+    "tpt": 3,
+    "orb": 27,
+    "drb": 29,
+    "tov": 10,
+    "fou": 14
+   },
+   "stats": "2025-26",
+   "tw": "minnesota-timberwolves"
   },
   {
    "id": "malik-dia",
    "name": "Malik Dia",
-   "age": 21,
+   "age": 22,
    "pos": "F",
-   "teamId": "new-orleans-pelicans",
+   "teamId": null,
    "hgt": 81,
    "ratings": {
-    "ovr": 46,
-    "sco": 10,
-    "sht": 25,
-    "ply": 7,
-    "dur": 84,
-    "stl": 16,
-    "blk": 12,
-    "ft": 5,
-    "tpt": 5,
-    "orb": 15,
-    "drb": 16,
-    "tov": 22,
-    "fou": 15
-   }
+    "ovr": 44,
+    "sco": 6,
+    "sht": 15,
+    "ply": 3,
+    "dur": 74,
+    "stl": 11,
+    "blk": 9,
+    "ft": 23,
+    "tpt": 13,
+    "orb": 11,
+    "drb": 13,
+    "tov": 19,
+    "fou": 11
+   },
+   "stats": "none",
+   "tw": "new-orleans-pelicans"
   },
   {
    "id": "jaron-pierre-jr",
    "name": "Jaron Pierre Jr.",
-   "age": 22,
+   "age": 24,
    "pos": "G",
-   "teamId": "new-orleans-pelicans",
+   "teamId": null,
    "hgt": 78,
    "ratings": {
-    "ovr": 46,
-    "sco": 10,
-    "sht": 18,
-    "ply": 36,
-    "dur": 80,
-    "stl": 19,
-    "blk": 5,
-    "ft": 5,
-    "tpt": 5,
-    "orb": 5,
-    "drb": 5,
-    "tov": 24,
-    "fou": 24
-   }
+    "ovr": 43,
+    "sco": 3,
+    "sht": 10,
+    "ply": 28,
+    "dur": 76,
+    "stl": 11,
+    "blk": 3,
+    "ft": 18,
+    "tpt": 15,
+    "orb": 3,
+    "drb": 3,
+    "tov": 14,
+    "fou": 14
+   },
+   "stats": "none",
+   "tw": "new-orleans-pelicans"
   },
   {
    "id": "julian-reese",
    "name": "Julian Reese",
-   "age": 24,
+   "age": 23,
    "pos": "F",
-   "teamId": "new-orleans-pelicans",
+   "teamId": null,
    "hgt": 83,
    "ratings": {
-    "ovr": 50,
-    "sco": 17,
-    "sht": 26,
-    "ply": 17,
-    "dur": 80,
-    "stl": 21,
-    "blk": 16,
-    "ft": 36,
-    "tpt": 5,
-    "orb": 31,
-    "drb": 27,
-    "tov": 9,
-    "fou": 5
-   }
+    "ovr": 61,
+    "sco": 37,
+    "sht": 35,
+    "ply": 26,
+    "dur": 79,
+    "stl": 53,
+    "blk": 46,
+    "ft": 30,
+    "tpt": 26,
+    "orb": 65,
+    "drb": 61,
+    "tov": 21,
+    "fou": 44
+   },
+   "stats": "2025-26",
+   "tw": "new-orleans-pelicans"
   },
   {
    "id": "tyler-nickel",
    "name": "Tyler Nickel",
    "age": 23,
    "pos": "F",
-   "teamId": "new-orleans-pelicans",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
-    "ovr": 46,
-    "sco": 8,
-    "sht": 18,
-    "ply": 6,
+    "ovr": 45,
+    "sco": 7,
+    "sht": 16,
+    "ply": 4,
     "dur": 85,
     "stl": 12,
-    "blk": 14,
-    "ft": 26,
-    "tpt": 5,
-    "orb": 15,
-    "drb": 17,
-    "tov": 21,
-    "fou": 14
-   }
+    "blk": 10,
+    "ft": 24,
+    "tpt": 14,
+    "orb": 12,
+    "drb": 14,
+    "tov": 20,
+    "fou": 12
+   },
+   "stats": "none",
+   "tw": "new-york-knicks"
   },
   {
    "id": "izaiyah-nelson",
    "name": "Izaiyah Nelson",
-   "age": 24,
+   "age": 23,
    "pos": "F",
-   "teamId": "orlando-magic",
+   "teamId": null,
    "hgt": 82,
    "ratings": {
-    "ovr": 47,
-    "sco": 10,
-    "sht": 17,
-    "ply": 9,
-    "dur": 88,
-    "stl": 17,
-    "blk": 13,
-    "ft": 28,
-    "tpt": 5,
-    "orb": 16,
-    "drb": 18,
-    "tov": 22,
-    "fou": 16
-   }
+    "ovr": 44,
+    "sco": 6,
+    "sht": 15,
+    "ply": 3,
+    "dur": 78,
+    "stl": 11,
+    "blk": 9,
+    "ft": 23,
+    "tpt": 13,
+    "orb": 11,
+    "drb": 13,
+    "tov": 19,
+    "fou": 11
+   },
+   "stats": "none",
+   "tw": "orlando-magic"
   },
   {
    "id": "tacko-fall",
    "name": "Tacko Fall",
-   "age": 31,
+   "age": 30,
    "pos": "C",
-   "teamId": "philadelphia-76ers",
+   "teamId": null,
    "hgt": 90,
    "ratings": {
     "ovr": 44,
-    "sco": 5,
-    "sht": 24,
-    "ply": 5,
-    "dur": 79,
-    "stl": 5,
-    "blk": 32,
-    "ft": 5,
-    "tpt": 5,
-    "orb": 36,
-    "drb": 36,
+    "sco": 3,
+    "sht": 9,
+    "ply": 3,
+    "dur": 78,
+    "stl": 3,
+    "blk": 30,
+    "ft": 17,
+    "tpt": 3,
+    "orb": 35,
+    "drb": 35,
     "tov": 9,
-    "fou": 5
-   }
+    "fou": 3
+   },
+   "stats": "none",
+   "tw": "philadelphia-76ers"
   },
   {
    "id": "rayan-rupert",
    "name": "Rayan Rupert",
    "age": 22,
    "pos": "G-F",
-   "teamId": "philadelphia-76ers",
+   "teamId": null,
    "hgt": 79,
    "ratings": {
-    "ovr": 50,
-    "sco": 18,
-    "sht": 27,
-    "ply": 28,
-    "dur": 79,
-    "stl": 28,
-    "blk": 8,
-    "ft": 35,
-    "tpt": 30,
-    "orb": 8,
-    "drb": 18,
-    "tov": 31,
-    "fou": 27
-   }
+    "ovr": 52,
+    "sco": 11,
+    "sht": 3,
+    "ply": 26,
+    "dur": 87,
+    "stl": 62,
+    "blk": 13,
+    "ft": 69,
+    "tpt": 27,
+    "orb": 38,
+    "drb": 40,
+    "tov": 35,
+    "fou": 30
+   },
+   "stats": "2025-26",
+   "tw": "philadelphia-76ers"
   },
   {
    "id": "chris-youngblood",
    "name": "Chris Youngblood",
    "age": 24,
    "pos": "G",
-   "teamId": "portland-trail-blazers",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
     "ovr": 49,
     "sco": 12,
-    "sht": 18,
-    "ply": 40,
+    "sht": 6,
+    "ply": 37,
     "dur": 88,
-    "stl": 29,
-    "blk": 5,
-    "ft": 38,
-    "tpt": 11,
-    "orb": 5,
-    "drb": 5,
-    "tov": 28,
-    "fou": 43
-   }
+    "stl": 20,
+    "blk": 7,
+    "ft": 57,
+    "tpt": 37,
+    "orb": 4,
+    "drb": 11,
+    "tov": 63,
+    "fou": 26
+   },
+   "stats": "2025-26",
+   "tw": "portland-trail-blazers"
   },
   {
    "id": "sean-pedulla",
    "name": "Sean Pedulla",
    "age": 24,
    "pos": "G",
-   "teamId": "sacramento-kings",
+   "teamId": null,
    "hgt": 73,
    "ratings": {
-    "ovr": 48,
-    "sco": 13,
-    "sht": 28,
+    "ovr": 45,
+    "sco": 6,
+    "sht": 3,
     "ply": 35,
-    "dur": 66,
-    "stl": 25,
-    "blk": 5,
-    "ft": 26,
-    "tpt": 15,
-    "orb": 5,
-    "drb": 5,
-    "tov": 38,
-    "fou": 27
-   }
+    "dur": 86,
+    "stl": 14,
+    "blk": 3,
+    "ft": 24,
+    "tpt": 30,
+    "orb": 3,
+    "drb": 3,
+    "tov": 29,
+    "fou": 19
+   },
+   "stats": "2025-26",
+   "tw": "sacramento-kings"
   },
   {
    "id": "jayden-quaintance",
    "name": "Jayden Quaintance",
-   "age": 20,
+   "age": 19,
    "pos": "F",
    "teamId": "san-antonio-spurs",
    "hgt": 81,
    "ratings": {
-    "ovr": 56,
-    "sco": 24,
-    "sht": 60,
-    "ply": 16,
-    "dur": 85,
-    "stl": 20,
-    "blk": 20,
-    "ft": 40,
-    "tpt": 67,
-    "orb": 28,
-    "drb": 30,
-    "tov": 68,
-    "fou": 35
+    "ovr": 41,
+    "sco": 3,
+    "sht": 6,
+    "ply": 3,
+    "dur": 84,
+    "stl": 3,
+    "blk": 3,
+    "ft": 14,
+    "tpt": 4,
+    "orb": 3,
+    "drb": 4,
+    "tov": 10,
+    "fou": 3
    },
-   "inj": 14
+   "stats": "none"
   },
   {
    "id": "nate-bittle",
    "name": "Nate Bittle",
    "age": 23,
    "pos": "C",
-   "teamId": "toronto-raptors",
+   "teamId": null,
    "hgt": 84,
    "ratings": {
-    "ovr": 52,
-    "sco": 18,
-    "sht": 45,
-    "ply": 5,
-    "dur": 81,
-    "stl": 11,
-    "blk": 37,
-    "ft": 31,
-    "tpt": 41,
-    "orb": 51,
-    "drb": 43,
-    "tov": 24,
-    "fou": 20
+    "ovr": 44,
+    "sco": 3,
+    "sht": 10,
+    "ply": 3,
+    "dur": 72,
+    "stl": 3,
+    "blk": 31,
+    "ft": 18,
+    "tpt": 3,
+    "orb": 36,
+    "drb": 36,
+    "tov": 10,
+    "fou": 3
    },
-   "inj": 12
+   "stats": "none",
+   "tw": "toronto-raptors"
   },
   {
    "id": "trey-alexander",
    "name": "Trey Alexander",
-   "age": 24,
+   "age": 23,
    "pos": "G",
-   "teamId": "utah-jazz",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
-    "ovr": 50,
-    "sco": 13,
-    "sht": 19,
+    "ovr": 51,
+    "sco": 17,
+    "sht": 34,
     "ply": 41,
-    "dur": 88,
-    "stl": 30,
-    "blk": 6,
-    "ft": 39,
-    "tpt": 12,
-    "orb": 6,
-    "drb": 6,
-    "tov": 29,
-    "fou": 44
+    "dur": 82,
+    "stl": 36,
+    "blk": 3,
+    "ft": 21,
+    "tpt": 34,
+    "orb": 3,
+    "drb": 8,
+    "tov": 51,
+    "fou": 28
    },
-   "inj": 6
+   "stats": "2025-26",
+   "tw": "utah-jazz"
   },
   {
    "id": "kobe-bufkin",
    "name": "Kobe Bufkin",
    "age": 23,
    "pos": "G",
-   "teamId": "utah-jazz",
+   "teamId": null,
    "hgt": 76,
    "ratings": {
-    "ovr": 52,
-    "sco": 21,
-    "sht": 30,
-    "ply": 48,
-    "dur": 89,
-    "stl": 31,
-    "blk": 5,
-    "ft": 38,
-    "tpt": 35,
-    "orb": 5,
-    "drb": 11,
-    "tov": 34,
-    "fou": 34
-   }
+    "ovr": 48,
+    "sco": 12,
+    "sht": 3,
+    "ply": 38,
+    "dur": 88,
+    "stl": 18,
+    "blk": 4,
+    "ft": 44,
+    "tpt": 13,
+    "orb": 3,
+    "drb": 7,
+    "tov": 44,
+    "fou": 38
+   },
+   "stats": "2025-26",
+   "tw": "utah-jazz"
   },
   {
    "id": "jamir-watkins",
    "name": "Jamir Watkins",
-   "age": 23,
+   "age": 25,
    "pos": "F",
-   "teamId": "washington-wizards",
+   "teamId": null,
    "hgt": 77,
    "ratings": {
-    "ovr": 48,
-    "sco": 11,
-    "sht": 44,
-    "ply": 9,
-    "dur": 87,
-    "stl": 13,
-    "blk": 12,
-    "ft": 28,
-    "tpt": 54,
-    "orb": 13,
-    "drb": 21,
-    "tov": 8,
-    "fou": 28
+    "ovr": 57,
+    "sco": 22,
+    "sht": 35,
+    "ply": 23,
+    "dur": 80,
+    "stl": 61,
+    "blk": 50,
+    "ft": 32,
+    "tpt": 21,
+    "orb": 46,
+    "drb": 49,
+    "tov": 59,
+    "fou": 22
    },
-   "inj": 75
+   "stats": "2025-26",
+   "tw": "washington-wizards"
   }
  ],
  "dead": {
