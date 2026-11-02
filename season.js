@@ -36,7 +36,29 @@
     return list;
   }
 
-  function create(eraId, year, teams, myId, gamesPerTeam) {
+  /* Real calendar: group the dated games into days; two generated rounds fill the games the Cup decides. */
+  function fromSchedule(ids, sched, r) {
+    var by = {}, order = [];
+    sched.games.forEach(function (g) { if (!by[g.d]) { by[g.d] = []; order.push(g.d); } by[g.d].push(g); });
+    order.sort();
+    var days = [], dates = [], meta = [], cupAt = -1;
+    order.forEach(function (d) {
+      if (cupAt < 0 && d >= '2026-12-04') cupAt = days.length;
+      days.push(by[d].map(function (g) { return [g.h, g.a]; }));
+      dates.push(d);
+      meta.push(by[d].map(function (g) { return g.lab ? [g.lab, g.sub || '', g.arena || '', g.city || ''] : (g.city ? ['', '', g.arena || '', g.city] : 0); }));
+    });
+    if (cupAt > 0) {
+      var fill = shuffle(roundRobin(ids), r).slice(0, 1).concat(shuffle(roundRobin(ids), r).slice(0, 1));
+      [0, 1].forEach(function (k) {
+        days.splice(cupAt + k, 0, fill[k]); meta.splice(cupAt + k, 0, fill[k].map(function () { return 0; }));
+        dates.splice(cupAt + k, 0, k ? '2026-12-08' : '2026-12-05');
+      });
+    }
+    return { days: days, dates: dates, meta: meta };
+  }
+
+  function create(eraId, year, teams, myId, gamesPerTeam, sched) {
     var ids = teams.map(function (t) { return t.id; });
     var r = rng(Math.floor(Math.random() * 1e9));
     var copies = Math.max(1, Math.ceil(gamesPerTeam / (ids.length - 1)));
@@ -50,11 +72,13 @@
     }
     var rounds = ids.length % 2 === 0 ? gamesPerTeam : Math.ceil(gamesPerTeam * ids.length / (ids.length - 1));
     if (days.length > rounds) days = days.slice(0, rounds);
+    var cal = sched && sched.games && sched.games.length ? fromSchedule(ids, sched, r) : null;
+    if (cal) days = cal.days;
     var division = {}, rec = {};
     teams.forEach(function (t) { division[t.id] = t.division; rec[t.id] = { w: 0, l: 0 }; });
     return {
       v: 1, fmt: (root.Rules ? root.Rules.get(year).kind : 'top'), eraId: eraId, year: year, myId: myId, ids: ids, division: division,
-      days: days, day: 0, results: [], rec: rec,
+      days: days, day: 0, results: [], rec: rec, dates: cal ? cal.dates : null, gmeta: cal ? cal.meta : null,
       phase: 'regular', playoffs: null, champion: null
     };
   }

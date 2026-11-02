@@ -1377,6 +1377,13 @@
   function gamesFor(id) {
     return save.days.filter(function (d) { return d.some(function (g) { return g[0] === id || g[1] === id; }); }).length;
   }
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function dateTag() {
+    if (!save || save.phase !== 'regular' || !save.dates || !save.dates[save.day]) return '';
+    var d = save.dates[save.day].split('-'), m = save.gmeta && save.gmeta[save.day], lab = '';
+    (save.days[save.day] || []).forEach(function (g, i) { if ((g[0] === save.myId || g[1] === save.myId) && m && m[i] && m[i][0]) lab = m[i][0]; });
+    return ' \u00B7 ' + MON[+d[1] - 1] + ' ' + (+d[2]) + (lab ? ' \u00B7 ' + lab.replace('NBA Cup - ', 'Cup \u00B7 ') : '');
+  }
   function seasonLabel(y) { return y + '-' + String(y + 1).slice(2); }
   function divTitle(d) { return d + (save && ((eraStart(save.eraId) || {}).current) ? ' Conference' : ' Division'); }
   function money(n) { return League.money(n, save && save.lg ? save.lg.cap : 0); }
@@ -1497,8 +1504,9 @@
     var data = seasons[currentEra.id];
     loadPlayers(function (pl) {
       if (!pl) return;
+      var go = function (sched) {
       rosterCache = {};
-      save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60);
+      save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60, sched);
       Engine.setRules({});
       League.init(save, pl.players, data.teams, pl.dead);
       if (currentEra.current) { Coach.build(save, COACHDATA, save.ids); }
@@ -1507,6 +1515,10 @@
       persist();
       renderSeason();
       show('screen-season');
+      };
+      if (currentEra.current && parseInt(currentEra.years, 10) === 2026) {
+        fetch('data/schedule-2026.json').then(function (r) { return r.json(); }).then(go).catch(function () { go(null); });
+      } else go(null);
     });
   }
 
@@ -3476,7 +3488,7 @@
       hero.appendChild(tx);
     } else if (next) {
       var oppId = next.home === me.id ? next.away : next.home, opp = teamById(oppId), orec = save.rec[oppId];
-      var head = el('div', 'hh-when', reg ? 'Game ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name);
+      var head = el('div', 'hh-when', reg ? 'Game ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) + dateTag() : Season.roundInfo(save, next.round).name);
       hero.appendChild(head);
       var vs = el('div', 'hh-vs');
       [[me, rec, 'mine'], [opp, orec, '']].forEach(function (x, i) {
@@ -3614,7 +3626,7 @@
       if (modernUI()) {
         card.className = 'stat-card hero';
         var oprec2 = save.rec[oppId];
-        card.appendChild(el('div', 'hero-when', save.phase === 'regular' ? 'Game ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name));
+        card.appendChild(el('div', 'hero-when', save.phase === 'regular' ? 'Game ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) + dateTag() : Season.roundInfo(save, next.round).name));
         var vs = el('div', 'hero-vs');
         function side(t, r, here) {
           var c = el('div', 'hero-side' + (here ? ' mine' : ''));
@@ -3650,7 +3662,7 @@
       tx.appendChild(el('span', 'meta', oprec.w + '-' + oprec.l + ' · team rating ' + teamRating(oppId) + ' vs your ' + teamRating(me.id)));
       tx.appendChild(el('span', 'meta', 'Offence ' + offRating(oppId) + ' vs ' + offRating(me.id) + ' · defence ' + defRating(oppId) + ' vs ' + defRating(me.id)));
       row.appendChild(tx);
-      card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Next game · ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) : Season.roundInfo(save, next.round).name));
+      card.appendChild(el('div', 'group-title', save.phase === 'regular' ? 'Next game · ' + (rec.w + rec.l + 1) + ' of ' + gamesFor(me.id) + dateTag() : Season.roundInfo(save, next.round).name));
       card.appendChild(row);
       }
     } else {
