@@ -1441,30 +1441,16 @@
   /* Who starts: the real opening-week fives in 2026-27, otherwise the best five that still make a lineup (no five centres, no five guards). */
   function isBig(p) { return p.pos === 'C' || p.pos === 'F-C'; }
   function isGuard(p) { return p.pos === 'G' || p.pos === 'G-F'; }
-  function isPureG(p) { return p.pos === 'G'; }
-  function isWing(p) { return !isBig(p) && !isPureG(p); }
   function defaultOrder(list) {
     var byOvr = list.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     var st = save.year === 2026 ? byOvr.filter(function (p) { return p.st; }).slice(0, 5) : [];
-    /* a sensible five: at most two guards, two bigs and three wings, with a ball handler and a big in it */
     byOvr.forEach(function (p) {
       if (st.length >= 5 || st.indexOf(p) >= 0) return;
-      var nb = st.filter(isBig).length, ng = st.filter(isPureG).length, nw = st.filter(isWing).length;
-      if ((isBig(p) && nb >= 2) || (isPureG(p) && ng >= 2) || (isWing(p) && nw >= 3)) return;
+      var nb = st.filter(isBig).length, ng = st.filter(isGuard).length;
+      if ((isBig(p) && nb >= 2) || (isGuard(p) && ng >= 3) || (!isBig(p) && !isGuard(p) && st.length - nb - ng >= 3)) return;
       st.push(p);
     });
     byOvr.forEach(function (p) { if (st.length < 5 && st.indexOf(p) < 0) st.push(p); });
-    function swapIn(test, outTest) {
-      if (st.some(test)) return;
-      var cand = byOvr.filter(function (p) { return test(p) && st.indexOf(p) < 0; })[0];
-      if (!cand) return;
-      var drop = st.slice().reverse().filter(outTest)[0];
-      if (drop) st[st.indexOf(drop)] = cand;
-    }
-    if (save.year !== 2026) {
-      swapIn(isBig, function (p) { return !isBig(p); });
-      swapIn(function (p) { return isPureG(p) || p.pos === 'G-F'; }, function (p) { return !isBig(p) && !isPureG(p) && p.pos !== 'G-F'; });
-    }
     st.sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     return st.concat(byOvr.filter(function (p) { return st.indexOf(p) < 0; }));
   }
