@@ -3834,7 +3834,7 @@
     return box;
   }
   function openCoachSheet(role) {
-    var label = { hc: 'Head coach', ao: 'Offensive assistant', ad: 'Defensive assistant' }[role], cur = Coach.staff(save, save.myId)[role];
+    var label = { hc: 'Head coach', ao: 'Assistant coach', ad: 'Assistant coach' }[role], cur = Coach.staff(save, save.myId)[role];
     hubSheet(label, function (sh, close) {
       if (cur) {
         sh.appendChild(coachRow(cur, '', null));
@@ -3848,7 +3848,7 @@
       }
       sh.appendChild(el('h3', 'box-title', cur ? 'Replace with' : 'Available'));
       var pool = Coach.bestFor ? save.coach.pool.slice().sort(function (x, y) {
-        var k = role === 'ao' ? function (c) { return c.off * 1.4 + c.dev * 0.3 + c.mot * 0.3; } : role === 'ad' ? function (c) { return c.def * 1.4 + c.dev * 0.3 + c.mot * 0.3; } : function (c) { return Coach.score(c) + c.mot * 0.2; };
+        var k = role !== 'hc' ? function (c) { return (c.off + c.def) * 0.7 + c.dev * 0.3 + c.mot * 0.3; } : function (c) { return Coach.score(c) + c.mot * 0.2; };
         return k(y) - k(x);
       }).slice(0, 5) : [];
       pool.forEach(function (c) {
@@ -3859,7 +3859,7 @@
           if (role === 'hc') Events.mood(save).coach = 50;
           rosterCache = {}; persist(); close(); refreshHub();
         });
-        sh.appendChild(coachRow(c, c.role === 'hc' ? 'HC' : c.role === 'ao' ? 'Offence' : 'Defence', null, hb));
+        sh.appendChild(coachRow(c, c.role === 'hc' ? 'HC' : 'Assistant', null, hb));
       });
       if (!pool.length) sh.appendChild(el('p', 'sub', 'No coaches are available right now.'));
     });

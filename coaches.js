@@ -14,9 +14,8 @@
     var n = FIRST[Math.floor(r() * FIRST.length)] + ' ' + LAST[Math.floor(r() * LAST.length)];
     var o = role === 'ao', d = role === 'ad', hc = role === 'hc';
     var c = { id: slug(n) + '-' + tag, n: n, age: 38 + Math.floor(r() * 24), role: role,
-      off: clamp((o ? 66 : d ? 46 : 58) + (r() - 0.5) * 26, 30, 90), def: clamp((d ? 66 : o ? 46 : 58) + (r() - 0.5) * 26, 30, 90),
+      off: clamp(58 + (r() - 0.5) * 26 + (hc ? 4 : 0), 30, 90), def: clamp(58 + (r() - 0.5) * 26 + (hc ? 4 : 0),30, 90),
       dev: clamp(56 + (r() - 0.5) * 30, 30, 90), mot: clamp(58 + (r() - 0.5) * 28, 30, 90) };
-    if (hc) { c.off = clamp(c.off + 4, 30, 90); c.def = clamp(c.def + 4, 30, 90); }
     return c;
   }
   function build(save, data, teamIds) {
@@ -44,7 +43,8 @@
     var hc = s.hc || { off: 50, def: 50, mot: 50 }, ao = s.ao || { off: 50 }, ad = s.ad || { def: 50 };
     var k = trust === undefined ? 1 : 0.5 + Math.max(0, Math.min(100, trust)) / 100;
     var m = ((hc.mot || 50) - 60) / 100 * 0.03;
-    return { off: ((0.5 * hc.off + 0.5 * ao.off - 60) / 100 * 0.08 + m) * k, def: ((0.5 * hc.def + 0.5 * ad.def - 60) / 100 * 0.08 + m) * k };
+    var ao_ = ((ao.off || 50) + (ad.off || 50)) / 2, ad_ = ((ao.def || 50) + (ad.def || 50)) / 2;
+    return { off: ((0.5 * hc.off + 0.5 * ao_ - 60) / 100 * 0.08 + m) * k, def: ((0.5 * hc.def + 0.5 * ad_ - 60) / 100 * 0.08 + m) * k };
   }
   function apply(save, id, players, trust) {
     var b = bonus(save, id, trust); if (!b) return players;
@@ -80,7 +80,7 @@
     return c;
   }
   function bestFor(pool, role) {
-    var key = role === 'ao' ? function (c) { return c.off * 1.4 + c.dev * 0.3 + c.mot * 0.3; } : role === 'ad' ? function (c) { return c.def * 1.4 + c.dev * 0.3 + c.mot * 0.3; } : function (c) { return score(c) + c.mot * 0.2; };
+    var key = role !== 'hc' ? function (c) { return (c.off + c.def) * 0.7 + c.dev * 0.3 + c.mot * 0.3; } : function (c) { return score(c) + c.mot * 0.2; };
     return pool.slice().sort(function (a, b) { return key(b) - key(a); })[0];
   }
   function fire(save, teamId, role) {
@@ -114,7 +114,7 @@
     });
     while (C.pool.length < 14) C.pool.push(made(Math.random, ['hc', 'ao', 'ad'][C.pool.length % 3], 'n' + Math.floor(Math.random() * 99999)));
   }
-  function owned(save, myId) { var s = staff(save, myId); return s ? [['hc', 'Head coach'], ['ao', 'Offensive assistant'], ['ad', 'Defensive assistant']].map(function (x) { return { role: x[0], label: x[1], c: s[x[0]] }; }) : []; }
+  function owned(save, myId) { var s = staff(save, myId); return s ? [['hc', 'Head coach'], ['ao', 'Assistant coach'], ['ad', 'Assistant coach']].map(function (x) { return { role: x[0], label: x[1], c: s[x[0]] }; }) : []; }
 
   root.Coach = { build: build, staff: staff, bonus: bonus, apply: apply, devBonus: devBonus, fromRetired: fromRetired, leadership: leadership, fire: fire, hire: hire, offseason: offseason, owned: owned, bestFor: bestFor, score: score, slug: slug };
 })(typeof window !== 'undefined' ? window : globalThis);
