@@ -10,18 +10,17 @@ src, team = sys.argv[1], sys.argv[2]
 side = sys.argv[3] if len(sys.argv) > 3 else 'right'
 im = Image.open(src).convert('RGB')
 a = np.array(im).astype(int)
-w = (a.min(2) > 225)
-rows, cols = w.sum(1), w.sum(0)
-ry = np.where(rows > a.shape[1] * 0.5)[0]
-cx = np.where(cols > a.shape[0] * 0.5)[0]
-if len(ry) >= 2 and len(cx) >= 2:
-    y0, y1, x0, x1 = ry.min(), ry.max(), cx.min(), cx.max()
-else:
-    m = (a[..., 0] > 150) & (a[..., 1] > 110) & (a[..., 2] < 190) & (a[..., 0] - a[..., 2] > 35)
-    cols, rows = m.sum(0), m.sum(1)
-    xs = np.where(cols > rows.max() * 0.3)[0]
-    ys = np.where(rows > cols.max() * 0.3)[0]
-    x0, x1, y0, y1 = xs.min(), xs.max(), ys.min(), ys.max()
+def span(mask, fr):
+    rows, cols = mask.sum(1), mask.sum(0)
+    ry = np.where(rows > mask.shape[1] * fr)[0]
+    cx = np.where(cols > mask.shape[0] * fr)[0]
+    if len(ry) < 2 or len(cx) < 2: return None
+    return cx.min(), ry.min(), cx.max(), ry.max()
+wood = (a[..., 0] > 190) & (a[..., 2] > 100) & (a[..., 0] - a[..., 2] > 25)
+cands = [span(a.min(2) > 225, 0.5), span(wood, 0.4)]
+cands = [c for c in cands if c]
+best = min(cands, key=lambda c: abs((c[2] - c[0]) / max(1, c[3] - c[1]) - 1.88))
+x0, y0, x1, y1 = best
 if len(sys.argv) > 4:
     x0, y0, x1, y1 = [int(v) for v in sys.argv[4].split(',')]
 mid = (x0 + x1) // 2
