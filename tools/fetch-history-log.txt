@@ -1,0 +1,30 @@
+atlanta-hawks champs=[1958] retired=8
+boston-celtics champs=[1984, 1986, 2008, 2024] retired=29
+brooklyn-nets champs=[1974, 1976] retired=7
+charlotte-hornets champs=[] retired=3
+chicago-bulls champs=[1993, 1996, 1997, 1998] retired=9
+cleveland-cavaliers FAILED <HTTPError 429: 'Too Many Requests'>
+dallas-mavericks FAILED <HTTPError 429: 'Too Many Requests'>
+denver-nuggets FAILED <HTTPError 429: 'Too Many Requests'>
+detroit-pistons FAILED <HTTPError 429: 'Too Many Requests'>
+golden-state-warriors FAILED <HTTPError 429: 'Too Many Requests'>
+houston-rockets FAILED <HTTPError 429: 'Too Many Requests'>
+indiana-pacers FAILED <HTTPError 429: 'Too Many Requests'>
+la-clippers FAILED <HTTPError 429: 'Too Many Requests'>
+los-angeles-lakers FAILED <HTTPError 429: 'Too Many Requests'>
+memphis-grizzlies champs=[] retired=5
+miami-heat champs=[2006, 2012, 2013] retired=8
+milwaukee-bucks champs=[1971, 2021] retired=10
+minnesota-timberwolves champs=[] retired=3
+new-orleans-pelicans champs=[] retired=2
+new-york-knicks FAILED <HTTPError 429: 'Too Many Requests'>
+oklahoma-city-thunder FAILED <HTTPError 429: 'Too Many Requests'>
+orlando-magic FAILED <HTTPError 429: 'Too Many Requests'>
+philadelphia-76ers FAILED <HTTPError 429: 'Too Many Requests'>
+phoenix-suns FAILED <HTTPError 429: 'Too Many Requests'>
+portland-trail-blazers FAILED <HTTPError 429: 'Too Many Requests'>
+sacramento-kings FAILED <HTTPError 429: 'Too Many Requests'>
+san-antonio-spurs FAILED <HTTPError 429: 'Too Many Requests'>
+toronto-raptors FAILED <HTTPError 429: 'Too Many Requests'>
+utah-jazz FAILED <HTTPError 429: 'Too Many Requests'>
+washington-wizards FAILED <HTTPError 429: 'Too Many Requests'>
