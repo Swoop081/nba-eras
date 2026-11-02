@@ -1493,6 +1493,16 @@
     if (Social.has(save.year)) Social.day(save, results, results.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     cupNews();
+    // a day without our game still gets its scores, shown on the hub until the next day is played
+    var mineToday = results.some(function (g) { return g.home === save.myId || g.away === save.myId; });
+    save.rest = null;
+    if (!mineToday && results.length) {
+      save.rest = { tok: save.day + '|' + (save.pd || 0) + '|' + save.phase, games: results.map(function (g) {
+        var all = (g.lines.h || []).map(function (x) { return [x, g.home]; }).concat((g.lines.a || []).map(function (x) { return [x, g.away]; })).sort(function (p, q) { return q[0].s.pts - p[0].s.pts; });
+        var win = g.hs > g.as, w = win ? g.home : g.away, l = win ? g.away : g.home, top = all[0];
+        return { wid: w, lid: l, ws: win ? g.hs : g.as, ls: win ? g.as : g.hs, tn: top ? top[0].name.split(' ').slice(-1)[0] : '', tp: top ? top[0].s.pts : 0, tt: top ? top[1] : null };
+      }) };
+    }
   }
   /* NBA Cup headlines: who made the eight, each round, the champion */
   function cupNews() {
@@ -1545,10 +1555,28 @@
     });
   }
 
+  /* the scoreboard for a day our club did not play */
+  function restScores() {
+    var r = save.rest; if (!r || !r.games || !r.games.length) return;
+    hubSheet('Around the league', function (sh, close) {
+      var box = el('div', 'lgp rest-scores');
+      r.games.forEach(function (g) {
+        var w = teamById(g.wid), l = teamById(g.lid); if (!w || !l) return;
+        var row = el('div', 'lg-row'), s = el('span', 'lg-g');
+        var wn = el('b', 'lg-w', w.city); wn.style.color = (w.colors && w.colors[0]) || '';
+        s.appendChild(wn); s.appendChild(el('b', 'lg-n', ' ' + g.ws)); s.appendChild(el('span', 'lg-l', ', ' + l.city + ' ' + g.ls));
+        row.appendChild(s);
+        if (g.tn) { var tp = el('span', 'lg-t'), tn = el('i', null, g.tn), tt = g.tt && teamById(g.tt); if (tt && tt.colors) tn.style.color = tt.colors[0]; tp.appendChild(tn); tp.appendChild(el('b', null, ' ' + g.tp)); row.appendChild(tp); }
+        box.appendChild(row);
+      });
+      sh.appendChild(box);
+      var b = el('button', 'btn wide', 'Done'); b.type = 'button'; b.addEventListener('click', close); sh.appendChild(b);
+    });
+  }
   function playNext() {
     if (save.pending && save.pending.length) { openEvents(); return; }
     var mine = Season.myNext(save);
-    if (!mine) { simDay(); persist(); renderSeason(); return; }
+    if (!mine) { simDay(); persist(); renderSeason(); if (modernUI()) restScores(); return; }
     var oppId = mine.home === save.myId ? mine.away : mine.home;
     var me = teamById(save.myId), opp = teamById(oppId);
     var label = save.phase === 'regular'
@@ -3869,7 +3897,6 @@
       card.appendChild(el('p', 'sub', save.phase === 'regular' ? 'No game for your team today.' : Season.inPlayoffs(save, me.id) ? 'Your club is resting while the other series finish.' : 'Your season is over. Sim the rest of the playoffs to crown a champion.'));
     }
     bodyEl.appendChild(card);
-
     if (save.playoffs) {
       bodyEl.appendChild(el('h3', 'box-title', 'Playoff bracket'));
       bodyEl.appendChild(bracketView());
