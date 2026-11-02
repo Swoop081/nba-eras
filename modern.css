@@ -957,3 +957,12 @@ body[data-modern="1"] #trade-body .ttabs button{font-size:14px;padding:0 4px}
 body[data-modern="1"] .tchips{display:flex;gap:6px;flex-wrap:wrap}
 body[data-modern="1"] .tchips button{border:0;border-radius:999px;padding:7px 14px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:600}
 body[data-modern="1"] .tchips button.on{background:var(--team);color:#fff}
+
+/* records boards */
+body[data-modern="1"] .rec-lb{margin:0 0 14px;padding:6px 12px;border-radius:16px;background:var(--card)}
+body[data-modern="1"] .rec-lb .lb-row.yr{grid-template-columns:50px 34px 1fr auto}
+body[data-modern="1"] .rec-lb .lb-row.yr.noav{grid-template-columns:50px 1fr auto}
+body[data-modern="1"] .rec-lb .lb-row.yr .rk{color:var(--ink);font-weight:700;font-size:13px;text-align:left}
+body[data-modern="1"] .rec-lb .lb-row.mine .who b{color:var(--team)}
+body[data-modern="1"] #records-body .box-title{margin-left:14px}
+body[data-modern="1"] #records-body .rec-lb{margin-left:14px;margin-right:14px;width:auto}

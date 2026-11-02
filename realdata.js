@@ -1,0 +1,41 @@
+/* Real NBA history that is not in the season files. Years are the season's first year (1961 = 1961-62). */
+(function (root) {
+  function range(a, b) { var o = []; for (var i = a; i <= b; i++) o.push(i); return o; }
+  function E(list) { return list.map(function (x) { return { y: x[0] - 1, n: x[1], id: x[2] || x[1].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z ]/g, '').trim().replace(/ +/g, '-') }; }); }
+  var MVP = E([[1956, 'Bob Pettit'], [1957, 'Bob Cousy'], [1958, 'Bill Russell'], [1959, 'Bob Pettit'], [1960, 'Wilt Chamberlain'], [1961, 'Bill Russell'], [1962, 'Bill Russell'], [1963, 'Bill Russell'], [1964, 'Oscar Robertson'], [1965, 'Bill Russell'], [1966, 'Wilt Chamberlain'], [1967, 'Wilt Chamberlain'], [1968, 'Wilt Chamberlain'], [1969, 'Wes Unseld'], [1970, 'Willis Reed'], [1971, 'Kareem Abdul-Jabbar'], [1972, 'Kareem Abdul-Jabbar'], [1973, 'Dave Cowens'], [1974, 'Kareem Abdul-Jabbar'], [1975, 'Bob McAdoo'], [1976, 'Kareem Abdul-Jabbar'], [1977, 'Kareem Abdul-Jabbar'], [1978, 'Bill Walton'], [1979, 'Moses Malone'], [1980, 'Kareem Abdul-Jabbar'], [1981, 'Julius Erving'], [1982, 'Moses Malone'], [1983, 'Moses Malone'], [1984, 'Larry Bird'], [1985, 'Larry Bird'], [1986, 'Larry Bird'], [1987, 'Magic Johnson'], [1988, 'Michael Jordan'], [1989, 'Magic Johnson'], [1990, 'Magic Johnson'], [1991, 'Michael Jordan'], [1992, 'Michael Jordan'], [1993, 'Charles Barkley'], [1994, 'Hakeem Olajuwon'], [1995, 'David Robinson'], [1996, 'Michael Jordan'], [1997, 'Karl Malone'], [1998, 'Michael Jordan'], [1999, 'Karl Malone'], [2000, 'Shaquille O\'Neal', 'shaquille-oneal'], [2001, 'Allen Iverson'], [2002, 'Tim Duncan'], [2003, 'Tim Duncan'], [2004, 'Kevin Garnett'], [2005, 'Steve Nash'], [2006, 'Steve Nash'], [2007, 'Dirk Nowitzki'], [2008, 'Kobe Bryant'], [2009, 'LeBron James'], [2010, 'LeBron James'], [2011, 'Derrick Rose'], [2012, 'LeBron James'], [2013, 'LeBron James'], [2014, 'Kevin Durant'], [2015, 'Stephen Curry'], [2016, 'Stephen Curry'], [2017, 'Russell Westbrook'], [2018, 'James Harden'], [2019, 'Giannis Antetokounmpo'], [2020, 'Giannis Antetokounmpo'], [2021, 'Nikola Jokic'], [2022, 'Nikola Jokic'], [2023, 'Joel Embiid'], [2024, 'Nikola Jokic'], [2025, 'Shai Gilgeous-Alexander', 'shai-gilgeousalexander'], [2026, 'Shai Gilgeous-Alexander', 'shai-gilgeousalexander']]);
+  var FMVP = E([[1969, 'Jerry West'], [1970, 'Willis Reed'], [1971, 'Kareem Abdul-Jabbar'], [1972, 'Wilt Chamberlain'], [1973, 'Willis Reed'], [1974, 'John Havlicek'], [1975, 'Rick Barry'], [1976, 'Jo Jo White'], [1977, 'Bill Walton'], [1978, 'Wes Unseld'], [1979, 'Dennis Johnson'], [1980, 'Magic Johnson'], [1981, 'Cedric Maxwell'], [1982, 'Magic Johnson'], [1983, 'Moses Malone'], [1984, 'Larry Bird'], [1985, 'Kareem Abdul-Jabbar'], [1986, 'Larry Bird'], [1987, 'Magic Johnson'], [1988, 'James Worthy'], [1989, 'Joe Dumars'], [1990, 'Isiah Thomas'], [1991, 'Michael Jordan'], [1992, 'Michael Jordan'], [1993, 'Michael Jordan'], [1994, 'Hakeem Olajuwon'], [1995, 'Hakeem Olajuwon'], [1996, 'Michael Jordan'], [1997, 'Michael Jordan'], [1998, 'Michael Jordan'], [1999, 'Tim Duncan'], [2000, 'Shaquille O\'Neal', 'shaquille-oneal'], [2001, 'Shaquille O\'Neal', 'shaquille-oneal'], [2002, 'Shaquille O\'Neal', 'shaquille-oneal'], [2003, 'Tim Duncan'], [2004, 'Chauncey Billups'], [2005, 'Tim Duncan'], [2006, 'Dwyane Wade'], [2007, 'Tony Parker'], [2008, 'Paul Pierce'], [2009, 'Kobe Bryant'], [2010, 'Kobe Bryant'], [2011, 'Dirk Nowitzki'], [2012, 'LeBron James'], [2013, 'LeBron James'], [2014, 'Kawhi Leonard'], [2015, 'Andre Iguodala'], [2016, 'LeBron James'], [2017, 'Kevin Durant'], [2018, 'Kevin Durant'], [2019, 'Kawhi Leonard'], [2020, 'LeBron James'], [2021, 'Giannis Antetokounmpo'], [2022, 'Stephen Curry'], [2023, 'Nikola Jokic'], [2024, 'Jaylen Brown'], [2025, 'Shai Gilgeous-Alexander', 'shai-gilgeousalexander'], [2026, 'Jalen Brunson']]);
+  /* championship seasons (last year of the season) for the players with the most rings */
+  var T = function (n, yrs, id) { return { n: n, id: id, y: yrs.map(function (x) { return x - 1; }) }; };
+  var TITLES = [
+    T('Bill Russell', [1957].concat(range(1959, 1966), [1968, 1969])), T('Sam Jones', range(1959, 1966).concat([1968, 1969])),
+    T('Tom Heinsohn', [1957].concat(range(1959, 1965))), T('K.C. Jones', range(1959, 1966), 'kc-jones'), T('Tom Sanders', range(1961, 1966).concat([1968, 1969])),
+    T('John Havlicek', range(1963, 1966).concat([1968, 1969, 1974, 1976])), T('Frank Ramsey', [1957].concat(range(1959, 1964))), T('Jim Loscutoff', [1957].concat(range(1959, 1964))),
+    T('Don Nelson', [1966, 1968, 1969, 1974, 1976]), T('Bob Cousy', [1957].concat(range(1959, 1963))), T('Bill Sharman', [1957, 1959, 1960, 1961]),
+    T('Robert Horry', [1994, 1995, 2000, 2001, 2002, 2003, 2005]), T('Michael Jordan', [1991, 1992, 1993, 1996, 1997, 1998]), T('Scottie Pippen', [1991, 1992, 1993, 1996, 1997, 1998]),
+    T('Kareem Abdul-Jabbar', [1971, 1980, 1982, 1985, 1987, 1988]), T('Magic Johnson', [1980, 1982, 1985, 1987, 1988]), T('Michael Cooper', [1980, 1982, 1985, 1987, 1988]),
+    T('Kobe Bryant', [2000, 2001, 2002, 2009, 2010]), T('Derek Fisher', [2000, 2001, 2002, 2004, 2009, 2010].filter(function (y) { return y !== 2004; })), T('Tim Duncan', [1999, 2003, 2005, 2007, 2014]),
+    T('Dennis Rodman', [1989, 1990, 1996, 1997, 1998]), T('Steve Kerr', [1996, 1997, 1998, 1999, 2003]), T('Ron Harper', [1996, 1997, 1998, 2000, 2001]),
+    T('Manu Ginobili', [2003, 2005, 2007, 2014]), T('Tony Parker', [2003, 2005, 2007, 2014]), T('Shaquille O\'Neal', [2000, 2001, 2002, 2006], 'shaquille-oneal'),
+    T('Stephen Curry', [2015, 2017, 2018, 2022]), T('Draymond Green', [2015, 2017, 2018, 2022]), T('Klay Thompson', [2015, 2017, 2018, 2022]), T('Andre Iguodala', [2015, 2017, 2018, 2022]),
+    T('LeBron James', [2012, 2013, 2016, 2020]), T('Kurt Rambis', [1982, 1985, 1987, 1988]), T('A.C. Green', [1985, 1987, 1988, 2000], 'ac-green'),
+    T('Robert Parish', [1981, 1984, 1986, 1997]), T('Larry Bird', [1981, 1984, 1986]), T('Kevin McHale', [1981, 1984, 1986]), T('James Worthy', [1985, 1987, 1988]),
+    T('Horace Grant', [1991, 1992, 1993, 2001]), T('Wilt Chamberlain', [1967, 1972]), T('Willis Reed', [1970, 1973]), T('Hakeem Olajuwon', [1994, 1995]), T('Isiah Thomas', [1989, 1990]),
+    T('Kevin Durant', [2017, 2018]), T('Dwyane Wade', [2006, 2012, 2013]), T('Kawhi Leonard', [2014, 2019]), T('Giannis Antetokounmpo', [2021]), T('Nikola Jokic', [2023])
+  ];
+  /* single-game records: v value, o opponent, y season start; only ones I am sure of */
+  function G(n, v, y, o, id) { return { n: n, v: v, y: y, o: o || '', id: id }; }
+  var GAME = {
+    pts: [G('Wilt Chamberlain', 100, 1961, 'New York'), G('Kobe Bryant', 81, 2005, 'Toronto'), G('Wilt Chamberlain', 78, 1961, 'Los Angeles'), G('Wilt Chamberlain', 73, 1961, 'Chicago'), G('Wilt Chamberlain', 73, 1962, 'Chicago'), G('David Thompson', 73, 1977, 'Detroit'), G('Luka Doncic', 73, 2022, 'Atlanta'), G('Elgin Baylor', 71, 1960, 'New York'), G('David Robinson', 71, 1993, 'LA Clippers'), G('Donovan Mitchell', 71, 2022, 'Chicago'), G('Devin Booker', 70, 2016, 'Boston'), G('Joel Embiid', 70, 2023, 'San Antonio'), G('Michael Jordan', 69, 1989, 'Cleveland'), G('Pete Maravich', 68, 1976, 'New York')],
+    trb: [G('Wilt Chamberlain', 55, 1960, 'Boston'), G('Bill Russell', 51, 1959, 'Syracuse'), G('Nate Thurmond', 42, 1965, 'Detroit')],
+    ast: [G('Scott Skiles', 30, 1990, 'Denver'), G('Kevin Porter', 29, 1977, 'Houston'), G('Bob Cousy', 28, 1958, 'Minneapolis'), G('Guy Rodgers', 28, 1962, 'St. Louis'), G('John Stockton', 28, 1990, 'San Antonio')],
+    fg: [G('Wilt Chamberlain', 36, 1961, 'New York')],
+    ft: [G('Wilt Chamberlain', 28, 1961, 'New York'), G('Adrian Dantley', 28, 1983, 'Houston')],
+    stl: [G('Larry Kenon', 11, 1976, 'Kansas City'), G('Kendall Gill', 11, 1993, 'Golden State')],
+    blk: [G('Elmore Smith', 17, 1973, 'Portland')]
+  };
+  var TEAMGAME = {
+    score: [{ n: 'Detroit', v: 186, y: 1983, o: 'Denver', sc: '186-184' }, { n: 'Boston', v: 173, y: 1958, o: 'Minneapolis', sc: '173-139' }],
+    margin: [{ n: 'Memphis', v: 73, y: 2021, o: 'Oklahoma City', sc: '152-79' }, { n: 'Cleveland', v: 68, y: 1991, o: 'Miami', sc: '148-80' }]
+  };
+  root.RealData = { MVP: MVP, FMVP: FMVP, TITLES: TITLES, GAME: GAME, TEAMGAME: TEAMGAME };
+})(window);

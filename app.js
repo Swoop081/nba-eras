@@ -3269,6 +3269,8 @@
 
   /* ---------- records and history ---------- */
   var RV = { tab: 'Champions' };
+  var REAL = null, FH = null;
+  function loadReal(cb) { if (REAL && FH) return cb(); Promise.all([fetch('data/real-records.json').then(function (r) { return r.json(); }), fetch('data/franchise-history.json').then(function (r) { return r.json(); })]).then(function (a) { REAL = a[0]; FH = a[1]; cb(); }).catch(function () { REAL = { seasons: {}, career: [] }; FH = {}; cb(); }); }
   var RTABS = ['Power', 'Awards', 'Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
   function openRecords() { RV.tab = RV.tab || 'Champions'; if (save.cup && save.dates && save.day >= save.cup.at - 14 && save.day <= save.cup.at + 10) RV.tab = 'Cup'; renderRecords(); show('screen-records'); }
   function renderRecords() {
@@ -3351,11 +3353,7 @@
       body.appendChild(el('p', 'sub', 'Group winners and the best runner-up in each conference reach the quarterfinals.'));
       return;
     }
-    if (RV.tab === 'Champions') {
-      section('Most championships', ['#', 'Club', 'Titles', 'Years'], v.teamTitles.map(function (x, i) { return [i + 1, city(x.id), x.n, x.years.map(function (y) { return seasonLabel(y).slice(-5); }).join(', ')]; }), 'No champions yet. The first one is crowned at the end of this season.');
-      section('Most titles by a player', ['#', 'Player', 'Titles'], v.playerTitles.map(function (x, i) { return [i + 1, plr(x.p), x.n]; }), 'No player has won a title yet.');
-      section('Champions by year', ['Season', 'Champion', 'Your club'], v.byYear.map(function (h) { return [seasonLabel(h.year), city(h.champion), h.rec || '']; }));
-    } else if (RV.tab === 'My legacy') {
+    if (RV.tab === 'My legacy') {
       var hs = (save.lg.history || []).filter(function (h) { return h.me; }), W = 0, L = 0, T = 0, P = 0, best = null;
       hs.forEach(function (h) {
         var m = /^(\d+)-(\d+)$/.exec(h.rec || ''); if (m) { W += +m[1]; L += +m[2]; var pc = +m[1] / Math.max(1, +m[1] + +m[2]); if (!best || pc > best.pc) best = { pc: pc, rec: h.rec, y: h.year }; }
@@ -3368,27 +3366,137 @@
       });
       body.appendChild(tile);
       section('Your seasons', ['Season', 'Record', 'Result'], hs.slice().reverse().map(function (h) { return [seasonLabel(h.year), h.rec, h.champion === h.me ? 'Champions' : h.po ? 'Playoffs' : 'Missed']; }), 'Your first season is still to be played.');
-    } else if (RV.tab === 'Game highs') {
-      var names = { pts: 'Most points in a game', ast: 'Most assists in a game', trb: 'Most rebounds in a game', fg: 'Most field goals in a game', ft: 'Most free throws in a game', stl: 'Most steals in a game', blk: 'Most blocks in a game' };
-      Object.keys(names).forEach(function (k) {
-        var list = (v.rec.game[k] || []).slice(0, 5);
-        section(names[k], ['#', 'Player', k.toUpperCase(), 'Opp', 'Season'], list.map(function (e, i) { return [i + 1, e.name, e.v, city(e.o), seasonLabel(e.y).slice(-5)]; }), 'Tracked from this save onward.');
+      return;
+    }
+    var cut = parseInt(save.eraId, 10) || save.year;
+    if (!REAL || !FH) {
+      body.appendChild(el('p', 'sub', 'Loading the record books...'));
+      loadReal(function () { if (RV.tab === 'Champions' || RV.tab === 'Game highs' || RV.tab === 'Season highs' || RV.tab === 'Career' || RV.tab === 'Honours') renderRecords(); });
+      if (['My legacy'].indexOf(RV.tab) < 0) return;
+    }
+    var RD = window.RealData;
+    function fmtN(x) { return x >= 1000 ? Math.round(x).toLocaleString('en-US') : String(x); }
+    /* one card of ranked rows, same look as the league leaders */
+    function board(title, rows, o) {
+      o = o || {};
+      body.appendChild(el('h3', 'box-title', title));
+      var box = el('div', 'lb rec-lb');
+      if (!rows.length) box.appendChild(el('p', 'sub', o.empty || 'Nothing on record yet.'));
+      var top = rows.length ? (rows[0].num || 0) : 0;
+      rows.forEach(function (r, i) {
+        var line = el('div', 'lb-row' + (r.mine ? ' mine' : '') + (r.noav ? ' noav' : '') + (r.rk !== undefined ? ' yr' : ''));
+        line.appendChild(el('span', 'rk', r.rk !== undefined ? r.rk : String(i + 1)));
+        if (r.noav) { } else if (r.club) { var bd = teamBadge(r.club); bd.className += ' sm'; line.appendChild(bd); } else line.appendChild(makeAvatar({ id: r.id || '', name: r.name }));
+        var tx = el('span', 'who'); tx.appendChild(el('b', null, r.name)); tx.appendChild(el('small', null, r.sub || '')); line.appendChild(tx);
+        var val = el('span', 'val'); val.appendChild(el('b', null, r.val));
+        if (top && r.num && !o.nobar) { var bar = el('i'); bar.style.width = Math.max(6, Math.round(100 * r.num / top)) + '%'; val.appendChild(bar); }
+        line.appendChild(val);
+        box.appendChild(line);
       });
-      section('Most points by a team', ['#', 'Club', 'Pts', 'Opp', 'Season'], (v.rec.team.score || []).slice(0, 5).map(function (e, i) { return [i + 1, city(e.t), e.v, city(e.o), seasonLabel(e.y).slice(-5)]; }));
-      section('Biggest margin of victory', ['#', 'Winner', 'Score', 'Opp', 'Season'], (v.rec.team.margin || []).slice(0, 5).map(function (e, i) { return [i + 1, city(e.t), e.sc + ' (+' + e.v + ')', city(e.o), seasonLabel(e.y).slice(-5)]; }));
+      body.appendChild(box);
+    }
+    function mineOf(p) { return p && p.team === save.myId; }
+    var yl = function (y) { return seasonLabel(y).slice(-5); };
+    if (RV.tab === 'Champions') {
+      var fr = {}, byYear = [];
+      Object.keys(FH).forEach(function (k) { (FH[k].champs || []).forEach(function (ey) { if (ey - 1 < cut && ey >= 1947 && !(k === 'los-angeles-lakers' && ey === 1948)) { byYear.push({ y: ey - 1, k: k }); (fr[k] = fr[k] || []).push(ey - 1); } }); });
+      function frKey(t) {
+        if (!t) return null;
+        var nm = String(t.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'), ex = { bullets: 'washington-wizards', supersonics: 'oklahoma-city-thunder', nationals: 'philadelphia-76ers', hornets: /orleans/i.test(t.city) ? 'new-orleans-pelicans' : 'charlotte-hornets', bobcats: 'charlotte-hornets' };
+        if (ex[nm]) return ex[nm];
+        var ks = Object.keys(FH).filter(function (k) { return k.slice(-nm.length) === nm; });
+        return ks[0] || null;
+      }
+      (save.lg.history || []).forEach(function (h) {
+        if (!h.champion || h.year < cut) return;
+        var k = frKey(teamById(h.champion)) || h.champion; byYear.push({ y: h.year, k: k, mine: h.champion === save.myId }); (fr[k] = fr[k] || []).push(h.year);
+      });
+      var nameOf = function (k) { return k.split('-').map(function (w) { return w === '76ers' ? '76ers' : w.charAt(0).toUpperCase() + w.slice(1); }).join(' ').replace('La ', 'LA '); };
+      var kt = Object.keys(fr).map(function (k) { return { k: k, n: fr[k].length, last: Math.max.apply(null, fr[k]) }; }).sort(function (a, b) { return b.n - a.n || b.last - a.last; });
+      board('Most championships', kt.slice(0, 10).map(function (x) { return { name: nameOf(x.k), sub: 'Last title ' + yl(x.last), val: String(x.n), num: x.n, mine: x.k === frKey(teamById(save.myId)), club: (function () { var f = save.ids.filter(function (i) { return frKey(teamById(i)) === x.k; })[0]; return f ? teamById(f) : null; })(), id: '' }; }), { empty: 'No champions yet.' });
+      /* titles by player: real rings before the start, then rings won in this save */
+      var pt = {};
+      RD.TITLES.forEach(function (t) { var yrs = t.y.filter(function (y) { return y < cut; }); if (yrs.length) pt[t.id || t.n] = { n: t.n, id: t.id || t.n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z ]/g, '').trim().replace(/ +/g, '-'), c: yrs.length, last: Math.max.apply(null, yrs) }; });
+      save.lg.players.forEach(function (p) {
+        var yrs = (p.awards || []).filter(function (a) { return a.a === 'League champion' && a.y >= cut; });
+        if (!yrs.length) return;
+        var key = p.id, hit = Object.keys(pt).filter(function (k) { return pt[k].id === p.id; })[0];
+        var e = hit ? pt[hit] : (pt[key] = { n: p.name, id: p.id, c: 0, last: 0 });
+        e.c += yrs.length; e.last = Math.max(e.last, yrs[yrs.length - 1].y); e.p = p;
+      });
+      var pl = Object.keys(pt).map(function (k) { return pt[k]; }).sort(function (a, b) { return b.c - a.c || b.last - a.last; }).slice(0, 10);
+      board('Most titles by a player', pl.map(function (e) { return { name: e.n, id: e.id, sub: 'Last ring ' + yl(e.last), val: String(e.c), num: e.c, mine: mineOf(e.p) }; }));
+      byYear.sort(function (a, b) { return b.y - a.y; });
+      board('Champions by year', byYear.map(function (x) { return { rk: yl(x.y), name: nameOf(x.k), sub: '', val: '', num: 0, mine: x.mine, noav: true }; }).map(function (r) { r.rk = r.rk; return r; }), { nobar: true });
+    } else if (RV.tab === 'Game highs') {
+      var gn = { pts: 'Most points in a game', ast: 'Most assists in a game', trb: 'Most rebounds in a game', fg: 'Most field goals in a game', ft: 'Most free throws in a game', stl: 'Most steals in a game', blk: 'Most blocks in a game' };
+      Object.keys(gn).forEach(function (k) {
+        var list = (RD.GAME[k] || []).filter(function (e) { return e.y < cut; }).map(function (e) { return { name: e.n, id: e.id, v: e.v, sub: (e.o ? 'vs ' + e.o + ' · ' : '') + yl(e.y), mine: false }; });
+        (v.rec.game[k] || []).forEach(function (e) { list.push({ name: e.name, id: e.id || '', v: e.v, sub: 'vs ' + city(e.o) + ' · ' + yl(e.y), mine: false, now: true }); });
+        list.sort(function (a, b) { return b.v - a.v; });
+        board(gn[k], list.slice(0, 5).map(function (e) { return { name: e.name, id: e.id, sub: e.sub, val: String(e.v), num: e.v, mine: e.now && false }; }));
+      });
+      var tg = function (k, fn) { var l = (RD.TEAMGAME[k] || []).filter(function (e) { return e.y < cut; }).map(function (e) { return { n: e.n, v: e.v, sc: e.sc, y: e.y, o: e.o }; }); (v.rec.team[k] || []).forEach(function (e) { l.push({ n: city(e.t), v: e.v, sc: e.sc || '', y: e.y, o: city(e.o), now: true }); }); l.sort(function (a, b) { return b.v - a.v; }); return l.slice(0, 5).map(fn); };
+      board('Most points by a team', tg('score', function (e) { return { name: e.n, sub: (e.sc ? e.sc + ' · ' : '') + 'vs ' + e.o + ' · ' + yl(e.y), val: String(e.v), num: e.v, id: '' }; }));
+      board('Biggest margin of victory', tg('margin', function (e) { return { name: e.n, sub: (e.sc ? e.sc + ' · ' : '') + 'vs ' + e.o + ' · ' + yl(e.y), val: '+' + e.v, num: e.v, id: '' }; }));
     } else if (RV.tab === 'Season highs') {
-      var sn = { ppg: 'Points per game', apg: 'Assists per game', pts: 'Total points in a season', ast: 'Total assists in a season' };
-      Object.keys(sn).forEach(function (k) {
-        section(sn[k], ['#', 'Player', k === 'ppg' || k === 'apg' ? 'Avg' : 'Total', 'Club', 'Season'], (v.rec.season[k] || []).slice(0, 10).map(function (e, i) { return [i + 1, e.name, e.v, city(e.t), seasonLabel(e.y).slice(-5)]; }), 'Filled in when each season ends.');
+      var sdef = [['pts', 'Points per game', 1], ['trb', 'Rebounds per game', 1], ['ast', 'Assists per game', 1], ['stl', 'Steals per game', 1], ['blk', 'Blocks per game', 1]];
+      sdef.forEach(function (s) {
+        var all = [];
+        Object.keys(REAL.seasons).forEach(function (y) { if (+y < cut) (REAL.seasons[y][s[0]] || []).forEach(function (r) { all.push({ id: r[0], name: r[1], tm: r[2], y: +y, v: r[4] }); }); });
+        var key = { pts: 'ppg', ast: 'apg' }[s[0]];
+        if (key) (v.rec.season[key] || []).forEach(function (e) { all.push({ id: e.id || '', name: e.name, tm: city(e.t), y: e.y, v: e.v, now: true }); });
+        all.sort(function (a, b) { return b.v - a.v; });
+        board(s[1], all.slice(0, 10).map(function (e) { return { name: e.name, id: e.id, sub: e.tm + ' · ' + yl(e.y), val: e.v.toFixed(1), num: e.v }; }));
       });
     } else if (RV.tab === 'Career') {
-      [['Career points', v.career.pts, function (x) { return x; }], ['Career assists', v.career.ast, function (x) { return x; }], ['Games played', v.career.g, function (x) { return x; }], ['Points per game (20+ games)', v.career.ppg, function (x) { return x.toFixed(1); }], ['Field goal % (100+ shots)', v.career.fg, function (x) { return x.toFixed(1) + '%'; }], ['Free throw % (100+ tries)', v.career.ft, function (x) { return x.toFixed(1) + '%'; }]].forEach(function (c) {
-        section(c[0], ['#', 'Player', 'Value', 'Club'], c[1].map(function (e, i) { return [i + 1, e.p.name, c[2](e.v), e.p.team ? city(e.p.team) : (e.p.status === 'retired' ? 'Retired' : 'Free agent')]; }));
+      var tot = {};
+      REAL.career.forEach(function (r) {
+        var t = [0, 0, 0, 0, 0, 0], last = 0, any = false;
+        r[2].forEach(function (x) { if (x[0] < cut) { any = true; last = x[0]; for (var i = 0; i < 6; i++) t[i] += x[i + 1]; } });
+        if (any) tot[r[0]] = { id: r[0], name: r[1], t: t, last: last, now: false };
       });
-    } else {
-      ['Most Valuable Player', 'Scoring champion', 'Assists leader'].forEach(function (k) {
-        section(k + 's', ['Season', 'Player'], (v.honours[k] || []).map(function (h) { return [seasonLabel(h.y), h.p.name]; }), 'Awarded when each season ends.');
+      save.lg.players.forEach(function (p) {
+        var c = { g: 0, pts: 0, trb: 0, ast: 0, stl: 0, blk: 0 };
+        (p.career || []).forEach(function (x) { Object.keys(c).forEach(function (k) { c[k] += x[k] || 0; }); });
+        var cur = save.lg.stats[p.id]; if (cur && cur.g) Object.keys(c).forEach(function (k) { c[k] += cur[k] || 0; });
+        if (!c.g) return;
+        var e = tot[p.id] || (tot[p.id] = { id: p.id, name: p.name, t: [0, 0, 0, 0, 0, 0], last: 0 });
+        e.t[0] += c.g; e.t[1] += c.pts; e.t[2] += c.trb; e.t[3] += c.ast; e.t[4] += c.stl; e.t[5] += c.blk; e.p = p; e.now = true;
       });
+      var rows = Object.keys(tot).map(function (k) { return tot[k]; });
+      [['Career points', 1, 0], ['Career rebounds', 2, 0], ['Career assists', 3, 0], ['Career steals', 4, 0], ['Career blocks', 5, 0], ['Games played', 0, 0], ['Points per game (400+ games)', 1, 1]].forEach(function (c) {
+        var l = rows.filter(function (r) { return c[2] ? r.t[0] >= 400 : r.t[c[1]] > 0; }).map(function (r) { return { r: r, v: c[2] ? r.t[1] / r.t[0] : r.t[c[1]] }; }).sort(function (a, b) { return b.v - a.v; }).slice(0, 10);
+        board(c[0], l.map(function (x) { return { name: x.r.name, id: x.r.id, sub: x.r.p ? (x.r.p.team ? city(x.r.p.team) : (x.r.p.status === 'retired' ? 'Retired' : 'Free agent')) : (x.r.last ? 'Through ' + yl(x.r.last) : ''), val: c[2] ? x.v.toFixed(1) : fmtN(x.v), num: x.v, mine: mineOf(x.r.p) }; }));
+      });
+    } else if (RV.tab === 'Honours') {
+      var hon = function (title, list, fromSave) {
+        var l = list.filter(function (e) { return e.y < cut; }).map(function (e) { return { y: e.y, n: e.n, id: e.id, tm: e.tm || '' }; });
+        (fromSave || []).forEach(function (h) { l.push({ y: h.y, n: h.p.name, id: h.p.id, tm: '', mine: mineOf(h.p) }); });
+        l.sort(function (a, b) { return b.y - a.y; });
+        return l;
+      };
+      var cnt = function (l) { var c = {}; l.forEach(function (e) { c[e.id] = c[e.id] || { n: e.n, id: e.id, c: 0, last: 0 }; c[e.id].c++; c[e.id].last = Math.max(c[e.id].last, e.y); }); return Object.keys(c).map(function (k) { return c[k]; }).sort(function (a, b) { return b.c - a.c || b.last - a.last; }).slice(0, 5); };
+      var byAward = function (k) { return (v.honours[k] || []); };
+      var yearRows = function (l) { return l.map(function (e) { return { rk: yl(e.y), name: e.n, id: e.id, sub: e.tm, val: '', num: 0, mine: e.mine }; }); };
+      var mvpL = hon('MVP', RD.MVP, byAward('Most Valuable Player'));
+      board('Most MVP awards', cnt(mvpL).map(function (e) { return { name: e.n, id: e.id, sub: 'Last ' + yl(e.last), val: String(e.c), num: e.c }; }));
+      var fmL = hon('Finals MVP', RD.FMVP, []);
+      board('Most Finals MVP awards', cnt(fmL).map(function (e) { return { name: e.n, id: e.id, sub: 'Last ' + yl(e.last), val: String(e.c), num: e.c }; }));
+      var sc = [], as = [], rb = [];
+      Object.keys(REAL.seasons).forEach(function (y) {
+        if (+y >= cut) return; var s = REAL.seasons[y];
+        if (s.pts && s.pts[0]) sc.push({ y: +y, n: s.pts[0][1], id: s.pts[0][0], tm: s.pts[0][2] + ' · ' + s.pts[0][4].toFixed(1) });
+        if (s.ast && s.ast[0]) as.push({ y: +y, n: s.ast[0][1], id: s.ast[0][0], tm: s.ast[0][2] + ' · ' + s.ast[0][4].toFixed(1) });
+        if (s.trb && s.trb[0]) rb.push({ y: +y, n: s.trb[0][1], id: s.trb[0][0], tm: s.trb[0][2] + ' · ' + s.trb[0][4].toFixed(1) });
+      });
+      var scL = hon('Scoring', sc, byAward('Scoring champion')), asL = hon('Assists', as, byAward('Assists leader')), rbL = hon('Rebounds', rb, []);
+      board('Most scoring titles', cnt(scL).map(function (e) { return { name: e.n, id: e.id, sub: 'Last ' + yl(e.last), val: String(e.c), num: e.c }; }));
+      board('Most Valuable Players', yearRows(mvpL), { nobar: true });
+      board('Finals MVPs', yearRows(fmL), { nobar: true });
+      board('Scoring champions', yearRows(scL), { nobar: true });
+      board('Assists leaders', yearRows(asL), { nobar: true });
+      board('Rebounding champions', yearRows(rbL), { nobar: true });
     }
   }
 

@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v224';
+var CACHE = 'nba-eras-v225';
 var SHELL = [
   './',
   'index.html',
@@ -10,7 +10,7 @@ var SHELL = [
   'events.js',
   'league.js',
   'coaches.js',
-  'history.js',
+  'history.js', 'realdata.js', 'data/real-records.json',
   'phone.js',
   'modern.css',
   'fonts.css',
