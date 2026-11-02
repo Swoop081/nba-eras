@@ -202,6 +202,8 @@
   }
 
   /* Who is on the floor: the best five start; the bench spells them in a window each quarter. */
+  /* sixteen quarter-segments of the usual rotation: the best play ~35 minutes, the 7th and 8th men ~24 */
+  var SCHED = [[0, 1, 2, 3, 4], [0, 1, 3, 5, 6], [1, 2, 3, 6, 7], [1, 2, 4, 6, 7], [1, 2, 3, 5, 7], [0, 2, 3, 4, 5], [0, 1, 2, 3, 6], [0, 1, 4, 5, 6], [0, 1, 2, 3, 6], [0, 2, 3, 4, 5], [1, 2, 4, 6, 7], [0, 2, 4, 6, 7], [0, 1, 3, 5, 7], [0, 1, 2, 4, 5], [0, 1, 4, 5, 7], [0, 3, 4, 5, 7]];
   function lineupIdx(g, T, side) {
     var n = T.length;
     if (n <= 5) return T.map(function (x, i) { return i; });
@@ -212,9 +214,7 @@
       if (g.q < 4 && !late) {
         if (mn === 'heavy') { if (ph >= 0.42 && ph < 0.58) base = [0, 1, 5, 6, 7]; }
         else if (mn === 'deep' && ph >= 0.25 && ph < 0.75) base = [0, 1, 5, 6, 7];
-        else if (ph >= 0.35 && ph < 0.65) base = [0, 1, 5, 6, 7];
-        else if (mn !== 'heavy' && (g.q === 0 || g.q === 2) && ph >= 0.8) base = [5, 6, 2, 3, 4];
-        else if (mn !== 'heavy' && (g.q === 1 || g.q === 3) && ph < 0.2) base = [5, 6, 2, 3, 4];
+        else base = SCHED[g.q * 4 + Math.min(3, Math.floor(ph * 4))];
       }
     }
     var rest = (g.rest && g.rest[side]) || {};
@@ -287,10 +287,11 @@
     var mH = live(g, 'H'), mA = live(g, 'A');
     setLineups(g);
     g.onH.forEach(function (x) { x.s.pos++; }); g.onA.forEach(function (x) { x.s.pos++; });
-    g.st.eo = g.edge.H || 0; g.st.ed = g.edge.A || 0;
+    var hca = g.neutral ? 0 : (g.pr.hca !== undefined ? g.pr.hca : 0.012);
+    g.st.eo = (g.edge.H || 0) + hca; g.st.ed = g.edge.A || 0;
     var a = possession(g.r, g.onH, g.onA, g.pr, g.st, mH, mA);
     var evA = { side: 'home', pts: a, ev: g.st.ev };
-    g.st.eo = g.edge.A || 0; g.st.ed = g.edge.H || 0;
+    g.st.eo = (g.edge.A || 0) - hca; g.st.ed = g.edge.H || 0;
     var b = possession(g.r, g.onA, g.onH, g.pr, g.st, mA, mH);
     var evB = { side: 'away', pts: b, ev: g.st.ev };
     g.qh += a; g.qa += b; g.hs += a; g.as += b; g.k++; g.n++;
