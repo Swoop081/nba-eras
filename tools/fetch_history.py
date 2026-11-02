@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """Pull each franchise's championship years and retired numbers (with the year each was retired) from Wikipedia.
 Writes data/franchise-history.json keyed by the modern club id."""
-import json, re, sys, urllib.request, urllib.parse, html
+import json, re, sys, time, urllib.request, urllib.parse, html
 from bs4 import BeautifulSoup
 PAGES = {'atlanta-hawks':'Atlanta_Hawks','boston-celtics':'Boston_Celtics','brooklyn-nets':'Brooklyn_Nets','charlotte-hornets':'Charlotte_Hornets','chicago-bulls':'Chicago_Bulls','cleveland-cavaliers':'Cleveland_Cavaliers','dallas-mavericks':'Dallas_Mavericks','denver-nuggets':'Denver_Nuggets','detroit-pistons':'Detroit_Pistons','golden-state-warriors':'Golden_State_Warriors','houston-rockets':'Houston_Rockets','indiana-pacers':'Indiana_Pacers','la-clippers':'Los_Angeles_Clippers','los-angeles-lakers':'Los_Angeles_Lakers','memphis-grizzlies':'Memphis_Grizzlies','miami-heat':'Miami_Heat','milwaukee-bucks':'Milwaukee_Bucks','minnesota-timberwolves':'Minnesota_Timberwolves','new-orleans-pelicans':'New_Orleans_Pelicans','new-york-knicks':'New_York_Knicks','oklahoma-city-thunder':'Oklahoma_City_Thunder','orlando-magic':'Orlando_Magic','philadelphia-76ers':'Philadelphia_76ers','phoenix-suns':'Phoenix_Suns','portland-trail-blazers':'Portland_Trail_Blazers','sacramento-kings':'Sacramento_Kings','san-antonio-spurs':'San_Antonio_Spurs','toronto-raptors':'Toronto_Raptors','utah-jazz':'Utah_Jazz','washington-wizards':'Washington_Wizards'}
 def api(**p):
     p['format'] = 'json'
     url = 'https://en.wikipedia.org/w/api.php?' + urllib.parse.urlencode(p)
-    req = urllib.request.Request(url, headers={'User-Agent': 'nba-eras-private-game/1.0 (hobby project)'})
-    return json.load(urllib.request.urlopen(req, timeout=60))
+    req = urllib.request.Request(url, headers={'User-Agent': 'nba-eras-private-game/1.0 (hobby project; contact via github Swoop081)'})
+    for k in range(8):
+        try:
+            time.sleep(1.5)
+            return json.load(urllib.request.urlopen(req, timeout=60))
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or k == 7: raise
+            time.sleep(10 * (k + 1))
 def clean(t): return re.sub(r'\[[^\]]*\]|\s+', ' ', html.unescape(t)).strip()
 out, log = {}, []
 for tid, page in PAGES.items():

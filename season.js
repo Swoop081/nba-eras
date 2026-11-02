@@ -165,6 +165,28 @@
     return { hs: 1, as: 0 };
   }
 
+  /* what the Cup screen shows: group tables, the eight in the bracket, and each knockout game's score */
+  function cupView(state) {
+    var c = state.cup; if (!c) return null;
+    var tab = cupTable(state), q = c.q || [];
+    var groups = c.groups.map(function (g, i) {
+      var rows = g.map(function (id) { return tab[id]; }).sort(cupSort);
+      return { n: i + 1, conf: state.division[g[0]], rows: rows };
+    });
+    function game(day, a, b) {
+      for (var i = state.results.length - 1; i >= 0; i--) {
+        var x = state.results[i];
+        if (x.d === day && ((x.h === a && x.a === b) || (x.h === b && x.a === a))) return { a: a, b: b, as: x.h === a ? x.hs : x.as, bs: x.h === a ? x.as : x.hs };
+      }
+      return { a: a, b: b };
+    }
+    var rounds = [];
+    if (c.qf) rounds.push({ name: 'Quarterfinals', games: c.qf.map(function (m) { return game(c.at, m[0], m[1]); }) });
+    if (c.sf) rounds.push({ name: 'Semifinals', games: c.sf.map(function (m) { return game(c.at + 1, m[0], m[1]); }) });
+    if (c.final) rounds.push({ name: 'Championship', games: [game(c.at + 2, c.final[0], c.final[1])] });
+    return { groups: groups, q: q, rounds: rounds, champ: c.champ || null, seed: c.seed || {} };
+  }
+
   function create(eraId, year, teams, myId, gamesPerTeam, sched) {
     var ids = teams.map(function (t) { return t.id; });
     var r = rng(Math.floor(Math.random() * 1e9));
@@ -394,6 +416,6 @@
 
   root.Season = {
     create: create, today: today, record: record, standings: standings, myNext: myNext,
-    inPlayoffs: inPlayoffs, ROUNDS: ROUNDS, roundInfo: roundInfo, pct: pct
+    inPlayoffs: inPlayoffs, ROUNDS: ROUNDS, roundInfo: roundInfo, pct: pct, cupView: cupView
   };
 })(window);
