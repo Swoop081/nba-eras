@@ -4145,6 +4145,16 @@
       trade.msg = 'Deal done. ' + line.replace('Trade: ', '');
       renderTrade();
     }
+    function adjustBtn(partner, give, get, giveK, getK) {
+      var b = el('button', 'btn tf-adj', 'Adjust the deal'); b.type = 'button';
+      b.addEventListener('click', function () {
+        trade.partner = partner; trade.view = ''; trade.give = {}; trade.get = {}; trade.msg = ''; trade.tab = 'send';
+        give.forEach(function (p) { trade.give[p.id] = 1; }); giveK.forEach(function (k) { trade.give[League.pickId(k)] = 1; });
+        get.forEach(function (p) { trade.get[p.id] = 1; }); getK.forEach(function (k) { trade.get[League.pickId(k)] = 1; });
+        renderTrade();
+      });
+      return b;
+    }
     function payAfter(give, get, giveK) {
       var d = get.reduce(function (s, p) { return s + p.salary; }, 0) - give.reduce(function (s, p) { return s + p.salary; }, 0);
       return League.payroll(save, me.id) + d;
@@ -4173,8 +4183,7 @@
       var give = mine.filter(function (p) { return trade.give[p.id]; }), giveK = myK.filter(function (k) { return trade.give[League.pickId(k)]; });
       var offers = League.findOffers(save, me.id, give, giveK, tradeMax());
       var list2 = el('div', 'tlist');
-      list2.appendChild(assetBlock('You are shopping', give, giveK));
-      if (!offers.length) list2.appendChild(el('p', 'note', 'No club would take that and stay within the roster and cap rules.'));
+      if (!offers.length) list2.appendChild(el('p', 'note', 'No club has anything that works for that. Try adding more.'));
       offers.forEach(function (o) {
         var t = teamById(o.tid), card = el('div', 'tf-offer');
         var hd = el('div', 'tf-head');
@@ -4184,11 +4193,13 @@
         ht.appendChild(el('small', null, ({ win: 'Contending', rebuild: 'Rebuilding', mid: 'In the middle' })[League.clubMode(save, o.tid)]));
         hd.appendChild(ht);
         var ab = el('button', 'btn primary', 'Accept'); ab.type = 'button';
-        ab.addEventListener('click', function () { accept(o.tid, give, o.get, giveK, o.getK, ab); });
+        ab.addEventListener('click', function () { accept(o.tid, o.give, o.get, o.giveK, o.getK, ab); });
         hd.appendChild(ab);
         card.appendChild(hd);
+        card.appendChild(assetBlock('You send', o.give, o.giveK));
         card.appendChild(assetBlock('You get', o.get, o.getK));
-        card.appendChild(el('small', 'tf-pay', 'Your payroll after ' + money(payAfter(give, o.get)) + (payAfter(give, o.get) > cap ? ' · over the cap' : '')));
+        card.appendChild(adjustBtn(o.tid, o.give, o.get, o.giveK, o.getK));
+        card.appendChild(el('small', 'tf-pay', 'Your payroll after ' + money(payAfter(o.give, o.get)) + (payAfter(o.give, o.get) > cap ? ' · over the cap' : '')));
         list2.appendChild(card);
       });
       body.appendChild(list2);
@@ -4199,20 +4210,21 @@
     document.getElementById('trade-title').textContent = 'Packages from ' + t2.city;
     var pk = League.findPackages(save, me.id, trade.partner, want.p, want.k, tradeMax(), 3);
     var list3 = el('div', 'tlist');
-    list3.appendChild(assetBlock('You want', want.p, want.k));
     if (!pk.length) list3.appendChild(el('p', 'note', 'They would not do that for anything you can send within the roster and cap rules.'));
     pk.forEach(function (o, i) {
       var card = el('div', 'tf-offer');
       var hd = el('div', 'tf-head');
       var ht = el('span', 'tf-tx');
       ht.appendChild(el('b', null, 'Offer ' + (i + 1)));
-      ht.appendChild(el('small', null, 'Payroll after ' + money(payAfter(o.give, want.p))));
+      ht.appendChild(el('small', null, 'Payroll after ' + money(payAfter(o.give, o.get))));
       hd.appendChild(ht);
       var ab = el('button', 'btn primary', 'Accept'); ab.type = 'button';
-      ab.addEventListener('click', function () { accept(trade.partner, o.give, want.p, o.giveK, want.k, ab); });
+      ab.addEventListener('click', function () { accept(trade.partner, o.give, o.get, o.giveK, o.getK, ab); });
       hd.appendChild(ab);
       card.appendChild(hd);
       card.appendChild(assetBlock('You send', o.give, o.giveK));
+      card.appendChild(assetBlock('You get', o.get, o.getK));
+      card.appendChild(adjustBtn(trade.partner, o.give, o.get, o.giveK, o.getK));
       list3.appendChild(card);
     });
     body.appendChild(list3);
