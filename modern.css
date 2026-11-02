@@ -725,3 +725,7 @@ body[data-modern="1"] .pd-chip.q{border-color:#ffb347;color:#ffb347;background:t
 body[data-modern="1"] .pd-chip.bench{background:#2a1618;color:#ff8a8e}
 body[data-modern="1"] .pd-chip.bench.q{border-color:#ff8a8e;background:transparent}
 body[data-modern="1"] .pd-chip:disabled{opacity:.35}
+
+body[data-modern="1"] .lr.pick{border-color:#ffb347;animation:pickpulse 1s infinite alternate}
+@keyframes pickpulse{to{background:#2a2112}}
+body[data-modern="1"] #screen-live .btn.opt:disabled{opacity:.4}

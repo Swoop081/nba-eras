@@ -116,13 +116,15 @@
   function none() { return {}; }
   var NOI = {};
   function ni(x) { return x.ins || NOI; }
+  function nd(x) { return x.dins || NOI; }
+  function cntd(list, k) { var n = 0; list.forEach(function (x) { if (nd(x)[k]) n++; }); return n; }
   function cnt(list, k) { var n = 0; list.forEach(function (x) { if (ni(x)[k]) n++; }); return n; }
 
   function possession(r, O, D, pr, st, mo, md) {
     mo = mo || none(); md = md || none();
     var ev = st.ev = { who: null, kind: 'miss', pts: 0 };
     var tovAdj = (50 - avg(O, function (x) { return x.p.ratings.tov; })) / 400 + (avg(D, function (x) { return x.p.ratings.stl; }) - 50) / 500;
-    tovAdj += (mo.tovAdd || 0) + (md.oppTovAdd || 0) + 0.012 * cnt(D, 'press');
+    tovAdj += (mo.tovAdd || 0) + (md.oppTovAdd || 0) + 0.012 * cnt(D, 'press') + 0.01 * cntd(O, 'deny') + 0.008 * cntd(O, 'double');
     if (r() < pr.tov + tovAdj) {
       var loser = pick(r, O, function (x) { return x.share * (110 - x.p.ratings.tov); });
       loser.s.tov++;
@@ -133,14 +135,15 @@
       }
       return 0;
     }
+    var dbl = cntd(O, 'double') > 0;
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco;
-      return x.share * Math.pow(s, mo.flat ? 0.15 : (pr.use || 2)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1);
+      return x.share * Math.pow(s, mo.flat ? 0.15 : (pr.use || 2)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
-    var si = ni(shooter);
-    var fouled = r() < pr.foul + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
+    var si = ni(shooter), sd = nd(shooter);
+    var fouled = r() < pr.foul + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + (sd.double ? 0.015 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
     if (fouled) {
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1) * (ni(x).press || ni(x).paint ? 1.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
@@ -151,8 +154,9 @@
     q *= 1 - 0.02 * D.reduce(function (t, x) { return t + (ni(x).paint ? x.p.ratings.blk / 70 : 0); }, 0);
     q *= (si.rim ? 1.015 : 1) * (si.use > 1.5 ? 0.985 : 1) * (mo.fgMul || 1) * (md.oppFgMul || 1) * (md.double === shooter.p.id ? 0.93 : 1);
     if (st.eo || st.ed) q *= Math.exp((st.eo || 0) - (st.ed || 0));
-    var three = pr.threes && r() < Math.max(0, (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500) + (si.tp || 0) - (si.rim ? 0.12 : 0));
+    var three = mo.force3 ? mo.force3 === 3 : pr.threes && r() < Math.max(0, (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500) + (si.tp || 0) + (sd.sag ? 0.12 : 0) - (si.rim ? 0.12 : 0));
     if (three) { q = q * (pr.tpq || 0.78); }
+    q *= (sd.double ? 0.94 : 1) * (sd.sag ? (three ? 1.06 : 0.97) : 1) * (1 - (sd.match || 0)) * (dbl && !sd.double ? 1.02 : 1);
     var made = r() < q;
     if (fouled) {
       var n = made ? 1 : (three ? 3 : 2);

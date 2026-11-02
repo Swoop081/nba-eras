@@ -1939,16 +1939,44 @@
       .sort(function (a, b) { return b.v - a.v; }).slice(0, 5).map(function (x) { return x.k; });
   }
   function slotPlayer(i) { return lv.g.onH[slotIdx(lv.g.onH)[i]]; }
+  var DORDERS = {
+    double: { l: 'Double team',   d: { double: 1 } },
+    sag:    { l: 'Sag off',       d: { sag: 1 } },
+    deny:   { l: 'Deny the ball', d: { deny: 1 } }
+  };
+  function swapDefenders() {
+    return lv.g.onH.slice().sort(function (u, v) { var f = function (x) { return x.p.ratings.stl + x.p.ratings.blk + x.p.ratings.ovr; }; return f(v) - f(u); }).slice(0, 2);
+  }
+  function orderLabel(key) {
+    if (ORDERS[key]) return ORDERS[key].l;
+    if (DORDERS[key]) return DORDERS[key].l;
+    if (key.indexOf('sw:') === 0) { var r = lv.g.H.filter(function (x) { return x.p.id === key.slice(3); })[0]; return 'Switch: ' + (r ? lastName(r.p.name) : '') + ' guards him'; }
+    return key;
+  }
+  function dinsFor(key) {
+    if (DORDERS[key]) return Object.assign({}, DORDERS[key].d);
+    var r = lv.g.H.filter(function (x) { return x.p.id === key.slice(3); })[0];
+    if (!r) return null;
+    var m = (r.p.ratings.stl + r.p.ratings.blk + r.p.ratings.ovr) / 3;
+    return { match: Math.max(0.01, Math.min(0.05, (m - 45) / 1000)) };
+  }
   function applyOrders() {
     var g = lv.g, any = false;
-    Object.keys(lv.queue).forEach(function (pid) {
-      var q = lv.queue[pid], row = g.H.filter(function (x) { return x.p.id === pid; })[0];
-      delete lv.queue[pid];
+    Object.keys(lv.queue).forEach(function (kk) {
+      var q = lv.queue[kk], opp = kk.charAt(0) === 'o', pid = opp ? kk.slice(1) : kk;
+      var row = (opp ? g.A : g.H).filter(function (x) { return x.p.id === pid; })[0];
+      delete lv.queue[kk];
       if (!row) return;
       any = true;
       if (q.bench) {
         g.rest.H[pid] = g.n + 10;
         tickerLine('Sub: ' + lastName(row.p.name) + ' to the bench', 'sys');
+        return;
+      }
+      if (opp) {
+        row.dins = q.key ? dinsFor(q.key) : null;
+        if (q.key) lv.orders[kk] = q.key; else delete lv.orders[kk];
+        tickerLine(lastName(row.p.name) + ': ' + (q.key ? orderLabel(q.key).toLowerCase() : 'back to normal'), 'sys');
         return;
       }
       row.ins = q.key ? Object.assign({}, ORDERS[q.key].ins) : null;
@@ -1957,11 +1985,11 @@
     });
     if (any) { syncCourt(); refreshDetail(); renderRail(); }
   }
-  function toggleOrder(pid, key) {
-    var q = lv.queue[pid];
-    if (q && !q.bench && q.key === key) delete lv.queue[pid];
-    else if (!q && lv.orders[pid] === key) lv.queue[pid] = { key: '' };
-    else lv.queue[pid] = { key: key };
+  function toggleOrder(kk, key) {
+    var q = lv.queue[kk];
+    if (q && !q.bench && q.key === key) delete lv.queue[kk];
+    else if (!q && lv.orders[kk] === key) lv.queue[kk] = { key: '' };
+    else lv.queue[kk] = { key: key };
     refreshDetail(); renderRail();
   }
   function toggleBench(pid) {
@@ -1975,7 +2003,7 @@
     lv.rail = [];
     for (var i = 0; i < 5; i++) {
       var row = slotPlayer(i), p = row.p;
-      var c = el('button', 'lr' + (lv.sel === p.id ? ' on' : '') + (lv.queue[p.id] ? ' q' : '') + (lv.orders[p.id] ? ' o' : ''));
+      var c = el('button', 'lr' + (lv.sel === p.id && !lv.selA ? ' on' : '') + (lv.queue[p.id] ? ' q' : '') + (lv.orders[p.id] ? ' o' : ''));
       c.type = 'button';
       c.appendChild(makeAvatar(p));
       c.appendChild(el('b', null, lastName(p.name)));
@@ -1990,7 +2018,16 @@
   }
   function selectPlayer(pid) {
     if (!lv || lv.skip) return;
-    lv.sel = lv.sel === pid ? null : pid;
+    if (lv.pickFn) { lv.pickFn(pid); return; }
+    var same = lv.sel === pid && !lv.selA;
+    lv.selA = false;
+    lv.sel = same ? null : pid;
+    renderRail(); renderDetail();
+  }
+  function selectOpp(pid) {
+    if (!lv || lv.skip || lv.pickFn) return;
+    if (lv.sel === pid && lv.selA) { lv.sel = null; lv.selA = false; }
+    else { lv.sel = pid; lv.selA = true; }
     renderRail(); renderDetail();
   }
   function renderDetail() {
@@ -1998,15 +2035,16 @@
     if (!box) return;
     lv.det = null;
     if (!lv.sel) { box.hidden = true; tk.hidden = false; box.textContent = ''; return; }
-    var row = lv.g.H.filter(function (x) { return x.p.id === lv.sel; })[0];
-    if (!row) { lv.sel = null; renderDetail(); return; }
-    var p = row.p;
+    var opp = !!lv.selA, side = opp ? lv.g.A : lv.g.H;
+    var row = side.filter(function (x) { return x.p.id === lv.sel; })[0];
+    if (!row) { lv.sel = null; lv.selA = false; renderDetail(); return; }
+    var p = row.p, kk = opp ? 'o' + p.id : p.id;
     tk.hidden = true; box.hidden = false; box.textContent = '';
     var head = el('div', 'pd-head');
     head.appendChild(el('b', null, p.name));
-    head.appendChild(el('small', null, (p.pos || '') + ' \u00B7 ' + (p.ratings ? p.ratings.ovr + ' ovr' : '')));
+    head.appendChild(el('small', null, (p.pos || '') + ' \u00B7 ' + (opp ? lv.opp.city : (p.ratings ? p.ratings.ovr + ' ovr' : ''))));
     var x = el('button', 'pd-x', '\u00D7'); x.type = 'button';
-    x.addEventListener('click', function () { selectPlayer(p.id); });
+    x.addEventListener('click', function () { lv.sel = null; lv.selA = false; renderRail(); renderDetail(); });
     head.appendChild(x);
     box.appendChild(head);
     var grid = el('div', 'pd-grid'), cells = {};
@@ -2014,31 +2052,42 @@
       var c = el('div'); var v = el('b', null, '0'); c.appendChild(v); c.appendChild(el('small', null, k)); grid.appendChild(c); cells[k] = v;
     });
     box.appendChild(grid);
-    var chips = el('div', 'pd-chips'), cm = {};
-    orderChoices(p).forEach(function (k) {
-      var b = el('button', 'pd-chip', ORDERS[k].l); b.type = 'button';
-      b.addEventListener('click', function () { toggleOrder(p.id, k); });
-      chips.appendChild(b); cm[k] = b;
-    });
-    var bn = el('button', 'pd-chip bench', 'Bench'); bn.type = 'button';
-    bn.disabled = lv.g.H.length <= 5;
-    bn.addEventListener('click', function () { toggleBench(p.id); });
-    chips.appendChild(bn);
+    var chips = el('div', 'pd-chips'), cm = {}, bn = null;
+    if (opp) {
+      var keys = ['double', 'sag', 'deny'].concat(swapDefenders().map(function (r) { return 'sw:' + r.p.id; }));
+      keys.forEach(function (k) {
+        var b = el('button', 'pd-chip', orderLabel(k)); b.type = 'button';
+        b.addEventListener('click', function () { toggleOrder(kk, k); });
+        chips.appendChild(b); cm[k] = b;
+      });
+    } else {
+      orderChoices(p).forEach(function (k) {
+        var b = el('button', 'pd-chip', ORDERS[k].l); b.type = 'button';
+        b.addEventListener('click', function () { toggleOrder(kk, k); });
+        chips.appendChild(b); cm[k] = b;
+      });
+      bn = el('button', 'pd-chip bench', 'Bench'); bn.type = 'button';
+      bn.disabled = lv.g.H.length <= 5;
+      bn.addEventListener('click', function () { toggleBench(p.id); });
+      chips.appendChild(bn);
+    }
     box.appendChild(chips);
-    lv.det = { row: row, cells: cells, chips: cm, bench: bn };
+    lv.det = { row: row, kk: kk, cells: cells, chips: cm, bench: bn };
     refreshDetail();
   }
   function refreshDetail() {
     var d = lv && lv.det; if (!d) return;
-    var s = d.row.s, pid = d.row.p.id, q = lv.queue[pid];
+    var s = d.row.s, kk = d.kk, q = lv.queue[kk];
     var v = { PTS: s.pts, REB: s.orb + s.drb, AST: s.ast, FG: s.fg + '-' + s.fga, '3PT': s.tp + '-' + s.tpa, STL: s.stl, BLK: s.blk, TO: s.tov, FT: s.ft + '-' + s.fta, PF: s.pf };
     Object.keys(v).forEach(function (k) { d.cells[k].textContent = v[k]; });
     Object.keys(d.chips).forEach(function (k) {
-      var on = !q && lv.orders[pid] === k, qd = q && !q.bench && q.key === k;
+      var on = !q && lv.orders[kk] === k, qd = q && !q.bench && q.key === k;
       d.chips[k].className = 'pd-chip' + (on ? ' on' : '') + (qd ? ' q' : '');
     });
-    d.bench.className = 'pd-chip bench' + (q && q.bench ? ' q' : '');
-    d.bench.textContent = q && q.bench ? 'Subbing next' : 'Bench';
+    if (d.bench) {
+      d.bench.className = 'pd-chip bench' + (q && q.bench ? ' q' : '');
+      d.bench.textContent = q && q.bench ? 'Subbing next' : 'Bench';
+    }
   }
 
   function startLive(me, opp, mine, label) {
@@ -2098,7 +2147,7 @@
       attachFace(d, o);
       d.style.left = (full ? OP_FULL : OPP_SPOTS)[i][0] + '%';
       d.style.top = (full ? fieldY(OP_FULL[i][1]) : OPP_SPOTS[i][1]) + '%';
-      (function (i2) { d.addEventListener('click', function () { openLivePlayer(lv.g.onA[slotIdx(lv.g.onA)[i2]].p, false); }); })(i);
+      (function (i2) { d.addEventListener('click', function () { if (lv.pickFn) return; if (full) selectOpp(lv.g.onA[slotIdx(lv.g.onA)[i2]].p.id); else openLivePlayer(lv.g.onA[slotIdx(lv.g.onA)[i2]].p, false); }); })(i);
       field.appendChild(d); lv.op.push(d);
       var b = el('button', 'pl');
       b.type = 'button';
@@ -2107,7 +2156,7 @@
       b.appendChild(makeAvatar(p));
       b.appendChild(el('span', 'nm', lastName(p.name)));
       var pp = el('span', 'pp', '0'); b.appendChild(pp);
-      (function (i2) { b.addEventListener('click', function () { if (b.classList.contains('pick')) return; if (full) selectPlayer(slotPlayer(i2).p.id); else openLivePlayer(lv.g.onH[slotIdx(lv.g.onH)[i2]].p, true); }); })(i);
+      (function (i2) { b.addEventListener('click', function () { if (full) selectPlayer(slotPlayer(i2).p.id); else { if (b.classList.contains('pick')) return; openLivePlayer(lv.g.onH[slotIdx(lv.g.onH)[i2]].p, true); } }); })(i);
       field.appendChild(b); lv.pl.push({ el: b, pp: pp });
     });
     lv.rank = full;
@@ -2180,7 +2229,7 @@
       }
       if (old[1] !== o.id) attachFace(lv.op[i], o);
     }
-    if (lv.rail && lv.rail.some(function (c, i) { return c.pid !== g.onH[oH[i]].p.id; })) { if (lv.sel && !g.onH.some(function (x) { return x.p.id === lv.sel; })) { lv.sel = null; renderRail(); renderDetail(); } else renderRail(); }
+    if (lv.rail && lv.rail.some(function (c, i) { return c.pid !== g.onH[oH[i]].p.id; })) { if (lv.sel && !lv.selA && !g.onH.some(function (x) { return x.p.id === lv.sel; })) { lv.sel = null; renderRail(); renderDetail(); } else renderRail(); }
   }
 
   function showPoss(evObj, mineSide) {
@@ -2230,46 +2279,14 @@
     return t;
   }
 
+  /* the only thing that stops the game: the last shot of a game you can still win */
   function decisionDue() {
-    var g = lv.g, diff = g.hs - g.as, d;
-    if (g.over) return null;
-    if (g.q >= 3 && g.k === g.limit - 1 && Math.abs(diff) <= 5) {
-      var key = 'clutch' + g.q;
-      if (!lv.done[key]) { lv.done[key] = 1; return { kind: 'clutch' }; }
-    }
-    if (g.q === 2 && g.k === 0 && !lv.done.half) { lv.done.half = 1; lv.lastDec = g.n; lv.count++; return { kind: 'half' }; }
-    if (g.q > 3 || lv.count >= 6 || g.n - lv.lastDec < 9 || g.k < 2 || g.k > g.limit - 3) return null;
-    var tries = [];
-    g.onH.forEach(function (x) {
-      var pf = x.s.pf;
-      if (pf >= 4 && !lv.fq[x.p.id + pf]) tries.push({ kind: 'foul', x: x, mark: x.p.id + pf });
-    });
-    var runDiff = -sumFeed(6, 'mp') + sumFeed(6, 'op');
-    if (lv.feed.length >= 6 && runDiff >= 8) tries.push({ kind: 'run', v: runDiff });
-    var oh = null;
-    g.onA.forEach(function (x) { var v = feedBy(10, x.p.name, 'o'); if (v >= 8 && (!oh || v > oh.v)) oh = { x: x, v: v }; });
-    if (oh && !lv.fq['oh' + oh.x.p.id + g.q]) tries.push({ kind: 'oppHot', x: oh.x, v: oh.v, mark: 'oh' + oh.x.p.id + g.q });
-    var mh = null;
-    g.onH.forEach(function (x) { var v = feedBy(10, x.p.name, 'm'); if (v >= 8 && (!mh || v > mh.v)) mh = { x: x, v: v }; });
-    if (mh && !lv.fq['mh' + mh.x.p.id + g.q]) tries.push({ kind: 'myHot', x: mh.x, v: mh.v, mark: 'mh' + mh.x.p.id + g.q });
-    g.onH.forEach(function (x) {
-      if (x.s.fga >= 7 && x.s.fg / x.s.fga <= 0.22 && x.p.ratings.sco >= 60 && !lv.fq['c' + x.p.id]) tries.push({ kind: 'cold', x: x, mark: 'c' + x.p.id });
-    });
-    var tov = 0; lv.feed.slice(-8).forEach(function (f) { if (f.mt) tov++; });
-    if (tov >= 4) tries.push({ kind: 'sloppy' });
-    if (g.q === 3 && Math.abs(diff) <= 8 && g.k >= Math.floor(g.limit * 0.5) && !lv.done.late) tries.push({ kind: 'late', mark: 'late' });
-    tries = tries.filter(function (t) { return t.kind !== lv.lastKind || tries.length === 1; });
-    if (tries.length) {
-      d = tries[Math.floor(Math.random() * tries.length)];
-      if (d.mark) { lv.fq[d.mark] = 1; if (d.kind === 'late') lv.done.late = 1; }
-      lv.lastDec = g.n; lv.lastKind = d.kind; lv.count++;
-      return d;
-    }
-    if ((g.q === 0 || g.q === 1 || g.q === 3) && g.k === Math.floor(g.limit / 2) && !lv.done['mid' + g.q] && g.n - lv.lastDec >= 14) {
-      lv.done['mid' + g.q] = 1; lv.lastDec = g.n; lv.lastKind = 'tempo'; lv.count++;
-      return { kind: 'tempo' };
-    }
-    return null;
+    var g = lv.g, diff = g.hs - g.as;
+    if (g.over || g.q < 3 || g.k !== g.limit - 1 || diff > 0 || diff < -3) return null;
+    var key = 'clutch' + g.q;
+    if (lv.done[key]) return null;
+    lv.done[key] = 1;
+    return { kind: 'clutch' };
   }
 
   function hotLine(x) { return x.s.pts + ' pts, ' + x.s.fg + '-' + x.s.fga; }
@@ -2351,19 +2368,34 @@
     syncCourt();
     var when = periodLabel(g) + ' ' + clockText(g) + ' · ' + lv.me.city + ' ' + g.hs + ', ' + lv.opp.city + ' ' + g.as;
     if (spec.kind === 'clutch') {
-      tickerLine('Final possession. Who takes the shot?', 'sys');
-      dock.appendChild(el('p', 'dec-title', when + '. Tap the player you want to take the last shot.'));
-      lv.pl.forEach(function (p, i) {
-        p.el.classList.add('pick');
-        p.el.onclick = function () {
-          lv.pl.forEach(function (q) { q.el.classList.remove('pick'); q.el.onclick = null; });
-          var hp = g.onH[slotIdx(g.onH)[i]].p;
-          g.mods.H = { focus: hp.id, focusW: 60, fgMul: 1.02, until: g.n + 1 };
-          tickerLine('Ball to ' + lastName(hp.name) + '...', 'sys');
-          skipButton();
-          lv.timer = later(liveTick, 700);
-        };
-      });
+      tickerLine('Final possession.', 'sys');
+      dock.appendChild(el('p', 'dec-title', when));
+      lv.pl.forEach(function (p) { p.el.classList.add('pick'); });
+      lv.sel = null; renderRail(); renderDetail();
+      Array.prototype.forEach.call(document.querySelectorAll('.lr'), function (c) { c.classList.add('pick'); });
+      lv.pickFn = function (pid) {
+        var hp = g.onH.filter(function (x) { return x.p.id === pid; })[0];
+        if (!hp) return;
+        lv.pickFn = null;
+        lv.pl.forEach(function (q) { q.el.classList.remove('pick'); });
+        Array.prototype.forEach.call(document.querySelectorAll('.lr'), function (c) { c.classList.remove('pick'); });
+        dock.textContent = '';
+        dock.appendChild(el('p', 'dec-title', lastName(hp.p.name) + ' gets the ball'));
+        [2, 3].forEach(function (v) {
+          var r = g.hs - g.as + v, b = el('button', 'btn opt' + (v === 3 ? ' primary' : ''));
+          b.type = 'button';
+          b.appendChild(el('span', null, 'Take the ' + v));
+          b.appendChild(el('small', null, r > 0 ? 'wins it' : r === 0 ? 'ties it' : 'not enough'));
+          b.disabled = r < 0;
+          b.addEventListener('click', function () {
+            g.mods.H = { focus: hp.p.id, focusW: 60, fgMul: 1.02, force3: v, until: g.n + 1 };
+            tickerLine('Ball to ' + lastName(hp.p.name) + ', going for ' + v + '...', 'sys');
+            skipButton();
+            lv.timer = later(liveTick, 700);
+          });
+          dock.appendChild(b);
+        });
+      };
       return;
     }
     var built = buildOptions(spec);
