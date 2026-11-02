@@ -992,3 +992,15 @@ body[data-modern="1"] .hd-row .btn.dnav:active{background:color-mix(in srgb,var(
 body[data-modern="1"] :is(.boxwrap,.ev,.paper.phone-feed,.pb,.fcard,.fc-stats div,.fc-p,.hh,.hpage,.coach-row,.half-rep,.potg,.tf-offer,.lr,.cup-champ,.aw-card,.call,.hero-card,.recent-deals){border-radius:0;clip-path:polygon(0 0,calc(100% - var(--ch)) 0,100% var(--ch),100% 100%,var(--ch) 100%,0 calc(100% - var(--ch)))}
 body[data-modern="1"] #screen-season .bar.star::before{mask-image:linear-gradient(90deg,transparent,#000 55%);-webkit-mask-image:linear-gradient(90deg,transparent,#000 55%);width:170px;opacity:.85}
 body[data-modern="1"] #screen-season .bar{padding-bottom:14px}
+
+/* title screen */
+body[data-modern="1"] #screen-title{background:radial-gradient(110% 60% at 50% 38%,rgba(255,70,40,.34),transparent 62%),radial-gradient(120% 50% at 50% 0%,#4a0a14,transparent 70%),#07060a}
+body[data-modern="1"] #screen-title::before{content:"";position:absolute;left:-30%;right:-30%;bottom:-6%;height:46%;background:repeating-linear-gradient(90deg,rgba(255,255,255,.07) 0 2px,transparent 2px 46px),repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 2px,transparent 2px 46px);transform:perspective(380px) rotateX(62deg);transform-origin:bottom;mask-image:linear-gradient(transparent,#000 70%);-webkit-mask-image:linear-gradient(transparent,#000 70%);pointer-events:none}
+body[data-modern="1"] #game-title{font-family:var(--disp);font-weight:800;font-size:96px;line-height:.82;letter-spacing:-.01em;text-transform:uppercase;text-shadow:0 8px 40px rgba(0,0,0,.8)}
+body[data-modern="1"] #game-title .era{display:block;color:transparent;-webkit-text-stroke:2px #ff6a2a;text-shadow:none}
+body[data-modern="1"] #tagline{font-family:var(--font);font-size:15px;color:var(--muted);letter-spacing:.02em}
+body[data-modern="1"] #title-menu{width:min(340px,86vw)}
+body[data-modern="1"] #title-menu .btn.primary{background:linear-gradient(100deg,#ff3b1f,#ff8a1f);color:#190405;font-family:var(--disp);font-weight:800;font-size:28px;letter-spacing:.08em;text-transform:uppercase;box-shadow:none}
+body[data-modern="1"] .logo-wrap img{filter:drop-shadow(0 0 22px rgba(255,90,40,.45))}
+body[data-modern="1"] #btn-take{font-size:22px;letter-spacing:.05em;white-space:nowrap;padding:0 8px}
+body[data-modern="1"] .btn.primary.wide{white-space:nowrap}
