@@ -340,7 +340,8 @@
   }
 
   function sign(save, p, teamId, salary, years) {
-    var how = p.team === teamId && p.status === 'active' ? 'Re-signed' : 'Signed';
+    var how = p.team === teamId && p.status === 'active' ? 'Re-signed' : (p.bird === teamId ? 'Re-signed' : 'Signed');
+    delete p.bird;
     p.team = teamId; p.salary = salary; p.yrs = years; p.status = 'active';
     logDeal(save, p, how);
     bump(save);
@@ -354,14 +355,31 @@
   function signRights(save, p) { p.status = 'active'; bump(save); }
 
   /* AI teams re-sign most players with expiring deals; the rest hit free agency. */
+  /* Options: a player option is the player's call, a team option the club's. Returns a note per player. */
+  function optionPass(save, teamId, userChoice) {
+    var notes = [];
+    rosterOf(save, teamId).forEach(function (p) {
+      if (p.yrs > 0 || !p.opt || p.opt === 'none') return;
+      var mkt = salaryFor(p.ratings.ovr), kind = p.opt;
+      if (kind === 'team' && userChoice) return;
+      var stay = kind === 'player' ? mkt <= p.salary * 1.12 : p.ratings.ovr >= 52 && mkt >= p.salary * 0.8;
+      if (stay) { p.yrs = 1; notes.push({ p: p, kind: kind, took: true }); logDeal(save, p, kind === 'player' ? 'Exercised player option' : 'Team option picked up'); }
+      else notes.push({ p: p, kind: kind, took: false });
+      p.opt = null;
+    });
+    return notes;
+  }
+  /* AI clubs keep nearly everyone through Bird rights. The rest reach the market tagged with their old club. */
   function aiReSign(save, teams, myId) {
+    save.lg.players.forEach(function (p) { if (p.status === 'active' && !p.team && p.bird && p.birdY !== save.year) { delete p.bird; } });
     teams.forEach(function (t) {
       if (t.id === myId) return;
+      optionPass(save, t.id, false);
       rosterOf(save, t.id).forEach(function (p) {
         if (p.yrs > 0) return;
-        var keep = p.ratings.ovr >= 72 ? 0.42 : p.ratings.ovr >= 66 ? 0.55 : p.ratings.ovr >= 58 ? 0.7 : 0.8;
-        if (p.ratings.ovr >= 50 && payroll(save, t.id) + salaryFor(p.ratings.ovr) < save.lg.cap * 1.25 && Math.random() < keep) { p.salary = salaryFor(p.ratings.ovr); p.yrs = 1 + Math.floor(Math.random() * 3); logDeal(save, p, 'Re-signed'); }
-        else { p.team = null; }
+        var o = p.ratings.ovr, keep = o >= 72 ? 0.93 : o >= 66 ? 0.9 : o >= 58 ? 0.85 : 0.7;
+        if (o >= 45 && Math.random() < keep) { p.salary = salaryFor(o); p.yrs = 2 + Math.floor(Math.random() * 4); logDeal(save, p, 'Re-signed'); }
+        else { p.bird = t.id; p.birdY = save.year; p.team = null; }
       });
     });
     bump(save);
@@ -1124,7 +1142,7 @@
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
-    aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
+    aiReSign: aiReSign, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     maxR: maxR, makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);
