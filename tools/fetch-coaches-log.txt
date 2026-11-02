@@ -1,5 +1,30 @@
-Traceback (most recent call last):
-  File "/home/runner/work/nba-eras/nba-eras/tools/fetch_coaches.py", line 11, in <module>
-    det = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-          ^^^^^^^^^^^^^^^^^^^^^
-AttributeError: module 'cv2' has no attribute 'CascadeClassifier'
+ok Quin Snyder
+ok Joe Mazzulla
+failed: Jordi Fernández HTTP Error 429: Too many requests (f061ab2)
+no image: Charles Lee
+failed: Tiago Splitter HTTP Error 429: Too many requests (f061ab2)
+ok Kenny Atkinson
+failed: Dusty May HTTP Error 429: Too many requests (f061ab2)
+failed: David Adelman HTTP Error 429: Too many requests (f061ab2)
+failed: J. B. Bickerstaff HTTP Error 429: Too many requests (f061ab2)
+ok Steve Kerr
+ok Ime Udoka
+ok Rick Carlisle
+ok Tyronn Lue
+ok JJ Redick
+failed: Tuomas Iisalo HTTP Error 429: Too many requests (f061ab2)
+failed: Erik Spoelstra HTTP Error 429: Too many requests (f061ab2)
+no image: Taylor Jenkins
+no image: Chris Finch
+no image: Jamahl Mosley
+no image: Mike Brown
+failed: Mark Daigneault HTTP Error 429: Too many requests - please contact noc@wikimedia.org to discuss a less disruptive approach or instead use thumbnail images in sizes listed on https://w.wiki/GHai. (0c640b1)
+no image: Sean Sweeney
+ok Nick Nurse
+no image: Jordan Ott
+no image: Micah Nori
+ok Doug Christie
+no image: Mitch Johnson
+no image: Darko Rajaković
+failed: Will Hardy HTTP Error 429: Too many requests - please contact noc@wikimedia.org to discuss a less disruptive approach or instead use thumbnail images in sizes listed on https://w.wiki/GHai. (0c640b1)
+failed: Brian Keefe HTTP Error 429: Too many requests - please contact noc@wikimedia.org to discuss a less disruptive approach or instead use thumbnail images in sizes listed on https://w.wiki/GHai. (0c640b1)
