@@ -935,3 +935,25 @@ body[data-modern="1"] .coachsheet .staff-fx{margin:0;font-size:12px}
 body[data-modern="1"] .coachsheet .sh-l{margin:2px 0 0}
 body[data-modern="1"] .coachsheet .chips button{padding:6px 11px;font-size:12.5px}
 body[data-modern="1"] .coachsheet .btn{height:42px}
+
+/* trades home: finder tools, clubs, free agents */
+body[data-modern="1"] #trade-body .tchips{flex:none;margin:0 0 2px}
+body[data-modern="1"] .tstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex:none}
+body[data-modern="1"] .tstrip .ts{display:grid;gap:2px;padding:8px 8px;border-radius:12px;background:var(--card);text-align:center}
+body[data-modern="1"] .tstrip small{font-size:10.5px;color:var(--muted)}
+body[data-modern="1"] .tstrip b{font-size:13px}
+body[data-modern="1"] .tool{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 14px;border-radius:16px;background:var(--card);border:0;color:inherit;font:inherit;margin-bottom:8px}
+body[data-modern="1"] .tool .ti{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-style:normal;font-size:18px;background:color-mix(in srgb,var(--team) 22%,transparent);color:var(--team)}
+body[data-modern="1"] .tool b{display:block;font-size:15.5px}
+body[data-modern="1"] .tool small{color:var(--muted);font-size:12px}
+body[data-modern="1"] .tool em{font-style:normal;font-size:22px;color:var(--muted)}
+body[data-modern="1"] .recent-deals{padding:6px 2px}
+body[data-modern="1"] .recent-deals .rd{margin:4px 0;font-size:12.5px;color:var(--muted)}
+body[data-modern="1"] .tsearch{flex:none;width:100%;padding:10px 12px;border-radius:12px;border:0;background:var(--card);color:var(--ink);font:inherit;font-size:14px;margin:2px 0}
+body[data-modern="1"] .fa-trow{display:grid;grid-template-columns:44px 1fr auto auto;gap:8px;align-items:center}
+body[data-modern="1"] #trade-body:has(.tlist){display:flex;flex-direction:column;gap:8px}
+body[data-modern="1"] #trade-body .ttabs:has(button:nth-child(3)){grid-template-columns:repeat(3,1fr)}
+body[data-modern="1"] #trade-body .ttabs button{font-size:14px;padding:0 4px}
+body[data-modern="1"] .tchips{display:flex;gap:6px;flex-wrap:wrap}
+body[data-modern="1"] .tchips button{border:0;border-radius:999px;padding:7px 14px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:600}
+body[data-modern="1"] .tchips button.on{background:var(--team);color:#fff}
