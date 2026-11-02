@@ -70,8 +70,8 @@
   }
 
   /* stars take a bigger share of the shots, but their efficiency flattens out above the 60s */
-  var USEADD = -0.5, REBEXP = 1.0, ASTEXP = 1.6;
-  function hf(p) { return p.hgt ? Math.pow(p.hgt / 79, 2) : 1; }   /* the taller man gets more of the rebounds */
+  var USEADD = -0.5, REBEXP = 1.35, ASTEXP = 1.6;
+  function hf(p) { return p.hgt ? Math.pow(p.hgt / 79, 3) : 1; }   /* the taller man gets more of the rebounds */
   function soft(v) { return v > 60 ? 60 + (v - 60) * SOFT : v; }
   var SOFT = 0.92;
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
@@ -185,7 +185,7 @@
       shooter.s.fg++; if (three) shooter.s.tp++;
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
-      if (r() < (pr.astp || 0.72) * (pr.threes ? 0.84 : 1) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
+      if (r() < (pr.astp || 0.72) * (pr.threes ? 0.76 : 1) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
         var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * Math.pow(x.p.ratings.ply, ASTEXP) * (ni(x).pass || 1); });
         passer.s.ast++; ev.ast = passer.p.name;
       }
@@ -195,6 +195,7 @@
       var blocker = pick(r, D, function (x) { return x.share * x.p.ratings.blk * x.p.ratings.blk * (ni(x).paint ? 2.2 : 1); });
       blocker.s.blk++; ev.blk = blocker.p.name;
     }
+    if (r() < 0.07) return pts;   /* out of bounds or a team rebound: no player is credited */
     var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250) + 0.014 * cnt(O, 'crash') - 0.01 * cnt(D, 'crash');
     if (r() < offRebP) {
       var reb = pick(r, O, function (x) { return x.share * Math.pow(x.p.ratings.orb + 22, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); });

@@ -46,6 +46,10 @@ for p in P:
         q = built[N.nm(p['name'])]
         chg.append((q['ratings']['ovr'] - p['ratings']['ovr'], p['name'], p['ratings']['ovr'], q['ratings']['ovr']))
         p['ratings'] = q['ratings']
+        if p['pos'] in ('G', 'G-F'):   # the rebound percentile is taken against every position; a guard's 89 is not a centre's 89
+            r = p['ratings']
+            r['drb'] = max(3, round(r['drb'] * 0.8)); r['orb'] = max(3, round(r['orb'] * 0.9))
+            r['ovr'] = round(35 + 0.6 * sum(B.W[k] * r[k] for k in B.W))
         p['stats'] = '2025-26'
 json.dump(doc, open(os.path.join(ROOT, 'data', 'players-2026.json'), 'w'), ensure_ascii=False, indent=1)
 chg.sort()
