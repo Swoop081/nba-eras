@@ -648,3 +648,20 @@ body[data-modern="1"] .lg-row{padding:4px 0}
 body[data-modern="1"] .bk-row{padding:3px 0}
 body[data-modern="1"] .bk-ic,body[data-modern="1"] .bk-ic.badge{width:32px;height:32px}
 body[data-modern="1"] .bk-row{grid-template-columns:32px 1fr}
+
+/* trade finder */
+body[data-modern="1"] .tf-offer{display:grid;gap:8px;padding:12px;margin:8px 0;border-radius:16px;background:var(--card)}
+body[data-modern="1"] .tf-head{display:flex;align-items:center;gap:10px}
+body[data-modern="1"] .tf-head .badge{width:34px;height:34px;flex:none}
+body[data-modern="1"] .tf-head .tf-tx{flex:1;min-width:0}
+body[data-modern="1"] .tf-head .btn{flex:none;padding:8px 16px}
+body[data-modern="1"] .tf-tx{display:grid;gap:1px;min-width:0}
+body[data-modern="1"] .tf-tx b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .tf-tx small,body[data-modern="1"] .tf-side>small,body[data-modern="1"] .tf-pay{color:var(--muted);font-size:12.5px}
+body[data-modern="1"] .tf-side{display:grid;gap:6px}
+body[data-modern="1"] .tf-side>small{text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+body[data-modern="1"] .tf-row{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center}
+body[data-modern="1"] .tf-row.pk{grid-template-columns:38px 1fr}
+body[data-modern="1"] .tf-row .avatar{width:38px;height:38px;border-radius:10px;overflow:hidden}
+body[data-modern="1"] .tf-row .avatar img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+body[data-modern="1"] .tf-pk{width:38px;height:38px;border-radius:10px;background:var(--raised);display:flex;align-items:center;justify-content:center;font:700 13px var(--font)}

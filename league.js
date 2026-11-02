@@ -619,6 +619,72 @@
     return best;
   }
 
+  /* ---------- trade finder ---------- */
+  /* Everything a quick legality and fairness check needs, worked out once per partner. */
+  function tctx(save, meId, themId, max) {
+    return { cap: save.lg.cap, mode: clubMode(save, themId), max: max, meN: rosterOf(save, meId).length, themN: rosterOf(save, themId).length, mePay: payroll(save, meId), themPay: payroll(save, themId) };
+  }
+  /* The AI's verdict on one package: the ratio they see, or -1 when it breaks roster or cap rules. */
+  function packRatio(save, c, give, giveK, get, getK) {
+    var gn = give.length, tn = get.length;
+    var meN = c.meN - gn + tn, themN = c.themN + gn - tn;
+    if (meN < Math.min(12, c.meN) || themN < Math.min(12, c.themN)) return -1;
+    if (meN > c.max && gn < tn) return -1;
+    if (themN > c.max && gn > tn) return -1;
+    var inMe = sum(get, function (p) { return p.salary; }), outMe = sum(give, function (p) { return p.salary; });
+    if (c.mePay - outMe + inMe > c.cap && inMe > outMe) return -1;
+    if (c.themPay + outMe - inMe > c.cap && outMe > inMe) return -1;
+    var gain = sum(give, function (p) { return tradeValue(p, c.mode); }) + sum(giveK, function (k) { return pickValue(save, k); });
+    var loss = sum(get, function (p) { return tradeValue(p, c.mode); }) + sum(getK, function (k) { return pickValue(save, k); });
+    return loss > 0 ? gain / loss : 9;
+  }
+  function subsets(n, maxK, fn) {
+    var i, j, k;
+    for (i = 0; i < n; i++) fn([i]);
+    if (maxK >= 2) for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) fn([i, j]);
+    if (maxK >= 3) for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) for (k = j + 1; k < n; k++) fn([i, j, k]);
+  }
+  /* I put players and picks on the block; each club says the best thing it would give back. */
+  function findOffers(save, meId, give, giveK, max) {
+    var out = [];
+    save.ids.forEach(function (tid) {
+      if (tid === meId) return;
+      var c = tctx(save, meId, tid, max);
+      var A = rosterOf(save, tid).map(function (p) { return { p: p, v: tradeValue(p) }; }).concat(picksOf(save, tid).map(function (k) { return { k: k, v: pickValue(save, k) }; }));
+      var best = null;
+      subsets(A.length, 2, function (ix) {
+        var get = [], getK = [], nv = 0;
+        ix.forEach(function (i) { if (A[i].p) get.push(A[i].p); else getK.push(A[i].k); nv += A[i].v; });
+        if (best && nv <= best.nv) return;
+        if (packRatio(save, c, give, giveK, get, getK) >= 1.1) best = { tid: tid, get: get, getK: getK, nv: nv };
+      });
+      if (best) out.push(best);
+    });
+    return out.sort(function (a, b) { return b.nv - a.nv; });
+  }
+  /* I ask for players and picks; a club says up to three packages from my side it would take. */
+  function findPackages(save, meId, themId, get, getK, max, limit) {
+    var c = tctx(save, meId, themId, max), found = [];
+    var A = rosterOf(save, meId).map(function (p) { return { p: p, v: tradeValue(p) }; }).concat(picksOf(save, meId).map(function (k) { return { k: k, v: pickValue(save, k) }; }));
+    subsets(A.length, 3, function (ix) {
+      var give = [], giveK = [], cost = 0;
+      ix.forEach(function (i) { if (A[i].p) give.push(A[i].p); else giveK.push(A[i].k); cost += A[i].v; });
+      if (packRatio(save, c, give, giveK, get, getK) >= 1.1) found.push({ give: give, giveK: giveK, cost: cost, key: ix, lead: ix.slice().sort(function (a, b) { return A[b].v - A[a].v; })[0] });
+    });
+    found.sort(function (a, b) { return a.cost - b.cost; });
+    var pick = [], leads = {};
+    function sub(a, b) { return a.every(function (i) { return b.indexOf(i) >= 0; }); }
+    found.forEach(function (f) {
+      if (pick.length >= (limit || 3) || leads[f.lead] || pick.some(function (q) { return sub(q.key, f.key); })) return;
+      leads[f.lead] = 1; pick.push(f);
+    });
+    found.forEach(function (f) {
+      if (pick.length >= (limit || 3) || pick.indexOf(f) >= 0 || pick.some(function (q) { return sub(q.key, f.key); })) return;
+      pick.push(f);
+    });
+    return pick;
+  }
+
   /* ---------- injuries ---------- */
   function healthy(save, id) {
     var all = rosterOf(save, id), ok = all.filter(function (p) { return !(p.inj > 0); });
@@ -882,7 +948,7 @@
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
-    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, executeTrade: executeTrade, suggestAdd: suggestAdd,
+    tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     aiReSign: aiReSign, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,

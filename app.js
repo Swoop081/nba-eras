@@ -3938,8 +3938,11 @@
   function openTrade(returnTo) {
     var closed = tradeWindow();
     if (!save.lg.picks) League.ensurePicks(save, save.ids.map(teamById));
-    trade = { back: returnTo, partner: null, give: {}, get: {}, msg: '', tab: 'send' };
+    trade = { back: returnTo, partner: null, give: {}, get: {}, msg: '', tab: 'send', view: '' };
     document.getElementById('trade-back').onclick = function () {
+      if (trade.view === 'shopRes') { trade.view = 'shopPick'; renderTrade(); return; }
+      if (trade.view === 'shopPick') { trade.view = ''; trade.give = {}; renderTrade(); return; }
+      if (trade.view === 'pkgRes') { trade.view = ''; renderTrade(); return; }
       if (trade.partner) { trade.partner = null; renderTrade(); return; }
       if (trade.back === 'off') { renderOff(); show('screen-off'); } else { renderSeason(); show('screen-season'); }
     };
@@ -3982,7 +3985,13 @@
       body.appendChild(el('p', 'note', trade.closed));
       return;
     }
+    if (trade.view === 'shopPick' || trade.view === 'shopRes' || trade.view === 'pkgRes') { renderFinder(body, dock, me); return; }
     if (!trade.partner) {
+      var shopBtn = el('button', 'btn primary wide', 'Shop my players and picks');
+      shopBtn.type = 'button';
+      shopBtn.addEventListener('click', function () { trade.view = 'shopPick'; trade.give = {}; trade.msg = ''; renderTrade(); });
+      body.appendChild(shopBtn);
+      if (trade.msg) { body.appendChild(el('p', 'dec-title', trade.msg)); trade.msg = ''; }
       body.appendChild(el('p', 'sub how', 'Pick a club to trade with.'));
       save.ids.filter(function (id) { return id !== me.id; }).forEach(function (id) {
         var t = teamById(id), pl = League.rosterOf(save, id);
@@ -4055,16 +4064,7 @@
     send.addEventListener('click', function () {
       var r = League.evaluateTrade(save, me.id, trade.partner, give, get, tradeMax(), ex);
       if (!r.ok) { trade.msg = r.reason; renderTrade(); return; }
-      var them = teamById(trade.partner);
-      League.executeTrade(save, me.id, trade.partner, give, get, giveK, getK);
-      give.concat(get).forEach(function (p) { var x = Events.pm(save, p.id); x.m = 55; x.t = 45; });
-      var line = 'Trade: ' + me.city + ' send ' + (give.map(function (p) { return lastName(p.name); }).concat(giveK.map(function (k) { return k.y + ' R' + k.r + ' pick'; })).join(', ') || 'nobody') + ' to ' + them.city + ' for ' + (get.map(function (p) { return lastName(p.name); }).concat(getK.map(function (k) { return k.y + ' R' + k.r + ' pick'; })).join(', ') || 'nothing');
-      var mo = Events.mood(save);
-      if (Social.has(save.year)) Social.react(save, 'trade', { text: line.replace(/^Trade: /, '') + '.' });
-      mo.news.push({ text: line, date: Events.dateFor(save) });
-      if (mo.news.length > 12) mo.news.shift();
-      rosterCache = {};
-      persist();
+      var line = commitTrade(trade.partner, give, get, giveK, getK);
       trade.give = {}; trade.get = {};
       trade.msg = 'Deal done. ' + line.replace('Trade: ', '');
       renderTrade();
@@ -4081,7 +4081,141 @@
       renderTrade();
     });
     btnRow.appendChild(ask);
+    var pk = el('button', 'btn', 'Find packages');
+    pk.type = 'button';
+    pk.disabled = !get.length && !getK.length;
+    pk.addEventListener('click', function () { trade.view = 'pkgRes'; trade.want = { p: get, k: getK }; renderTrade(); });
+    btnRow.appendChild(pk);
     dock.appendChild(btnRow);
+  }
+
+
+  /* Carries out a legal deal: moves the assets, resets morale, tells the feed. Returns the headline. */
+  function commitTrade(partnerId, give, get, giveK, getK) {
+    var me = teamById(save.myId), them = teamById(partnerId);
+    League.executeTrade(save, me.id, partnerId, give, get, giveK, getK);
+    give.concat(get).forEach(function (p) { var x = Events.pm(save, p.id); x.m = 55; x.t = 45; });
+    var names = function (pl, pk) { return pl.map(function (p) { return lastName(p.name); }).concat(pk.map(function (k) { return k.y + ' R' + k.r + ' pick'; })).join(', '); };
+    var line = 'Trade: ' + me.city + ' send ' + (names(give, giveK) || 'nobody') + ' to ' + them.city + ' for ' + (names(get, getK) || 'nothing');
+    var mo = Events.mood(save);
+    if (Social.has(save.year)) Social.react(save, 'trade', { text: line.replace(/^Trade: /, '') + '.' });
+    mo.news.push({ text: line, date: Events.dateFor(save) });
+    if (mo.news.length > 12) mo.news.shift();
+    rosterCache = {};
+    persist();
+    return line;
+  }
+
+  function assetBlock(title, players, picks) {
+    var box = el('div', 'tf-side');
+    box.appendChild(el('small', null, title));
+    var allT = save.ids.map(teamById);
+    players.forEach(function (p) {
+      var r = el('div', 'tf-row');
+      r.appendChild(makeAvatar(p));
+      var tx = el('span', 'tf-tx');
+      tx.appendChild(el('b', null, p.name));
+      tx.appendChild(el('small', null, (p.pos || '') + ' · ' + p.age + ' · ' + money(p.salary) + ' · ' + (p.yrs <= 0 ? 'exp.' : p.yrs + 'y')));
+      r.appendChild(tx);
+      r.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
+      box.appendChild(r);
+    });
+    picks.forEach(function (k) {
+      var r = el('div', 'tf-row pk');
+      r.appendChild(el('span', 'tf-pk', 'R' + k.r));
+      var tx = el('span', 'tf-tx');
+      tx.appendChild(el('b', null, League.pickLabel(k, allT)));
+      tx.appendChild(el('small', null, 'worth ~' + Math.round(League.pickValue(save, k))));
+      r.appendChild(tx);
+      box.appendChild(r);
+    });
+    return box;
+  }
+
+  function renderFinder(body, dock, me) {
+    var mine = League.rosterOf(save, me.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var myK = League.picksOf(save, me.id), allT = save.ids.map(teamById);
+    var cap = save.lg.cap;
+    function accept(partner, give, get, giveK, getK, btn) {
+      var ex = { gain: giveK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), loss: getK.reduce(function (s, k) { return s + League.pickValue(save, k); }, 0), n: giveK.length + getK.length };
+      var r = League.evaluateTrade(save, me.id, partner, give, get, tradeMax(), ex);
+      if (!r.ok) { trade.msg = r.reason; trade.view = trade.view === 'pkgRes' ? 'pkgRes' : 'shopPick'; renderTrade(); return; }
+      var line = commitTrade(partner, give, get, giveK, getK);
+      trade.give = {}; trade.get = {}; trade.view = ''; trade.partner = null;
+      trade.msg = 'Deal done. ' + line.replace('Trade: ', '');
+      renderTrade();
+    }
+    function payAfter(give, get, giveK) {
+      var d = get.reduce(function (s, p) { return s + p.salary; }, 0) - give.reduce(function (s, p) { return s + p.salary; }, 0);
+      return League.payroll(save, me.id) + d;
+    }
+    if (trade.view === 'shopPick') {
+      document.getElementById('trade-title').textContent = 'Shop';
+      var list = el('div', 'tlist');
+      mine.forEach(function (p) { list.appendChild(tradeRow(p, !!trade.give[p.id], function () { if (trade.give[p.id]) delete trade.give[p.id]; else trade.give[p.id] = 1; renderTrade(); })); });
+      if (myK.length) {
+        list.appendChild(el('h3', 'box-title', 'Draft picks'));
+        var chips = el('div', 'tpicks');
+        myK.forEach(function (k) { chips.appendChild(pickRow(k, allT, !!trade.give[League.pickId(k)], function () { var id = League.pickId(k); if (trade.give[id]) delete trade.give[id]; else trade.give[id] = 1; renderTrade(); })); });
+        list.appendChild(chips);
+      }
+      body.appendChild(list);
+      var n = Object.keys(trade.give).length;
+      if (trade.msg) dock.appendChild(el('p', 'note tmsg', trade.msg));
+      var go = el('button', 'btn primary wide', n ? 'Find offers (' + n + ')' : 'Find offers');
+      go.type = 'button'; go.disabled = !n;
+      go.addEventListener('click', function () { trade.msg = ''; trade.view = 'shopRes'; renderTrade(); });
+      dock.appendChild(go);
+      return;
+    }
+    if (trade.view === 'shopRes') {
+      document.getElementById('trade-title').textContent = 'Offers';
+      var give = mine.filter(function (p) { return trade.give[p.id]; }), giveK = myK.filter(function (k) { return trade.give[League.pickId(k)]; });
+      var offers = League.findOffers(save, me.id, give, giveK, tradeMax());
+      var list2 = el('div', 'tlist');
+      list2.appendChild(assetBlock('You are shopping', give, giveK));
+      if (!offers.length) list2.appendChild(el('p', 'note', 'No club would take that and stay within the roster and cap rules.'));
+      offers.forEach(function (o) {
+        var t = teamById(o.tid), card = el('div', 'tf-offer');
+        var hd = el('div', 'tf-head');
+        hd.appendChild(teamBadge(t));
+        var ht = el('span', 'tf-tx');
+        ht.appendChild(el('b', null, t.city + ' ' + t.name));
+        ht.appendChild(el('small', null, ({ win: 'Contending', rebuild: 'Rebuilding', mid: 'In the middle' })[League.clubMode(save, o.tid)]));
+        hd.appendChild(ht);
+        var ab = el('button', 'btn primary', 'Accept'); ab.type = 'button';
+        ab.addEventListener('click', function () { accept(o.tid, give, o.get, giveK, o.getK, ab); });
+        hd.appendChild(ab);
+        card.appendChild(hd);
+        card.appendChild(assetBlock('You get', o.get, o.getK));
+        card.appendChild(el('small', 'tf-pay', 'Your payroll after ' + money(payAfter(give, o.get)) + (payAfter(give, o.get) > cap ? ' · over the cap' : '')));
+        list2.appendChild(card);
+      });
+      body.appendChild(list2);
+      return;
+    }
+    // packages for the players and picks I asked for
+    var t2 = teamById(trade.partner), want = trade.want || { p: [], k: [] };
+    document.getElementById('trade-title').textContent = 'Packages from ' + t2.city;
+    var pk = League.findPackages(save, me.id, trade.partner, want.p, want.k, tradeMax(), 3);
+    var list3 = el('div', 'tlist');
+    list3.appendChild(assetBlock('You want', want.p, want.k));
+    if (!pk.length) list3.appendChild(el('p', 'note', 'They would not do that for anything you can send within the roster and cap rules.'));
+    pk.forEach(function (o, i) {
+      var card = el('div', 'tf-offer');
+      var hd = el('div', 'tf-head');
+      var ht = el('span', 'tf-tx');
+      ht.appendChild(el('b', null, 'Offer ' + (i + 1)));
+      ht.appendChild(el('small', null, 'Payroll after ' + money(payAfter(o.give, want.p))));
+      hd.appendChild(ht);
+      var ab = el('button', 'btn primary', 'Accept'); ab.type = 'button';
+      ab.addEventListener('click', function () { accept(trade.partner, o.give, want.p, o.giveK, want.k, ab); });
+      hd.appendChild(ab);
+      card.appendChild(hd);
+      card.appendChild(assetBlock('You send', o.give, o.giveK));
+      list3.appendChild(card);
+    });
+    body.appendChild(list3);
   }
 
   /* ---------- off-season ---------- */
