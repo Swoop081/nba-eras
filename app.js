@@ -911,6 +911,7 @@
       var rows = x2.log.slice(-5).reverse().map(function (g) { return [(g[2] ? 'vs ' : 'at ') + oppName(g[1]), (g[3] > g[4] ? 'W ' : 'L ') + g[3] + '-' + g[4], g[6] + ' pts', g[7] + ' ast', g[13] + '/' + g[14] + ' FG']; });
       body.appendChild(dataTable(['Game', 'Result', 'PTS', 'AST', 'FG'], rows));
     }
+    pvExtras(body, p);
     body.appendChild(el('div', 'group-title', 'Contract'));
     var cc = el('div', 'stat-card');
     cc.appendChild(el('p', 'sub', money(p.salary) + ' a year · ' + (p.yrs <= 0 ? 'expires this off-season' : p.yrs + (p.yrs === 1 ? ' year' : ' years') + ' remaining')));
@@ -926,6 +927,48 @@
         League.release(save, p); persist(); renderRoster(team); show('screen-roster');
       });
       body.appendChild(rel);
+    }
+  }
+
+  function pvExtras(body, p) {
+    var c = (p.career || []).slice(), cur = save.lg.stats[p.id], tot = { g: 0, pts: 0, trb: 0, ast: 0 };
+    c.forEach(function (x) { Object.keys(tot).forEach(function (k) { tot[k] += x[k] || 0; }); });
+    if (cur && cur.g) Object.keys(tot).forEach(function (k) { tot[k] += cur[k] || 0; });
+    var rows = [];
+    if (tot.g) rows.push(['Career', '', tot.g, f1(tot.pts, tot.g), f1(tot.trb, tot.g), f1(tot.ast, tot.g)]);
+    if (cur && cur.g) rows.push([seasonLabel(save.year), p.team ? oppName(p.team) : '', cur.g, f1(cur.pts || 0, cur.g), f1(cur.trb || 0, cur.g), f1(cur.ast || 0, cur.g)]);
+    c.slice(-4).reverse().forEach(function (x) { rows.push([seasonLabel(x.y), x.t ? oppName(x.t) : '', x.g, f1(x.pts || 0, x.g), f1(x.trb || 0, x.g), f1(x.ast || 0, x.g)]); });
+    if (rows.length) { body.appendChild(el('div', 'group-title', 'Career stats')); body.appendChild(dataTable(['Season', 'Team', 'GP', 'PPG', 'RPG', 'APG'], rows)); }
+    var aw = p.awards || [], cnt = {};
+    aw.forEach(function (x) { cnt[x.a] = (cnt[x.a] || 0) + 1; });
+    var names = Object.keys(cnt);
+    if (names.length) {
+      body.appendChild(el('div', 'group-title', 'Awards and honors'));
+      var ac = el('div', 'stat-card headlines');
+      names.forEach(function (n) { ac.appendChild(el('div', null, cnt[n] + ' ' + n)); });
+      body.appendChild(ac);
+    }
+    var log = cur && cur.log ? cur.log.slice(-4).reverse() : [];
+    if (log.length) {
+      body.appendChild(el('div', 'group-title', 'Player news'));
+      var nc = el('div', 'stat-card headlines');
+      var last = lastName(p.name);
+      log.forEach(function (g) {
+        var win = g[3] > g[4], pts = g[6], head = pts >= 40 ? 'Erupts for ' + pts + ' points' : pts >= 30 ? 'Drops ' + pts + ' in ' + (win ? 'win' : 'loss') : g[8] >= 14 ? 'Dominates the glass with ' + g[8] + ' boards' : g[7] >= 12 ? 'Dishes out ' + g[7] + ' assists' : g[14] >= 10 && g[13] / g[14] < 0.25 ? 'Woeful shooting night' : win ? 'Solid line in win' : 'Quiet night in loss';
+        var d = el('div', null, head); d.style.fontWeight = '700';
+        nc.appendChild(d);
+        nc.appendChild(el('small', null, last + ' finished ' + (win ? 'the win over ' : 'the loss to ') + oppName(g[1]) + ' ' + g[3] + '-' + g[4] + ' with ' + pts + ' points (' + g[13] + '-' + g[14] + ' FG), ' + g[8] + ' rebounds, ' + g[7] + ' assists' + (g[9] ? ', ' + g[9] + ' steals' : '') + (g[10] ? ' and ' + g[10] + ' blocks' : '') + ' over ' + Math.round(g[5]) + ' minutes.'));
+      });
+      body.appendChild(nc);
+    }
+    if (tot.g) {
+      body.appendChild(el('div', 'group-title', 'Player bio'));
+      var bc = el('div', 'stat-card');
+      var bio = 'Averaging ' + f1(tot.pts, tot.g) + ' points, ' + f1(tot.trb, tot.g) + ' rebounds and ' + f1(tot.ast, tot.g) + ' assists in ' + tot.g + ' career games' + (p.team ? ' with ' + oppName(p.team) : '') + '.';
+      if (p.draftedYear) bio += ' Drafted ' + p.draftedYear + (p.draftPick ? ' with pick ' + p.draftPick : '') + (p.college ? ' out of ' + p.college : '') + '.';
+      if (names.length) bio += ' Honors include ' + names.slice(0, 4).map(function (n) { return cnt[n] + ' ' + n; }).join(', ') + '.';
+      bc.appendChild(el('p', 'sub', bio));
+      body.appendChild(bc);
     }
   }
 
@@ -1154,33 +1197,11 @@
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 ' + (p.injType ? p.injType + ' \u00B7 ' : '') + 'out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
-      var detail = el('button', 'detail quick');
-      detail.type = 'button';
-      detail.hidden = true;
-      var s = statsOf(p);
-      detail.appendChild(el('div', 'group-title', s ? 'Averages \u00B7 ' + s.label : 'No games yet'));
-      if (s) detail.appendChild(boxes(statBoxes(Object.assign({ src: s.src }, s.x))));
-      detail.appendChild(el('div', 'quick-k', money(p.salary) + ' \u00B7 ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' year' : ' years') + ' left') + ' \u00B7 potential ' + p.pot));
-      if (team.id === save.myId) {
-        var mv = el('div', 'dock-row');
-        [['Move up', -1], ['Move down', 1]].forEach(function (m) {
-          var mb = el('span', 'btn small', m[0]);
-          mb.addEventListener('click', function (ev) { ev.stopPropagation(); moveRot(team, p, m[1]); });
-          mv.appendChild(mb);
-        });
-        detail.appendChild(mv);
-      }
-      detail.appendChild(el('div', 'quick-go', 'Tap for full profile \u203A'));
-      detail.addEventListener('click', function () { openPlayer(p, team); });
-      card.addEventListener('click', function () {
-        detail.hidden = !detail.hidden;
-        holder.classList.toggle('open', !detail.hidden);
-      });
+      card.addEventListener('click', function () { openPlayer(p, team); });
       holder.appendChild(card);
-      holder.appendChild(detail);
       list.appendChild(holder);
     });
-    list.appendChild(el('p', 'sub how', 'Tap a player for his averages and contract, tap again for the full profile. Salaries are estimates except where the record is known (Joe Fulks earned $8,000).'));
+    list.appendChild(el('p', 'sub how', 'Salaries are estimates except where the record is known (Joe Fulks earned $8,000).'));
   }
 
   /* ---------- match ---------- */
