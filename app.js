@@ -1621,17 +1621,33 @@
       var card = function (r) { return { id: r.p.id, name: r.p.name, tid: r.tid, line: (r.o.pts / r.o.g).toFixed(1) + ' pts · ' + (r.o.trb / r.o.g).toFixed(1) + ' reb · ' + (r.o.ast / r.o.g).toFixed(1) + ' ast' }; };
       var top = function (list, key, n, f) { return list.filter(f || function () { return true; }).sort(function (x, y) { return y[key] - x[key]; }).slice(0, n); };
       var y = { y: save.year, label: seasonLabel(save.year) };
-      var pick = function (list, key, f) { var t = top(list, key, 1, f)[0]; return t ? card(t) : null; };
-      y.mvp = pick(rows, 'sc'); y.dpoy = pick(rows, 'df');
-      y.roy = pick(rows, 'sc', function (r) { return r.rk; }); y.smoy = pick(rows, 'sc', function (r) { return r.bench; });
-      var mip = rows.filter(function (r) { return !r.rk && (r.p.formAdj || 0) > 0; }).sort(function (x, z) { return ((z.p.formAdj || 0) * 3 + z.sc * 0.1) - ((x.p.formAdj || 0) * 3 + x.sc * 0.1); })[0];
-      y.mip = mip ? card(mip) : null;
+      // a panel of 100 voters, each with a little noise: MVP ballots go five deep at 10-7-5-3-1, the rest three deep at 5-3-1
+      var gauss = function () { return (Math.random() + Math.random() + Math.random() + Math.random() - 2) / 0.58; };
+      var vote = function (cands, scoreFn, mk, pts) {
+        cands = cands.slice().sort(function (x, z) { return scoreFn(z) - scoreFn(x); }).slice(0, 10);
+        if (!cands.length) return [];
+        var mx = Math.max(1e-6, scoreFn(cands[0])), tally = cands.map(function () { return { p: 0, f: 0 }; });
+        for (var v = 0; v < 100; v++) {
+          var bias = gauss() * 0.04;
+          cands.map(function (c, i) { return [scoreFn(c) / mx + gauss() * 0.06 + (c.win !== undefined ? bias * (c.win - 0.5) * 2 : 0), i]; }).sort(function (x, z) { return z[0] - x[0]; }).slice(0, pts.length).forEach(function (r, k) { tally[r[1]].p += pts[k]; if (k === 0) tally[r[1]].f++; });
+        }
+        return cands.map(function (c, i) { var o = mk(c); o.pts = tally[i].p; o.fp = tally[i].f; return o; }).sort(function (x, z) { return z.pts - x.pts; }).slice(0, 3);
+      };
+      var M5 = [10, 7, 5, 3, 1], M3 = [5, 3, 1];
+      y.t = {
+        mvp: vote(rows, function (r) { return r.sc; }, card, M5),
+        dpoy: vote(rows, function (r) { return r.df; }, card, M3),
+        roy: vote(rows.filter(function (r) { return r.rk; }), function (r) { return r.sc; }, card, M3),
+        smoy: vote(rows.filter(function (r) { return r.bench; }), function (r) { return r.sc; }, card, M3),
+        mip: vote(rows.filter(function (r) { return !r.rk && (r.p.formAdj || 0) > 0; }), function (r) { return Math.max(0.01, (r.p.formAdj || 0) * 3 + r.sc * 0.1); }, card, M3)
+      };
+      var gains = [];
+      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; gains.push({ id: id, g: rc.w / (rc.w + rc.l) - lr.w / Math.max(1, lr.w + lr.l) + 0.5 }); });
+      y.t.coy = vote(gains, function (g) { return g.g; }, function (g) { var s = Coach.staff(save, g.id), t = teamById(g.id); return { id: '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: g.id, line: save.rec[g.id].w + '-' + save.rec[g.id].l }; }, M3);
+      ['mvp', 'dpoy', 'roy', 'smoy', 'mip', 'coy'].forEach(function (k) { y[k] = y.t[k][0] || null; });
       var an = top(rows, 'sc', 15).map(card); y.allnba = [an.slice(0, 5), an.slice(5, 10), an.slice(10, 15)];
       var ad = top(rows, 'df', 10).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
       var ar = top(rows, 'sc', 10, function (r) { return r.rk; }).map(card); y.allrook = [ar.slice(0, 5), ar.slice(5, 10)];
-      var best = null, bi = -1;
-      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; var gain = rc.w / (rc.w + rc.l) - lr.w / Math.max(1, lr.w + lr.l); if (gain > bi) { bi = gain; best = id; } });
-      if (best) { var s = Coach.staff(save, best), t = teamById(best); y.coy = { id: '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: best, line: save.rec[best].w + '-' + save.rec[best].l }; }
       (save.lg.ya = save.lg.ya || []).push(y); e = y;
       (save.lg.awq || (save.lg.awq = [])).push({ kind: 'ye', y: save.year });
     }
@@ -1640,25 +1656,64 @@
       if (e && !e.fmvp) {
         var st2 = save.lg.stats, bestP = null, bs = -1;
         rosterOf(save.champion).forEach(function (p) { var o = st2[p.id]; if (!o || !o.g) return; var sc = perfScore(o, 0.6); if (sc > bs) { bs = sc; bestP = p; } });
-        if (bestP) e.fmvp = { id: bestP.id, name: bestP.name, tid: save.champion, line: 'NBA champions' };
+        if (bestP) { e.fmvp = { id: bestP.id, name: bestP.name, tid: save.champion, line: 'NBA champions' }; (save.lg.awq || (save.lg.awq = [])).push({ kind: 'ye', y: save.year, keys: ['fmvp'] }); }
       }
     }
   }
+  var TROPHY = '<svg viewBox="0 0 100 120" aria-hidden="true"><defs><linearGradient id="tg" x1="0" x2="1"><stop offset="0" stop-color="#8a6a1f"/><stop offset=".45" stop-color="#f6dc86"/><stop offset="1" stop-color="#9c7a26"/></linearGradient></defs><path d="M26 8h48v30c0 20-12 32-24 32S26 58 26 38z" fill="url(#tg)"/><path d="M26 16H10c0 22 8 32 22 34M74 16h16c0 22-8 32-22 34" fill="none" stroke="url(#tg)" stroke-width="6" stroke-linecap="round"/><rect x="44" y="68" width="12" height="22" fill="url(#tg)"/><rect x="30" y="90" width="40" height="10" rx="2" fill="url(#tg)"/><rect x="22" y="100" width="56" height="12" rx="3" fill="#5b4510"/><path d="M36 14v28" stroke="#fff6cf" stroke-width="3" opacity=".55" stroke-linecap="round"/></svg>';
+  var AWNAMES = { mvp: 'Most Valuable Player', dpoy: 'Defensive Player of the Year', roy: 'Rookie of the Year', smoy: 'Sixth Man of the Year', mip: 'Most Improved Player', coy: 'Coach of the Year', fmvp: 'Finals MVP' };
+  function awardShow(pages, onDone) {
+    var ov = el('div', 'aw-full'), track = el('div', 'aw-track'), dots = el('div', 'aw-dots'), n = pages.length, cur = 0;
+    pages.forEach(function (pg, i) {
+      var t = teamById(pg.win.tid) || { colors: ['#C8102E'] }, page = el('section', 'aw-page');
+      page.style.setProperty('--tc', (t.colors && t.colors[0]) || '#C8102E'); page.style.setProperty('--team', (t.colors && t.colors[0]) || '#C8102E'); page.style.setProperty('--ink', '#fff');
+      page.appendChild(el('small', 'aw-cap', seasonLabel(pg.y)));
+      page.appendChild(el('h2', 'aw-title', pg.name));
+      var tr = el('div', 'aw-trophy'); tr.innerHTML = TROPHY;
+      var im = new Image(); im.onload = function () { tr.textContent = ''; tr.appendChild(im); }; im.src = 'assets/trophies/' + pg.key + '.webp';
+      page.appendChild(tr);
+      var big = el('div', 'aw-big');
+      if (pg.win.id) { var av = makeAvatar({ id: pg.win.id, name: pg.win.name }); av.classList.add('aw-bigph'); big.appendChild(av); }
+      else { var tb = teamBadge(t.id ? t : teamById(pg.win.tid)); tb.classList.add('aw-bigph'); big.appendChild(tb); }
+      page.appendChild(big);
+      page.appendChild(el('b', 'aw-wn', pg.win.name));
+      var tm = teamById(pg.win.tid);
+      page.appendChild(el('span', 'aw-wt', (tm ? tm.city + ' ' + tm.name : '') + ' · ' + pg.win.line));
+      if (pg.win.pts) page.appendChild(el('span', 'aw-vt', pg.win.pts + ' points \u00B7 ' + pg.win.fp + ' first-place vote' + (pg.win.fp === 1 ? '' : 's')));
+      if (pg.run && pg.run.length) {
+        var rr = el('div', 'aw-run');
+        pg.run.forEach(function (c, k) {
+          var cd = el('div', 'aw-r');
+          cd.appendChild(el('small', null, k === 0 ? '2nd' : '3rd'));
+          if (c.id) { var a2 = makeAvatar({ id: c.id, name: c.name }); a2.classList.add('aw-rph'); cd.appendChild(a2); } else { var b2 = teamBadge(teamById(c.tid)); b2.classList.add('aw-rph'); cd.appendChild(b2); }
+          cd.appendChild(el('b', null, c.name));
+          cd.appendChild(el('span', null, ((teamById(c.tid) || {}).city || '') + ' · ' + c.line));
+          rr.appendChild(cd);
+        });
+        page.appendChild(rr);
+      }
+      track.appendChild(page);
+      dots.appendChild(el('i', i === 0 ? 'on' : ''));
+    });
+    var btn = el('button', 'btn primary wide aw-next', n > 1 ? 'Next' : 'Done'); btn.type = 'button';
+    function go(i) { track.scrollTo({ left: i * track.clientWidth, behavior: 'smooth' }); }
+    btn.addEventListener('click', function () { if (cur < n - 1) go(cur + 1); else { ov.remove(); if (onDone) onDone(); } });
+    track.addEventListener('scroll', function () {
+      cur = Math.round(track.scrollLeft / track.clientWidth);
+      Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === cur); });
+      btn.textContent = cur < n - 1 ? 'Next' : 'Done';
+    });
+    ov.appendChild(track); ov.appendChild(dots); ov.appendChild(btn);
+    document.body.appendChild(ov);
+  }
   function yearEndPop(a) {
     var e = (save.lg.ya || []).filter(function (x) { return x.y === a.y; })[0]; if (!e) return;
-    hubSheet(e.label + ' awards', function (sh, close) {
-      sh.classList.add('tall');
-      var box = el('div', 'pr-list ye-list');
-      [['mvp', 'MVP'], ['dpoy', 'Defensive Player'], ['roy', 'Rookie of the Year'], ['smoy', 'Sixth Man'], ['mip', 'Most Improved'], ['coy', 'Coach of the Year']].forEach(function (x) {
-        var c = e[x[0]]; if (!c) return;
-        var row = el('div', 'aw-row');
-        if (c.id) row.appendChild(makeAvatar({ id: c.id, name: c.name })); else { var tb = teamBadge(teamById(c.tid)); row.appendChild(tb); }
-        var tx = el('span'); tx.appendChild(el('small', 'ye-k', x[1])); tx.appendChild(el('b', null, c.name)); tx.appendChild(el('small', null, (teamById(c.tid) || {}).city + ' · ' + c.line)); row.appendChild(tx);
-        box.appendChild(row);
-      });
-      sh.appendChild(box);
-      var b = el('button', 'btn wide', 'Done'); b.type = 'button'; b.addEventListener('click', close); sh.appendChild(b);
-    }, function () { setTimeout(awardsPop, 250); });
+    var keys = a.keys || ['mvp', 'dpoy', 'roy', 'smoy', 'mip', 'coy'], pages = [];
+    keys.forEach(function (k) {
+      var list = (e.t && e.t[k]) || (e[k] ? [e[k]] : []); if (!list.length) return;
+      pages.push({ key: k, name: AWNAMES[k], y: e.y, win: list[0], run: list.slice(1, 3) });
+    });
+    if (pages.length) awardShow(pages, function () { setTimeout(awardsPop, 250); });
   }
 
   /* ---------- weekly and monthly awards ---------- */
