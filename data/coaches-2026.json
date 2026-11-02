@@ -1829,6 +1829,240 @@
     60,
     58
    ]
+  ],
+  "dallas-mavericks": [
+   [
+    "Willie Green",
+    "Willie_Green",
+    60,
+    62,
+    60,
+    70
+   ],
+   [
+    "Garrett Temple",
+    "Garrett_Temple",
+    54,
+    56,
+    60,
+    68
+   ],
+   [
+    "Joe Boylan",
+    "Joe_Boylan",
+    56,
+    54,
+    62,
+    56
+   ]
+  ],
+  "houston-rockets": [
+   [
+    "Ben Sullivan",
+    "Ben_Sullivan",
+    52,
+    66,
+    60,
+    60
+   ],
+   [
+    "Royal Ivey",
+    "Royal_Ivey",
+    56,
+    56,
+    62,
+    66
+   ],
+   [
+    "Garrett Jackson",
+    "Garrett_Jackson",
+    58,
+    52,
+    62,
+    54
+   ],
+   [
+    "Cam Hodges",
+    "Cam_Hodges",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Josh Bostic",
+    "Josh_Bostic",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Will Dunn",
+    "Will_Dunn",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Robbie Lemons",
+    "Robbie_Lemons",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "memphis-grizzlies": [
+   [
+    "Ryan Saunders",
+    "Ryan_Saunders",
+    62,
+    56,
+    60,
+    66
+   ],
+   [
+    "Julius Thomas",
+    "Julius_Thomas",
+    56,
+    52,
+    56,
+    58
+   ],
+   [
+    "Darnell Lazare",
+    "Darnell_Lazare",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Jason March",
+    "Jason_March",
+    56,
+    52,
+    62,
+    54
+   ],
+   [
+    "Erik Schmidt",
+    "Erik_Schmidt",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "new-orleans-pelicans": [
+   [
+    "Bret Brielmaier",
+    "Bret_Brielmaier",
+    66,
+    50,
+    60,
+    58
+   ],
+   [
+    "Dale Osbourne",
+    "Dale_Osbourne",
+    50,
+    66,
+    58,
+    58
+   ],
+   [
+    "God Shammgod",
+    "God_Shammgod",
+    56,
+    52,
+    68,
+    56
+   ],
+   [
+    "Will Bynum",
+    "Will_Bynum",
+    54,
+    52,
+    62,
+    56
+   ],
+   [
+    "Mike Hopkins",
+    "Mike_Hopkins",
+    58,
+    60,
+    56,
+    58
+   ],
+   [
+    "Greg Monroe",
+    "Greg_Monroe",
+    54,
+    52,
+    64,
+    54
+   ],
+   [
+    "Brandon Demas",
+    "Brandon_Demas",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "san-antonio-spurs": [
+   [
+    "Billy Donovan",
+    "Billy_Donovan",
+    62,
+    60,
+    66,
+    72
+   ],
+   [
+    "Corliss Williamson",
+    "Corliss_Williamson",
+    52,
+    60,
+    62,
+    64
+   ],
+   [
+    "Matt Nielsen",
+    "Matt_Nielsen",
+    58,
+    52,
+    66,
+    54
+   ],
+   [
+    "Scott King",
+    "Scott_King",
+    58,
+    54,
+    62,
+    54
+   ],
+   [
+    "Mike Noyes",
+    "Mike_Noyes",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Kenny Trevino",
+    "Kenny_Trevino",
+    54,
+    52,
+    60,
+    54
+   ]
   ]
  }
 }
