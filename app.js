@@ -4361,11 +4361,12 @@
     var hdr = document.querySelector('#screen-season .bar');
     (function () {
       hdr.classList.remove('star'); hdr.style.removeProperty('--star');
-      var top = rosterOf(me.id).slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
-      if (!top) return;
-      var im = new Image(), url = 'assets/players/' + top.id + '.png';
-      im.onload = function () { hdr.style.setProperty('--star', 'url(' + url + ')'); hdr.classList.add('star'); };
-      im.src = url;
+      var urls = ['assets/logos/' + me.id + '-2026.svg', 'assets/logos/' + me.id + '-2026.png', 'assets/logos/' + me.id + '.png', 'assets/logos/' + me.id + '.svg'];
+      if (me.nbaId) urls.push('https://cdn.nba.com/logos/nba/' + me.nbaId + '/primary/L/logo.svg');
+      var n = 0, im = new Image();
+      im.onload = function () { hdr.style.setProperty('--star', 'url(' + im.src + ')'); hdr.classList.add('star'); };
+      im.onerror = function () { n++; if (n < urls.length) im.src = urls[n]; };
+      im.src = urls[0];
     })();
     var gear = hdr.querySelector('.gear');
     if (!gear) {

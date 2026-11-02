@@ -1059,3 +1059,5 @@ body[data-modern="1"] #era-list .era-photo img[src*="2018."]{object-position:38%
 #era-list .pg.era-pg .card.era.e0.full .year{font-size:36px}
 body[data-modern="1"] #era-list .era-photo{cursor:pointer}
 body[data-modern="1"] #era-list .card.era.src{border-left:3px solid var(--team)}
+body[data-modern="1"] #screen-season .bar.star::before{right:-34px;top:-46px;width:250px;height:230px;background-position:center;background-size:contain;opacity:.42;mask-image:none;-webkit-mask-image:none}
+body[data-modern="1"] #screen-season .bar.star::before{right:-30px;top:-36px;width:220px;height:200px;opacity:.34}
