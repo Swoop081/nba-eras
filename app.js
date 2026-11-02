@@ -205,35 +205,76 @@
   var decTabs = el('div', 'dec-tabs');
   eraList.parentNode.insertBefore(decTabs, eraList);
   function eraBlurb(era) { return eraBlurbs[era.id] && era.id !== '2026' ? eraBlurbs[era.id] : era.blurb; }
+  var eraPages = [];
+  function eraPhoto(box, ids) {
+    var urls = [];
+    ids.forEach(function (id) { ['webp', 'jpg', 'png'].forEach(function (x) { urls.push('assets/eras/' + id + '.' + x); }); });
+    var i = 0, img = new Image();
+    img.alt = '';
+    img.onload = function () { box.textContent = ''; box.classList.add('has'); box.appendChild(img); };
+    img.onerror = function () { i++; if (i < urls.length) img.src = urls[i]; };
+    img.src = urls[0];
+  }
   function buildEraList() {
     eraList.textContent = '';
-    ERAS.filter(function (era) { return era.current && String(Math.floor(+era.id / 10) * 10) === eraDecade; }).forEach(function (era) {
-      var card = el('button', 'card era');
-      card.type = 'button';
-      card.appendChild(el('span', 'year', era.years));
-      var text = el('span');
-      text.appendChild(el('strong', null, era.title));
-      text.appendChild(el('span', 'meta', eraBlurb(era)));
-      card.appendChild(text);
-      card.addEventListener('click', function () { openTeams(era); });
-      eraList.appendChild(card);
+    var all = ERAS.filter(function (era) { return era.current; });
+    var pgr = el('div', 'pgr'), track = el('div', 'pgr-track era-track'), dots = el('div', 'pgr-dots');
+    eraPages = [];
+    for (var i = 0; i < all.length; i += 3) {
+      var grp = all.slice(i, i + 3);
+      var pg = el('section', 'pg era-pg');
+      grp.forEach(function (era, k) {
+        var card = el('button', 'card era e' + k);
+        card.type = 'button';
+        card.appendChild(el('span', 'year', era.years));
+        var text = el('span', 'et');
+        text.appendChild(el('strong', null, era.title));
+        text.appendChild(el('span', 'meta', eraBlurb(era)));
+        card.appendChild(text);
+        card.addEventListener('click', function () { openTeams(era); });
+        pg.appendChild(card);
+        if (k === 0) {
+          var ph = el('div', 'era-photo');
+          ph.appendChild(el('span', 'big', String(+era.id + 1).slice(2)));
+          eraPhoto(ph, grp.map(function (g) { return g.id; }));
+          pg.appendChild(ph);
+        }
+      });
+      track.appendChild(pg);
+      dots.appendChild(el('i', i === 0 ? 'on' : ''));
+      eraPages.push(grp[0].id);
+    }
+    var tick = null;
+    track.addEventListener('scroll', function () {
+      clearTimeout(tick);
+      tick = setTimeout(function () {
+        var w = track.firstChild ? track.firstChild.offsetWidth : 1, n = Math.round(track.scrollLeft / (w + 10));
+        Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === n); });
+        var dec = String(Math.floor(+eraPages[n] / 10) * 10);
+        Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x.dataset.d === dec); });
+      }, 40);
     });
+    pgr.appendChild(track); pgr.appendChild(dots);
+    eraList.appendChild(pgr);
+    eraTrack = track;
   }
+  var eraTrack = null;
   (function () {
     var decs = [];
     ERAS.forEach(function (era) { if (era.current) { var d = String(Math.floor(+era.id / 10) * 10); if (decs.indexOf(d) < 0) decs.push(d); } });
     decs.forEach(function (d) {
       var b = el('button', d === eraDecade ? 'on' : '', d + 's');
       b.type = 'button';
+      b.dataset.d = d;
       b.addEventListener('click', function () {
-        eraDecade = d;
-        Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x === b); });
-        buildEraList();
+        var n = 0;
+        eraPages.forEach(function (id, k) { if (String(Math.floor(+id / 10) * 10) === d && !n) n = k; });
+        if (eraTrack && eraTrack.firstChild) eraTrack.scrollTo({ left: n * (eraTrack.firstChild.offsetWidth + 10), behavior: 'smooth' });
       });
       decTabs.appendChild(b);
     });
     buildEraList();
-    fetch('data/era-blurbs.json').then(function (r) { return r.json(); }).then(function (j) { eraBlurbs = j; buildEraList(); }).catch(function () {});
+    fetch('data/era-blurbs.json').then(function (r) { return r.json(); }).then(function (j) { eraBlurbs = j; var l = eraTrack ? eraTrack.scrollLeft : 0; buildEraList(); eraTrack.scrollLeft = l; }).catch(function () {});
   })();
 
   /* ---------- team select ---------- */
@@ -3627,7 +3668,7 @@
   }
 
   /* ---------- no vertical scrolling: long lists become swipeable pages ---------- */
-  var PAGED = ['era-list', 'roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
+  var PAGED = ['roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
   function pageify(box) {
     if (!modernUI() || box._busy || !box.offsetParent) return;
     var tl = box.id === 'trade-body' ? box.querySelector(':scope > .tlist') : null;
