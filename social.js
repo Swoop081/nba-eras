@@ -345,6 +345,19 @@
       post(save, 'fan', fan(), rnd(['Free agency week. Ready to be disappointed again.', 'Sign ' + lastN(fa[0].name) + '. I do not care what it costs. Actually I do. But sign him.', 'Inbox is full of "sources say". None of it is us. Classic.']));
     } catch (e) {}
   }
+  function faAI(save, p, tid, salary, years) {
+    try {
+      if (!has(save.year)) return;
+      if (save.said) recent = save.said; else save.said = recent;
+      var big = p.ratings.ovr >= 68;
+      if (!big && !chance(0.3)) return;
+      post(save, 'insider', acct(INSIDER), rnd([
+        'Sources: ' + p.name + ' agrees to a ' + years + '-year, ' + mon(save, salary * years) + ' deal with ' + tc(save, tid) + '.',
+        p.name + ' is signing with ' + tc(save, tid) + ': ' + years + ' years, ' + mon(save, salary) + ' per year, per sources.'
+      ]), { v: true, big: big ? 1.8 : 1 });
+      if (big) post(save, 'fan', fan(), rnd([lastN(p.name) + ' to ' + tc(save, tid) + '?! Did not see that coming.', 'Well. ' + tc(save, tid) + ' just got a lot better.']));
+    } catch (e) {}
+  }
   function faSigned(save, p, salary, years) {
     try {
       if (!has(save.year)) return;
@@ -359,5 +372,5 @@
   /* the feed only exists in the social-media era */
   function has(year) { return year >= 2009; }
 
-  root.Social = { draftOpen: draftOpen, draftPick: draftPick, rightsSigned: rightsSigned, faOpen: faOpen, faSigned: faSigned, lead: function (y) { return leadInsider(y).n; }, has: has, add: add, fromBanner: fromBanner, day: day, react: react, capPost: capPost, unread: unread, markRead: markRead, feed: feed };
+  root.Social = { faAI: faAI, draftOpen: draftOpen, draftPick: draftPick, rightsSigned: rightsSigned, faOpen: faOpen, faSigned: faSigned, lead: function (y) { return leadInsider(y).n; }, has: has, add: add, fromBanner: fromBanner, day: day, react: react, capPost: capPost, unread: unread, markRead: markRead, feed: feed };
 })(window);

@@ -1576,6 +1576,27 @@
       draw();
     });
   }
+  /* promote a player into the rotation and let him react */
+  function giveMinutes(pid) {
+    var team = teamById(save.myId), ord = rotOrder(team.id), p = ord.filter(function (q) { return q.id === pid; })[0];
+    if (!p) return null;
+    var i = ord.indexOf(p), to = Math.min(i, p.ratings.ovr >= (ord[4] ? ord[4].ratings.ovr : 99) ? 4 : 5);
+    if (to < i) { ord.splice(i, 1); ord.splice(to, 0, p); }
+    save.rot = ord.map(function (q) { return q.id; });
+    save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
+    var top = ord.filter(function (q) { return !(q.inj > 0); }).slice(0, 10), mm;
+    if (save.plan.mins) {
+      mm = save.plan.mins.slice(); while (mm.length < 10) mm.push(4);
+      var k = top.indexOf(p);
+      if (k >= 0 && mm[k] < 18) { var need = 18 - mm[k]; mm[k] = 18; for (var j = 0; j < 10 && need > 0; j++) if (j !== k && mm[j] > 20) { var t = Math.min(need, mm[j] - 20); mm[j] -= t; need -= t; } save.plan.mins = mm; }
+    } else mm = Engine.defaultMins(top);
+    var k2 = top.indexOf(p), mins = k2 >= 0 ? (save.plan.mins || mm)[k2] : 0;
+    var x = Events.pm(save, pid), m0 = Math.round(x.m), t0 = Math.round(x.t);
+    x.m = Math.min(100, x.m + 12); x.t = Math.min(100, x.t + 8); delete x.promise; x.gotMin = 1;
+    persist(); rosterCache = {};
+    var text = ['That is all I wanted, boss. I will make it count.', 'Thank you. You will not regret this.', 'I appreciate you showing it, not just saying it. Let me work.'][Math.floor(Math.random() * 3)];
+    return { m0: m0, m1: Math.round(x.m), t0: t0, t1: Math.round(x.t), mins: mins, text: text };
+  }
   function moveRot(team, p, d) {
     var ord = rotOrder(team.id), i = ord.indexOf(p), j = i + d;
     if (j < 0 || j >= ord.length) return;
@@ -5101,6 +5122,30 @@
     }
     bodyEl.appendChild(card);
     var mine = rosterOf(save.myId);
+    if (ev.act && ev.act.type === 'minutes' && ev.pid) {
+      var gm = el('button', 'btn wide act', 'Move him into the rotation');
+      gm.type = 'button';
+      gm.addEventListener('click', function () {
+        var r = giveMinutes(ev.pid);
+        dock.textContent = '';
+        if (r) {
+          var rep = el('div', 'card ph reply');
+          rep.appendChild(el('p', 'ph-bubble me', 'You are in the rotation. ' + r.mins + ' minutes a night.'));
+          rep.appendChild(el('p', 'ph-bubble', r.text));
+          bodyEl.appendChild(rep);
+          bodyEl.appendChild(el('p', 'note', lastName(ev.who) + ' morale ' + r.m0 + ' \u2192 ' + r.m1 + ' \u00B7 trust ' + r.t0 + ' \u2192 ' + r.t1));
+        }
+        var dc = el('button', 'btn wide', 'Open the depth chart');
+        dc.type = 'button';
+        dc.addEventListener('click', function () { openDepth(teamById(save.myId)); });
+        dock.appendChild(dc);
+        var nb2 = el('button', 'btn primary wide', 'Continue');
+        nb2.type = 'button';
+        nb2.addEventListener('click', nextEvent);
+        dock.appendChild(nb2);
+      });
+      dock.appendChild(gm);
+    }
     if (ev.choices) {
       ev.choices.forEach(function (c, i) {
         var b = el('button', 'btn wide' + (i === 0 ? ' primary' : ''), c.label);
@@ -5605,7 +5650,7 @@
     League.newSeasonContracts(save);
     Coach.offseason(save, me.id, save.rec);
     save.off = {
-      step: 'review', review: review, leagueRetired: rep.leagueRetired,
+      step: 'review', review: review, leagueRetired: rep.leagueRetired, notable: (rep.notable || []).sort(function (x, y) { return y.g - x.g; }).slice(0, 6).map(function (x) { return { id: x.p.id, ovr: x.ovr }; }),
       dev: rep.mine.map(function (x) { return { id: x.p.id, name: x.p.name, from: x.from, to: x.to, age: x.p.age }; }),
       retired: rep.retired.map(function (x) { return { id: x.p.id, name: x.p.name, ovr: x.ovr }; })
     };
@@ -5776,7 +5821,38 @@
     offDock('Player development', function () { offStep('dev'); });
   }
 
+  function careerLine(p) {
+    var c = p.career || [], g = 0, pts = 0, trb = 0, ast = 0;
+    c.forEach(function (x) { g += x.g || 0; pts += x.pts || 0; trb += x.trb || 0; ast += x.ast || 0; });
+    return { n: c.length, g: g, ppg: g ? pts / g : 0, rpg: g ? trb / g : 0, apg: g ? ast / g : 0, pts: pts };
+  }
+  function offTribute(body, me) {
+    var d = save.off, list = d.retired.map(function (x) { return { id: x.id, ovr: x.ovr, mine: true }; }).concat((d.notable || []).map(function (x) { return { id: x.id, ovr: x.ovr }; }));
+    offHeader('Farewell', list.length + ' retire' + (list.length === 1 ? 's' : ''));
+    var wrap = el('div', 'dn');
+    var top = el('div', 'dn-top');
+    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    top.appendChild(lg); top.appendChild(el('strong', null, 'RETIREMENTS')); top.appendChild(el('em', null, seasonLabel(save.year)));
+    wrap.appendChild(top);
+    var pages = list.map(function (x) {
+      var p = League.byId(save, x.id), cl = careerLine(p), tm = p.retiredTeam && save.tm[p.retiredTeam];
+      var card = el('div', 'tb-card');
+      var pic = el('div', 'fa-pic tb'); pic.appendChild(makeAvatar(p)); card.appendChild(pic);
+      card.appendChild(el('h2', 'fa-name', p.name));
+      card.appendChild(el('p', 'fa-sub', (x.mine ? 'Your club \u00B7 ' : tm ? tm.city + ' \u00B7 ' : '') + (p.pos || '') + ' \u00B7 retires at ' + p.age));
+      var terms = el('div', 'fa-terms');
+      [[cl.ppg.toFixed(1), 'PTS'], [cl.rpg.toFixed(1), 'REB'], [cl.apg.toFixed(1), 'AST']].forEach(function (q) { var c = el('div'); c.appendChild(el('b', null, q[0])); c.appendChild(el('small', null, q[1])); terms.appendChild(c); });
+      card.appendChild(terms);
+      card.appendChild(el('p', 'fa-by', cl.n + ' season' + (cl.n === 1 ? '' : 's') + ' \u00B7 ' + cl.g.toLocaleString() + ' games \u00B7 ' + cl.pts.toLocaleString() + ' career points' + (x.ovr ? ' \u00B7 peak ' + (p.ovrHist ? Math.max.apply(null, p.ovrHist.map(function (h) { return h.o; }).concat([x.ovr])) : x.ovr) : '')));
+      return { title: x.mine ? 'Retires from your club' : 'Retires from the league', node: card };
+    });
+    wrap.appendChild(hubRail(pages));
+    body.appendChild(wrap);
+    offDock('Continue', function () { d.tribute = 1; persist(); renderOff(); });
+  }
+
   function offDev(body, me) {
+    if (!save.off.tribute && (save.off.retired.length || (save.off.notable || []).length)) return offTribute(body, me);
     offHeader('Player development', 'Everyone is a year older');
     var d = save.off;
     if (d.retired.length) {
@@ -6000,14 +6076,14 @@
   function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
   function dnRank(d, p) { return d.pool.filter(function (q) { return q.board > p.board; }).length + 1; }
   function dnNote(d, p, slot) {
-    var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = lastName(p.name);
+    var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = dnLast(p.name);
     var gap = n - r;
     if (gap >= 6) return 'Steal. ' + w + ' was a top-' + (r + 3) + ' talent on my board and ' + t + ' got him at ' + n + '.';
     if (gap <= -6) return 'Reach at ' + n + '. ' + t + ' fell in love with ' + w + ' and passed on better names.';
     if (n <= 3) return 'The right call. ' + w + ' is the best prospect in the class and ' + t + ' did not overthink it.';
     return w + ' to ' + t + ' fits. ' + (p.age <= 19 ? 'Young, with a long runway.' : 'Closer to ready than most of this class.');
   }
-  function lastName(n) { var s = String(n).split(' '); return s.length > 1 ? s.slice(1).join(' ') : n; }
+  function dnLast(n) { var s = String(n).split(' '); return s.length > 1 ? s.slice(1).join(' ') : n; }
   function dnBreak(text) {
     dn.brk = text; dn.feed.unshift(text); if (dn.feed.length > 14) dn.feed.pop();
     var b = document.querySelector('#off-body .dn-break');
@@ -6238,29 +6314,142 @@
     });
   }
 
+  /* ---------- free agency week ---------- */
+  var FADAYS = 5;
+  function faYears(p) { return p.age <= 25 ? 4 : p.age <= 29 ? 3 : 2; }
+  function faAsk(p) { return League.salaryFor(p.ratings.ovr); }
+  function faState() {
+    var f = save.off.fa;
+    if (!f) f = save.off.fa = { day: 0, rum: {}, log: [], flash: [] };
+    return f;
+  }
+  function faSuitors(f, p, me) {
+    var ask = faAsk(p);
+    var list = save.ids.filter(function (id) { return id !== me.id && League.rosterOf(save, id).length < League.MAX_ROSTER && League.canSign(save, id, ask); })
+      .map(function (id) { return { id: id, v: (save.lg.cap - League.payroll(save, id)) / save.lg.cap * 100 + Math.random() * 40 + (League.clubMode(save, id) === 'win' ? 10 : 0) }; })
+      .sort(function (a, b) { return b.v - a.v; });
+    return list.slice(0, 3).map(function (x) { return x.id; });
+  }
+  function faRumours(me) {
+    var f = faState();
+    League.freeAgents(save).slice(0, 12).forEach(function (p) {
+      var cur = (f.rum[p.id] || []).filter(function (id) { return League.canSign(save, id, faAsk(p)); });
+      if (cur.length < 3) f.rum[p.id] = faSuitors(f, p, me);
+    });
+  }
+  function faDayRun(me) {
+    var f = faState(); f.day++;
+    var n = [0, 6, 4, 3, 3, 99][Math.min(f.day, 5)];
+    var fas = League.freeAgents(save).filter(function (p) { return p.ratings.ovr >= 40; }).slice(0, n), made = [];
+    fas.forEach(function (p) {
+      var ask = faAsk(p), pool = (f.rum[p.id] || []).filter(function (id) { return id !== me.id && League.canSign(save, id, ask) && League.rosterOf(save, id).length < League.MAX_ROSTER; });
+      if (!pool.length || Math.random() < 0.25) pool = faSuitors(f, p, me);
+      if (!pool.length) return;
+      var tid = pool[Math.floor(Math.random() * Math.min(2, pool.length))], yrs = faYears(p);
+      League.sign(save, p, tid, ask, yrs);
+      var sig = { pid: p.id, team: tid, salary: ask, yrs: yrs, day: f.day, ovr: p.ratings.ovr };
+      made.push(sig); f.log.unshift(sig);
+      try { Social.faAI && Social.faAI(save, p, tid, ask, yrs); } catch (e) {}
+      League.wire(save, p.name + ' signs with ' + teamById(tid).city + ': ' + yrs + ' years, ' + money(ask));
+    });
+    made.sort(function (a, b) { return b.ovr - a.ovr; });
+    f.flash = made.slice(0, f.day === 1 ? 4 : 3).filter(function (s) { return s.ovr >= 55 || f.day === 1; });
+    League.aiRosterPass && f.day >= FADAYS && League.aiRosterPass(save, save.ids.map(teamById), me.id);
+    faRumours(me);
+    persist();
+  }
+  function faFlash(next) {
+    var f = faState(), s = f.flash.shift();
+    if (!s) { next(); return; }
+    var p = League.byId(save, s.pid), t = teamById(s.team);
+    var ov = el('div', 'fa-flash');
+    var band = el('div', 'fa-band');
+    var lg = new Image(); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    band.appendChild(lg); band.appendChild(el('b', null, 'BREAKING')); band.appendChild(el('span', null, 'Free agency · day ' + s.day));
+    ov.appendChild(band);
+    var pic = el('div', 'fa-pic'); pic.appendChild(makeAvatar(p)); ov.appendChild(pic);
+    ov.appendChild(el('h2', 'fa-name', p.name));
+    ov.appendChild(el('p', 'fa-sub', (p.pos || '') + ' · age ' + p.age + ' · ' + p.ratings.ovr + ' overall'));
+    ov.appendChild(el('p', 'fa-with', 'AGREES TO TERMS WITH'));
+    var tb = el('div', 'fa-team'); tb.appendChild(teamBadge(t)); tb.appendChild(el('b', null, t.city + ' ' + t.name)); ov.appendChild(tb);
+    var terms = el('div', 'fa-terms');
+    [[s.yrs + ' YRS', 'Length'], [money(s.salary), 'Per year'], [money(s.salary * s.yrs), 'Total']].forEach(function (x) { var c = el('div'); c.appendChild(el('b', null, x[0])); c.appendChild(el('small', null, x[1])); terms.appendChild(c); });
+    ov.appendChild(terms);
+    ov.appendChild(el('p', 'fa-by', '— ESPN Insider'));
+    var b = el('button', 'btn primary wide', f.flash.length ? 'Next' : 'Continue'); b.type = 'button';
+    b.addEventListener('click', function () { ov.remove(); faFlash(next); });
+    ov.appendChild(b);
+    document.getElementById('screen-off').appendChild(ov);
+  }
   function offFA(body, me) {
     Social.faOpen(save);
+    var f = faState();
+    if (f.day === 0 && !Object.keys(f.rum).length) faRumours(me);
     var pay = League.payroll(save, me.id), n = League.rosterOf(save, me.id).length;
-    offHeader('Free agency', n + ' players · ' + money(pay) + ' of ' + money(save.lg.cap));
-    var fa = League.freeAgents(save).slice(0, 30);
-    body.appendChild(el('p', 'sub how', 'Sign anyone you can fit under the cap. Your drafted rookies are under draft rights below.'));
-    rightsSection(body, me);
+    offHeader('Free agency', f.day === 0 ? 'The market opens' : 'Day ' + f.day + ' of ' + FADAYS);
+    var wrap = el('div', 'dn');
+    var top = el('div', 'dn-top');
+    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    top.appendChild(lg); top.appendChild(el('strong', null, 'FREE AGENCY ' + (save.year + 1)));
+    top.appendChild(el('em', null, f.day === 0 ? 'DAY 1 EVE' : 'DAY ' + f.day));
+    wrap.appendChild(top);
+    var cap = el('div', 'dn-clock mine');
+    cap.appendChild(teamBadge(me));
+    var who = el('div', 'dn-who');
+    who.appendChild(el('small', null, 'YOUR CAP SPACE'));
+    who.appendChild(el('b', null, money(Math.max(0, save.lg.cap - pay))));
+    who.appendChild(el('span', null, n + ' players · payroll ' + money(pay) + ' of ' + money(save.lg.cap)));
+    cap.appendChild(who);
+    wrap.appendChild(cap);
+    var fa = League.freeAgents(save).slice(0, 7), sel = offSel;
+    if (!sel || !fa.some(function (p) { return p.id === sel; })) sel = offSel = fa[0] && fa[0].id;
+    var board = el('div', 'dn-board');
     fa.forEach(function (p) {
-      var ask = League.salaryFor(p.ratings.ovr);
-      var can = League.canSign(save, me.id, ask) && n < League.MAX_ROSTER;
-      var b = el('button', 'btn small', can ? 'Sign ' + money(ask) : (n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap'));
-      b.type = 'button';
-      b.disabled = !can;
-      b.addEventListener('click', function () { League.sign(save, p, me.id, ask, 2); Social.faSigned(save, p, money(ask), 2); persist(); renderOff(); });
-      var right = el('span'); right.style.marginLeft = 'auto'; right.appendChild(b);
-      body.appendChild(personRow(p, [(p.pos || '') + ' · ' + hgtText(p) + ' · age ' + p.age + ' · potential ' + p.pot, 'Overall ' + p.ratings.ovr + ' \u00B7 ' + oddsShift(me.id, p)], right));
+      var r = el('div', 'dn-row' + (p.id === sel ? ' sel' : ''));
+      r.appendChild(makeAvatar(p));
+      var t = el('span'); t.appendChild(el('b', null, p.name));
+      t.appendChild(el('small', null, (p.pos || '') + ' · ' + p.age + ' · asks ' + money(faAsk(p))));
+      r.appendChild(t);
+      var rm = el('span', 'fa-rum');
+      (f.rum[p.id] || []).forEach(function (id) { rm.appendChild(teamBadge(teamById(id))); });
+      r.appendChild(rm);
+      r.appendChild(el('em', null, String(p.ratings.ovr)));
+      r.addEventListener('click', function () { offSel = p.id; renderOff(); });
+      board.appendChild(r);
     });
-    if (!fa.length) body.appendChild(el('p', 'sub', 'Nobody is available.'));
-    var tb = el('button', 'btn wide', 'Trades');
-    tb.type = 'button';
-    tb.addEventListener('click', function () { openTrade('off'); });
-    body.appendChild(tb);
-    offDock('Finish the off-season', function () { offStep('ready'); });
+    if (!fa.length) board.appendChild(el('p', 'sub', 'Nobody is available.'));
+    var logp = el('div', 'dn-board');
+    f.log.slice(0, 7).forEach(function (s) {
+      var p = League.byId(save, s.pid), r = el('div', 'dn-row');
+      r.appendChild(teamBadge(teamById(s.team)));
+      var t = el('span'); t.appendChild(el('b', null, p.name));
+      t.appendChild(el('small', null, teamById(s.team).city + ' · ' + s.yrs + ' yrs · ' + money(s.salary)));
+      r.appendChild(t); r.appendChild(el('em', null, String(s.ovr)));
+      logp.appendChild(r);
+    });
+    if (!f.log.length) logp.appendChild(el('p', 'sub', 'No signings yet. Teams are waiting for the clock.'));
+    var rp = el('div', 'dn-board'); rightsSection(rp, me);
+    wrap.appendChild(hubRail([{ title: 'Top available', node: board }, { title: 'Signed around the league', node: logp }, { title: 'Draft rights', node: rp }]));
+    body.appendChild(wrap);
+    var dock = document.getElementById('off-dock'); dock.textContent = '';
+    var btn = function (label, fn, cls) { var b = el('button', cls || 'btn', label); b.type = 'button'; b.addEventListener('click', fn); return b; };
+    var p0 = fa.filter(function (p) { return p.id === sel; })[0];
+    if (p0) {
+      var ask = faAsk(p0), can = League.canSign(save, me.id, ask) && n < League.MAX_ROSTER;
+      var sb = btn(can ? 'Sign ' + p0.name + ' · ' + money(ask) : n >= League.MAX_ROSTER ? 'Roster full' : 'Over the cap', function () {
+        var yrs = faYears(p0); League.sign(save, p0, me.id, ask, yrs); Social.faSigned(save, p0, money(ask), yrs);
+        League.wire(save, 'You sign ' + p0.name + ': ' + yrs + ' years, ' + money(ask));
+        f.log.unshift({ pid: p0.id, team: me.id, salary: ask, yrs: yrs, day: f.day, ovr: p0.ratings.ovr }); persist(); offSel = null; renderOff();
+      }, 'btn wide');
+      sb.disabled = !can; dock.appendChild(sb);
+    }
+    var row = el('div', 'dock-row');
+    row.appendChild(btn('Trades', function () { openTrade('off'); }, 'btn ghost'));
+    if (f.day < FADAYS) {
+      row.appendChild(btn('Sim to the end', function () { while (f.day < FADAYS) { faDayRun(me); f.flash = []; } renderOff(); }, 'btn ghost'));
+      dock.appendChild(btn(f.day === 0 ? 'Open the market' : 'Next day', function () { faDayRun(me); offSel = null; renderOff(); faFlash(function () {}); }, 'btn primary wide'));
+    } else dock.appendChild(btn('Finish the off-season', function () { offStep('ready'); }, 'btn primary wide'));
+    dock.appendChild(row);
   }
 
   function offReady(body, me) {

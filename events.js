@@ -709,9 +709,9 @@
       P.push(function () { return conv(bn, '"My family is in town. Can I get a day away from the facility?"', [
         { label: 'Take the day.', fx: { s: { m: 5, t: 3 } }, say: 'Day off granted' },
         { label: 'Not this week.', fx: { s: { m: -3, t: -2 } }, say: 'Said no' }], bn); });
-      P.push(function () { return conv(bn, '"I think I should be getting more minutes. Can you talk to the coach?"', [
+      if (!pm(save, bn.id).gotMin) P.push(function () { var ev = conv(bn, '"I think I should be getting more minutes. Can you talk to the coach?"', [
         { label: 'I will have a word.', fx: { s: { m: 4, t: 3 }, coach: -1 }, say: 'Spoke to the coach' },
-        { label: 'Wait for your chance.', fx: { s: { m: -3, t: 0 } }, say: 'Told him to wait' }], bn); });
+        { label: 'Wait for your chance.', fx: { s: { m: -3, t: 0 } }, say: 'Told him to wait' }], bn); ev.act = { type: 'minutes' }; return ev; });
       P.push(function () { return conv(st2, '"A shoe company wants me for a campaign. It means time away from practice. What do you think?"', [
         { label: 'Go for it.', fx: { s: { m: 5, t: 2 }, fans: 1, coach: -1 } , say: 'Approved' },
         { label: 'Focus on basketball.', fx: { s: { m: -3, t: 1 }, coach: 1 }, say: 'Said no' }], st2); });

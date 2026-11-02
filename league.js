@@ -281,7 +281,7 @@
 
   /* Ages everyone a year, changes ratings, retires the old. Returns a report for the user's team. */
   function progress(save, myId) {
-    var report = { mine: [], retired: [], leagueRetired: 0 };
+    var report = { mine: [], retired: [], leagueRetired: 0, notable: [] };
     save.lg.players.forEach(function (p) {
       if (p.status !== 'active') return;
       var before = p.ratings.ovr, age = p.age || 26;
@@ -305,7 +305,7 @@
       if (Math.random() < pr) {
         p.status = 'retired';
         if (p.team === myId) report.retired.push({ p: p, ovr: before });
-        else report.leagueRetired++;
+        else { report.leagueRetired++; var cg = (p.career || []).reduce(function (a, c) { return a + (c.g || 0); }, 0); if (before >= 62 || cg >= 500) report.notable.push({ p: p, ovr: before, g: cg }); }
         if (root.Coach) try { root.Coach.fromRetired(save, p); } catch (e) {}
         p.retiredTeam = p.team; p.team = null;
       } else if (p.team === myId) {
