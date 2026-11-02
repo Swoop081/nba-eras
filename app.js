@@ -1558,6 +1558,46 @@
   }
 
 
+
+  /* ---------- power rankings: form first, standings kept as a factor ---------- */
+  function powerRank() {
+    var d = save.day, ids = save.ids.slice(), l10 = {};
+    ids.forEach(function (id) { l10[id] = { n: 0, w: 0, m: 0 }; });
+    for (var i = save.results.length - 1; i >= 0; i--) {
+      var r = save.results[i];
+      [[r.h, r.hs - r.as], [r.a, r.as - r.hs]].forEach(function (x) { var o = l10[x[0]]; if (o && o.n < 10) { o.n++; if (x[1] > 0) o.w++; o.m += x[1]; } });
+    }
+    var prev = save.lg.pr ? save.lg.pr.rank : null, rows = ids.map(function (id) {
+      var rc = save.rec[id], gp = rc.w + rc.l, base = gp ? rc.w / gp : 0.5, o = l10[id];
+      var form = o.n ? 0.7 * (o.w / o.n) + 0.3 * ((Math.max(-15, Math.min(15, o.m / o.n)) + 15) / 30) : 0.5;
+      var rn = Math.max(0, Math.min(1, (teamRating(id) - 55) / 25)), k = Math.min(1, gp / 10), wS = 0.25 * k, wF = 0.4 * k;
+      var ahead = [];
+      for (var j = d; j < Math.min(save.days.length, d + 7); j++) (save.days[j] || []).forEach(function (g) { if (g[0] === id) ahead.push({ o: g[1], h: 1 }); else if (g[1] === id) ahead.push({ o: g[0], h: 0 }); });
+      return { id: id, sc: wS * base + wF * form + (1 - wS - wF) * rn, w: rc.w, l: rc.l, l10: o.n ? o.w + '-' + (o.n - o.w) : '', ahead: ahead };
+    }).sort(function (x, y) { return y.sc - x.sc; });
+    var rank = {};
+    rows.forEach(function (r, i) { r.rank = i + 1; rank[r.id] = i + 1; r.move = prev && prev[r.id] ? prev[r.id] - r.rank : 0; });
+    return { d: d, rows: rows, rank: rank };
+  }
+  function prList(pr) {
+    var box = el('div', 'pr-list');
+    pr.rows.forEach(function (r) {
+      var t = teamById(r.id), row = el('div', 'pr-row' + (r.id === save.myId ? ' me' : ''));
+      row.appendChild(el('b', 'pr-k', String(r.rank)));
+      row.appendChild(el('span', 'pr-mv ' + (r.move > 0 ? 'up' : r.move < 0 ? 'dn' : ''), r.move > 0 ? '▲' + r.move : r.move < 0 ? '▼' + (-r.move) : '–'));
+      var bd = teamBadge(t); bd.classList.add('sm'); row.appendChild(bd);
+      var mid = el('span', 'pr-mid'); mid.appendChild(el('b', null, t.city));
+      mid.appendChild(el('small', null, r.w + '-' + r.l + (r.l10 ? ' · L10 ' + r.l10 : '')));
+      row.appendChild(mid);
+      var ah = el('span', 'pr-ah');
+      if (!r.ahead.length) ah.appendChild(el('small', null, 'Off'));
+      r.ahead.slice(0, 5).forEach(function (g) { var c = el('span', 'pr-g' + (g.h ? '' : ' aw')); var ob = teamBadge(teamById(g.o)); ob.classList.add('sm'); c.appendChild(ob); c.appendChild(el('i', null, g.h ? 'vs' : '@')); ah.appendChild(c); });
+      row.appendChild(ah);
+      box.appendChild(row);
+    });
+    return box;
+  }
+
   /* ---------- weekly and monthly awards ---------- */
   function confOf(tid) { var d = save.division[tid] || ''; return /east/i.test(d) ? 'East' : /west/i.test(d) ? 'West' : 'League'; }
   function isRookie(p) { return !!(p.rookie || p.draftedYear === save.year || (save.eraId === '2026' && p.age <= 20)); }
@@ -1581,6 +1621,11 @@
       if (wk.length) q.push({ title: 'Players of the Week', cards: wk });
       aw.wk = {};
     }
+    if (d >= 10 && d % 7 === 3 && last.pr !== d) {
+      last.pr = d;
+      var pr = powerRank(); save.lg.pr = { d: pr.d, rows: pr.rows, rank: pr.rank };
+      q.push({ kind: 'pr' });
+    }
     var dt = save.dates && save.dates[d], pd = save.dates && save.dates[d - 1];
     var newMonth = dt && pd ? dt.slice(0, 7) !== pd.slice(0, 7) : (!dt && d >= 30 && d - (last.moDay || 0) >= 30);
     if (newMonth && d - (last.moDay || 0) >= 10) {
@@ -1595,6 +1640,15 @@
     var q = save && save.lg && save.lg.awq;
     if (!q || !q.length || document.querySelector('.sheet-ov') || document.body.dataset.screen !== 'screen-season') return;
     var a = q.shift(); persist();
+    if (a.kind === 'pr') {
+      if (!save.lg.pr) return;
+      hubSheet('Power rankings', function (sh, close) {
+        sh.classList.add('tall');
+        sh.appendChild(prList(save.lg.pr));
+        var b = el('button', 'btn wide', 'Done'); b.type = 'button'; b.addEventListener('click', close); sh.appendChild(b);
+      }, function () { setTimeout(awardsPop, 250); });
+      return;
+    }
     hubSheet(a.title, function (sh, close) {
       var grid = el('div', 'awards');
       a.cards.forEach(function (c) {
@@ -2980,7 +3034,7 @@
 
   /* ---------- records and history ---------- */
   var RV = { tab: 'Champions' };
-  var RTABS = ['Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
+  var RTABS = ['Power', 'Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
   function openRecords() { RV.tab = RV.tab || 'Champions'; if (save.cup && save.dates && save.day >= save.cup.at - 14 && save.day <= save.cup.at + 10) RV.tab = 'Cup'; renderRecords(); show('screen-records'); }
   function renderRecords() {
     var v = League.recordsView(save), body = document.getElementById('records-body'), tabs = document.getElementById('records-tabs');
@@ -2997,6 +3051,10 @@
       body.appendChild(dataTable(heads, rows));
     }
     function plr(p) { return p.name; }
+    if (RV.tab === 'Power') {
+      if (!save.lg.pr) { body.appendChild(el('p', 'sub', 'The first power rankings come out after a few games.')); return; }
+      body.appendChild(prList(save.lg.pr)); return;
+    }
     if (RV.tab === 'Cup') {
       var cv = Season.cupView(save);
       if (!cv) { body.appendChild(el('p', 'sub', 'There is no NBA Cup in this season.')); return; }

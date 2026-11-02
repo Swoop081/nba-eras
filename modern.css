@@ -800,3 +800,21 @@ body[data-modern="1"] .aw-n{font:800 17px "Big Shoulders Display",sans-serif;lin
 body[data-modern="1"] .aw-t{display:flex;align-items:center;gap:6px;font:600 12px var(--font);color:#c9ccd8}
 body[data-modern="1"] .aw-l{font:700 11.5px var(--font);color:#F4F2EE}
 body[data-modern="1"] .aw-r{font:500 10px var(--font);color:#8d92a3}
+
+/* power rankings */
+body[data-modern="1"] .sheet.tall{max-height:88%;grid-template-rows:auto minmax(0,1fr) auto}
+body[data-modern="1"] .pr-list{overflow-y:auto;-webkit-overflow-scrolling:touch;display:grid;gap:2px;align-content:start}
+body[data-modern="1"] .pr-row{display:grid;grid-template-columns:22px 34px 30px minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 6px;border-radius:12px}
+body[data-modern="1"] .pr-row.me{background:rgba(255,255,255,.08)}
+body[data-modern="1"] .pr-k{font:800 16px "Big Shoulders Display",sans-serif;text-align:center}
+body[data-modern="1"] .pr-mv{font:700 10.5px var(--font);color:#8d92a3;text-align:center;white-space:nowrap}
+body[data-modern="1"] .pr-mv.up{color:#3DDC84}
+body[data-modern="1"] .pr-mv.dn{color:#FF5C5C}
+body[data-modern="1"] .pr-mid{display:flex;flex-direction:column;min-width:0}
+body[data-modern="1"] .pr-mid b{font:700 14px var(--font);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-modern="1"] .pr-mid small{font:500 10.5px var(--font);color:#8d92a3}
+body[data-modern="1"] .pr-ah{display:flex;gap:3px;align-items:center}
+body[data-modern="1"] .pr-g{display:flex;flex-direction:column;align-items:center;width:20px}
+body[data-modern="1"] .pr-g .badge{width:18px;height:18px}
+body[data-modern="1"] .pr-g i{font:600 7.5px var(--font);font-style:normal;color:#8d92a3;line-height:1}
+body[data-modern="1"] .pr-g.aw i{color:#E8C46A}
