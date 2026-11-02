@@ -1,0 +1,496 @@
+{
+ "atlanta-hawks": [
+  {
+   "name": "RayJ Dennis",
+   "page": "RayJ Dennis",
+   "pos": "G",
+   "hgt": 73,
+   "age": null,
+   "no": "10",
+   "caption_team": "Atlanta Hawks"
+  },
+  {
+   "name": "Keshon Gilbert",
+   "page": "Keshon Gilbert",
+   "pos": "G",
+   "hgt": 75,
+   "age": null,
+   "no": "00",
+   "caption_team": "Atlanta Hawks"
+  },
+  {
+   "name": "Jalen Wilson",
+   "page": "Jalen Wilson",
+   "pos": "F",
+   "hgt": 78,
+   "age": null,
+   "no": "22",
+   "caption_team": "Atlanta Hawks"
+  }
+ ],
+ "boston-celtics": [
+  {
+   "name": "Devin Carter",
+   "page": "Devin Carter",
+   "pos": "G",
+   "hgt": 74,
+   "age": null,
+   "no": "99",
+   "caption_team": "Boston Celtics"
+  },
+  {
+   "name": "Dillon Mitchell",
+   "page": "Dillon Mitchell (basketball)",
+   "pos": "F",
+   "hgt": 78,
+   "age": null,
+   "no": "20",
+   "caption_team": "Boston Celtics"
+  },
+  {
+   "name": "Amari Williams",
+   "page": "Amari Williams",
+   "pos": "F-C",
+   "hgt": 83,
+   "age": null,
+   "no": "77",
+   "caption_team": "Boston Celtics"
+  }
+ ],
+ "brooklyn-nets": [
+  {
+   "name": "Tyler Bilodeau",
+   "page": "Tyler Bilodeau",
+   "pos": "F",
+   "hgt": 80,
+   "age": null,
+   "no": "34",
+   "caption_team": "Brooklyn Nets"
+  },
+  {
+   "name": "Joshua Jefferson",
+   "page": "Joshua Jefferson",
+   "pos": "F",
+   "hgt": 80,
+   "age": null,
+   "no": "9",
+   "caption_team": "Brooklyn Nets"
+  },
+  {
+   "name": "Grant Nelson",
+   "page": "Grant Nelson (basketball)",
+   "pos": "F",
+   "hgt": 82,
+   "age": null,
+   "no": "16",
+   "caption_team": "Brooklyn Nets"
+  }
+ ],
+ "charlotte-hornets": [
+  {
+   "name": "Michael Ajayi",
+   "page": "Michael Ajayi",
+   "pos": "G",
+   "hgt": 79,
+   "age": null,
+   "no": "10",
+   "caption_team": "Charlotte Hornets"
+  },
+  {
+   "name": "Kylan Boswell",
+   "page": "Kylan Boswell",
+   "pos": "G",
+   "hgt": 73,
+   "age": null,
+   "no": "18",
+   "caption_team": "Charlotte Hornets"
+  }
+ ],
+ "cleveland-cavaliers": [
+  {
+   "name": "Thomas Bryant",
+   "page": "Thomas Bryant",
+   "pos": "F-C",
+   "hgt": 81,
+   "age": null,
+   "no": "3",
+   "caption_team": "Cleveland Cavaliers"
+  },
+  {
+   "name": "Khalifa Diop",
+   "page": "Khalifa Diop",
+   "pos": "C",
+   "hgt": 82,
+   "age": null,
+   "no": "18",
+   "caption_team": "Cleveland Cavaliers"
+  },
+  {
+   "name": "Tristan Enaruna",
+   "page": "Tristan Enaruna",
+   "pos": "F",
+   "hgt": 79,
+   "age": null,
+   "no": "21",
+   "caption_team": "Cleveland Cavaliers"
+  },
+  {
+   "name": "Riley Minix",
+   "page": "Riley Minix",
+   "pos": "F",
+   "hgt": 79,
+   "age": null,
+   "no": "12",
+   "caption_team": "Cleveland Cavaliers"
+  },
+  {
+   "name": "Nae'Qwan Tomlin",
+   "page": "Nae'Qwan Tomlin",
+   "pos": "F",
+   "hgt": 80,
+   "age": null,
+   "no": "35",
+   "caption_team": "Cleveland Cavaliers"
+  },
+  {
+   "name": "Ernest Udeh Jr.",
+   "page": "Ernest Udeh Jr.",
+   "pos": "C",
+   "hgt": 81,
+   "age": null,
+   "no": "88",
+   "caption_team": "Cleveland Cavaliers"
+  }
+ ],
+ "detroit-pistons": [
+  {
+   "name": "Ugonna Onyenso",
+   "page": "Ugonna Onyenso",
+   "pos": "C",
+   "hgt": 83,
+   "age": null,
+   "no": "34",
+   "caption_team": "Detroit Pistons"
+  }
+ ],
+ "golden-state-warriors": [
+  {
+   "name": "Jimmy Butler",
+   "page": "Jimmy Butler",
+   "pos": "F",
+   "hgt": 78,
+   "age": null,
+   "no": "10",
+   "caption_team": "Golden State Warriors"
+  },
+  {
+   "name": "Moses Moody",
+   "page": "Moses Moody",
+   "pos": "G",
+   "hgt": 77,
+   "age": null,
+   "no": "4",
+   "caption_team": "Golden State Warriors"
+  },
+  {
+   "name": "Kristaps Porziņģis",
+   "page": "Kristaps Porziņģis",
+   "pos": "F-C",
+   "hgt": 86,
+   "age": null,
+   "no": "7",
+   "caption_team": "Golden State Warriors"
+  }
+ ],
+ "houston-rockets": [
+  {
+   "name": "Quadir Copeland",
+   "page": "Quadir Copeland",
+   "pos": "G",
+   "hgt": 77,
+   "age": null,
+   "no": "25",
+   "caption_team": "Houston Rockets"
+  }
+ ],
+ "los-angeles-lakers": [
+  {
+   "name": "Arthur Kaluma",
+   "page": "Arthur Kaluma",
+   "pos": "F",
+   "hgt": 79,
+   "age": null,
+   "no": "47",
+   "caption_team": "Los Angeles Lakers"
+  },
+  {
+   "name": "Lawson Lovering",
+   "page": "Lawson Lovering",
+   "pos": "C",
+   "hgt": 84,
+   "age": null,
+   "no": "18",
+   "caption_team": "Los Angeles Lakers"
+  }
+ ],
+ "memphis-grizzlies": [
+  {
+   "name": "Carson Cooper",
+   "page": "Carson Cooper (basketball)",
+   "pos": "C",
+   "hgt": 82,
+   "age": null,
+   "no": "20",
+   "caption_team": "Memphis Grizzlies"
+  },
+  {
+   "name": "Jahmai Mashack",
+   "page": "Jahmai Mashack",
+   "pos": "G",
+   "hgt": 76,
+   "age": null,
+   "no": "21",
+   "caption_team": "Memphis Grizzlies"
+  },
+  {
+   "name": "Javon Small",
+   "page": "Javon Small",
+   "pos": "G",
+   "hgt": 73,
+   "age": null,
+   "no": "10",
+   "caption_team": "Memphis Grizzlies"
+  }
+ ],
+ "miami-heat": [
+  {
+   "name": "Tre Donaldson",
+   "page": "Tre Donaldson",
+   "pos": "G",
+   "hgt": 73,
+   "age": null,
+   "no": "24",
+   "caption_team": "Miami Heat"
+  },
+  {
+   "name": "Vladislav Goldin",
+   "page": "Vladislav Goldin",
+   "pos": "C",
+   "hgt": 85,
+   "age": null,
+   "no": "50",
+   "caption_team": "Miami Heat"
+  },
+  {
+   "name": "Keshad Johnson",
+   "page": "Keshad Johnson",
+   "pos": "F",
+   "hgt": 78,
+   "age": null,
+   "no": "16",
+   "caption_team": "Miami Heat"
+  }
+ ],
+ "milwaukee-bucks": [
+  {
+   "name": "Kam Jones",
+   "page": "Kam Jones",
+   "pos": "G",
+   "hgt": 76,
+   "age": null,
+   "no": "19",
+   "caption_team": "Milwaukee Bucks"
+  },
+  {
+   "name": "Pete Nance",
+   "page": "Pete Nance",
+   "pos": "F",
+   "hgt": 81,
+   "age": null,
+   "no": "35",
+   "caption_team": "Milwaukee Bucks"
+  },
+  {
+   "name": "Cormac Ryan",
+   "page": "Cormac Ryan",
+   "pos": "G",
+   "hgt": 77,
+   "age": null,
+   "no": "30",
+   "caption_team": "Milwaukee Bucks"
+  }
+ ],
+ "minnesota-timberwolves": [
+  {
+   "name": "Donte DiVincenzo",
+   "page": "Donte DiVincenzo",
+   "pos": "G",
+   "hgt": 76,
+   "age": null,
+   "no": "0",
+   "caption_team": "Minnesota Timberwolves"
+  },
+  {
+   "name": "Enrique Freeman",
+   "page": "Enrique Freeman",
+   "pos": "F",
+   "hgt": 80,
+   "age": null,
+   "no": "25",
+   "caption_team": "Minnesota Timberwolves"
+  },
+  {
+   "name": "Rocco Zikarsky",
+   "page": "Rocco Zikarsky",
+   "pos": "C",
+   "hgt": 87,
+   "age": null,
+   "no": "44",
+   "caption_team": "Minnesota Timberwolves"
+  }
+ ],
+ "new-orleans-pelicans": [
+  {
+   "name": "Malik Dia",
+   "page": "Malik Dia",
+   "pos": "F",
+   "hgt": 81,
+   "age": null,
+   "no": "8",
+   "caption_team": "New Orleans Pelicans"
+  },
+  {
+   "name": "Jaron Pierre Jr.",
+   "page": "Jaron Pierre Jr.",
+   "pos": "G",
+   "hgt": 78,
+   "age": null,
+   "no": "10",
+   "caption_team": "New Orleans Pelicans"
+  },
+  {
+   "name": "Julian Reese",
+   "page": "Julian Reese",
+   "pos": "F",
+   "hgt": 83,
+   "age": null,
+   "no": "13",
+   "caption_team": "New Orleans Pelicans"
+  },
+  {
+   "name": "Tyler Nickel",
+   "page": "Tyler Nickel",
+   "pos": "F",
+   "hgt": 79,
+   "age": null,
+   "no": "55",
+   "caption_team": "New York Knicks"
+  }
+ ],
+ "orlando-magic": [
+  {
+   "name": "Izaiyah Nelson",
+   "page": "Izaiyah Nelson",
+   "pos": "F",
+   "hgt": 82,
+   "age": null,
+   "no": "25",
+   "caption_team": "Orlando Magic"
+  }
+ ],
+ "philadelphia-76ers": [
+  {
+   "name": "Tacko Fall",
+   "page": "Tacko Fall",
+   "pos": "C",
+   "hgt": 90,
+   "age": null,
+   "no": null,
+   "caption_team": null
+  },
+  {
+   "name": "Rayan Rupert",
+   "page": "Rayan Rupert",
+   "pos": "G-F",
+   "hgt": 79,
+   "age": null,
+   "no": null,
+   "caption_team": null
+  }
+ ],
+ "portland-trail-blazers": [
+  {
+   "name": "Chris Youngblood",
+   "page": "Chris Youngblood (basketball)",
+   "pos": "G",
+   "hgt": 76,
+   "age": null,
+   "no": "11",
+   "caption_team": "Portland Trail Blazers"
+  }
+ ],
+ "sacramento-kings": [
+  {
+   "name": "Sean Pedulla",
+   "page": "Sean Pedulla",
+   "pos": "G",
+   "hgt": 73,
+   "age": null,
+   "no": "3",
+   "caption_team": "Sacramento Kings"
+  }
+ ],
+ "san-antonio-spurs": [
+  {
+   "name": "Jayden Quaintance",
+   "page": "Jayden Quaintance",
+   "pos": "F",
+   "hgt": 81,
+   "age": null,
+   "no": "22",
+   "caption_team": "San Antonio Spurs"
+  }
+ ],
+ "toronto-raptors": [
+  {
+   "name": "Nate Bittle",
+   "page": "Nate Bittle",
+   "pos": "C",
+   "hgt": 84,
+   "age": null,
+   "no": "12",
+   "caption_team": "Toronto Raptors"
+  }
+ ],
+ "utah-jazz": [
+  {
+   "name": "Trey Alexander",
+   "page": "Trey Alexander",
+   "pos": "G",
+   "hgt": 77,
+   "age": null,
+   "no": "15",
+   "caption_team": "Utah Jazz"
+  },
+  {
+   "name": "Kobe Bufkin",
+   "page": "Kobe Bufkin",
+   "pos": "G",
+   "hgt": 76,
+   "age": null,
+   "no": "0",
+   "caption_team": "Utah Jazz"
+  }
+ ],
+ "washington-wizards": [
+  {
+   "name": "Jamir Watkins",
+   "page": "Jamir Watkins",
+   "pos": "F",
+   "hgt": 77,
+   "age": null,
+   "no": "5",
+   "caption_team": "Washington Wizards"
+  }
+ ]
+}
