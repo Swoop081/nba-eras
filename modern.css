@@ -966,3 +966,29 @@ body[data-modern="1"] .rec-lb .lb-row.yr .rk{color:var(--ink);font-weight:700;fo
 body[data-modern="1"] .rec-lb .lb-row.mine .who b{color:var(--team)}
 body[data-modern="1"] #records-body .box-title{margin-left:14px}
 body[data-modern="1"] #records-body .rec-lb{margin-left:14px;margin-right:14px;width:auto}
+
+/* ===== Prime Time: cut corners, no pills, glow, icon dock ===== */
+body[data-modern="1"]{--ch:12px;--chs:7px}
+body[data-modern="1"] :is(.ptabs button,.seg button,.conf-tabs button,.htabs button,.dec-tabs button,.chips button,.tchips button,.pd-chip,.fc-out,.pb-act,.site-bar,.fp-score,.aw-vt,.tag,.year,.ttabs button){border-radius:0;clip-path:polygon(0 0,calc(100% - var(--chs)) 0,100% var(--chs),100% 100%,var(--chs) 100%,0 calc(100% - var(--chs)))}
+.sheet .chips button{border-radius:0;clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px))}
+body[data-modern="1"] :is(.card,.stat-card,.setting,.btn,.back,.hubtile,.tool,.tstrip .ts,.rec-lb,.lg-card,.coach-head){border-radius:0;clip-path:polygon(0 0,calc(100% - var(--ch)) 0,100% var(--ch),100% 100%,var(--ch) 100%,0 calc(100% - var(--ch)))}
+body[data-modern="1"] .back{--ch:9px}
+body[data-modern="1"] :is(.ptabs button,.seg button,.htabs button,.ttabs button){font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;background:var(--raised)}
+body[data-modern="1"] :is(.ptabs button.on,.seg button.on,.htabs button.on,.ttabs button.on){background:linear-gradient(100deg,var(--team),color-mix(in srgb,var(--team) 60%,#fff));color:var(--on);box-shadow:none}
+body[data-modern="1"] .screen:not(#screen-title) .btn.primary,body[data-modern="1"] .hdock .btn.primary{background:linear-gradient(100deg,var(--team),color-mix(in srgb,var(--team) 62%,#fff));color:var(--on);font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:.07em;text-transform:uppercase;--ch:14px}
+body[data-modern="1"] .btn:not(.primary){font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:.06em;text-transform:uppercase}
+
+/* team header with the star cutout */
+body[data-modern="1"] #screen-season .bar{position:relative;overflow:hidden}
+body[data-modern="1"] #screen-season .bar.star::before{content:"";position:absolute;right:46px;top:-4px;width:190px;height:100%;background:var(--star) right top/contain no-repeat;opacity:.9;pointer-events:none;mask-image:linear-gradient(90deg,transparent,#000 35%);-webkit-mask-image:linear-gradient(90deg,transparent,#000 35%)}
+body[data-modern="1"] #screen-season .bar>*{position:relative;z-index:1}
+body[data-modern="1"] #screen-season .bar h2{font-size:40px;text-transform:uppercase;letter-spacing:.01em;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+
+/* icon dock */
+body[data-modern="1"] .hd-row{display:flex;gap:0;margin:8px -12px 0;padding:0;background:#0c0a0e;border-top:1px solid rgba(255,255,255,.08)}
+body[data-modern="1"] .hd-row .btn.dnav{flex:1;min-width:0;height:64px;clip-path:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-family:var(--font);font-size:10.5px;font-weight:700;letter-spacing:.07em;padding:0}
+body[data-modern="1"] .hd-row .btn.dnav svg{color:var(--team)}
+body[data-modern="1"] .hd-row .btn.dnav:active{background:color-mix(in srgb,var(--team) 18%,transparent)}
+body[data-modern="1"] :is(.boxwrap,.ev,.paper.phone-feed,.pb,.fcard,.fc-stats div,.fc-p,.hh,.hpage,.coach-row,.half-rep,.potg,.tf-offer,.lr,.cup-champ,.aw-card,.call,.hero-card,.recent-deals){border-radius:0;clip-path:polygon(0 0,calc(100% - var(--ch)) 0,100% var(--ch),100% 100%,var(--ch) 100%,0 calc(100% - var(--ch)))}
+body[data-modern="1"] #screen-season .bar.star::before{mask-image:linear-gradient(90deg,transparent,#000 55%);-webkit-mask-image:linear-gradient(90deg,transparent,#000 55%);width:170px;opacity:.85}
+body[data-modern="1"] #screen-season .bar{padding-bottom:14px}

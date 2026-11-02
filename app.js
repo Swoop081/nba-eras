@@ -4300,6 +4300,14 @@
     titleEl.textContent = me.city + ' ' + me.name;
     document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + (rec.w + rec.l ? rec.w + '-' + rec.l : recText(me.id, rec, 1)) + ' · ' + money(League.payroll(save, me.id)) + (save.phase === 'done' ? '' : ' · Title ' + pctText(titleOdds(me.id)));
     var hdr = document.querySelector('#screen-season .bar');
+    (function () {
+      hdr.classList.remove('star'); hdr.style.removeProperty('--star');
+      var top = rosterOf(me.id).slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
+      if (!top) return;
+      var im = new Image(), url = 'assets/players/' + top.id + '.png';
+      im.onload = function () { hdr.style.setProperty('--star', 'url(' + url + ')'); hdr.classList.add('star'); };
+      im.src = url;
+    })();
     var gear = hdr.querySelector('.gear');
     if (!gear) {
       gear = el('button', 'gear', '⚙'); gear.type = 'button'; gear.setAttribute('aria-label', 'Customise');
@@ -4410,7 +4418,12 @@
     });
     dk.appendChild(play);
     var row = el('div', 'hd-row');
-    function nav(label, fn) { var b = el('button', 'btn', label); b.type = 'button'; b.addEventListener('click', fn); row.appendChild(b); }
+    var NAVIC = {'Roster': 'M4 20c0-3.5 3-6 6-6s6 2.5 6 6M10 4a3.5 3.5 0 100 7 3.5 3.5 0 000-7M17 8a3 3 0 010 6M21 19c0-2.4-1.5-4.3-3.5-5', 'Coaching': 'M4 5h16v11H9l-5 4z', 'Trades': 'M4 8h14l-3-3M20 16H6l3 3', 'Records': 'M7 4h10v5a5 5 0 01-10 0zM12 14v4M8 20h8', 'Sim': 'M5 4l8 8-8 8M13 4l8 8-8 8'};
+    function nav(label, fn) {
+      var b = el('button', 'btn dnav'); b.type = 'button';
+      b.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + (NAVIC[label] || '') + '"/></svg><span>' + label + '</span>';
+      b.addEventListener('click', fn); row.appendChild(b);
+    }
     nav('Roster', function () { renderRoster(me); show('screen-roster'); });
     nav('Coaching', openPlan);
     nav('Trades', function () { openTrade('season'); });
