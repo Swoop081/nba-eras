@@ -70,7 +70,7 @@
   }
 
   /* stars take a bigger share of the shots, but their efficiency flattens out above the 60s */
-  var USEADD = 0.0;
+  var USEADD = -0.15;
   function soft(v) { return v > 60 ? 60 + (v - 60) * SOFT : v; }
   var SOFT = 0.8;
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
