@@ -642,7 +642,7 @@
     var nums = {}, ret = {};
     function wire() { League.setNumbers(nums, function (t) { return ret[FRANCHISE[t] || t] || []; }); }
     wire();
-    fetch('data/jersey-numbers-2026.json').then(function (r) { return r.json(); }).then(function (d) { var m = {}; Object.keys(d).forEach(function (t) { m[t] = {}; Object.keys(d[t]).forEach(function (n) { m[t][League.normName(n)] = d[t][n]; }); }); nums = m; wire(); }).catch(function () {});
+    fetch('data/jersey-numbers-2026.json').then(function (r) { return r.json(); }).then(function (d) { var m = {}; Object.keys(d).forEach(function (t) { m[t] = {}; Object.keys(d[t]).forEach(function (n) { m[t][League.normName(n)] = d[t][n]; }); }); nums = m; wire(); return fetch('data/jersey-numbers-extra.json'); }).then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { nums[t] = nums[t] || {}; Object.keys(d[t]).forEach(function (n) { nums[t][League.normName(n)] = d[t][n]; }); }); wire(); }).catch(function () {});
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
   fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACHDATA = d; }).catch(function () {});

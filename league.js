@@ -171,7 +171,7 @@
     players.forEach(function (p) {
       var q = JSON.parse(JSON.stringify(p));
       q.team = p.teamId; delete q.teamId;
-      q.status = 'active';
+      q.status = 'active'; q.base = 1;
       q.salary = KNOWN_SALARY[q.id] || salaryFor(q.ratings.ovr);
       q.known = !!KNOWN_SALARY[q.id];
       q.yrs = 1 + Math.floor(Math.random() * 3);
@@ -218,6 +218,7 @@
       by[t].sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).forEach(function (p) {
         /* a number a player already wears at this club stays his (real rosters honour a few retired ones); a newcomer cannot take a retired or worn one */
         if (p.no === undefined || p.no === null) { var m = NUMS[t] && NUMS[t][normName(p.name)]; if (m !== undefined) { p.no = String(m); p.noT = t; } }
+        if ((p.no === undefined || p.no === null) && p.base) return; /* a real player whose number we do not have yet shows none rather than an invented one */
         var ok = p.no !== undefined && p.no !== null && !used[p.no] && (p.noT === t || !ret[p.no]);
         if (ok) { used[p.no] = 1; p.noT = t; } else need.push(p);
       });
