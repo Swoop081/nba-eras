@@ -3,7 +3,7 @@
    a losing streak) stay pinned in the header until you answer, and what you decide comes back later. */
 (function (root) {
   var src = null, timer = null, allowed = false, last = '', lastApp = '';
-  var OK = { 'screen-season': 1, 'screen-events': 1, 'screen-off': 1, 'screen-trade': 1, 'screen-roster': 1, 'screen-records': 1, 'screen-team': 1, 'screen-player': 1 };
+  var OK = { 'screen-season': 1, 'screen-events': 1, 'screen-off': 1, 'screen-trade': 1, 'screen-roster': 1, 'screen-records': 1, 'screen-club': 1, 'screen-player': 1 };
 
   var recent = [];
   function rnd(a) {

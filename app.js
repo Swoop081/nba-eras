@@ -2805,19 +2805,19 @@
   function modernId(id) { return FRANCHISE[id] || id; }
   function openTeamPage() {
     if (!save) return;
-    loadFHist(function () { renderTeamPage(); show('screen-team'); });
+    loadFHist(function () { renderTeamPage(); show('screen-club'); });
   }
   function renderTeamPage() {
     var me = teamById(save.myId), mid = modernId(save.myId), fh = (FHIST && FHIST[mid]) || { champs: [], retired: [] };
-    var body = document.getElementById('team-body'); body.textContent = '';
-    document.getElementById('team-title').textContent = me.city + ' ' + me.name;
+    var body = document.getElementById('club-body'); body.textContent = '';
+    document.getElementById('club-title').textContent = me.city + ' ' + me.name;
     var c1 = (me.colors && me.colors[0]) || '#C8102E', c2 = (me.colors && me.colors[1]) || '#FFFFFF';
     var abaYrs = (mid === 'brooklyn-nets' || mid === 'indiana-pacers') ? 1976 : 0;
     var titles = (fh.champs || []).filter(function (y) { return y <= save.year; }).map(function (y) { return { y: y, aba: abaYrs && y <= abaYrs }; });
     (save.lg.history || []).forEach(function (h) { if (h.champion === save.myId && h.year >= save.year) titles.push({ y: h.year + 1, you: true }); });
     titles.sort(function (a, b) { return b.y - a.y; });
     var nba = titles.filter(function (t) { return !t.aba; }).length;
-    document.getElementById('team-sub').textContent = titles.length ? (nba + ' championship' + (nba === 1 ? '' : 's') + (titles.length > nba ? ' + ' + (titles.length - nba) + ' ABA' : '')) : 'Still chasing the first banner';
+    document.getElementById('club-sub').textContent = titles.length ? (nba + ' championship' + (nba === 1 ? '' : 's') + (titles.length > nba ? ' + ' + (titles.length - nba) + ' ABA' : '')) : 'Still chasing the first banner';
     var rafters = el('div', 'rafters');
     rafters.style.setProperty('--c1', c1); rafters.style.setProperty('--c2', c2);
     rafters.appendChild(el('div', 'rf-beam'));
@@ -2836,7 +2836,7 @@
     rafters.appendChild(row1);
     rafters.appendChild(el('div', 'rf-beam low'));
     rafters.appendChild(el('h3', 'rf-label', 'Retired numbers'));
-    var ret = (fh.retired || []).filter(function (r) { return !r.y || r.y <= save.year; });
+    var ret = (fh.retired || []).filter(function (r) { return r.p && r.p !== 'Player' && r.n !== 'No.' && (!r.y || r.y <= save.year); });
     var row2 = el('div', 'rf-row jerseys');
     if (!ret.length) row2.appendChild(el('p', 'rf-empty', 'No number has been retired yet.'));
     ret.sort(function (a, b) { return (b.y || 0) - (a.y || 0); }).forEach(function (r) {
