@@ -1022,3 +1022,4 @@ body[data-modern="1"] #era-list .era-photo .big{position:absolute;right:-6px;bot
 body[data-modern="1"] #era-list .era-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 body[data-modern="1"] #era-list .era-photo.has::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.45),transparent 45%)}
 body[data-modern="1"] .dec-tabs button{border-radius:0}
+body[data-modern="1"] #era-list .era-photo img{object-position:50% 30%}
