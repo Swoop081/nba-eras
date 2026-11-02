@@ -1566,7 +1566,7 @@
   var KEYTPL = {
     hot: [
       function (c) { return c.n + ' is averaging ' + c.a3 + ' points over his last three, against ' + c.pp + ' on the season.'; },
-      function (c) { return c.n + ' has scored ' + c.list + ' in his last three. ' + c.t + ' have not found an answer.'; },
+      function (c) { return c.n + ' has scored ' + c.list + ' in his last three. Nobody has slowed him down.'; },
       function (c) { return c.t + ' come in with ' + c.n + ' on a run, ' + c.a3 + ' a night over his last three.'; },
       function (c) { return 'Watch ' + c.n + '. ' + c.a3 + ' points a game lately is well above his ' + c.pp + '.'; }
     ],
@@ -1577,7 +1577,7 @@
       function (c) { return c.t + ' have a scorer in a hole: ' + c.n + ' is shooting ' + c.pct + '% over his last ' + c.gs + '.'; }
     ],
     board: [
-      function (c) { return c.n + ' has averaged ' + c.a3 + ' rebounds over his last three. Box him out.'; },
+      function (c) { return c.n + ' has averaged ' + c.a3 + ' rebounds over his last three. ' + (c.us ? 'The glass is yours to take.' : 'Box him out.'); },
       function (c) { return 'The glass belongs to ' + c.n + ' right now, ' + c.a3 + ' boards a night in his last three.'; }
     ],
     dime: [
@@ -1624,12 +1624,12 @@
       function (c) { return c.n + ' sets the tone for ' + c.t + ', ' + c.v + '.'; }
     ],
     rim: [
-      function (c) { return c.n + ' ' + c.vb + ' ' + c.b + ' blocks a game' + (c.ls ? ' last season' : '') + '. Think twice before driving the lane.'; },
-      function (c) { return 'The rim belongs to ' + c.n + ' (' + c.b + ' blocks ' + (c.ls ? 'a game last season' : 'a game') + '). Pull him out or go around.'; }
+      function (c) { return c.n + ' ' + c.vb + ' ' + c.b + ' blocks a game' + (c.ls ? ' last season' : '') + '. ' + (c.us ? 'Anyone driving on you will think twice.' : 'Think twice before driving the lane.'); },
+      function (c) { return 'The rim belongs to ' + c.n + ' (' + c.b + ' blocks ' + (c.ls ? 'a game last season' : 'a game') + '). ' + (c.us ? 'Keep him home and the paint stays closed.' : 'Pull him out or go around.'); }
     ],
     pest: [
-      function (c) { return c.n + ' ' + c.vb + ' ' + c.s + ' steals a game' + (c.ls ? ' last season' : '') + '. Protect the ball on his side.'; },
-      function (c) { return 'Careful with the pass near ' + c.n + ', who has ' + c.s + ' steals a game' + (c.ls ? ' to his name last season.' : '.'); }
+      function (c) { return c.n + ' ' + c.vb + ' ' + c.s + ' steals a game' + (c.ls ? ' last season' : '') + '. ' + (c.us ? 'Pressure the ball and he will turn it into points.' : 'Protect the ball on his side.'); },
+      function (c) { return c.us ? c.n + ' has ' + c.s + ' steals a game' + (c.ls ? ' to his name last season' : '') + '. Passing lanes belong to him.' : 'Careful with the pass near ' + c.n + ', who has ' + c.s + ' steals a game' + (c.ls ? ' to his name last season.' : '.'); }
     ],
     stand: [
       function (c) { return c.line; },
@@ -1670,7 +1670,7 @@
         var l4 = x.rc.slice(-4), fg = l4.reduce(function (a, g) { return a + g[1]; }, 0), fga = l4.reduce(function (a, g) { return a + g[2]; }, 0);
         if (fga >= 28 && fg / fga <= 0.37 && x.fga && x.fg / x.fga >= 0.42) add('slump', p.id, { n: lastName(p.name), t: tm(t), fg: fg, fga: fga, gs: l4.length, pct: Math.round(100 * fg / fga) });
         var r3 = l3.reduce(function (a, g) { return a + g[3]; }, 0) / 3;
-        if (r3 >= 11 && r3 - x.trb / x.g >= 2.5) add('board', p.id, { n: lastName(p.name), a3: r3.toFixed(1) });
+        if (r3 >= 11 && r3 - x.trb / x.g >= 2.5) add('board', p.id, { us: t === me, n: lastName(p.name), a3: r3.toFixed(1) });
         var d3 = l3.reduce(function (a, g) { return a + g[4]; }, 0) / 3;
         if (d3 >= 8 && d3 - x.ast / x.g >= 2.5) add('dime', p.id, { n: lastName(p.name), a3: d3.toFixed(1) });
         if ((p.rookie || p.draftedYear === save.year) && x.g >= 6 && pp >= 8) add('rookie', p.id, { n: lastName(p.name), age: p.age, line: pp.toFixed(1) + ' points and ' + (x.trb / x.g).toFixed(1) + ' rebounds' });
@@ -1721,9 +1721,10 @@
     starters.forEach(function (row) {
       [row.p, row.o].forEach(function (p) {
         var s = statOf(p); if (!s) return;
+        var us = p === row.p;
         var nm = lastName(p.name), vb = s.ls ? 'averaged' : 'averages';
-        if (s.blk >= 1.8) add('rim', p.id, { n: nm, b: s.blk.toFixed(1), vb: vb, ls: s.ls });
-        else if (s.stl >= 1.8) add('pest', p.id, { n: nm, s: s.stl.toFixed(1), vb: vb, ls: s.ls });
+        if (s.blk >= 1.8) add('rim', p.id, { us: us, n: nm, b: s.blk.toFixed(1), vb: vb, ls: s.ls });
+        else if (s.stl >= 1.8) add('pest', p.id, { us: us, n: nm, s: s.stl.toFixed(1), vb: vb, ls: s.ls });
       });
     });
     [[me, 1], [opp, 0]].forEach(function (pr) {
