@@ -4,7 +4,7 @@ Writes data/jersey-numbers-extra.json {teamId: {name: number}} and a log of ever
 import json, re, time, urllib.request, urllib.parse, html
 from bs4 import BeautifulSoup
 MISSING = {
- 'toronto-raptors': ['Jakob Poeltl'], 'memphis-grizzlies': [],
+ 'toronto-raptors': ['Jakob Poeltl', 'Dailyn Swain'], 'memphis-grizzlies': ['GG Jackson', "D'Angelo Russell", 'Cole Anthony'],
  'cleveland-cavaliers': ['Kenrich Williams', 'Hannes Steinbach', 'Craig Porter Jr.', 'Jalen Pickett', 'Alex Morales'],
  'minnesota-timberwolves': ['Jordan Hawkins'], 'portland-trail-blazers': ['Yang Hansen'], 'utah-jazz': ['Svi Mykhailiuk'],
  'new-orleans-pelicans': ['Caleb Houstan'], 'charlotte-hornets': ['Rob Dillingham'], 'chicago-bulls': ['Nic Claxton'],
@@ -32,15 +32,11 @@ for tid, names in MISSING.items():
             if not title: log.append('%s %s NO PAGE' % (tid, nm)); continue
             soup = BeautifulSoup(api(action='parse', page=title, prop='text', redirects=1)['parse']['text']['*'], 'html.parser')
             info = soup.find('table', class_=re.compile('infobox'))
-            cand = None
-            for tr in (info.find_all('tr') if info else []):
-                th = tr.find('th')
-                if th and clean(th.get_text()).lower() in ('number', 'numbers'):
-                    td = tr.find('td'); cand = clean(td.get_text(' ')) if td else None
-            if cand is None: log.append('   labels: ' + ' / '.join(clean(t.get_text()) for t in (info.find_all('th') if info else []))[:600] + ' || text: ' + (clean(info.get_text(' '))[:900] if info else 'NOINFO'))
-            nums = re.findall(r'\b(00|\d{1,2})\b', cand or '')
-            log.append('%s | %s | page=%s | number row=%r' % (tid, nm, title, cand))
-            if nums: out[tid][nm] = nums[-1]
+            txt = clean(info.get_text(' ')) if info else ''
+            m = re.search(r'No\. (00|\d{1,2}) \u2013 ([A-Za-z .]+?) (Position|Positions)', txt)
+            log.append('%s | %s | page=%s | caption=%r' % (tid, nm, title, m.group(0) if m else None))
+            if m: out[tid][nm] = m.group(1); out[tid][nm + ' @team'] = m.group(2)
+
         except Exception as e:
             log.append('%s %s ERR %r' % (tid, nm, e))
 json.dump(out, open('data/jersey-numbers-extra.json', 'w'), indent=1, ensure_ascii=False)
