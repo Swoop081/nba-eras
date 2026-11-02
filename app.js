@@ -1851,10 +1851,12 @@
   var lv = null;
   var COURT_SPOTS = [[50, 41], [15, 52], [85, 52], [30, 80], [70, 80]];
   var OPP_SPOTS = [[50, 12], [29, 27], [71, 27], [36, 59], [64, 59]];
-  var FULL_SVG = '<svg class="lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="97"/><rect x="34" y="60" width="32" height="38.5" class="key"/><circle cx="50" cy="60" r="11"/><path d="M6 98.5V72A47.5 50.6 0 0 1 94 72V98.5"/><path d="M41 91h18"/><circle cx="50" cy="90" r="2"/><path d="M42 82.5a8 8 0 0 0 16 0" stroke-dasharray="1.5 1.5"/></svg>';
+  var FULL_SVG = '<svg class="lines" viewBox="0 12 100 88" preserveAspectRatio="none" aria-hidden="true"><rect x="1.5" y="1.5" width="97" height="97"/><rect x="34" y="60" width="32" height="38.5" class="key"/><circle cx="50" cy="60" r="11"/><path d="M6 98.5V72A47.5 50.6 0 0 1 94 72V98.5"/><path d="M41 91h18"/><circle cx="50" cy="90" r="2"/><path d="M42 82.5a8 8 0 0 0 16 0" stroke-dasharray="1.5 1.5"/></svg>';
   /* a zone look: guards outside the arc, wings at the elbows of the key, the centre under the ring; the opponent's man sits beside each */
-  var ME_FULL = [[33, 31], [67, 31], [76, 66], [24, 66], [50, 80]];
-  var OP_FULL = [[18, 31], [82, 31], [91, 76], [9, 76], [66, 86]];
+  /* the floor is cropped a little past the three-point line, so everything is placed on the 12%-100% band */
+  function band(list) { return list.map(function (q) { return [q[0], Math.round((q[1] - 12) / 0.88 * 10) / 10]; }); }
+  var ME_FULL = band([[33, 31], [67, 31], [76, 66], [24, 66], [50, 80]]);
+  var OP_FULL = band([[18, 31], [82, 31], [91, 76], [9, 76], [66, 86]]);
   function rankOrder(list) { return list.map(function (m, i) { return i; }).sort(function (u, v) { return slotRank(list[u].p) - slotRank(list[v].p); }); }
   var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
 
@@ -1958,7 +1960,7 @@
       // the real floor, rotated to a half court, when one has been added for this club
       (function (exts) {
         var im = new Image(), k = 0;
-        im.onload = function () { court.style.backgroundImage = 'url(' + im.src + ')'; court.classList.add('real'); };
+        im.onload = function () { var bg = el('div', 'court-bg'); bg.style.backgroundImage = 'url(' + im.src + ')'; court.insertBefore(bg, court.firstChild); court.classList.add('real'); };
         im.onerror = function () { k++; if (k < exts.length) im.src = 'assets/courts/' + home.id + '.' + exts[k]; };
         im.src = 'assets/courts/' + home.id + '.' + exts[0];
       })(['webp', 'png', 'jpg']);
@@ -1992,6 +1994,18 @@
     skipButton();
     show('screen-live');
     lv.timer = later(liveTick, 900);
+  }
+
+  /* teams swap ends after the break: the floor turns round and everyone is mirrored */
+  function flipCourt() {
+    var court = document.getElementById('court');
+    if (!court || !court.classList.contains('full') || lv.flipped) return;
+    lv.flipped = true;
+    court.classList.add('flip');
+    Array.prototype.forEach.call(court.querySelectorAll('.pl, .op'), function (e) {
+      e.style.left = (100 - parseFloat(e.style.left)) + '%';
+      e.style.top = (100 - parseFloat(e.style.top)) + '%';
+    });
   }
 
   function skipButton() {
@@ -2228,6 +2242,7 @@
     }
     var built = buildOptions(spec);
     tickerLine(spec.kind === 'half' ? 'Halftime.' : 'Timeout.', 'sys');
+    if (spec.kind === 'half') flipCourt();
     if (spec.kind === 'half') {
       var rep = el('div', 'half-rep');
       [[lv.me, g.H, g.hs], [lv.opp, g.A, g.as]].forEach(function (t, i) {
