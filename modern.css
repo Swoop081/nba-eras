@@ -732,3 +732,5 @@ body[data-modern="1"] #screen-live .btn.opt:disabled{opacity:.4}
 
 body[data-modern="1"] #screen-live #court.full+#ticker .tk{font-size:13.5px;line-height:1.28;margin:0 0 4px}
 body[data-modern="1"] #screen-live #court.full+#ticker .tk:first-child{font-size:15.5px}
+
+body[data-modern="1"] #court.full .cfield .pl,body[data-modern="1"] #court.full .cfield .op{transition:left .55s cubic-bezier(.3,.7,.3,1),top .55s cubic-bezier(.3,.7,.3,1)}

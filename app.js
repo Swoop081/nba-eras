@@ -2210,11 +2210,13 @@
       d.style.left = (full ? OP_FULL : OPP_SPOTS)[i][0] + '%';
       d.style.top = (full ? fieldY(OP_FULL[i][1]) : OPP_SPOTS[i][1]) + '%';
       (function (i2) { d.addEventListener('click', function () { if (lv.pickFn) return; if (full) selectOpp(lv.g.onA[slotIdx(lv.g.onA)[i2]].p.id); else openLivePlayer(lv.g.onA[slotIdx(lv.g.onA)[i2]].p, false); }); })(i);
+      d.dataset.bx = parseFloat(d.style.left); d.dataset.by = parseFloat(d.style.top);
       field.appendChild(d); lv.op.push(d);
       var b = el('button', 'pl');
       b.type = 'button';
       if (full) sp = ME_FULL[i];
       b.style.left = sp[0] + '%'; b.style.top = (full ? fieldY(sp[1]) : sp[1]) + '%';
+      b.dataset.bx = parseFloat(b.style.left); b.dataset.by = parseFloat(b.style.top);
       b.appendChild(makeAvatar(p));
       b.appendChild(el('span', 'nm', lastName(p.name)));
       var pp = el('span', 'pp', '0'); b.appendChild(pp);
@@ -2294,6 +2296,37 @@
     if (lv.rail && lv.rail.some(function (c, i) { return c.pid !== g.onH[oH[i]].p.id; })) { if (lv.sel && !lv.selA && !g.onH.some(function (x) { return x.p.id === lv.sel; })) { lv.sel = null; renderRail(); renderDetail(); } else renderRail(); }
   }
 
+  /* players drift and step into their shots: the shooter moves to where he'd take it from and his man follows */
+  var FT_PCT = 100 / 106, OOB_PCT = 5.66;
+  function arcFt(xPct) { var dx = (xPct - 50) * 0.5; return Math.abs(dx) >= 22 ? 14 : 5.25 + Math.sqrt(Math.max(0, 23.75 * 23.75 - dx * dx)); }
+  function ftToTop(ft) { return OOB_PCT + ft * FT_PCT; }
+  function place(node, x, y) { node.style.left = x.toFixed(1) + '%'; node.style.top = y.toFixed(1) + '%'; }
+  function moveCourt(mineSide, idx, ev, evObj) {
+    if (reduceMotion || !lv.pl || !lv.pl.length || !document.querySelector('#court .cfield')) return;
+    var offs = mineSide ? lv.pl.map(function (p) { return p.el; }) : lv.op, defs = mineSide ? lv.op : lv.pl.map(function (p) { return p.el; });
+    var j = function (v) { return (Math.random() - 0.5) * v; };
+    offs.concat(defs).forEach(function (n) { place(n, parseFloat(n.dataset.bx) + j(3), parseFloat(n.dataset.by) + j(1.6)); });
+    if (idx < 0 || idx > 4 || ev.kind === 'tov') return;
+    var o = offs[idx], bx = parseFloat(o.dataset.bx), by = parseFloat(o.dataset.by), tx, ty;
+    var made = ev.kind === 'made', three = ev.three;
+    if (three) {
+      tx = Math.max(7, Math.min(93, bx + (bx < 50 ? -6 : 6)));
+      ty = ftToTop(arcFt(tx) + 1.6);
+    } else if (made || ev.kind === 'foul') {
+      tx = 50 + (bx - 50) * 0.6 + j(6); ty = ftToTop(10 + Math.random() * 5);
+    } else {
+      tx = 50 + (bx - 50) * 0.6; ty = ftToTop(9 + Math.random() * 9);
+    }
+    place(o, tx, ty);
+    var d = defs[idx];
+    place(d, tx + (tx < 50 ? 7 : -7), ty - 2.4);
+    if (ev.ast) {
+      var pidx = -1, list = mineSide ? lv.g.onH : lv.g.onA, ord = slotIdx(list);
+      for (var i = 0; i < 5; i++) if (list[i].p.name === ev.ast) pidx = ord.indexOf(i);
+      if (pidx >= 0 && pidx !== idx) { var pn = offs[pidx]; place(pn, parseFloat(pn.dataset.bx) + (tx < 50 ? -3 : 3), parseFloat(pn.dataset.by) - 3); }
+    }
+  }
+
   function showPoss(evObj, mineSide) {
     var g = lv.g, ev = evObj.ev;
     syncCourt();
@@ -2304,6 +2337,7 @@
     lv.pl.forEach(function (p) { p.el.classList.remove('ball'); });
     lv.op.forEach(function (o) { o.classList.remove('ball'); });
     if (idx >= 0) (mineSide ? lv.pl[idx].el : lv.op[idx]).classList.add('ball');
+    moveCourt(mineSide, idx, ev, evObj);
     if (mineSide && idx >= 0) {
       var node = lv.pl[idx].el;
       node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash');
