@@ -1,16 +1,65 @@
 {
- "toronto-raptors": {},
- "memphis-grizzlies": {},
- "cleveland-cavaliers": {},
- "minnesota-timberwolves": {},
- "portland-trail-blazers": {},
- "utah-jazz": {},
- "new-orleans-pelicans": {},
+ "toronto-raptors": {
+  "Jakob Poeltl": "19",
+  "Jakob Poeltl @team": "Toronto Raptors",
+  "Dailyn Swain": "5",
+  "Dailyn Swain @team": "Chicago Bulls"
+ },
+ "memphis-grizzlies": {
+  "GG Jackson": "45",
+  "GG Jackson @team": "Memphis Grizzlies",
+  "D'Angelo Russell": "23",
+  "D'Angelo Russell @team": "Shanghai Sharks",
+  "Cole Anthony": "3",
+  "Cole Anthony @team": "Melbourne United"
+ },
+ "cleveland-cavaliers": {
+  "Kenrich Williams": "34",
+  "Kenrich Williams @team": "Oklahoma City Thunder",
+  "Hannes Steinbach": "22",
+  "Hannes Steinbach @team": "Charlotte Hornets",
+  "Craig Porter Jr.": "9",
+  "Craig Porter Jr. @team": "Cleveland Cavaliers",
+  "Jalen Pickett": "21",
+  "Jalen Pickett @team": "Los Angeles Clippers",
+  "Alex Morales": "30",
+  "Alex Morales @team": "Orlando Magic"
+ },
+ "minnesota-timberwolves": {
+  "Jordan Hawkins": "15",
+  "Jordan Hawkins @team": "Chicago Bulls"
+ },
+ "portland-trail-blazers": {
+  "Yang Hansen": "16",
+  "Yang Hansen @team": "Portland Trail Blazers"
+ },
+ "utah-jazz": {
+  "Svi Mykhailiuk": "10",
+  "Svi Mykhailiuk @team": "Utah Jazz"
+ },
+ "new-orleans-pelicans": {
+  "Caleb Houstan": "33",
+  "Caleb Houstan @team": "Rip City Remix"
+ },
  "charlotte-hornets": {},
- "chicago-bulls": {},
- "philadelphia-76ers": {},
+ "chicago-bulls": {
+  "Nic Claxton": "9",
+  "Nic Claxton @team": "Chicago Bulls"
+ },
+ "philadelphia-76ers": {
+  "Johni Broome": "22",
+  "Johni Broome @team": "Wisconsin Herd"
+ },
  "oklahoma-city-thunder": {},
  "boston-celtics": {},
- "los-angeles-lakers": {},
- "miami-heat": {}
+ "los-angeles-lakers": {
+  "Dalton Knecht": "1",
+  "Dalton Knecht @team": "New York Knicks"
+ },
+ "miami-heat": {
+  "Drew Timme": "2",
+  "Drew Timme @team": "Phoenix Suns",
+  "EJ Liddell": "32",
+  "EJ Liddell @team": "Aris Thessaloniki"
+ }
 }
