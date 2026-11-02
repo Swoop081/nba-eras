@@ -1922,9 +1922,128 @@
     }, end);
   }
 
+  /* ---------- live orders: per-player instructions that take hold at the next dead ball ---------- */
+  var ORDERS = {
+    hunt:   { l: 'Hunt shots',        s: function (r) { return r.sco; },                                   ins: { use: 1.8 } },
+    threes: { l: 'Look for 3s',       s: function (r) { return r.tpt * 0.7 + r.sht * 0.3; },              ins: { tp: 0.2, use: 1.15 } },
+    rim:    { l: 'Attack the rim',    s: function (r, p) { return r.sco * 0.8 + ((p.hgt || 0) >= 80 ? 8 : 0); }, ins: { rim: 1, use: 1.3 } },
+    run:    { l: 'Run the offence',   s: function (r) { return r.ply; },                                   ins: { pass: 1.9, use: 0.7 } },
+    share:  { l: 'Take fewer shots',  s: function (r) { return 90 - r.sco; },                              ins: { use: 0.5 } },
+    paint:  { l: 'Protect the paint', s: function (r, p) { return r.blk + ((p.hgt || 0) >= 82 ? 8 : 0); }, ins: { paint: 1 } },
+    crash:  { l: 'Crash the boards',  s: function (r) { return Math.max(r.orb, r.drb); },                  ins: { crash: 1 } },
+    press:  { l: 'Pressure the ball', s: function (r) { return r.stl; },                                   ins: { press: 1 } }
+  };
+  function orderChoices(p) {
+    var r = p.ratings || {};
+    return Object.keys(ORDERS).map(function (k) { return { k: k, v: ORDERS[k].s(r, p) }; })
+      .sort(function (a, b) { return b.v - a.v; }).slice(0, 5).map(function (x) { return x.k; });
+  }
+  function slotPlayer(i) { return lv.g.onH[slotIdx(lv.g.onH)[i]]; }
+  function applyOrders() {
+    var g = lv.g, any = false;
+    Object.keys(lv.queue).forEach(function (pid) {
+      var q = lv.queue[pid], row = g.H.filter(function (x) { return x.p.id === pid; })[0];
+      delete lv.queue[pid];
+      if (!row) return;
+      any = true;
+      if (q.bench) {
+        g.rest.H[pid] = g.n + 10;
+        tickerLine('Sub: ' + lastName(row.p.name) + ' to the bench', 'sys');
+        return;
+      }
+      row.ins = q.key ? Object.assign({}, ORDERS[q.key].ins) : null;
+      if (q.key) lv.orders[pid] = q.key; else delete lv.orders[pid];
+      tickerLine(lastName(row.p.name) + ': ' + (q.key ? ORDERS[q.key].l.toLowerCase() : 'back to normal'), 'sys');
+    });
+    if (any) { syncCourt(); refreshDetail(); renderRail(); }
+  }
+  function toggleOrder(pid, key) {
+    var q = lv.queue[pid];
+    if (q && !q.bench && q.key === key) delete lv.queue[pid];
+    else if (!q && lv.orders[pid] === key) lv.queue[pid] = { key: '' };
+    else lv.queue[pid] = { key: key };
+    refreshDetail(); renderRail();
+  }
+  function toggleBench(pid) {
+    if (lv.queue[pid] && lv.queue[pid].bench) delete lv.queue[pid]; else lv.queue[pid] = { bench: true };
+    refreshDetail(); renderRail();
+  }
+  function renderRail() {
+    var rail = document.getElementById('live-rail');
+    if (!rail || !lv || !lv.g) return;
+    rail.textContent = '';
+    lv.rail = [];
+    for (var i = 0; i < 5; i++) {
+      var row = slotPlayer(i), p = row.p;
+      var c = el('button', 'lr' + (lv.sel === p.id ? ' on' : '') + (lv.queue[p.id] ? ' q' : '') + (lv.orders[p.id] ? ' o' : ''));
+      c.type = 'button';
+      c.appendChild(makeAvatar(p));
+      c.appendChild(el('b', null, lastName(p.name)));
+      var pts = el('span', 'lr-pts', String(row.s.pts));
+      c.appendChild(pts);
+      var sub = el('small', null, row.s.orb + row.s.drb + ' reb \u00B7 ' + row.s.ast + ' ast');
+      c.appendChild(sub);
+      (function (id) { c.addEventListener('click', function () { selectPlayer(id); }); })(p.id);
+      rail.appendChild(c);
+      lv.rail.push({ pts: pts, sub: sub, pid: p.id });
+    }
+  }
+  function selectPlayer(pid) {
+    if (!lv || lv.skip) return;
+    lv.sel = lv.sel === pid ? null : pid;
+    renderRail(); renderDetail();
+  }
+  function renderDetail() {
+    var box = document.getElementById('pdetail'), tk = document.getElementById('ticker');
+    if (!box) return;
+    lv.det = null;
+    if (!lv.sel) { box.hidden = true; tk.hidden = false; box.textContent = ''; return; }
+    var row = lv.g.H.filter(function (x) { return x.p.id === lv.sel; })[0];
+    if (!row) { lv.sel = null; renderDetail(); return; }
+    var p = row.p;
+    tk.hidden = true; box.hidden = false; box.textContent = '';
+    var head = el('div', 'pd-head');
+    head.appendChild(el('b', null, p.name));
+    head.appendChild(el('small', null, (p.pos || '') + ' \u00B7 ' + (p.ratings ? p.ratings.ovr + ' ovr' : '')));
+    var x = el('button', 'pd-x', '\u00D7'); x.type = 'button';
+    x.addEventListener('click', function () { selectPlayer(p.id); });
+    head.appendChild(x);
+    box.appendChild(head);
+    var grid = el('div', 'pd-grid'), cells = {};
+    ['PTS', 'REB', 'AST', 'FG', '3PT', 'STL', 'BLK', 'TO', 'FT', 'PF'].forEach(function (k) {
+      var c = el('div'); var v = el('b', null, '0'); c.appendChild(v); c.appendChild(el('small', null, k)); grid.appendChild(c); cells[k] = v;
+    });
+    box.appendChild(grid);
+    var chips = el('div', 'pd-chips'), cm = {};
+    orderChoices(p).forEach(function (k) {
+      var b = el('button', 'pd-chip', ORDERS[k].l); b.type = 'button';
+      b.addEventListener('click', function () { toggleOrder(p.id, k); });
+      chips.appendChild(b); cm[k] = b;
+    });
+    var bn = el('button', 'pd-chip bench', 'Bench'); bn.type = 'button';
+    bn.disabled = lv.g.H.length <= 5;
+    bn.addEventListener('click', function () { toggleBench(p.id); });
+    chips.appendChild(bn);
+    box.appendChild(chips);
+    lv.det = { row: row, cells: cells, chips: cm, bench: bn };
+    refreshDetail();
+  }
+  function refreshDetail() {
+    var d = lv && lv.det; if (!d) return;
+    var s = d.row.s, pid = d.row.p.id, q = lv.queue[pid];
+    var v = { PTS: s.pts, REB: s.orb + s.drb, AST: s.ast, FG: s.fg + '-' + s.fga, '3PT': s.tp + '-' + s.tpa, STL: s.stl, BLK: s.blk, TO: s.tov, FT: s.ft + '-' + s.fta, PF: s.pf };
+    Object.keys(v).forEach(function (k) { d.cells[k].textContent = v[k]; });
+    Object.keys(d.chips).forEach(function (k) {
+      var on = !q && lv.orders[pid] === k, qd = q && !q.bench && q.key === k;
+      d.chips[k].className = 'pd-chip' + (on ? ' on' : '') + (qd ? ' q' : '');
+    });
+    d.bench.className = 'pd-chip bench' + (q && q.bench ? ' q' : '');
+    d.bench.textContent = q && q.bench ? 'Subbing next' : 'Bench';
+  }
+
   function startLive(me, opp, mine, label) {
     var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
-    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false };
+    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false, orders: {}, queue: {}, sel: null, dead: true };
     var top = document.getElementById('live-top');
     top.textContent = '';
     [[me, 'a', false], [opp, 'b', true]].forEach(function (t, i) {
@@ -1988,10 +2107,11 @@
       b.appendChild(makeAvatar(p));
       b.appendChild(el('span', 'nm', lastName(p.name)));
       var pp = el('span', 'pp', '0'); b.appendChild(pp);
-      (function (i2) { b.addEventListener('click', function () { if (b.classList.contains('pick')) return; openLivePlayer(lv.g.onH[slotIdx(lv.g.onH)[i2]].p, true); }); })(i);
+      (function (i2) { b.addEventListener('click', function () { if (b.classList.contains('pick')) return; if (full) selectPlayer(slotPlayer(i2).p.id); else openLivePlayer(lv.g.onH[slotIdx(lv.g.onH)[i2]].p, true); }); })(i);
       field.appendChild(b); lv.pl.push({ el: b, pp: pp });
     });
     lv.rank = full;
+    renderRail(); renderDetail();
     document.getElementById('ticker').textContent = '';
     tickerLine('Tip-off. ' + me.city + ' v ' + opp.city + '.', 'sys');
     document.getElementById('live-dock').textContent = '';
@@ -2060,6 +2180,7 @@
       }
       if (old[1] !== o.id) attachFace(lv.op[i], o);
     }
+    if (lv.rail && lv.rail.some(function (c, i) { return c.pid !== g.onH[oH[i]].p.id; })) { if (lv.sel && !g.onH.some(function (x) { return x.p.id === lv.sel; })) { lv.sel = null; renderRail(); renderDetail(); } else renderRail(); }
   }
 
   function showPoss(evObj, mineSide) {
@@ -2097,7 +2218,8 @@
     document.getElementById('lv-clock').textContent = clockText(g);
     document.getElementById('lv-period').textContent = periodLabel(g);
     var oh = slotIdx(g.onH);
-    for (var i = 0; i < 5; i++) { lv.pl[i].pp.textContent = g.onH[oh[i]].s.pts; }
+    for (var i = 0; i < 5; i++) { lv.pl[i].pp.textContent = g.onH[oh[i]].s.pts; var rc = lv.rail && lv.rail[i]; if (rc) { var rs = g.onH[oh[i]].s; rc.pts.textContent = rs.pts; rc.sub.textContent = (rs.orb + rs.drb) + ' reb \u00B7 ' + rs.ast + ' ast'; } }
+    refreshDetail();
   }
 
   /* ---------- timeout decisions: situational, each with its own trade-off ---------- */
@@ -2352,8 +2474,10 @@
   function liveTick() {
     var g = lv.g;
     var due = decisionDue();
+    if (lv.dead || due) applyOrders();
     if (due) { updateLive(); showDecision(due); return; }
     var evs = Engine.step(g);
+    lv.dead = evs[0].ev.kind !== 'miss' || evs[1].ev.kind !== 'miss' || g.k === 0;
     lv.da += evs[0].pts; lv.db += evs[1].pts;
     lv.hist.push(evs[1].pts - evs[0].pts);
     lv.feed.push({ mw: evs[0].ev.who, mp: evs[0].pts, mt: evs[0].ev.kind === 'tov', ow: evs[1].ev.who, op: evs[1].pts, ot: evs[1].ev.kind === 'tov' });
