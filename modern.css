@@ -777,3 +777,4 @@ body[data-modern="1"] #court .cfield{transition:opacity .18s}
 body[data-modern="1"] .rest-scores .lg-row{font-size:13.5px}
 body[data-modern="1"] .rest-scores .lg-g{white-space:normal;min-width:0}
 body[data-modern="1"] .rest-scores .lg-t{flex:none;white-space:nowrap}
+body[data-modern="1"] #season-title::after{content:"\203A";margin-left:8px;color:#8d92a3;font-weight:400}
