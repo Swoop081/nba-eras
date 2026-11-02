@@ -48,14 +48,121 @@
       dates.push(d);
       meta.push(by[d].map(function (g) { return g.lab ? [g.lab, g.sub || '', g.arena || '', g.city || ''] : (g.city ? ['', '', g.arena || '', g.city] : 0); }));
     });
+    var cup = null;
     if (cupAt > 0) {
-      var fill = shuffle(roundRobin(ids), r).slice(0, 1).concat(shuffle(roundRobin(ids), r).slice(0, 1));
-      [0, 1].forEach(function (k) {
-        days.splice(cupAt + k, 0, fill[k]); meta.splice(cupAt + k, 0, fill[k].map(function () { return 0; }));
-        dates.splice(cupAt + k, 0, k ? '2026-12-08' : '2026-12-05');
+      [[ '2026-12-05' ], [ '2026-12-08' ], [ '2026-12-11' ]].forEach(function (d, k) {
+        days.splice(cupAt + k, 0, []); meta.splice(cupAt + k, 0, []); dates.splice(cupAt + k, 0, d[0]);
       });
+      cup = { at: cupAt, groups: cupGroups(sched) };
     }
-    return { days: days, dates: dates, meta: meta };
+    return { days: days, dates: dates, meta: meta, cup: cup };
+  }
+
+  /* the 6 Cup groups are the connected sets of group-play games */
+  function cupGroups(sched) {
+    var adj = {};
+    sched.games.forEach(function (g) {
+      if (!/Group/.test(g.lab || '')) return;
+      (adj[g.h] = adj[g.h] || {})[g.a] = 1; (adj[g.a] = adj[g.a] || {})[g.h] = 1;
+    });
+    var seen = {}, out = [];
+    Object.keys(adj).forEach(function (t) {
+      if (seen[t]) return;
+      var comp = [], st = [t]; seen[t] = 1;
+      while (st.length) { var x = st.pop(); comp.push(x); Object.keys(adj[x]).forEach(function (y) { if (!seen[y]) { seen[y] = 1; st.push(y); } }); }
+      out.push(comp);
+    });
+    return out;
+  }
+
+  function cupTable(state) {
+    var t = {};
+    state.cup.groups.forEach(function (g) { g.forEach(function (id) { t[id] = { id: id, w: 0, l: 0, pd: 0 }; }); });
+    state.results.forEach(function (r) {
+      if (!r.cg || !t[r.h] || !t[r.a]) return;
+      var hw = r.hs > r.as;
+      t[hw ? r.h : r.a].w++; t[hw ? r.a : r.h].l++;
+      t[r.h].pd += r.hs - r.as; t[r.a].pd -= r.hs - r.as;
+    });
+    return t;
+  }
+  function cupSort(a, b) { return b.w - a.w || b.pd - a.pd; }
+
+  function pairUp(ids, state, r) {
+    var best = null;
+    for (var tries = 0; tries < 40; tries++) {
+      var l = shuffle(ids.slice(), r), g = [], clash = 0;
+      for (var i = 0; i + 1 < l.length; i += 2) {
+        var h = r() < 0.5;
+        g.push(h ? [l[i], l[i + 1]] : [l[i + 1], l[i]]);
+        if (state.results.some(function (x) { return (x.h === l[i] && x.a === l[i + 1]) || (x.h === l[i + 1] && x.a === l[i]); })) clash++;
+      }
+      if (!best || clash < best.c) best = { g: g, c: clash };
+      if (!clash) break;
+    }
+    return best.g;
+  }
+
+  function cupStep(state) {
+    var c = state.cup, k = state.day - c.at, r = rng(Math.floor(Math.random() * 1e9));
+    if (k === 0) {
+      var tab = cupTable(state), winners = [], seconds = [];
+      c.groups.forEach(function (g) {
+        var l = g.map(function (id) { return tab[id]; }).sort(cupSort);
+        winners.push(l[0].id); seconds.push(l[1]);
+      });
+      var conf = {};
+      winners.forEach(function (id) { (conf[state.division[id]] = conf[state.division[id]] || []).push(id); });
+      Object.keys(conf).forEach(function (cf) {
+        var wc = seconds.filter(function (t) { return state.division[t.id] === cf; }).sort(cupSort)[0];
+        if (wc) conf[cf].push(wc.id);
+      });
+      var q = [];
+      c.seed = {};
+      Object.keys(conf).forEach(function (cf) {
+        var l = conf[cf].map(function (id) { return tab[id]; }).sort(cupSort);
+        l.forEach(function (t, i) { c.seed[t.id] = i + 1; });
+        var o = l.map(function (t) { return t.id; });
+        [[0, 3], [1, 2]].forEach(function (p) { q.push([o[p[0]], o[p[1]]]); });
+        if (o.length === 4) return;
+      });
+      c.q = q.reduce(function (a, x) { return a.concat(x); }, []);
+      c.qf = q;
+      var out = state.ids.filter(function (id) { return c.q.indexOf(id) < 0; });
+      var fill = pairUp(out, state, r);
+      state.days[state.day] = q.concat(fill);
+      state.gmeta[state.day] = q.map(function () { return ['NBA Cup - Quarterfinal', '', '', '']; }).concat(fill.map(function () { return 0; }));
+    } else if (k === 1) {
+      var w = [], lost = [];
+      c.qf.forEach(function (m) {
+        var res = lastResult(state, m[0], m[1]);
+        w.push(res.hs > res.as ? m[0] : m[1]); lost.push(res.hs > res.as ? m[1] : m[0]);
+      });
+      c.sf = [];
+      // two semifinals: each side of the bracket (by order of quarterfinals) keeps its winners together
+      var half = w.length / 2;
+      for (var i = 0; i < w.length; i += 2) c.sf.push(c.seed[w[i]] <= c.seed[w[i + 1]] ? [w[i], w[i + 1]] : [w[i + 1], w[i]]);
+      var flat = c.sf.reduce(function (a, x) { return a.concat(x); }, []);
+      var rest = state.ids.filter(function (id) { return flat.indexOf(id) < 0; });
+      var fill2 = pairUp(rest, state, r);
+      state.days[state.day] = c.sf.concat(fill2);
+      state.gmeta[state.day] = c.sf.map(function () { return ['NBA Cup - Semifinal', '', '', '']; }).concat(fill2.map(function () { return 0; }));
+    } else if (k === 2) {
+      var fin = c.sf.map(function (m) { var res = lastResult(state, m[0], m[1]); return res.hs > res.as ? m[0] : m[1]; });
+      c.final = fin;
+      state.days[state.day] = [fin];
+      state.gmeta[state.day] = [['NBA Cup - Championship', '', 'Hinkle Fieldhouse', 'Indianapolis']];
+    } else if (k === 3) {
+      var res2 = lastResult(state, c.final[0], c.final[1]);
+      c.champ = res2.hs > res2.as ? c.final[0] : c.final[1];
+    }
+  }
+  function lastResult(state, a, b) {
+    for (var i = state.results.length - 1; i >= 0; i--) {
+      var x = state.results[i];
+      if ((x.h === a && x.a === b) || (x.h === b && x.a === a)) return x.h === a ? x : { hs: x.as, as: x.hs };
+    }
+    return { hs: 1, as: 0 };
   }
 
   function create(eraId, year, teams, myId, gamesPerTeam, sched) {
@@ -78,7 +185,7 @@
     teams.forEach(function (t) { division[t.id] = t.division; rec[t.id] = { w: 0, l: 0 }; });
     return {
       v: 1, fmt: (root.Rules ? root.Rules.get(year).kind : 'top'), eraId: eraId, year: year, myId: myId, ids: ids, division: division,
-      days: days, day: 0, results: [], rec: rec, dates: cal ? cal.dates : null, gmeta: cal ? cal.meta : null,
+      days: days, day: 0, results: [], rec: rec, dates: cal ? cal.dates : null, gmeta: cal ? cal.meta : null, cup: cal ? cal.cup : null,
       phase: 'regular', playoffs: null, champion: null
     };
   }
@@ -250,11 +357,15 @@
   function record(state, results) {
     if (state.phase === 'regular') {
       results.forEach(function (g) {
-        state.results.push({ d: state.day, h: g.home, a: g.away, hs: g.hs, as: g.as });
+        var cg = 0, m = state.gmeta && state.gmeta[state.day];
+        (state.days[state.day] || []).forEach(function (x, i) { if (x[0] === g.home && x[1] === g.away && m && m[i] && /Group/.test(m[i][0] || '')) cg = 1; });
+        state.results.push({ d: state.day, h: g.home, a: g.away, hs: g.hs, as: g.as, cg: cg });
+        if (state.cup && state.day === state.cup.at + 2) return; // the Cup final is not a regular-season game
         var win = g.hs > g.as ? g.home : g.away, lose = win === g.home ? g.away : g.home;
         state.rec[win].w++; state.rec[lose].l++;
       });
       state.day++;
+      if (state.cup && state.day >= state.cup.at && state.day <= state.cup.at + 3) cupStep(state);
       if (state.day >= state.days.length) startPlayoffs(state);
       return;
     }
