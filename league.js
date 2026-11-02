@@ -193,7 +193,7 @@
     });
     save.lg = lg;
     // unsigned veterans, so a short club can fill its roster on opening night
-    if (MODERN) makeVeterans(save, null, 40, 41, 52);
+    // the free-agent pool is only real players: the clubs' extras beyond the opening-night limit
     openingRosters(lg, teams);
     ensurePicks(save, teams);
   }
