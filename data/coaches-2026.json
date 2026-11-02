@@ -1531,6 +1531,304 @@
     60,
     66
    ]
+  ],
+  "golden-state-warriors": [
+   [
+    "Frank Vogel",
+    "Frank_Vogel",
+    54,
+    70,
+    62,
+    68
+   ],
+   [
+    "Seth Cooper",
+    "Seth_Cooper",
+    64,
+    52,
+    60,
+    58
+   ],
+   [
+    "Kris Weems",
+    "Kris_Weems",
+    58,
+    56,
+    58,
+    58
+   ]
+  ],
+  "la-clippers": [
+   [
+    "Jeff Van Gundy",
+    "Jeff_Van_Gundy",
+    52,
+    72,
+    58,
+    68
+   ],
+   [
+    "Jay Larranaga",
+    "Jay_Larranaga",
+    62,
+    58,
+    64,
+    60
+   ],
+   [
+    "Brian Shaw",
+    "Brian_Shaw",
+    56,
+    58,
+    60,
+    64
+   ],
+   [
+    "Larry Drew",
+    "Larry_Drew",
+    58,
+    56,
+    58,
+    64
+   ],
+   [
+    "Cookie Belcher",
+    "Cookie_Belcher",
+    56,
+    52,
+    62,
+    58
+   ],
+   [
+    "Tim Dather",
+    "Tim_Dather",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Chris Holguin",
+    "Chris_Holguin",
+    54,
+    52,
+    66,
+    56
+   ],
+   [
+    "Shaun Fein",
+    "Shaun_Fein",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Dahntay Jones",
+    "Dahntay_Jones",
+    52,
+    54,
+    60,
+    56
+   ],
+   [
+    "Jeremy Castleberry",
+    "Jeremy_Castleberry",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Conor Dunleavy",
+    "Conor_Dunleavy",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "los-angeles-lakers": [
+   [
+    "Nate McMillan",
+    "Nate_McMillan",
+    54,
+    70,
+    58,
+    68
+   ],
+   [
+    "Scott Brooks",
+    "Scott_Brooks",
+    58,
+    60,
+    60,
+    68
+   ],
+   [
+    "Greg St. Jean",
+    "Greg_St._Jean",
+    64,
+    54,
+    58,
+    56
+   ],
+   [
+    "Lindsey Harding",
+    "Lindsey_Harding",
+    54,
+    54,
+    66,
+    58
+   ],
+   [
+    "Beau Levesque",
+    "Beau_Levesque",
+    58,
+    50,
+    66,
+    54
+   ],
+   [
+    "Zach Guthrie",
+    "Zach_Guthrie",
+    54,
+    52,
+    64,
+    54
+   ],
+   [
+    "Michael Wexler",
+    "Michael_Wexler",
+    56,
+    52,
+    56,
+    54
+   ],
+   [
+    "Ty Abbott",
+    "Ty_Abbott",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "phoenix-suns": [
+   [
+    "Jesse Mermuys",
+    "Jesse_Mermuys",
+    54,
+    66,
+    60,
+    62
+   ],
+   [
+    "DeMarre Carroll",
+    "DeMarre_Carroll",
+    54,
+    60,
+    58,
+    58
+   ],
+   [
+    "Mike Muscala",
+    "Mike_Muscala",
+    58,
+    54,
+    58,
+    56
+   ],
+   [
+    "Brian Randle",
+    "Brian_Randle",
+    54,
+    54,
+    62,
+    56
+   ],
+   [
+    "Chaisson Allen",
+    "Chaisson_Allen",
+    52,
+    52,
+    64,
+    54
+   ],
+   [
+    "John Little",
+    "John_Little",
+    54,
+    52,
+    62,
+    54
+   ],
+   [
+    "Sean Dwyer",
+    "Sean_Dwyer",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Mateen Cleaves",
+    "Mateen_Cleaves",
+    50,
+    52,
+    62,
+    62
+   ]
+  ],
+  "sacramento-kings": [
+   [
+    "Mike Woodson",
+    "Mike_Woodson",
+    56,
+    66,
+    58,
+    68
+   ],
+   [
+    "Brendan Suhr",
+    "Brendan_Suhr",
+    56,
+    58,
+    58,
+    60
+   ],
+   [
+    "DJ Ham",
+    "DJ_Ham",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Leandro Barbosa",
+    "Leandro_Barbosa",
+    56,
+    52,
+    58,
+    60
+   ],
+   [
+    "Mike Miller",
+    "Mike_Miller",
+    58,
+    54,
+    58,
+    58
+   ],
+   [
+    "Chris Darnell",
+    "Chris_Darnell",
+    58,
+    58,
+    60,
+    58
+   ]
   ]
  }
 }
