@@ -1,0 +1,19 @@
+name: Fetch schedule
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/fetch_schedule.py 2>&1 | tee tools/fetch-schedule-log.txt
+        shell: bash
+      - if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/schedule-2026.json tools/fetch-schedule-log.txt
+          git diff --cached --quiet || git commit -m "Add real 2026-27 schedule"
+          git pull --rebase
+          git push
