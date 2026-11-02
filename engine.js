@@ -114,39 +114,44 @@
   }
 
   function none() { return {}; }
+  var NOI = {};
+  function ni(x) { return x.ins || NOI; }
+  function cnt(list, k) { var n = 0; list.forEach(function (x) { if (ni(x)[k]) n++; }); return n; }
 
   function possession(r, O, D, pr, st, mo, md) {
     mo = mo || none(); md = md || none();
     var ev = st.ev = { who: null, kind: 'miss', pts: 0 };
     var tovAdj = (50 - avg(O, function (x) { return x.p.ratings.tov; })) / 400 + (avg(D, function (x) { return x.p.ratings.stl; }) - 50) / 500;
-    tovAdj += (mo.tovAdd || 0) + (md.oppTovAdd || 0);
+    tovAdj += (mo.tovAdd || 0) + (md.oppTovAdd || 0) + 0.012 * cnt(D, 'press');
     if (r() < pr.tov + tovAdj) {
       var loser = pick(r, O, function (x) { return x.share * (110 - x.p.ratings.tov); });
       loser.s.tov++;
       ev.who = loser.p.name; ev.kind = 'tov';
       if (r() < 0.55) {
-        var thief = pick(r, D, function (x) { return x.share * x.p.ratings.stl * x.p.ratings.stl; });
+        var thief = pick(r, D, function (x) { return x.share * x.p.ratings.stl * x.p.ratings.stl * (ni(x).press ? 2 : 1); });
         thief.s.stl++; ev.stl = thief.p.name;
       }
       return 0;
     }
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco;
-      return x.share * Math.pow(s, mo.flat ? 0.15 : (pr.use || 2)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1);
+      return x.share * Math.pow(s, mo.flat ? 0.15 : (pr.use || 2)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
-    var fouled = r() < pr.foul + (md.foulAdd || 0);
+    var si = ni(shooter);
+    var fouled = r() < pr.foul + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
     if (fouled) {
-      pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1); }).s.pf++;
+      pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1) * (ni(x).press || ni(x).paint ? 1.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
     }
     var q = pr.fg * ((pr.fb !== undefined ? pr.fb : 0.62) + (pr.fsh || 0.0095) * shooter.p.ratings.sht + (pr.fsc || 0.0030) * shooter.p.ratings.sco);
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
-    q *= (mo.fgMul || 1) * (md.oppFgMul || 1) * (md.double === shooter.p.id ? 0.93 : 1);
+    q *= 1 - 0.02 * D.reduce(function (t, x) { return t + (ni(x).paint ? x.p.ratings.blk / 70 : 0); }, 0);
+    q *= (si.rim ? 1.015 : 1) * (si.use > 1.5 ? 0.985 : 1) * (mo.fgMul || 1) * (md.oppFgMul || 1) * (md.double === shooter.p.id ? 0.93 : 1);
     if (st.eo || st.ed) q *= Math.exp((st.eo || 0) - (st.ed || 0));
-    var three = pr.threes && r() < (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500);
+    var three = pr.threes && r() < Math.max(0, (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500) + (si.tp || 0) - (si.rim ? 0.12 : 0));
     if (three) { q = q * (pr.tpq || 0.78); }
     var made = r() < q;
     if (fouled) {
@@ -170,25 +175,25 @@
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
       if (r() < (pr.astp || 0.72) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
-        var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply; });
+        var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply * (ni(x).pass || 1); });
         passer.s.ast++; ev.ast = passer.p.name;
       }
       return pts;
     }
     if (r() < 0.07 + avg(D, function (x) { return x.p.ratings.blk; }) / 900) {
-      var blocker = pick(r, D, function (x) { return x.share * x.p.ratings.blk * x.p.ratings.blk; });
+      var blocker = pick(r, D, function (x) { return x.share * x.p.ratings.blk * x.p.ratings.blk * (ni(x).paint ? 2.2 : 1); });
       blocker.s.blk++; ev.blk = blocker.p.name;
     }
-    var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250);
+    var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250) + 0.014 * cnt(O, 'crash') - 0.01 * cnt(D, 'crash');
     if (r() < offRebP) {
-      var reb = pick(r, O, function (x) { return x.share * x.p.ratings.orb * x.p.ratings.orb; });
+      var reb = pick(r, O, function (x) { return x.share * x.p.ratings.orb * x.p.ratings.orb * (ni(x).crash ? 1.9 : 1); });
       reb.s.orb++;
       var first = ev;
       var more = possession(r, O, D, pr, st, mo, md);
       st.ev.second = true;
       return pts + more;
     }
-    pick(r, D, function (x) { return x.share * x.p.ratings.drb * x.p.ratings.drb; }).s.drb++;
+    pick(r, D, function (x) { return x.share * x.p.ratings.drb * x.p.ratings.drb * (ni(x).crash ? 1.9 : 1); }).s.drb++;
     return pts;
   }
 
