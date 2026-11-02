@@ -666,3 +666,9 @@ body[data-modern="1"] .tf-row .avatar{width:38px;height:38px;border-radius:10px;
 body[data-modern="1"] .tf-row .avatar img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
 body[data-modern="1"] .tf-pk{width:38px;height:38px;border-radius:10px;background:var(--raised);display:flex;align-items:center;justify-content:center;font:700 13px var(--font)}
 body[data-modern="1"] .tf-adj{width:100%;padding:9px;background:var(--raised);color:var(--ink)}
+
+/* team floors: a framed court in the home club's colours, or the real floor art when assets/courts/<club>.webp exists */
+body[data-modern="1"] .court.full{box-shadow:inset 0 0 0 9px color-mix(in srgb,var(--home) 72%,#000),inset 0 0 0 11px rgba(255,255,255,.5),0 10px 30px rgba(0,0,0,.45)}
+body[data-modern="1"] .cc-wm{position:absolute;left:0;right:0;bottom:1px;text-align:center;font:800 7.5px/9px var(--font);letter-spacing:.32em;color:var(--home2,#fff);text-shadow:0 0 2px rgba(0,0,0,.6);pointer-events:none;z-index:1}
+body[data-modern="1"] .court.full.real{background-size:100% 100%;background-position:center;background-repeat:no-repeat;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+body[data-modern="1"] .court.full.real svg.lines,body[data-modern="1"] .court.full.real .cc-logo,body[data-modern="1"] .court.full.real .cc-wm{display:none}

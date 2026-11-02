@@ -1953,6 +1953,15 @@
       var cc = el('div', 'cc-logo');
       cc.appendChild(teamBadge(home));
       court.appendChild(cc);
+      court.style.setProperty('--home2', (home.colors && home.colors[1]) || '#fff');
+      court.appendChild(el('div', 'cc-wm', (home.city + ' ' + home.name).toUpperCase()));
+      // the real floor, rotated to a half court, when one has been added for this club
+      (function (exts) {
+        var im = new Image(), k = 0;
+        im.onload = function () { court.style.backgroundImage = 'url(' + im.src + ')'; court.classList.add('real'); };
+        im.onerror = function () { k++; if (k < exts.length) im.src = 'assets/courts/' + home.id + '.' + exts[k]; };
+        im.src = 'assets/courts/' + home.id + '.' + exts[0];
+      })(['webp', 'png', 'jpg']);
     }
     lv.pl = []; lv.op = [];
     lv.ids = [];
