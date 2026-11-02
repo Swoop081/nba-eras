@@ -1417,7 +1417,7 @@
     } else if (a.type === 'extend') {
       var ask = Math.round(League.salaryFor(p.ratings.ovr) * 1.1), pay = League.payroll(save, save.myId);
       opts.push(['Extend 3 years at ' + money(ask), function () {
-        if (pay - p.salary + ask > save.lg.cap * 1.3) return 'The owner will not take the payroll that high.';
+        if (pay - p.salary + ask > save.lg.cap * 1.3) return 'Payroll cannot go that high.';
         p.salary = ask; p.yrs = Math.max(p.yrs, 0) + 3; League.bump && League.bump(save); rosterCache = {}; persist();
         react('extend', { years: 3, salary: money(ask), payroll: money(League.payroll(save, save.myId)) });
         return fx({ s: { m: 8, t: 8 }, fans: 2 }) + ' \u00B7 ' + p.name + ' signs through ' + (save.year + p.yrs);
@@ -3119,7 +3119,7 @@
       var st = Season.standings(save), dv = save.tm[me].division, rank = 0;
       (st[dv] || []).forEach(function (t, i) { if (t.id === me) rank = i + 1; });
       var left = gamesFor(me) - rec.w - rec.l;
-      return rec.w + '-' + rec.l + ' \u00B7 ' + ordinal(rank) + ' in the ' + dv + ' \u00B7 ' + left + ' games left' + (save.owner ? ' \u00B7 owner wants: ' + save.owner.text.toLowerCase() : '');
+      return rec.w + '-' + rec.l + ' \u00B7 ' + ordinal(rank) + ' in the ' + dv + ' \u00B7 ' + left + ' games left';
     }
     return '';
   }
@@ -3625,6 +3625,7 @@
 
   /* ---------- owner ---------- */
   function ensureOwner() {
+    save.owner = null; return;
     if (save.ownerTrust === undefined) save.ownerTrust = 60;
     if (save.owner) { if (!save.owner.side) addSideGoals(); return; }
     var ids = save.ids.slice().sort(function (x, y) { return teamRating(y) - teamRating(x); });
@@ -4140,13 +4141,10 @@
     ensureOwner();
     var pages = [];
     var ow = el('div', 'hc');
-    ow.appendChild(el('p', 'goal', save.owner.text + '.'));
-    sideBlock(ow);
-    ow.appendChild(ratingRow('Owner trust', save.ownerTrust));
     var sm = Events.summary(save, rosterOf(me.id));
     ow.appendChild(ratingRow('Team morale', sm.morale));
     if (u.detail !== 'basic') { ow.appendChild(ratingRow('Fan interest', sm.fans)); ow.appendChild(ratingRow('Coach trust', sm.coach)); }
-    pages.push({ title: 'The owner', node: ow });
+    pages.push({ title: 'The club', node: ow });
     var mo = Events.mood(save);
     var feed = el('div', 'hc feed');
     var items = [];
@@ -4684,12 +4682,6 @@
     }
 
     ensureOwner();
-    var oc = el('div', 'stat-card');
-    oc.appendChild(el('div', 'group-title', 'The owner wants'));
-    oc.appendChild(el('p', 'sub', save.owner.text + '.'));
-    sideBlock(oc);
-    oc.appendChild(ratingRow('Owner trust', save.ownerTrust));
-    bodyEl.appendChild(oc);
     var st = Season.standings(save);
     var divs = Object.keys(st).sort(function (x, y) {
       var mx = st[x].some(function (r) { return r.id === me.id; }), my = st[y].some(function (r) { return r.id === me.id; });
@@ -5662,7 +5654,7 @@
       pts: League.leaders(save, 'pts', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       ast: League.leaders(save, 'ast', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       mvp: best ? { id: best.p.id, name: best.p.name } : null,
-      title: titleLeader(), allLeague: allLeague(), recap: buildRecap(), owner: judgeOwner()
+      title: titleLeader(), allLeague: allLeague(), recap: buildRecap(), owner: null
     };
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null, me: save.myId, po: madePlayoffs() });
     (function () {

@@ -88,7 +88,7 @@
       var p = rnd(exp); m.asked = true;
       return { app: 'Messages', c: '#5E5CE6', g: '\u2605', title: p.name, text: '"Boss, my contract is up soon. I want to stay. Can we talk about an extension?"', act: { type: 'extend', pid: p.id } };
     });
-    if (save.owner && save.day >= save.days.length * 0.5 && !save.ownerPromise && !save.ownerNagged) {
+    if (false && save.owner && save.day >= save.days.length * 0.5 && !save.ownerPromise && !save.ownerNagged) {
       var pace = rec.w / Math.max(1, gp);
       if ((save.owner.k === 'title' && pace < 0.6) || (save.owner.k === 'playoffs' && pace < 0.5) || (save.owner.k === 'wins' && rec.w < save.owner.n * (gp / (save.days.length || 82)) * 0.9)) outs.push(function () {
         save.ownerNagged = true;
@@ -130,7 +130,7 @@
       return { app: 'Messages', c: '#34C759', g: 'C', title: hc ? hc.n : 'Coach', text: c.text, act: { type: 'coach', topic: c.k } };
     });
     var payNow = save.lg.players.filter(function (p) { return p.team === me && p.status === 'active'; }).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
-    if (gp >= 4 && !(save.ownerTalked && save.day - save.ownerTalked < 30) && payNow > cap * 1.05) outs.push(function () {
+    if (false && gp >= 4 && !(save.ownerTalked && save.day - save.ownerTalked < 30) && payNow > cap * 1.05) outs.push(function () {
       save.ownerTalked = save.day || 1;
       return { app: 'Messages', c: '#5E5CE6', g: 'O', title: 'Owner', text: 'Payroll is ' + root.League.money(payNow, cap) + ' and the cap is ' + root.League.money(cap, cap) + '. I want to talk about it.', act: { type: 'ownercap' } };
     });
