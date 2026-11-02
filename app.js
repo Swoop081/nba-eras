@@ -1145,9 +1145,10 @@
       var holder = el('div', 'player');
       var card = el('button', 'card');
       card.type = 'button';
+      if (team.id === save.myId && modernUI()) card.appendChild(el('span', 'slot' + (squad.indexOf(p) < 5 ? ' st' : ''), slotLabel(squad.indexOf(p))));
       card.appendChild(makeAvatar(p));
       var text = el('span');
-      text.appendChild(el('strong', null, (team.id === save.myId ? (modernUI() ? (squad.indexOf(p) < 5 ? '' : ordinal(squad.indexOf(p) + 1) + ' \u00B7 ') : (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ') : '') + p.name));
+      text.appendChild(el('strong', null, (team.id === save.myId ? (modernUI() ? '' : (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ') : '') + p.name));
       text.appendChild(starsEl(League.starsOf(save, p)));
       text.appendChild(el('span', 'meta', (p.no !== undefined ? '#' + p.no + ' \u00B7 ' : '') + (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?') + (p.tw ? ' \u00B7 Two-way' : '') + (isRookie(p) ? ' \u00B7 Rookie' : '')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 ' + (p.injType ? p.injType + ' \u00B7 ' : '') + 'out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
@@ -1551,7 +1552,7 @@
         show.forEach(function (i, pos) {
           var p = ord[i];
           var row = el('div', 'dc-row');
-          row.appendChild(el('span', 'dc-n', String(pos + 1)));
+          row.appendChild(el('span', 'dc-n', slotLabel(pos)));
           row.appendChild(makeAvatar(p));
           var nm = el('span', 'dc-name'); nm.appendChild(el('strong', null, p.name)); nm.appendChild(el('span', 'meta', (p.pos || '') + ' \u00B7 ' + p.ratings.ovr));
           row.appendChild(nm);
@@ -2032,6 +2033,7 @@
     return { s: s, t: t, now: (s.ls ? 'averaged ' : 'is averaging ') + t + (s.ls ? ' last season' : '') };
   }
   var POSV = { 'G': 1.2, 'G-F': 2.4, 'F': 3.4, 'F-C': 4.3, 'C': 5 };
+  function slotLabel(i) { return i < 5 ? ['PG', 'SG', 'SF', 'PF', 'C'][i] : ordinal(i + 1); }
   function slotRank(p) { return (POSV[p.pos] || 3) - ((p.ratings.ply || 50) - 50) / 200; }
   var KEYTPL = {
     hot: [
@@ -4737,6 +4739,14 @@
       mast.appendChild(el('div', 'pp-meta', ev.date + ' \u00B7 ' + ev.edition + ' EDITION \u00B7 TWO CENTS'));
     }
     pg.appendChild(mast);
+    if (M) {
+      var SITES = ['nba', 'espn', 'realgm'];
+      save.siteN = ((save.siteN || 0) + 1) % 1000;
+      var logo = new Image();
+      logo.className = 'site-logo'; logo.alt = '';
+      logo.src = 'assets/sites/' + SITES[save.siteN % SITES.length] + '.png';
+      pg.appendChild(logo);
+    }
     pg.appendChild(el('h2', 'pp-head', ev.head));
     pg.appendChild(el('p', 'pp-deck', ev.deck));
     function photoFig(list, text) {
@@ -4803,7 +4813,7 @@
       // the recap is a swipeable feed, not a long page
       var kids = Array.prototype.slice.call(pg.children), pages = [];
       function grab(pred) { var out = kids.filter(pred); out.forEach(function (k) { kids.splice(kids.indexOf(k), 1); }); return out; }
-      var first = grab(function (k) { return k.classList.contains('pp-mast') || k.classList.contains('pp-head') || k.classList.contains('pp-deck') || k.classList.contains('pp-photo'); });
+      var first = grab(function (k) { return k.classList.contains('pp-mast') || k.classList.contains('site-logo') || k.classList.contains('pp-head') || k.classList.contains('pp-deck') || k.classList.contains('pp-photo'); });
       var story = grab(function (k) { return k.classList.contains('pp-p'); });
       function wrap(list) { var d = el('div', 'rc phone-feed'); list.forEach(function (n) { d.appendChild(n); }); return d; }
       function tcol(id) {
@@ -4938,13 +4948,7 @@
       rail.classList.add('recap');
       var site = el('div', 'site');
       var sbar = el('div', 'site-bar');
-      var SITES = ['nba', 'espn', 'realgm'];
-      save.siteN = ((save.siteN || 0) + 1) % 1000;
-      var logo = new Image();
-      logo.className = 'site-logo'; logo.alt = '';
-      logo.src = 'assets/sites/' + SITES[save.siteN % SITES.length] + '.png';
-      sbar.appendChild(logo);
-      site.appendChild(sbar);
+
       var snav = el('div', 'site-nav'), strack = rail.querySelector('.hrail-track');
       pages.forEach(function (pg, i) {
         var tb = el('button', i === 0 ? 'on' : '', pg.title || 'Recap'); tb.type = 'button';

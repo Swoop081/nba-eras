@@ -49,7 +49,7 @@
       return { app: 'Messages', c: '#34C759', g: 'C', title: 'Coach', text: rnd(gp0 < 3 ? ['Film at 10. Bring coffee.', 'Practice was sharp today. The group is listening.', 'Good energy in camp. Everyone is healthy.'] : ['Film at 10. Bring coffee.', 'Saw the tape. Their bigs hurt us on the glass.', 'Practice was sharp today. The group is listening.', 'Their guards keep getting to the rim. We can fix it.']) };
     });
     outs.push(function () {
-      return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(gp0 >= 3 ? ['Ticket sales are up this week.', 'Agent for a free agent called twice. Want me to ping back?'] : ['Agent for a free agent called twice. Want me to ping back?', 'Season ticket renewals are ahead of last year.']) };
+      return { app: 'Group chat', c: '#5E5CE6', g: '★', title: 'Front office', text: rnd(gp0 >= 3 ? ['Ticket sales are up this week.', 'Merch sales are up since the last homestand.'] : ['Season ticket renewals are ahead of last year.', 'Ticket sales are steady this week.']) };
     });
     var st = null; try { st = root.Season.standings(save); } catch (e) { st = null; }
     if (st && (save.results || []).length >= 8) outs.push(function () {
