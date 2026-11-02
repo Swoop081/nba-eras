@@ -1057,3 +1057,4 @@ body[data-modern="1"] #era-list .era-photo img[src*="2018."]{object-position:38%
 #era-list .pg.era-pg .card.era.half .year{font-size:30px}
 #era-list .pg.era-pg .card.era.e0.half .year{font-size:38px}
 #era-list .pg.era-pg .card.era.e0.full .year{font-size:36px}
+body[data-modern="1"] #era-list .era-photo{cursor:pointer}

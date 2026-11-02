@@ -247,6 +247,7 @@
         if (k === 0) {
           var ph = el('div', 'era-photo');
           ph.style.gridColumn = LAY.p[0]; ph.style.gridRow = LAY.p[1];
+          ph.addEventListener('click', function () { openTeams(era); });
           ph.appendChild(el('span', 'big', String(+era.id + 1).slice(2)));
           eraPhoto(ph, grp.map(function (g) { return g.id; }));
           pg.appendChild(ph);
