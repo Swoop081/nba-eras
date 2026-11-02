@@ -2854,11 +2854,11 @@
       } else if (!isNum) st = { bg: c1, fg: c2, trim: c2, mark: '', nm: c2 };
       if (mid === 'los-angeles-lakers' && isNum) {
         var gid = 'ar' + Math.floor(Math.random() * 1e9), s2 = sur.replace('&', '&amp;'), fz = s2.length > 10 ? 10 : s2.length > 7 ? 12 : 14;
-        j.insertAdjacentHTML('beforeend', '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true"><defs><path id="' + gid + '" d="M26 40 Q60 22 94 40"/></defs>' +
-          '<path d="M34 6 L46 6 Q60 24 74 6 L86 6 L112 30 L98 50 L96 50 L96 142 Q60 148 24 142 L24 50 L22 50 L8 30 Z" fill="#FDB927"/>' +
-          '<path d="M34 6 L46 6 Q60 24 74 6 L86 6" fill="none" stroke="#552583" stroke-width="3.5"/>' +
-          '<path d="M8 30 L22 50 M112 30 L98 50" stroke="#552583" stroke-width="3.5" fill="none"/>' +
-          '<path d="M25 52 L25 140 M95 52 L95 140" stroke="#552583" stroke-width="2.5" fill="none"/>' +
+        j.insertAdjacentHTML('beforeend', '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true"><defs><path id="' + gid + '" d="M30 52 Q60 36 90 52"/></defs>' +
+          '<path d="M34 4 L48 4 Q60 30 72 4 L86 4 Q88 40 104 56 L100 142 Q60 150 20 142 L16 56 Q32 40 34 4 Z" fill="#FDB927"/>' +
+          '<path d="M34 4 L48 4 Q60 30 72 4 L86 4" fill="none" stroke="#552583" stroke-width="3.5"/>' +
+          '<path d="M34 4 Q32 40 16 56 M86 4 Q88 40 104 56" stroke="#552583" stroke-width="3.5" fill="none"/>' +
+          '<path d="M17 60 L21 140 M103 60 L99 140" stroke="#552583" stroke-width="2.5" fill="none"/>' +
           '<text font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + fz + '" letter-spacing="1" fill="#552583" text-anchor="middle"><textPath href="#' + gid + '" startOffset="50%">' + s2 + '</textPath></text>' +
           '<text x="60" y="' + (num.length > 1 ? 106 : 108) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + (num.length > 1 ? 52 : 60) + '" fill="#FFFFFF" stroke="#552583" stroke-width="3" paint-order="stroke">' + num + '</text></svg>');
         row2.appendChild(j); return;
