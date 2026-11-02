@@ -692,7 +692,7 @@ body[data-modern="1"] #court.full .pl{width:54px}
 body[data-modern="1"] #court.full .pl .avatar{width:46px;height:46px;border-width:3px}
 body[data-modern="1"] #court.full .pl .nm{font-size:10.5px}
 body[data-modern="1"] #court.full .op{width:34px;height:34px;border:2px solid #E03A3E}
-body[data-modern="1"] #screen-live #court.full+#ticker{flex:none;position:relative;z-index:3;margin:-196px 12px 8px;min-height:196px;max-height:196px;overflow:hidden;padding:10px 16px;border-radius:16px;background:rgba(10,11,16,.84);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.5);align-content:end}
+body[data-modern="1"] #screen-live #court.full+#ticker{flex:none;position:relative;z-index:3;margin:-60px 12px 8px;min-height:0;max-height:none;flex:1 1 0;overflow:hidden;padding:10px 16px;border-radius:16px;background:rgba(10,11,16,.84);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.5);align-content:end}
 body[data-modern="1"] #screen-live:has(.dec-title) #court.full+#ticker{margin-top:-48px;min-height:0;max-height:48px;padding:8px 16px}
 body[data-modern="1"] .lt-team{gap:8px}
 body[data-modern="1"] .lt-team .badge,body[data-modern="1"] .lt-team .badge.has-logo{width:54px;height:54px;border:0;background:transparent;flex:none}
@@ -733,4 +733,4 @@ body[data-modern="1"] #screen-live .btn.opt:disabled{opacity:.4}
 body[data-modern="1"] #screen-live #court.full+#ticker .tk{font-size:13.5px;line-height:1.28;margin:0 0 4px}
 body[data-modern="1"] #screen-live #court.full+#ticker .tk:first-child{font-size:15.5px}
 
-body[data-modern="1"] #court.full .cfield .pl,body[data-modern="1"] #court.full .cfield .op{transition:left .55s cubic-bezier(.3,.7,.3,1),top .55s cubic-bezier(.3,.7,.3,1)}
+body[data-modern="1"] #screen-live #court.full{flex:none;height:calc(94vw + 60px);max-height:calc(94vw + 60px)}

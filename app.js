@@ -2302,7 +2302,7 @@
   function ftToTop(ft) { return OOB_PCT + ft * FT_PCT; }
   function place(node, x, y) { node.style.left = x.toFixed(1) + '%'; node.style.top = y.toFixed(1) + '%'; }
   function moveCourt(mineSide, idx, ev, evObj) {
-    if (reduceMotion || !lv.pl || !lv.pl.length || !document.querySelector('#court .cfield')) return;
+    return;
     var offs = mineSide ? lv.pl.map(function (p) { return p.el; }) : lv.op, defs = mineSide ? lv.op : lv.pl.map(function (p) { return p.el; });
     var j = function (v) { return (Math.random() - 0.5) * v; };
     offs.concat(defs).forEach(function (n) { place(n, parseFloat(n.dataset.bx) + j(3), parseFloat(n.dataset.by) + j(1.6)); });
@@ -2337,7 +2337,6 @@
     lv.pl.forEach(function (p) { p.el.classList.remove('ball'); });
     lv.op.forEach(function (o) { o.classList.remove('ball'); });
     if (idx >= 0) (mineSide ? lv.pl[idx].el : lv.op[idx]).classList.add('ball');
-    moveCourt(mineSide, idx, ev, evObj);
     if (mineSide && idx >= 0) {
       var node = lv.pl[idx].el;
       node.classList.remove('flash'); void node.offsetWidth; node.classList.add('flash');
