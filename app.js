@@ -1072,6 +1072,9 @@
     if (team.id === save.myId && save.phase !== 'done') {
       var fab = el('button', 'btn wide fa-open', 'Free agents \u00B7 ' + League.freeAgents(save).length); fab.type = 'button';
       fab.addEventListener('click', function () { openFAList(team); });
+      var dcb = el('button', 'btn wide fa-open', 'Depth chart'); dcb.type = 'button';
+      dcb.addEventListener('click', function () { openDepth(team); });
+      list.appendChild(dcb);
       list.appendChild(fab);
     }
     document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
@@ -1458,6 +1461,43 @@
     save.rot.forEach(function (pid) { var p = all.filter(function (q) { return q.id === pid; })[0]; if (p) out.push(p); });
     all.forEach(function (p) { if (out.indexOf(p) < 0) out.push(p); });
     return out;
+  }
+  function openDepth(team) {
+    save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
+    var ord = rotOrder(team.id).filter(function (p) { return !(p.inj > 0); }).slice(0, 10);
+    function cur() { var m = (save.plan.mins && save.plan.mins.slice()) || Engine.DEFMIN.slice(); while (m.length < 10) m.push(4); return m; }
+    hubSheet('Depth chart', function (sh, close) {
+      sh.classList.add('tall');
+      var box = el('div', 'dc-list'); sh.appendChild(box);
+      function draw() {
+        box.textContent = '';
+        var m = cur(), tot = 0;
+        ord.forEach(function (p, i) { tot += m[i]; });
+        ord.forEach(function (p, i) {
+          var row = el('div', 'dc-row');
+          row.appendChild(el('span', 'dc-n', String(i + 1)));
+          row.appendChild(makeAvatar(p));
+          var nm = el('span', 'dc-name'); nm.appendChild(el('strong', null, p.name)); nm.appendChild(el('span', 'meta', (p.pos || '') + ' \u00B7 ' + p.ratings.ovr));
+          row.appendChild(nm);
+          var ctl = el('span', 'dc-ctl');
+          [['\u2212', -1], ['+', 1]].forEach(function (b) {
+            var bt = el('button', 'dc-b', b[0]); bt.type = 'button';
+            bt.addEventListener('click', function () { var mm = cur(); mm[i] = Math.max(0, Math.min(42, mm[i] + b[1])); save.plan.mins = mm; persist(); draw(); });
+            ctl.appendChild(bt);
+            if (b[1] < 0) ctl.appendChild(el('span', 'dc-min', String(m[i])));
+          });
+          row.appendChild(ctl);
+          box.appendChild(row);
+        });
+        var foot = el('div', 'dc-foot');
+        foot.appendChild(el('span', 'dc-tot' + (tot === 240 ? '' : ' off'), tot + ' / 240'));
+        var rs = el('button', 'btn small', 'Reset'); rs.type = 'button';
+        rs.addEventListener('click', function () { save.plan.mins = null; persist(); draw(); });
+        foot.appendChild(rs);
+        box.appendChild(foot);
+      }
+      draw();
+    });
   }
   function moveRot(team, p, d) {
     var ord = rotOrder(team.id), i = ord.indexOf(p), j = i + d;

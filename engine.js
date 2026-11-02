@@ -70,10 +70,10 @@
   }
 
   /* stars take a bigger share of the shots, but their efficiency flattens out above the 60s */
-  var USEADD = 0.2;
+  var USEADD = 0.0;
   function soft(v) { return v > 60 ? 60 + (v - 60) * SOFT : v; }
   var SOFT = 0.8;
-  var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7];
+  var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
 
   /* Real leagues are tighter than raw ratings suggest: comp pulls every skill toward 55 so rating gaps decide fewer games. */
   var SKILLS = ['sco', 'sht', 'ft', 'tpt', 'ply', 'tov', 'orb', 'drb', 'stl', 'blk', 'fou'];
@@ -161,6 +161,7 @@
     var three = mo.force3 ? mo.force3 === 3 : pr.threes && r() < Math.max(0, (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500) + (si.tp || 0) + (sd.sag ? 0.12 : 0) - (si.rim ? 0.12 : 0));
     if (three) { q = q * (pr.tpq || 0.78); }
     q *= (sd.double ? 0.94 : 1) * (sd.sag ? (three ? 1.06 : 0.97) : 1) * (1 - (sd.match || 0)) * (dbl && !sd.double ? 1.02 : 1);
+    if (pr.threes) q *= 0.982;
     var made = r() < q;
     if (fouled) {
       var n = made ? 1 : (three ? 3 : 2);
@@ -206,23 +207,42 @@
   }
 
   /* Who is on the floor: the best five start; the bench spells them in a window each quarter. */
-  /* sixteen quarter-segments of the usual rotation: the best play ~35 minutes, the 7th and 8th men ~24 */
-  var SCHED = [[0, 1, 2, 3, 4], [0, 1, 3, 5, 6], [1, 2, 3, 6, 7], [1, 2, 4, 6, 7], [1, 2, 3, 5, 7], [0, 2, 3, 4, 5], [0, 1, 2, 3, 6], [0, 1, 4, 5, 6], [0, 1, 2, 3, 6], [0, 2, 3, 4, 5], [1, 2, 4, 6, 7], [0, 2, 4, 6, 7], [0, 1, 3, 5, 7], [0, 1, 2, 4, 5], [0, 1, 4, 5, 7], [0, 3, 4, 5, 7]];
+  /* minutes each rotation slot plays in a normal game; the coach can change these (plan.mins) */
+  var DEFMIN = [34, 33, 31, 29, 27, 24, 21, 17, 13, 11];
+  function targets(plan, n) {
+    var base = (plan && plan.mins && plan.mins.length ? plan.mins : DEFMIN).slice(0, n), mn = plan && plan.minutes, tot = 0, i;
+    while (base.length < n) base.push(4);
+    for (i = 0; i < n; i++) {
+      if (mn === 'heavy') base[i] *= i < 5 ? 1.1 : 0.7;
+      else if (mn === 'deep') base[i] = 24 + (base[i] - 24) * 0.55;
+      base[i] = Math.max(0, Math.min(42, base[i]));
+      tot += base[i];
+    }
+    var f = tot ? 240 / tot : 1;
+    return base.map(function (m) { return Math.min(42, m * f); });
+  }
+  /* A rotation by need: every 1.5 minutes the five furthest behind their minutes target take the floor. */
   function lineupIdx(g, T, side) {
     var n = T.length;
     if (n <= 5) return T.map(function (x, i) { return i; });
     var base = [0, 1, 2, 3, 4];
-    if (n >= 8) {
-      var ph = g.k / g.limit, diff = Math.abs(g.hs - g.as), late = g.q >= 3 && diff <= 8;
-      var mn = g.plan && g.plan[side] && g.plan[side].minutes;
-      if (g.q < 4 && !late) {
-        if (mn === 'heavy') { if (ph >= 0.42 && ph < 0.58) base = [0, 1, 5, 6, 7]; }
-        else if (mn === 'deep' && ph >= 0.25 && ph < 0.75) base = [0, 1, 5, 6, 7];
-        else base = SCHED[g.q * 4 + Math.min(3, Math.floor(ph * 4))];
-      }
-    }
+    var diff = Math.abs(g.hs - g.as), late = g.q >= 3 && diff <= 8;
     var rest = (g.rest && g.rest[side]) || {};
     function out(i) { return T[i].s.pf >= 6 || (rest[T[i].p.id] || 0) > g.n; }
+    if (n >= 7 && g.q < 4 && !late) {
+      var S = (g.seg = g.seg || {})[side] = (g.seg || {})[side] || { k: -1, idx: base, played: T.map(function () { return 0; }), tg: targets(g.plan && g.plan[side], n) };
+      var segIdx = Math.min(31, g.q * 8 + Math.floor((g.k / g.limit) * 8));
+      if (segIdx !== S.k) {
+        S.k = segIdx;
+        var need = T.map(function (x, i) { return { i: i, v: S.tg[i] / 1.5 * (segIdx + 1) / 32 - S.played[i] - i * 0.001 }; });
+        need = need.filter(function (o) { return !out(o.i); }).sort(function (a, b) { return b.v - a.v; });
+        var pick5 = need.slice(0, 5).map(function (o) { return o.i; });
+        if (!pick5.some(function (i) { return i < 3; })) { var best = need.filter(function (o) { return o.i < 3; })[0]; if (best) pick5[4] = best.i; }
+        S.idx = pick5; pick5.forEach(function (i) { S.played[i]++; });
+      }
+      base = S.idx.slice();
+      while (base.length < 5) base.push(0);
+    }
     /* a player you chose to ride stays on the floor while the plan lasts */
     var gm = g.mods && g.mods[side];
     if (gm && gm.until > g.n && gm.focus) {
@@ -333,5 +353,5 @@
     return finalize(g);
   }
 
-  root.Engine = { simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
+  root.Engine = { DEFMIN: DEFMIN, simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
 })(window);
