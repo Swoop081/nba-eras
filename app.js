@@ -1960,6 +1960,27 @@
     var m = (r.p.ratings.stl + r.p.ratings.blk + r.p.ratings.ovr) / 3;
     return { match: Math.max(0.01, Math.min(0.05, (m - 45) / 1000)) };
   }
+  /* each order is tracked from the moment it takes hold, so the recap can say whether it paid off */
+  function snap(r) { var t = r.s; return { pts: t.pts, fg: t.fg, fga: t.fga, tp: t.tp, tpa: t.tpa, reb: t.orb + t.drb, tov: t.tov, blk: t.blk, stl: t.stl }; }
+  function openRec(kk, key, row, opp) {
+    lv.act[kk] = { key: key, row: row, opp: opp, s0: snap(row), my0: lv.g.hs, op0: lv.g.as, n0: lv.g.n, q: periodLabel(lv.g) };
+  }
+  function closeRec(kk) {
+    var a = lv.act[kk]; if (!a) return;
+    delete lv.act[kk];
+    if (lv.g.n - a.n0 < 5) return;
+    var my = lv.g.hs - a.my0, op = lv.g.as - a.op0, net = my - op, t = snap(a.row), n = lastName(a.row.p.name);
+    var d = function (k) { return t[k] - a.s0[k]; };
+    var verdict = net >= 3 ? 'It worked.' : net <= -3 ? 'It backfired.' : 'A wash.';
+    var line = a.opp
+      ? n + ': ' + d('pts') + ' pts on ' + d('fg') + '-' + d('fga') + ' shooting' + (d('pts') <= 3 ? ' \u2014 shut down' : d('pts') >= 10 ? ' \u2014 still got his' : '')
+      : /^(threes)$/.test(a.key) ? n + ': ' + d('tp') + '-' + d('tpa') + ' from three'
+      : a.key === 'crash' ? n + ': ' + d('reb') + ' boards'
+      : a.key === 'paint' ? n + ': ' + d('blk') + ' blocks'
+      : a.key === 'press' ? n + ': ' + d('stl') + ' steals'
+      : n + ': ' + d('pts') + ' pts on ' + d('fg') + '-' + d('fga') + ' shooting';
+    lv.calls.push({ label: n + ': ' + orderLabel(a.key).toLowerCase(), my: my, op: op, net: net, verdict: verdict, q: a.q, line: line });
+  }
   function applyOrders() {
     var g = lv.g, any = false;
     Object.keys(lv.queue).forEach(function (kk) {
@@ -1974,12 +1995,16 @@
         return;
       }
       if (opp) {
+        closeRec(kk);
         row.dins = q.key ? dinsFor(q.key) : null;
+        if (q.key) openRec(kk, q.key, row, true);
         if (q.key) lv.orders[kk] = q.key; else delete lv.orders[kk];
         tickerLine(lastName(row.p.name) + ': ' + (q.key ? orderLabel(q.key).toLowerCase() : 'back to normal'), 'sys');
         return;
       }
+      closeRec(pid);
       row.ins = q.key ? Object.assign({}, ORDERS[q.key].ins) : null;
+      if (q.key) openRec(pid, q.key, row, false);
       if (q.key) lv.orders[pid] = q.key; else delete lv.orders[pid];
       tickerLine(lastName(row.p.name) + ': ' + (q.key ? ORDERS[q.key].l.toLowerCase() : 'back to normal'), 'sys');
     });
@@ -2092,7 +2117,7 @@
 
   function startLive(me, opp, mine, label) {
     var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
-    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false, orders: {}, queue: {}, sel: null, dead: true };
+    lv = { g: g, me: me, opp: opp, mine: mine, label: label, da: 0, db: 0, hist: [], feed: [], fq: {}, fo: {}, count: 0, tovM: 0, tovO: 0, plan: null, calls: [], lastKind: '', done: {}, lastDec: -99, timer: null, skip: false, orders: {}, queue: {}, act: {}, sel: null, dead: true };
     var top = document.getElementById('live-top');
     top.textContent = '';
     [[me, 'a', false], [opp, 'b', true]].forEach(function (t, i) {
@@ -2534,6 +2559,7 @@
 
   function finishLive() {
     clearTimeout(lv.timer);
+    Object.keys(lv.act).forEach(closeRec);
     var res = Engine.finalize(lv.g);
     checkPlan();
     res.calls = lv.calls;
