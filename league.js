@@ -17,7 +17,6 @@
     MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : Math.round(1000 * SCALE / 100) * 100;
     MIN_ROSTER = MODERN ? (year >= 1996 ? 13 : 11) : 9;
     OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
-    MAX_ROSTER = year >= 2023 ? 18 : 15;   /* fifteen players plus three on two-way deals */
     if (root.League) { root.League.MIN_ROSTER = MIN_ROSTER; root.League.MAX_ROSTER = MAX_ROSTER; }
   }
   function money(n, cap) {
@@ -171,6 +170,7 @@
     setEra(save.year);
     var lg = { rev: 0, cap: capFor(save.year), dead: dead ? JSON.parse(JSON.stringify(dead)) : {}, players: [], stats: {}, history: [], year: save.year, draft: null, off: null };
     players.forEach(function (p) {
+      if (p.tw) return;   /* two-way players wait in the data until the G League exists as its own feeder league */
       var q = JSON.parse(JSON.stringify(p));
       q.team = p.teamId; delete q.teamId;
       q.status = 'active'; q.base = 1;
