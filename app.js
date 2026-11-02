@@ -3662,6 +3662,13 @@
   function leaderDefs(detail) {
     var gp = (save.rec[save.myId].w + save.rec[save.myId].l), qual = Math.max(1, Math.min(15, Math.floor(gp * 0.5)));
     var pct = function (a, b, min) { return function (x) { return x[b] >= min ? 100 * x[a] / x[b] : -1; }; };
+    var tot = 0, mins = 0;
+    function rawPer(x) {
+      var orb = x.orb !== undefined ? x.orb : 0.27 * x.trb, drb = x.drb !== undefined ? x.drb : x.trb - orb;
+      return x.min > 0 ? (85.9 * x.fg + 53.9 * x.stl + 51.7 * (x.tp || 0) + 46.3 * x.ft + 39.1 * x.blk + 39.1 * orb + 34.7 * x.ast + 14.7 * drb - 17.2 * x.pf - 20.1 * (x.fta - x.ft) - 39.9 * (x.fga - x.fg) - 53.9 * x.tov) / x.min : 0;
+    }
+    Object.keys(save.lg.stats).forEach(function (id) { var x = save.lg.stats[id]; if (x.min > 0) { tot += rawPer(x) * x.min; mins += x.min; } });
+    var lgPer = mins ? tot / mins : 1;
     var all = [
       { id: 'pts', t: 'Points', lvl: 0, f: function (x) { return x.pts / x.g; }, fmt: function (v) { return v.toFixed(1); } },
       { id: 'trb', t: 'Rebounds', lvl: 0, f: function (x) { return x.trb / x.g; }, fmt: function (v) { return v.toFixed(1); } },
@@ -3671,11 +3678,16 @@
       { id: 'fgp', t: 'Field goal %', lvl: 0, f: pct('fg', 'fga', qual * 3), fmt: function (v) { return v.toFixed(1) + '%'; } },
       { id: 'tpp', t: 'Three-point %', lvl: 0, f: pct('tp', 'tpa', qual * 2), fmt: function (v) { return v.toFixed(1) + '%'; } },
       { id: 'ftp', t: 'Free throw %', lvl: 0, f: pct('ft', 'fta', qual), fmt: function (v) { return v.toFixed(1) + '%'; } },
-      { id: 'tpm', t: 'Threes made', lvl: 2, f: function (x) { return (x.tp || 0) / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'ts', t: 'True shooting %', lvl: 2, f: function (x) { var d = 2 * (x.fga + 0.44 * x.fta); return x.fga >= qual * 3 && d ? 100 * x.pts / d : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
-      { id: 'min', t: 'Minutes', lvl: 2, f: function (x) { return x.min / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'tov', t: 'Turnovers', lvl: 2, f: function (x) { return x.tov / x.g; }, fmt: function (v) { return v.toFixed(1); } },
-      { id: 'eff', t: 'Efficiency', lvl: 2, f: function (x) { return (x.pts + x.trb + x.ast + x.stl + x.blk - (x.fga - x.fg) - (x.fta - x.ft) - x.tov) / x.g; }, fmt: function (v) { return v.toFixed(1); } }
+{ id: 'per', t: 'PER', lvl: 0, f: function (x) { return x.min >= qual * 8 && lgPer > 0 ? 15 * rawPer(x) / lgPer : -1; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'tpm', t: 'Threes made', lvl: 0, f: function (x) { return (x.tp || 0) / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'ts', t: 'True shooting %', lvl: 0, f: function (x) { var d = 2 * (x.fga + 0.44 * x.fta); return x.fga >= qual * 3 && d ? 100 * x.pts / d : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'efg', t: 'Effective FG %', lvl: 0, f: function (x) { return x.fga >= qual * 3 ? 100 * (x.fg + 0.5 * (x.tp || 0)) / x.fga : -1; }, fmt: function (v) { return v.toFixed(1) + '%'; } },
+      { id: 'eff', t: 'Efficiency', lvl: 0, f: function (x) { return (x.pts + x.trb + x.ast + x.stl + x.blk - (x.fga - x.fg) - (x.fta - x.ft) - x.tov) / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'min', t: 'Minutes', lvl: 0, f: function (x) { return x.min / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'ato', t: 'Assist to turnover', lvl: 0, f: function (x) { return x.tov >= qual && x.ast >= qual * 2 ? x.ast / x.tov : -1; }, fmt: function (v) { return v.toFixed(2); } },
+      { id: 'tov', t: 'Turnovers', lvl: 0, f: function (x) { return x.tov / x.g; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'orb', t: 'Offensive rebounds', lvl: 0, f: function (x) { return x.orb !== undefined ? x.orb / x.g : -1; }, fmt: function (v) { return v.toFixed(1); } },
+      { id: 'drb', t: 'Defensive rebounds', lvl: 0, f: function (x) { return x.drb !== undefined ? x.drb / x.g : -1; }, fmt: function (v) { return v.toFixed(1); } }
     ];
     return { all: all, qual: qual, level: DETAILS.indexOf(detail) };
   }
