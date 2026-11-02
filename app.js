@@ -4067,12 +4067,26 @@
   }
 
   /* the coach's game plan: style, pace and how hard the starters play. It runs in every game you sim or play. */
+  /* Coaching: the head coach, the game plan, the rotation and the staff in one place */
   function openPlan() {
-    hubSheet('Game plan', function (sh, close) {
+    hubSheet('Coaching', function (sh, close) {
+      sh.classList.add('tall');
       save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
-      var pl = save.plan;
+      var pl = save.plan, st = Coach.staff(save, save.myId), hc = st && st.hc;
+      if (hc) {
+        var head = el('button', 'coach-head'); head.type = 'button';
+        head.appendChild(makeAvatar({ id: hc.id, name: hc.n }));
+        var tx = el('span', 'ch-tx');
+        tx.appendChild(el('b', null, hc.n));
+        tx.appendChild(el('small', null, 'Head coach \u00B7 ' + (Events.mood(save).coach >= 65 ? 'trusts you' : Events.mood(save).coach >= 40 ? 'wants a say' : 'losing faith')));
+        tx.appendChild(ratingRow('Coach trust', Events.mood(save).coach));
+        head.appendChild(tx);
+        head.addEventListener('click', function () { close(); openCoachSheet('hc'); });
+        sh.appendChild(head);
+      }
       [['pace', 'Pace', [[1, 'Run'], [0, 'Balanced'], [-1, 'Grind']]],
-       ['focus', 'Style', [['inside', 'Inside'], ['', 'Balanced'], ['ball', 'Ball movement'], ['defence', 'Lock down']]],
+       ['focus', 'Offence', [['inside', 'Inside'], ['', 'Balanced'], ['ball', 'Ball movement'], ['defence', 'Lock down']]],
+       ['scheme', 'Defence', [['', 'Standard'], ['press', 'Full-court press'], ['pack', 'Pack the paint'], ['switch', 'Switch everything']]],
        ['minutes', 'Starters', [['heavy', 'Heavy minutes'], ['', 'Normal'], ['deep', 'Share the load']]]].forEach(function (rr) {
         sh.appendChild(el('p', 'sh-l', rr[1]));
         var row = el('div', 'chips');
@@ -4086,6 +4100,12 @@
         });
         sh.appendChild(row);
       });
+      var more = el('div', 'dock-row');
+      var dc = el('button', 'btn wide', 'Depth chart'); dc.type = 'button'; dc.addEventListener('click', function () { close(); openDepth(teamById(save.myId)); });
+      var sf = el('button', 'btn wide', 'Coaching staff'); sf.type = 'button';
+      sf.addEventListener('click', function () { close(); hubSheet('Coaching staff', function (s2, c2) { s2.classList.add('tall'); s2.appendChild(staffNode()); var d2 = el('button', 'btn primary wide', 'Done'); d2.type = 'button'; d2.addEventListener('click', c2); s2.appendChild(d2); }); });
+      more.appendChild(dc); more.appendChild(sf);
+      sh.appendChild(more);
       var d = el('button', 'btn primary wide', 'Done'); d.type = 'button'; d.addEventListener('click', close); sh.appendChild(d);
     });
   }
@@ -4287,7 +4307,7 @@
     var row = el('div', 'hd-row');
     function nav(label, fn) { var b = el('button', 'btn', label); b.type = 'button'; b.addEventListener('click', fn); row.appendChild(b); }
     nav('Roster', function () { renderRoster(me); show('screen-roster'); });
-    nav('Plan', openPlan);
+    nav('Coaching', openPlan);
     nav('Trades', function () { openTrade('season'); });
     nav('Records', openRecords);
     if (reg) nav('Sim', function () {

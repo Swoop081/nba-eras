@@ -295,11 +295,14 @@
   /* the coach's game plan: pace, style and how hard the starters work. Always on for your side. */
   function planMods(p) {
     if (!p) return null;
-    var o = { fgMul: 1, oppFgMul: 1, astMul: 1, tovAdd: 0, foulAdd: 0 }, pc = p.pace || 0;
+    var o = { fgMul: 1, oppFgMul: 1, astMul: 1, tovAdd: 0, foulAdd: 0, oppTovAdd: 0 }, pc = p.pace || 0;
     o.tovAdd += 0.012 * pc; o.fgMul *= 1 - 0.01 * pc;
     if (p.focus === 'inside') { o.fgMul *= 1.012; o.foulAdd += 0.02; o.tovAdd += 0.004; }
     else if (p.focus === 'ball') { o.astMul *= 1.2; o.fgMul *= 1.008; o.tovAdd += 0.006; }
     else if (p.focus === 'defence') { o.oppFgMul *= 0.972; o.fgMul *= 0.988; o.foulAdd += 0.012; }
+    if (p.scheme === 'press') { o.oppTovAdd += 0.014; o.oppFgMul *= 1.012; o.foulAdd += 0.01; }
+    else if (p.scheme === 'pack') { o.oppFgMul *= 0.984; o.oppTovAdd -= 0.004; }
+    else if (p.scheme === 'switch') { o.oppFgMul *= 0.992; o.oppTovAdd += 0.004; o.astMul *= 0.98; }
     return o;
   }
   function live(g, side) {
@@ -308,7 +311,7 @@
     if (!on) return pm;
     var r = Object.assign({}, m);
     r.fgMul = (m.fgMul || 1) * pm.fgMul; r.oppFgMul = (m.oppFgMul || 1) * pm.oppFgMul; r.astMul = (m.astMul || 1) * pm.astMul;
-    r.tovAdd = (m.tovAdd || 0) + pm.tovAdd; r.foulAdd = (m.foulAdd || 0) + pm.foulAdd;
+    r.tovAdd = (m.tovAdd || 0) + pm.tovAdd; r.foulAdd = (m.foulAdd || 0) + pm.foulAdd; r.oppTovAdd = (m.oppTovAdd || 0) + (pm.oppTovAdd || 0);
     return r;
   }
 

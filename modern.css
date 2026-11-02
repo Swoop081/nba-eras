@@ -915,3 +915,12 @@ body[data-modern="1"] .cupst{display:grid;gap:10px}
 body[data-modern="1"] .ht.cupt td,body[data-modern="1"] .ht.cupt td.tn{height:22px;font-size:12.5px}
 body[data-modern="1"] table.ht.cupt{table-layout:fixed}
 body[data-modern="1"] .ht.cupt th:not(.tn),body[data-modern="1"] .ht.cupt td:not(.tn){width:46px}
+
+/* coaching sheet header */
+body[data-modern="1"] .coach-head{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 12px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:inherit;font:inherit;margin-bottom:4px}
+body[data-modern="1"] .coach-head .avatar{width:58px;height:58px;flex:none}
+body[data-modern="1"] .ch-tx{display:grid;gap:3px;min-width:0;flex:1}
+body[data-modern="1"] .ch-tx b{font-size:17px}
+body[data-modern="1"] .ch-tx small{color:var(--muted)}
+body[data-modern="1"] .ch-tx .bar-row{grid-template-columns:1fr 28px;font-size:12px}
+body[data-modern="1"] .ch-tx .bar-row>span:first-child{display:none}
