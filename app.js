@@ -6106,13 +6106,19 @@
   function dnTime(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
   function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
   function dnRank(d, p) { var ip = d.pool.indexOf(p); return d.pool.filter(function (q, i) { return q.board > p.board || (q.board === p.board && i < ip); }).length + 1; }
+  function dnPick(list) { return list[Math.floor(Math.random() * list.length)]; }
   function dnNote(d, p, slot) {
-    var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = dnLast(p.name);
-    var gap = n - r;
-    if (gap >= 6) return 'Steal. ' + w + ' was a top-' + (r + 3) + ' talent on my board and ' + t + ' got him at ' + n + '.';
-    if (gap <= -6) return 'Reach at ' + n + '. ' + t + ' fell in love with ' + w + ' and passed on better names.';
-    if (n <= 3) return 'The right call. ' + w + ' is the best prospect in the class and ' + t + ' did not overthink it.';
-    return w + ' to ' + t + ' fits. ' + (p.age <= 19 ? 'Young, with a long runway.' : 'Closer to ready than most of this class.');
+    var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = dnLast(p.name), gap = n - r;
+    var o = p.scout ? p.scout.ovr : p.ratings.ovr, pot = p.scout ? p.scout.pot : p.pot, up = pot - o, col = p.college || 'his program';
+    var pos = /C/.test(p.pos || '') ? 'big man' : /G/.test(p.pos || '') ? 'guard' : 'forward';
+    if (gap >= 8) return dnPick(['Steal of the draft so far. ' + w + ' was top ' + (r + 2) + ' on my board and ' + t + ' got him at ' + n + '.', 'I cannot believe ' + w + ' is still there. ' + t + ' just got a first-round bargain.', n + ' picks in and ' + w + ' falls to ' + t + '. The league will regret this.']);
+    if (gap <= -8) return dnPick(['Big reach at ' + n + '. ' + t + ' went for ' + w + ' ahead of ' + (r - n) + ' better names on my board.', 'That is a surprise. ' + w + ' was a long way down my list. ' + t + ' must see something I do not.', t + ' got cute. ' + w + ' could have waited.']);
+    if (n <= 3) return dnPick(['The right call. ' + w + ' is the most complete prospect in this class.', t + ' take the best player available. ' + w + ' has franchise upside.', 'No surprise at ' + n + '. ' + w + ' has been circled for months.']);
+    if (up >= 15) return dnPick([w + ' is a lottery ticket: ' + o + ' now, ' + pot + ' ceiling. ' + t + ' are betting on the development staff.', 'Raw, but the tools are loud. ' + w + ' at ' + n + ' is a bet on ' + pot + ' down the road.', 'Three years from helping, five from a star. ' + t + ' took the upside with ' + w + '.']);
+    if (p.age >= 22) return dnPick([w + ' is a ' + p.age + '-year-old ' + pos + ' who can step in. ' + t + ' get a rotation piece now.', 'Older, polished ' + pos + ' out of ' + col + '. ' + w + ' should play right away for ' + t + '.', 'Do not expect a superstar, but ' + w + ' will stick in this league. Smart pick by ' + t + '.']);
+    if (/C/.test(p.pos || '')) return dnPick([w + ' gives ' + t + ' size at the rim. The ' + col + ' big has real touch.', 'A ' + pos + ' with ' + pot + ' potential. ' + t + ' needed this.', 'Rim protection and rebounding. ' + w + ' fills a hole for ' + t + '.']);
+    if (/G/.test(p.pos || '')) return dnPick([w + ' brings handle and pace to ' + t + '. The ' + col + ' guard can run a team.', 'A ' + pos + ' with ' + pot + ' ceiling and great vision. ' + t + ' like what they see.', 'Backcourt help for ' + t + '. ' + w + ' shot it well at ' + col + '.']);
+    return dnPick([w + ' is a versatile ' + pos + ' out of ' + col + '. ' + t + ' get flexibility at ' + n + '.', 'Solid pick at ' + n + '. ' + w + ' does a bit of everything for ' + t + '.', 'Two-way ' + pos + ' with a ' + pot + ' ceiling. ' + t + ' made a safe, smart choice.', 'Good value. ' + w + ' was ranked ' + r + ' on my board and goes ' + n + ' to ' + t + '.']);
   }
   function dnLast(n) { var s = String(n).split(' '); return s.length > 1 ? s.slice(1).join(' ') : n; }
   function dnBreak(text) {
