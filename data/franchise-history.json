@@ -5,12 +5,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "9",
     "p": "Bob Pettit",
     "y": null,
@@ -41,7 +35,7 @@
     "raw": "55"
    },
    {
-    "n": "59 1",
+    "n": "59",
     "p": "Kasim Reed",
     "y": null,
     "raw": "59 1"
@@ -78,12 +72,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Name",
-    "y": null,
-    "raw": "Position Tenure Inducted No. Name Position Tenure Inducted"
-   },
-   {
     "n": "22",
     "p": "Ed Macauley",
     "y": 1961,
@@ -108,8 +96,8 @@
     "raw": "G/F 1957\u20131969 1984 17 John Havlicek G/F 1962\u20131978 1984"
    },
    {
-    "n": "15 20",
-    "p": "Tom Heinsohn 1",
+    "n": "15",
+    "p": "Tom Heinsohn",
     "y": 1987,
     "raw": "F 1956\u20131965 1986 20 Bob Houbregs C / F 1954 1987"
    },
@@ -120,7 +108,7 @@
     "raw": "G 1980 1987 4 34 Clyde Lovellette C 1962\u20131964 1988"
    },
    {
-    "n": "25 27",
+    "n": "25",
     "p": "K. C. Jones",
     "y": 1990,
     "raw": "G 1958\u20131967 1989 44 Dave Bing G 1977\u20131978 1990"
@@ -247,7 +235,7 @@
    },
    {
     "n": "16",
-    "p": "Satch Sanders 4",
+    "p": "Satch Sanders",
     "y": 2012,
     "raw": "F 1960\u20131973 2011 17 Don Barksdale F 1953\u20131955 2012"
    }
@@ -309,12 +297,6 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "13",
     "p": "Bobby Phills",
     "y": null,
@@ -338,12 +320,6 @@
    1998
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Derrick Rose",
@@ -399,7 +375,50 @@
   "champs": [
    2016
   ],
-  "retired": [],
+  "retired": [
+   {
+    "n": "7",
+    "p": "Bobby \"Bingo\" Smith",
+    "y": 1979,
+    "raw": "1979"
+   },
+   {
+    "n": "11",
+    "p": "Zydrunas Ilgauskas",
+    "y": 2014,
+    "raw": "2014"
+   },
+   {
+    "n": "22",
+    "p": "Larry Nance",
+    "y": 1995,
+    "raw": "1995"
+   },
+   {
+    "n": "25",
+    "p": "Mark Price",
+    "y": 1999,
+    "raw": "1999"
+   },
+   {
+    "n": "34",
+    "p": "Austin Carr",
+    "y": 1981,
+    "raw": "1981"
+   },
+   {
+    "n": "42",
+    "p": "Nate Thurmond",
+    "y": 1977,
+    "raw": "1977"
+   },
+   {
+    "n": "43",
+    "p": "Brad Daugherty",
+    "y": 1997,
+    "raw": "1997"
+   }
+  ],
   "champs_raw": "1 ( 2016 )"
  },
  "dallas-mavericks": {
@@ -407,12 +426,6 @@
    2011
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "12",
     "p": "Derek Harper",
@@ -452,12 +465,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "2",
     "p": "Alex English",
     "y": null,
@@ -494,7 +501,7 @@
     "raw": "55"
    },
    {
-    "n": "432 1",
+    "n": "432",
     "p": "Doug Moe",
     "y": null,
     "raw": "432 1"
@@ -511,12 +518,6 @@
    2004
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Chauncey Billups",
@@ -610,12 +611,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "9",
     "p": "Andre Iguodala",
     "y": null,
@@ -666,12 +661,6 @@
    1995
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "11",
     "p": "Yao Ming",
@@ -767,12 +756,6 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Name",
-    "y": null,
-    "raw": "Position Tenure Inducted"
-   },
-   {
     "n": "32",
     "p": "Bill Walton",
     "y": 1993,
@@ -852,7 +835,7 @@
    },
    {
     "n": "25",
-    "p": "Doc Rivers 1",
+    "p": "Doc Rivers",
     "y": 2026,
     "raw": "Head coach 2013\u20132020 2026"
    },
@@ -892,12 +875,6 @@
    2020
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "8",
     "p": "Kobe Bryant",
@@ -995,12 +972,6 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Name",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "9",
     "p": "Tony Allen",
     "y": null,
@@ -1033,12 +1004,6 @@
    2013
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Chris Bosh",
@@ -1090,12 +1055,6 @@
    2021
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Oscar Robertson",
@@ -1157,12 +1116,6 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "2",
     "p": "Malik Sealy",
     "y": null,
@@ -1180,12 +1133,6 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "7",
     "p": "Pete Maravich",
     "y": null,
@@ -1202,7 +1149,7 @@
   "retired": [
    {
     "n": "10",
-    "p": "Walt Frazier 1",
+    "p": "Walt Frazier",
     "y": 1979,
     "raw": "December 15, 1979"
    },
@@ -1213,20 +1160,20 @@
     "raw": "March 10, 1990"
    },
    {
-    "n": "15 5",
+    "n": "15",
     "p": "Earl Monroe",
     "y": 1986,
     "raw": "March 1, 1986"
    },
    {
-    "n": "Dick McGuire 2",
-    "p": "G",
+    "n": "15",
+    "p": "Dick McGuire",
     "y": 1992,
     "raw": "1949\u20131957 March 14, 1992"
    },
    {
     "n": "19",
-    "p": "Willis Reed 3",
+    "p": "Willis Reed",
     "y": 1976,
     "raw": "October 21, 1976"
    },
@@ -1250,7 +1197,7 @@
    },
    {
     "n": "613",
-    "p": "Red Holzman 4",
+    "p": "Red Holzman",
     "y": 1990,
     "raw": "March 10, 1990"
    }
@@ -1263,12 +1210,6 @@
    2025
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Gus Williams",
@@ -1324,13 +1265,7 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
-    "n": "6 1",
+    "n": "6",
     "p": "Fans (\"The Sixth Man\")",
     "y": null,
     "raw": "6 1"
@@ -1351,12 +1286,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "2",
     "p": "Moses Malone",
     "y": null,
@@ -1375,7 +1304,7 @@
     "raw": "4"
    },
    {
-    "n": "6 3",
+    "n": "6",
     "p": "Julius Erving",
     "y": null,
     "raw": "6 3"
@@ -1429,79 +1358,73 @@
   "champs": [],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "Position Career"
-   },
-   {
-    "n": "5 *",
+    "n": "5",
     "p": "Dick Van Arsdale",
     "y": 1977,
     "raw": "G 1968\u20131977 1"
    },
    {
-    "n": "6 *",
+    "n": "6",
     "p": "Walter Davis",
     "y": 1988,
     "raw": "G 1977\u20131988"
    },
    {
-    "n": "7 *",
+    "n": "7",
     "p": "Kevin Johnson",
     "y": 2000,
     "raw": "G 1988\u20131998, 2000"
    },
    {
-    "n": "9 *",
+    "n": "9",
     "p": "Dan Majerle",
     "y": 2002,
     "raw": "F 1988\u20131995, 2001\u20132002 2"
    },
    {
-    "n": "13 *",
+    "n": "13",
     "p": "Steve Nash",
     "y": 2012,
     "raw": "G 1996\u20131998, 2004\u20132012"
    },
    {
-    "n": "24 *",
+    "n": "24",
     "p": "Tom Chambers",
     "y": 1993,
     "raw": "F 1988\u20131993"
    },
    {
-    "n": "31 *",
+    "n": "31",
     "p": "Shawn Marion",
     "y": 2008,
     "raw": "F 1999\u20132008"
    },
    {
-    "n": "32*",
+    "n": "32",
     "p": "Amar'e Stoudemire",
     "y": 2010,
     "raw": "F 2002\u20132010"
    },
    {
-    "n": "33 *",
+    "n": "33",
     "p": "Alvan Adams",
     "y": 1988,
     "raw": "C 1975\u20131988 3"
    },
    {
-    "n": "34 *",
-    "p": "Charles Barkley 4",
+    "n": "34",
+    "p": "Charles Barkley",
     "y": 1996,
     "raw": "F 1992\u20131996"
    },
    {
-    "n": "42 *",
+    "n": "42",
     "p": "Connie Hawkins",
     "y": 1973,
     "raw": "F 1969\u20131973"
    },
    {
-    "n": "44 *",
+    "n": "44",
     "p": "Paul Westphal",
     "y": 1984,
     "raw": "G 1975\u20131980, 1983\u20131984 5"
@@ -1544,13 +1467,7 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
-    "n": "1 1",
+    "n": "1",
     "p": "Larry Weinberg",
     "y": null,
     "raw": "1 1"
@@ -1592,8 +1509,8 @@
     "raw": "30"
    },
    {
-    "n": "Terry Porter",
-    "p": "G",
+    "n": "30",
+    "p": "Terry Porter",
     "y": null,
     "raw": "Terry Porter"
    },
@@ -1616,7 +1533,7 @@
     "raw": "45"
    },
    {
-    "n": "77 2",
+    "n": "77",
     "p": "Jack Ramsay",
     "y": null,
     "raw": "77 2"
@@ -1636,12 +1553,6 @@
    1951
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Nate Archibald",
@@ -1721,12 +1632,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "00",
     "p": "Johnny Moore",
     "y": null,
@@ -1745,7 +1650,7 @@
     "raw": "9"
    },
    {
-    "n": "12 1",
+    "n": "12",
     "p": "Bruce Bowen",
     "y": null,
     "raw": "12 1"
@@ -1801,12 +1706,6 @@
   ],
   "retired": [
    {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
-   {
     "n": "15",
     "p": "Vince Carter",
     "y": null,
@@ -1818,12 +1717,6 @@
  "utah-jazz": {
   "champs": [],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "1",
     "p": "Frank Layden",
@@ -1897,12 +1790,6 @@
    1978
   ],
   "retired": [
-   {
-    "n": "No.",
-    "p": "Player",
-    "y": null,
-    "raw": "No."
-   },
    {
     "n": "10",
     "p": "Earl Monroe",
