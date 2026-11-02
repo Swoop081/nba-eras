@@ -1884,9 +1884,11 @@
   /* a zone look: guards outside the arc, wings at the elbows of the key, the centre under the ring; the opponent's man sits beside each */
   /* the floor is cropped a little past the three-point line, so everything is placed on the 12%-100% band */
   function band(list) { return list.map(function (q) { return [q[0], Math.round((q[1] - 12) / 0.88 * 10) / 10]; }); }
-  function fieldY(y) { return Math.round((100 - y) * 0.42 * 10) / 10; }
+  function fieldY(y) { return Math.round((5.66 + (100 - y) * 0.3726) * 10) / 10; }
   var ME_FULL = band([[33, 31], [67, 31], [76, 66], [24, 66], [50, 80]]);
+  ME_FULL[0][1] = ME_FULL[1][1] = 30.4; /* guards stand on the three-point line */
   var OP_FULL = band([[18, 31], [82, 31], [91, 76], [9, 76], [66, 86]]);
+  OP_FULL[0][1] = OP_FULL[1][1] = 27;
   function rankOrder(list) { return list.map(function (m, i) { return i; }).sort(function (u, v) { return slotRank(list[u].p) - slotRank(list[v].p); }); }
   var COURT_SVG = '<svg class="lines" viewBox="0 0 100 90" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="86"/><rect x="34" y="2" width="32" height="38"/><circle cx="50" cy="40" r="10"/><path d="M12 2v14a38 38 0 0 0 76 0V2"/><circle cx="50" cy="9" r="2.4"/><path d="M44 5h12"/></svg>';
 
@@ -2179,17 +2181,23 @@
       // a full-length floor at true proportions: the live action is the top half, the far end fades out
       court.textContent = '';
       field = el('div', 'cfield');
-      ['t', 'b'].forEach(function (k) { var h = el('div', 'ch ' + k); h.innerHTML = FULL_SVG; field.appendChild(h); });
       court.appendChild(field);
-      (function (exts) {
-        var im = new Image(), k = 0;
-        im.onload = function () {
-          Array.prototype.forEach.call(field.querySelectorAll('.ch'), function (h) { h.style.backgroundImage = 'url(' + im.src + ')'; });
-          court.classList.add('real');
+      // one picture of the whole floor, border and all; the old two-halves build is the fallback
+      (function () {
+        var im = new Image();
+        im.onload = function () { field.style.backgroundImage = 'url(' + im.src + ')'; court.classList.add('real', 'whole'); };
+        im.onerror = function () {
+          ['t', 'b'].forEach(function (k) { var h = el('div', 'ch ' + k); h.innerHTML = FULL_SVG; field.appendChild(h); });
+          var h2 = new Image(), k2 = 0, exts = ['webp', 'png', 'jpg'];
+          h2.onload = function () {
+            Array.prototype.forEach.call(field.querySelectorAll('.ch'), function (h) { h.style.backgroundImage = 'url(' + h2.src + ')'; });
+            court.classList.add('real');
+          };
+          h2.onerror = function () { k2++; if (k2 < exts.length) h2.src = 'assets/courts/' + home.id + '.' + exts[k2]; };
+          h2.src = 'assets/courts/' + home.id + '.' + exts[0];
         };
-        im.onerror = function () { k++; if (k < exts.length) im.src = 'assets/courts/' + home.id + '.' + exts[k]; };
-        im.src = 'assets/courts/' + home.id + '.' + exts[0];
-      })(['webp', 'png', 'jpg']);
+        im.src = 'assets/courts/full/' + home.id + '.webp';
+      })();
     }
     lv.pl = []; lv.op = [];
     lv.ids = [];
@@ -2253,7 +2261,7 @@
     var t = document.getElementById('ticker');
     var line = el('div', 'tk' + (cls ? ' ' + cls : ''), text);
     t.insertBefore(line, t.firstChild);
-    while (t.children.length > 4) t.removeChild(t.lastChild);
+    while (t.children.length > 9) t.removeChild(t.lastChild);
   }
 
   function evText(ev, mine) {
