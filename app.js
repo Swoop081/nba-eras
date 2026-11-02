@@ -1778,6 +1778,23 @@
   /* ---------- year-end awards, kept for every season in the save ---------- */
   function perfScore(o, win) { return (o.pts + 1.2 * o.trb + 1.5 * o.ast + 1.5 * o.stl + 1.2 * o.blk - o.tov) / o.g * (0.7 + 0.6 * win); }
   function yearEnd() { var ya = save.lg.ya || (save.lg.ya = []), e = ya.filter(function (x) { return x.y === save.year; })[0]; return e; }
+  var COACHPH = ["billy-donovan", "brett-brown", "brian-keefe", "charles-lee", "chris-finch", "darko-rajakovic", "david-adelman", "doug-christie", "dusty-may", "erik-spoelstra", "ime-udoka", "j-b-bickerstaff", "jama-mahlalela", "jamahl-mosley", "jason-march", "jay-triano", "jj-redick", "joe-mazzulla", "jordan-ott", "jordi-fernandez", "kenny-atkinson", "mark-daigneault", "micah-nori", "mike-brown", "mike-williams", "mitch-johnson", "nate-mcmillan", "nick-nurse", "pat-delany", "quin-snyder", "rick-carlisle", "ryan-saunders", "sam-cassell", "scott-brooks", "sean-sweeney", "steve-kerr", "taylor-jenkins", "tiago-splitter", "tony-dobbins", "tuomas-iisalo", "tyronn-lue", "will-hardy"];
+  /* Most Improved: the biggest jump in production on last season, not a star already at the top */
+  function prodOf(o) { return o.g ? (o.pts + 0.8 * o.trb + 0.9 * o.ast + 0.5 * (o.stl + o.blk)) / o.g : 0; }
+  function mipVote(rows, vote, card, pts) {
+    var cs = [];
+    rows.forEach(function (r) {
+      if (!r.el || r.rk) return;
+      var pv = (r.p.career || []).filter(function (c) { return c.y === save.year - 1; })[0];
+      if (!pv || pv.g < 25) return;
+      var now = prodOf(r.o), was = prodOf(pv), jump = now - was;
+      if (jump < 2.5) return;
+      r.mj = jump * (1 - Math.max(0, Math.min(0.6, (was - 20) / 25)));
+      cs.push(r);
+    });
+    if (cs.length < 3) return vote(rows.filter(function (r) { return r.el && !r.rk && r.p.ratings.ovr < 78 && (r.p.formAdj || 0) > 0; }), function (r) { return Math.max(0.01, (r.p.formAdj || 0) * 3 + r.sc * 0.1); }, card, pts);
+    return vote(cs, function (r) { return Math.max(0.01, r.mj); }, card, pts);
+  }
   function yearEndCheck() {
     if (!save || !save.lg || !save.lg.stats) return;
     var e = yearEnd();
@@ -1815,11 +1832,11 @@
         dpoy: vote(rows.filter(function (r) { return r.el; }), function (r) { return r.df; }, card, M3),
         roy: vote(rows.filter(function (r) { return r.rk; }), function (r) { return r.sc; }, card, M3),
         smoy: vote(rows.filter(function (r) { return r.bench && r.el; }), function (r) { return r.sc; }, card, M3),
-        mip: vote(rows.filter(function (r) { return r.el && !r.rk && (r.p.formAdj || 0) > 0; }), function (r) { return Math.max(0.01, (r.p.formAdj || 0) * 3 + r.sc * 0.1); }, card, M3)
+        mip: mipVote(rows, vote, card, M3)
       };
       var gains = [];
-      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; if (save.coach && save.coach.since && Math.floor((save.coach.since[id + 'hcd'] || 0) / 1000) === save.year) return; gains.push({ id: id, g: rc.w / (rc.w + rc.l) - lr.w / Math.max(1, lr.w + lr.l) + 0.5 }); });
-      y.t.coy = vote(gains, function (g) { return g.g; }, function (g) { var s = Coach.staff(save, g.id), t = teamById(g.id); return { id: '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: g.id, line: save.rec[g.id].w + '-' + save.rec[g.id].l }; }, M3);
+      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; if (save.coach && save.coach.since && Math.floor((save.coach.since[id + 'hcd'] || 0) / 1000) === save.year) return; var pc = rc.w / (rc.w + rc.l), im = pc - lr.w / Math.max(1, lr.w + lr.l); if (pc < 0.5) return; gains.push({ id: id, g: pc + 0.5 * Math.max(-0.1, Math.min(0.3, im)) }); });
+      y.t.coy = vote(gains, function (g) { return g.g; }, function (g) { var s = Coach.staff(save, g.id), t = teamById(g.id); return { id: (s && s.hc && COACHPH.indexOf(s.hc.id) >= 0) ? s.hc.id : '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: g.id, line: save.rec[g.id].w + '-' + save.rec[g.id].l }; }, M3);
       ['mvp', 'dpoy', 'roy', 'smoy', 'mip', 'coy'].forEach(function (k) { y[k] = y.t[k][0] || null; });
       var an = top(rows, 'sc', 15, function (r) { return r.el; }).map(card); y.allnba = [an.slice(0, 5), an.slice(5, 10), an.slice(10, 15)];
       var ad = top(rows, 'df', 10, function (r) { return r.el; }).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
