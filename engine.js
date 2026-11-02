@@ -70,7 +70,7 @@
   }
 
   /* stars take a bigger share of the shots, but their efficiency flattens out above the 60s */
-  var USEADD = -0.15;
+  var USEADD = -0.5, REBEXP = 1.25, ASTEXP = 1.6;
   function soft(v) { return v > 60 ? 60 + (v - 60) * SOFT : v; }
   var SOFT = 0.8;
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
@@ -88,9 +88,10 @@
     var c = pr && pr.comp !== undefined && pr.comp !== 1 ? pr.comp : 0;
     // the coach's rotation order (slot) wins when it is set; otherwise the best play the most
     var top = players.slice().sort(function (a, b) { return (a.slot !== undefined && b.slot !== undefined) ? a.slot - b.slot : b.ratings.ovr - a.ratings.ovr; }).slice(0, SHARE.length);
+    var bySco = top.slice().sort(function (a, b) { return b.ratings.sco - a.ratings.sco; }), GO = [1.25, 1.08];   /* the go-to scorer and his running mate take more of the shots */
     return top.map(function (p, i) {
       return {
-        p: c ? squash(p, c) : p, share: SHARE[i],
+        go: GO[bySco.indexOf(p)] || 1, p: c ? squash(p, c) : p, share: SHARE[i],
         s: { pos: 0, pts: 0, fg: 0, fga: 0, ft: 0, fta: 0, tp: 0, tpa: 0, ast: 0, pf: 0, orb: 0, drb: 0, trb: 0, stl: 0, blk: 0, tov: 0, min: 0 }
       };
     });
@@ -142,7 +143,7 @@
     var dbl = cntd(O, 'double') > 0;
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco;
-      return x.share * Math.pow(s, mo.flat ? 0.15 : ((pr.use || 2) + USEADD)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
+      return x.share * (x.go || 1) * Math.pow(s, mo.flat ? 0.15 : ((pr.use || 2) + USEADD)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
@@ -184,7 +185,7 @@
       shooter.s.pts += v; pts += v;
       ev.kind = 'made'; ev.pts = v; ev.three = three;
       if (r() < (pr.astp || 0.72) * (pr.threes ? 0.84 : 1) * (mo.astMul || 1) * (0.2 + 0.4 * shooter.p.ratings.ply / 100)) {
-        var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * x.p.ratings.ply * x.p.ratings.ply * (ni(x).pass || 1); });
+        var passer = pick(r, O.filter(function (x) { return x !== shooter; }), function (x) { return x.share * Math.pow(x.p.ratings.ply, ASTEXP) * (ni(x).pass || 1); });
         passer.s.ast++; ev.ast = passer.p.name;
       }
       return pts;
@@ -195,14 +196,14 @@
     }
     var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250) + 0.014 * cnt(O, 'crash') - 0.01 * cnt(D, 'crash');
     if (r() < offRebP) {
-      var reb = pick(r, O, function (x) { return x.share * x.p.ratings.orb * x.p.ratings.orb * (ni(x).crash ? 1.9 : 1); });
+      var reb = pick(r, O, function (x) { return x.share * Math.pow(x.p.ratings.orb, REBEXP) * (ni(x).crash ? 1.9 : 1); });
       reb.s.orb++;
       var first = ev;
       var more = possession(r, O, D, pr, st, mo, md);
       st.ev.second = true;
       return pts + more;
     }
-    pick(r, D, function (x) { return x.share * x.p.ratings.drb * x.p.ratings.drb * (ni(x).crash ? 1.9 : 1); }).s.drb++;
+    pick(r, D, function (x) { return x.share * Math.pow(x.p.ratings.drb, REBEXP) * (ni(x).crash ? 1.9 : 1); }).s.drb++;
     return pts;
   }
 
