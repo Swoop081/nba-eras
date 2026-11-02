@@ -2836,25 +2836,30 @@
     rafters.appendChild(row1);
     rafters.appendChild(el('div', 'rf-beam low'));
     rafters.appendChild(el('h3', 'rf-label', 'Retired numbers'));
-    var ret = (fh.retired || []).filter(function (r) { return r.p && r.p !== 'Player' && r.n !== 'No.' && (!r.y || r.y <= save.year); });
+    var ret = (fh.retired || []).filter(function (r) { return r.p && r.p !== 'Player' && r.n !== 'No.' && /^\d{1,2}$/.test(String(r.n).trim()) && (!r.y || r.y <= save.year); });
     var row2 = el('div', 'rf-row jerseys');
     if (!ret.length) row2.appendChild(el('p', 'rf-empty', 'No number has been retired yet.'));
-    ret.sort(function (a, b) { return (b.y || 0) - (a.y || 0); }).forEach(function (r) {
+    ret.sort(function (a, b) { return (b.y || 0) - (a.y || 0) || parseInt(a.n, 10) - parseInt(b.n, 10); }).forEach(function (r) {
       var j = el('div', 'jy'); j.appendChild(el('i', 'rope'));
       var nm = r.p.replace(/\s*\(.*$/, '').replace(/\s*\[.*$/, '').trim(), sur = nm.split(' ').slice(-1)[0].toUpperCase();
       if (/^(jr|sr|ii|iii|iv)\.?$/i.test(sur)) sur = nm.split(' ').slice(-2)[0].toUpperCase();
-      var num = String(r.n).replace(/\s*\(.*$/, '').slice(0, 5);
-      var fs = num.length > 2 ? 40 : 54, nf = sur.length > 9 ? 9.5 : sur.length > 7 ? 11.5 : 13.5;
-      j.insertAdjacentHTML('beforeend', '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true">' +
-        '<path d="M34 6 L46 6 Q60 22 74 6 L86 6 L112 30 L98 50 L96 50 L96 142 Q60 148 24 142 L24 50 L22 50 L8 30 Z" fill="var(--c1)"/>' +
-        '<path d="M34 6 L46 6 Q60 22 74 6 L86 6" fill="none" stroke="var(--c2)" stroke-width="4"/>' +
-        '<path d="M8 30 L22 50 M112 30 L98 50" stroke="var(--c2)" stroke-width="4" fill="none"/>' +
-        '<path d="M24 50 L24 142 M96 50 L96 142" stroke="var(--c2)" stroke-width="3" fill="none" opacity=".9"/>' +
-        '<path d="M26 138 Q60 144 94 138" stroke="var(--c2)" stroke-width="5" fill="none"/>' +
-        '<text x="60" y="48" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + nf + '" letter-spacing="1" fill="var(--c2)">' + sur + '</text>' +
-        '<text x="60" y="' + (fs > 45 ? 112 : 106) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + fs + '" fill="var(--c2)">' + num + '</text></svg>');
-      j.appendChild(el('span', 'jn', nm));
-      if (r.y) j.appendChild(el('small', null, 'Retired ' + r.y));
+      var isNum = /^\d{1,2}$/.test(String(r.n).trim()), num = isNum ? String(r.n).trim() : '';
+      var st = { bg: '#FFFFFF', fg: c1, trim: c1, mark: me.city.toUpperCase() + ' ' + me.name.toUpperCase() };
+      // some banners hang in their own colours: the real ones differ by era and player
+      if (mid === 'atlanta-hawks') {
+        if (sur === 'PETTIT') st = { bg: '#14234F', fg: '#FFFFFF', trim: '#C8102E', mark: 'ST. LOUIS HAWKS', nm: '#FFFFFF' };
+        else if (sur === 'MARAVICH') st = { bg: '#FFFFFF', fg: '#3AA6DC', trim: '#3AA6DC', mark: 'ATLANTA HAWKS' };
+        else if (!isNum) st = { bg: '#E03A3E', fg: '#FFFFFF', trim: '#FFFFFF', mark: '', nm: '#FFFFFF' };
+        else st = { bg: '#FFFFFF', fg: '#E03A3E', trim: '#E03A3E', mark: 'ATLANTA HAWKS' };
+      } else if (!isNum) st = { bg: c1, fg: c2, trim: c2, mark: '', nm: c2 };
+      var bn = el('div', 'rb');
+      bn.style.cssText = 'background:' + st.bg + ';border-color:' + st.trim + ';color:' + st.fg;
+      if (st.mark) bn.appendChild(el('small', 'rbm', st.mark));
+      if (num) { var nb = el('b', 'rbn', num); nb.style.fontSize = num.length > 1 ? '44px' : '50px'; bn.appendChild(nb); }
+      var sn = el('span', 'rbs', num ? sur : nm.toUpperCase()); if (st.nm) sn.style.color = st.nm; else if (st.fg) sn.style.color = st.fg;
+      bn.appendChild(sn);
+      var lg = teamBadge(me); lg.classList.add('rbl'); bn.appendChild(lg);
+      j.appendChild(bn);
       row2.appendChild(j);
     });
     rafters.appendChild(row2);
