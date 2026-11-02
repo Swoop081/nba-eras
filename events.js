@@ -101,6 +101,7 @@
     m.cool.inj = Math.max(0, (m.cool.inj || 0) - 1);
     m.cool.offer = Math.max(0, (m.cool.offer || 0) - 1);
     m.cool.act = Math.max(0, (m.cool.act || 0) - 1);
+    m.cool.cc = Math.max(0, (m.cool.cc || 0) - 1);
     Object.keys(m.tweak).forEach(function (id) { m.tweak[id].g--; if (m.tweak[id].g <= 0) delete m.tweak[id]; });
     resolveFollows(save, m);
   }
@@ -532,7 +533,16 @@
     }
 
     // a rival club wires a trade offer
-    if (save.phase === 'regular' && save.day <= save.days.length * 0.75 && !(m.cool.offer > 0) && Math.random() < 0.06 && root.League && ctx.others) {
+    if (v.modern && save.phase === 'regular' && save.day <= save.days.length * 0.75 && !(m.cool.offer > 0) && Math.random() < 0.14 && root.League && root.League.makeDeal && ctx.others) {
+      var dl = root.League.makeDeal(save, ctx.me.id, ctx.others.concat([ctx.opp]));
+      if (dl) {
+        m.cool.offer = 5;
+        out.push({ kind: 'rumour', who: dl.city, text: dl.text + ' What do you say?', choices: [
+          { label: 'Accept the deal', fx: { deal: { them: dl.tid, give: dl.give.map(function (p) { return p.id; }), get: dl.get.map(function (p) { return p.id; }), giveK: dl.giveK.map(root.League.pickId), getK: dl.getK.map(root.League.pickId) } }, say: 'Accepted' },
+          { label: 'Decline', fx: {}, say: 'Declined' }
+        ] });
+      }
+    } else if (!v.modern && save.phase === 'regular' && save.day <= save.days.length * 0.75 && !(m.cool.offer > 0) && Math.random() < 0.06 && root.League && ctx.others) {
       var of = root.League.makeOffer(save, ctx.me.id, ctx.others.concat([ctx.opp]));
       if (of) {
         m.cool.offer = 14;
@@ -543,8 +553,14 @@
       }
     }
 
+    var hcv = v.modern ? coachConv(save, ctx, lines, won) : null;
+    if (hcv) { m.cool.cc = 1; out.push(hcv); }
     var conv = pickConversation(save, ctx, lines, won);
-    if (conv) { m.cool.conv = 3; out.push(conv); }
+    if (conv) { m.cool.conv = v.modern ? 1 : 3; out.push(conv); }
+    var hc0 = root.Coach && root.Coach.staff(save, ctx.me.id);
+    out.forEach(function (e) {
+      if (e.coach && !e.cslug && hc0 && hc0.hc) { e.cslug = root.Coach.slug(hc0.hc.n); e.who = hc0.hc.n; }
+    });
     if (v.modern) {
       var M = function (t) {
         return typeof t !== 'string' ? t : t.replace(/Skipper/g, 'Boss').replace(/Give the boys a day off/g, 'Give the guys a day off').replace(/A fellow plays better/g, 'A player plays better')
@@ -556,6 +572,81 @@
       });
     }
     return out;
+  }
+
+
+  /* ---------- the head coach talks to you ---------- */
+  function pickTpl(save, key, list) {
+    var m = mood(save); m.last = m.last || {};
+    var i, tries = 0;
+    do { i = Math.floor(Math.random() * list.length); tries++; } while (m.last[key] === i && tries < 8);
+    m.last[key] = i;
+    return list[i];
+  }
+  function coachConv(save, ctx, lines, won) {
+    var m = mood(save), st = root.Coach && root.Coach.staff(save, ctx.me.id);
+    if (!st || !st.hc) return null;
+    if (m.cool.cc > 0) return null;
+    var chance = m.coach < 35 ? 0.8 : m.streak <= -2 ? 0.6 : 0.42;
+    if (Math.random() > chance) return null;
+    var hc = st.hc, ros = ctx.rosterMe.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var starter = ros[Math.floor(Math.random() * 5)], bench = ros[5 + Math.floor(Math.random() * 5)] || ros[ros.length - 1];
+    var young = ros.filter(function (p) { return (p.age || 30) <= 22 && ros.indexOf(p) >= 4; })[0] || bench;
+    var top = ros[0], sn = last(starter.name), yn = last(young.name), tn = last(top.name);
+    var out = function (text, ch) { return { kind: 'talk', coach: true, who: hc.n, cslug: root.Coach.slug(hc.n), text: text, choices: ch }; };
+    if (m.coach < 35) {
+      return out('"Boss, I do not feel supported. If we are not on the same page, tell me now."', [
+        { label: 'You have my full backing.', fx: { coach: 10, team: { m: 1 } }, say: 'Backed him' },
+        { label: 'Results come first.', fx: { coach: -3 }, say: 'Put him on notice' },
+        { label: 'Time for a change.', fx: { sack: true, team: { m: -2 } }, say: 'Fired the coach' }
+      ]);
+    }
+    var T = [];
+    if (m.streak <= -2) T.push(function () { return out('"Three straight losses, boss. I want to change the starting group and tighten the rotation. Your call."', [
+      { label: 'Shake it up.', fx: { coach: 3, team: { m: -1 } }, say: 'Shook up the lineup' },
+      { label: 'Stay the course.', fx: { coach: 1, team: { m: 1 } }, say: 'Stayed the course' },
+      { label: 'Run them harder in practice.', fx: { coach: 2, team: { m: -2 } }, say: 'Tough week ahead' }]); });
+    if (m.streak >= 3) T.push(function () { return out('"We are rolling, boss. I do not want to touch anything. Keep the group together and keep the energy up."', [
+      { label: 'Agreed. Do not change a thing.', fx: { coach: 3, team: { m: 2 } }, say: 'Kept it steady' },
+      { label: 'Give the starters a night off.', fx: { coach: 1, team: { m: 3 } }, say: 'Rest granted' }]); });
+    T.push(function () { return out('"Back-to-back coming up. I would like to rest ' + sn + '. We risk the game, but we protect his legs."', [
+      { label: 'Rest him.', fx: { coach: 3, s: null, team: { m: 1 } }, say: 'Rested a starter' },
+      { label: 'Play him.', fx: { coach: -2, fans: 1 }, say: 'Played through it' }]); });
+    T.push(function () { return out('"' + tn + ' is carrying too much. I want to run more sets through the rest of the group."', [
+      { label: 'Spread it around.', fx: { coach: 3, team: { m: 2 } }, say: 'Shared the load' },
+      { label: 'Keep feeding ' + tn + '.', fx: { coach: -2, team: { m: -1 } }, say: 'Star first' }]); });
+    T.push(function () { return out('"' + yn + ' has earned a look. Give me the green light to play him real minutes."', [
+      { label: 'Go ahead.', fx: { coach: 3, team: { m: 1 } }, say: 'Opened a spot' },
+      { label: 'Not yet.', fx: { coach: -2 }, say: 'Told him to wait' }]); });
+    T.push(function () { return out('"We are giving up too many easy ones. I want to switch to a tighter defensive scheme. It will cost us pace."', [
+      { label: 'Do it.', fx: { coach: 4 }, say: 'New scheme' },
+      { label: 'Keep it fast.', fx: { coach: -3, fans: 1 }, say: 'Kept the pace' },
+      { label: 'Try it for a week.', fx: { coach: 2, team: { m: 1 } }, say: 'Trial week' }]); });
+    T.push(function () { return out('"We are not shooting enough threes. Every team in the league is. Let me open it up."', [
+      { label: 'Open it up.', fx: { coach: 4, fans: 2 }, say: 'Green light' },
+      { label: 'Stick to the plan.', fx: { coach: -3 }, say: 'Held the line' }]); });
+    T.push(function () { return out('"Legs are heavy. I can cut practice to a walkthrough or put them through a hard session. Which?"', [
+      { label: 'Light day.', fx: { team: { m: 4 }, coach: 1 }, say: 'Light day' },
+      { label: 'Hard session.', fx: { team: { m: -3 }, coach: 3 }, say: 'Hard session' }]); });
+    T.push(function () { return out('"I want to sit the group down for film tomorrow. Some of it will be ugly."', [
+      { label: 'Good. Do it.', fx: { coach: 3, team: { m: -1 } }, say: 'Film day' },
+      { label: 'Keep it positive.', fx: { coach: -1, team: { m: 2 } }, say: 'Kept it light' }]); });
+    T.push(function () { return out('"' + sn + ' is struggling. I would rather move him to the bench for a few games and let him reset."', [
+      { label: 'Do what you think.', fx: { coach: 4, team: { m: -1 } }, say: 'Benched him briefly' },
+      { label: 'Leave him in.', fx: { coach: -3, team: { m: 1 } }, say: 'Kept faith' }]); });
+    T.push(function () { return out('"My assistants are getting calls from other teams. I would like to give them a raise to keep the group."', [
+      { label: 'Approve it.', fx: { coach: 5 }, say: 'Staff paid' },
+      { label: 'Not now.', fx: { coach: -3 }, say: 'Turned down' }]); });
+    T.push(function () { return out('"The way we are closing games bothers me. I want to run a late-game set for ' + tn + ' every time."', [
+      { label: 'He is our closer.', fx: { coach: 3, team: { m: 1 } }, say: 'Closer named' },
+      { label: 'Mix it up.', fx: { coach: 1, team: { m: 1 } }, say: 'Kept options' }]); });
+    T.push(function () { return out('"The players have been working hard. A team dinner on you would mean a lot."', [
+      { label: 'Book the restaurant.', fx: { team: { m: 4 }, coach: 2 }, say: 'Team dinner' },
+      { label: 'Maybe after a win.', fx: { team: { m: -1 }, coach: 0 }, say: 'Not yet' }]); });
+    if ((hc.age || 50) > 0) T.push(function () { return out('"My contract is something we should talk about at some point. I would like to know you see me here long term."', [
+      { label: 'You are our guy.', fx: { coach: 8 }, say: 'Vote of confidence' },
+      { label: 'Let us see how the year goes.', fx: { coach: -2 }, say: 'Kept him waiting' }]); });
+    return pickTpl(save, 'coach', T)();
   }
 
   function pickConversation(save, ctx, lines, won) {
@@ -592,6 +683,47 @@
       ] };
     }
     var r = Math.random();
+    if (Math.random() < 0.7) {
+      var ros2 = roster, st2 = ros2[Math.floor(Math.random() * 5)], vet = ros2.filter(function (p) { return (p.age || 25) >= 29; })[Math.floor(Math.random() * 3)] || ros2[0],
+        rook = ros2.filter(function (p) { return (p.age || 30) <= 22; })[0], mate = ros2[Math.floor(Math.random() * 8)], bn = ros2[5 + Math.floor(Math.random() * 5)] || ros2[ros2.length - 1];
+      var P = [];
+      P.push(function () { return conv(st2, '"I want the ball more late in games. I think I can do more for this team."', [
+        { label: 'Fair. We will find shots.', fx: { s: { m: 4, t: 3 }, team: { m: -1 } }, say: 'Promised touches' },
+        { label: 'Fit into the system.', fx: { s: { m: -3, t: 2 } }, say: 'Told him to fit in' }], st2); });
+      P.push(function () { return conv(st2, '"I am in a funk, boss. Nothing is falling. Can we talk?"', [
+        { label: 'Stay with it. I trust you.', fx: { s: { m: 4, t: 4 } }, say: 'Backed him' },
+        { label: 'Extra shooting work tomorrow.', fx: { s: { m: 1, t: 2 } }, say: 'Extra work' },
+        { label: 'Take a few days off.', fx: { s: { m: 3, t: 0 }, coach: -1 }, say: 'Gave him rest' }], st2); });
+      P.push(function () { return conv(vet, '"I would like to wear the captain\u2019s armband. The room listens to me."', [
+        { label: 'It is yours.', fx: { s: { m: 6, t: 5 }, team: { m: 1 } }, say: 'Named captain' },
+        { label: 'Not this year.', fx: { s: { m: -4, t: -2 } }, say: 'Passed over' }], vet); });
+      if (rook) P.push(function () { return conv(rook, '"I am trying to learn the game but it is moving fast. Can someone take me under their wing?"', [
+        { label: 'I will pair you with a veteran.', fx: { s: { m: 4, t: 4 } }, say: 'Assigned a mentor' },
+        { label: 'Learn by playing.', fx: { s: { m: -1, t: 1 } }, say: 'Sink or swim' }], rook); });
+      P.push(function () { return conv(mate, '"Me and ' + last(st2.name === mate.name ? ros2[1].name : st2.name) + ' are not seeing eye to eye lately. It is starting to show on the court."', [
+        { label: 'Sit them down together.', fx: { s: { m: 2, t: 3 }, team: { m: 1 } }, say: 'Settled it' },
+        { label: 'Let them work it out.', fx: { s: { m: -2, t: -1 } }, say: 'Left it alone' }], mate); });
+      P.push(function () { return conv(st2, '"Fans are all over my mentions after last night. I want to answer back."', [
+        { label: 'Stay off social media.', fx: { s: { m: -1, t: 3 }, fans: 1 }, say: 'Kept quiet' },
+        { label: 'Say your piece.', fx: { s: { m: 3, t: 1 }, fans: -3 }, say: 'Let him post' }], st2); });
+      P.push(function () { return conv(bn, '"My family is in town. Can I get a day away from the facility?"', [
+        { label: 'Take the day.', fx: { s: { m: 5, t: 3 } }, say: 'Day off granted' },
+        { label: 'Not this week.', fx: { s: { m: -3, t: -2 } }, say: 'Said no' }], bn); });
+      P.push(function () { return conv(bn, '"I think I should be getting more minutes. Can you talk to the coach?"', [
+        { label: 'I will have a word.', fx: { s: { m: 4, t: 3 }, coach: -1 }, say: 'Spoke to the coach' },
+        { label: 'Wait for your chance.', fx: { s: { m: -3, t: 0 } }, say: 'Told him to wait' }], bn); });
+      P.push(function () { return conv(st2, '"A shoe company wants me for a campaign. It means time away from practice. What do you think?"', [
+        { label: 'Go for it.', fx: { s: { m: 5, t: 2 }, fans: 1, coach: -1 } , say: 'Approved' },
+        { label: 'Focus on basketball.', fx: { s: { m: -3, t: 1 }, coach: 1 }, say: 'Said no' }], st2); });
+      P.push(function () { return conv(vet, '"I want to run an extra film session with the young guys. Okay with you?"', [
+        { label: 'Great idea.', fx: { s: { m: 3, t: 3 }, team: { m: 1 } }, say: 'Film session' },
+        { label: 'Let them rest.', fx: { s: { m: 0, t: 0 }, team: { m: 1 } }, say: 'Rest instead' }], vet); });
+      P.push(function () { return conv(st2, '"I have been hearing the trade rumours. Am I part of the plans here?"', [
+        { label: 'You are not going anywhere.', fx: { s: { m: 5, t: 5 } }, say: 'Reassured him' },
+        { label: 'Everyone has a price.', fx: { s: { m: -6, t: -5 } }, say: 'Honest answer' },
+        { label: 'Focus on the games.', fx: { s: { m: -1, t: 0 } }, say: 'Deflected' }], st2); });
+      return pickTpl(save, 'player', P)();
+    }
     if (r < 0.3 && topPlayer && topScorer.s.pts >= 15) {
       return conv(topPlayer, '"Thanks for believing in me, boss. A fellow plays better when he knows somebody is behind him."', [
         { label: 'You are the franchise.', fx: { s: { m: 6, t: 5 }, team: { m: -1 } }, say: 'Backed him' },
@@ -632,6 +764,8 @@
     }
     if (fx.inj && root.League) notes.push(root.League.injuryChoice(save, fx.inj.id, fx.inj.mode, save.myId));
     if (fx.offer && root.League) notes.push(root.League.doOffer(save, save.myId, fx.offer.them, fx.offer.give, fx.offer.get));
+    if (fx.deal && root.League) notes.push(root.League.doDeal(save, save.myId, fx.deal));
+    if (fx.sack && root.Coach) { var f0 = root.Coach.fire(save, save.myId, 'hc'), n0 = root.Coach.bestFor(save.coach.pool, 'hc'); if (n0) root.Coach.hire(save, save.myId, 'hc', n0); m.coach = 50; notes.push(f0 ? 'Fired ' + f0.n + (n0 ? ', hired ' + n0.n : '') : 'No coach to fire'); }
     if (fx.coach) { m.coach = clamp(m.coach + fx.coach); notes.push('Coach trust ' + (fx.coach > 0 ? '+' : '') + fx.coach); }
     if (fx.fans) { m.fans = clamp(m.fans + fx.fans); notes.push('Fans ' + (fx.fans > 0 ? '+' : '') + fx.fans); }
     return notes.length ? notes.join(' · ') : c.say;

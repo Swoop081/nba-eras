@@ -742,22 +742,26 @@
     if (maxK >= 3) for (i = 0; i < t; i++) for (j = i + 1; j < t; j++) for (k = j + 1; k < t; k++) fn([i, j, k]);
   }
   /* I put players and picks on the block; every club says the best thing it would give back, salary fillers included. */
+  function bestFrom(save, meId, tid, give, giveK, max) {
+    var c = tctx(save, meId, tid, max), mine = rosterOf(save, meId), theirs = rosterOf(save, tid);
+    var A = theirs.map(function (p) { return { p: p, v: tradeValue(p) }; }).concat(picksOf(save, tid).map(function (k) { return { k: k, v: pickValue(save, k) }; }));
+    var best = null;
+    A.sort(function (a, b) { return b.v - a.v; });
+    subsets(A.length, 3, function (ix) {
+      var d = { meId: meId, give: give.slice(), giveK: giveK.slice(), get: [], getK: [] }, nv = 0;
+      ix.forEach(function (i) { if (A[i].p) d.get.push(A[i].p); else d.getK.push(A[i].k); nv += A[i].v; });
+      var a0 = assess(save, c, d);
+      if (a0.r < 1.1) return;
+      if (!complete(save, c, d, mine, theirs, false)) return;
+      if (!best || nv > best.nv) best = { tid: tid, give: d.give, giveK: d.giveK, get: d.get, getK: d.getK, nv: nv };
+    }, 8);
+    return best;
+  }
   function findOffers(save, meId, give, giveK, max) {
     var out = [];
     save.ids.forEach(function (tid) {
       if (tid === meId) return;
-      var c = tctx(save, meId, tid, max), mine = rosterOf(save, meId), theirs = rosterOf(save, tid);
-      var A = theirs.map(function (p) { return { p: p, v: tradeValue(p) }; }).concat(picksOf(save, tid).map(function (k) { return { k: k, v: pickValue(save, k) }; }));
-      var best = null;
-      A.sort(function (a, b) { return b.v - a.v; });
-      subsets(A.length, 3, function (ix) {
-        var d = { meId: meId, give: give.slice(), giveK: giveK.slice(), get: [], getK: [] }, nv = 0;
-        ix.forEach(function (i) { if (A[i].p) d.get.push(A[i].p); else d.getK.push(A[i].k); nv += A[i].v; });
-        var a0 = assess(save, c, d);
-        if (a0.r < 1.1) return;
-        if (!complete(save, c, d, mine, theirs, false)) return;
-        if (!best || nv > best.nv) best = { tid: tid, give: d.give, giveK: d.giveK, get: d.get, getK: d.getK, nv: nv };
-      }, 8);
+      var best = bestFrom(save, meId, tid, give, giveK, max);
       if (best) out.push(best);
     });
     return out.sort(function (a, b) { return b.nv - a.nv; });
@@ -964,28 +968,7 @@
     if (save.phase !== 'regular' || save.day > save.days.length * 0.75) return;
     var others = teams.filter(function (t) { return t.id !== myId; });
     if (others.length < 2) return;
-    if (Math.random() < 0.1) {
-      var a = others[Math.floor(Math.random() * others.length)], b = others[Math.floor(Math.random() * others.length)];
-      if (a.id !== b.id) {
-        var pa = rosterOf(save, a.id).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(2, 9);
-        var pb = rosterOf(save, b.id).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).slice(2, 9);
-        var done = false;
-        pa.sort(function () { return Math.random() - 0.5; }).forEach(function (x) {
-          if (done) return;
-          pb.forEach(function (y) {
-            if (done || x.inj > 0 || y.inj > 0) return;
-            var vx = tradeValue(x), vy = tradeValue(y);
-            if (Math.abs(vx - vy) / Math.max(vx, vy) > 0.2) return;
-            var payA = payroll(save, a.id) - x.salary + y.salary, payB = payroll(save, b.id) - y.salary + x.salary;
-            if (payA > save.lg.cap || payB > save.lg.cap) return;
-            x.team = b.id; y.team = a.id;
-            logDeal(save, x, 'Traded', b.id); logDeal(save, y, 'Traded', a.id);
-            wire(save, a.city + ' send ' + x.name + ' to ' + b.city + ' for ' + y.name + '.');
-            done = true;
-          });
-        });
-      }
-    }
+    if (Math.random() < 0.3) aiTrade(save, myId, teams);
     if (Math.random() < 0.12) {
       var t = others[Math.floor(Math.random() * others.length)];
       var roster = rosterOf(save, t.id), hurt = roster.filter(function (p) { return p.inj > 3; }).length;
@@ -1055,6 +1038,62 @@
     return name + ' will heal properly. No risks.';
   }
 
+  function pkLabel(k) { return k.y + ' ' + (k.r === 1 ? 'first' : 'second') + '-round pick'; }
+  function listOf(ps, ks) {
+    var a = ps.map(function (p) { return p.name; }).concat(ks.map(pkLabel));
+    return a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+  }
+  function cityName(save, id) { var t = (save.lg.teams || []).filter(function (x) { return x.id === id; })[0]; return t ? t.city : id.split('-').map(function (w) { return w[0].toUpperCase() + w.slice(1); }).join(' '); }
+  /* A club shops for one of my rotation players or a pick and offers a package of players and picks. */
+  function makeDeal(save, myId, teams) {
+    var mine = rosterOf(save, myId).filter(function (p) { return !p.inj; }).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; });
+    if (mine.length < 9) return null;
+    var pickMine = picksOf(save, myId), r = Math.random(), give = [], giveK = [];
+    if (r < 0.2 && pickMine.length) giveK = [pickMine[Math.floor(Math.random() * pickMine.length)]];
+    else {
+      give = [mine[1 + Math.floor(Math.random() * 7)]];
+      if (Math.random() < 0.3) { var q = mine[Math.floor(Math.random() * 9)]; if (q && q !== give[0]) give.push(q); }
+    }
+    var tids = teams.filter(function (t) { return t.id !== myId; }).map(function (t) { return t.id; }).sort(function () { return Math.random() - 0.5; }).slice(0, 6), best = null;
+    tids.forEach(function (tid) {
+      var o = bestFrom(save, myId, tid, give, giveK, MAX_ROSTER);
+      if (o && (o.get.length + o.getK.length) >= 1 && (!best || (o.get.length + o.getK.length > best.get.length + best.getK.length && Math.random() < 0.7))) best = o;
+    });
+    if (!best) return null;
+    best.city = cityOf(teams, best.tid);
+    best.text = 'The ' + best.city + ' offer ' + listOf(best.get, best.getK) + ' for ' + listOf(best.give, best.giveK) + '.';
+    return best;
+  }
+  function doDeal(save, myId, d) {
+    var give = d.give.map(function (id) { return byId(save, id); }), get = d.get.map(function (id) { return byId(save, id); });
+    if (give.concat(get).some(function (p) { return !p; }) || give.some(function (p) { return p.team !== myId; }) || get.some(function (p) { return p.team !== d.them; })) return 'The offer is off. The situation changed.';
+    var giveK = (save.lg.picks || []).filter(function (k) { return d.giveK.indexOf(pickId(k)) >= 0 && k.t === myId; });
+    var getK = (save.lg.picks || []).filter(function (k) { return d.getK.indexOf(pickId(k)) >= 0 && k.t === d.them; });
+    if (giveK.length !== d.giveK.length || getK.length !== d.getK.length) return 'The offer is off. The situation changed.';
+    if (rosterOf(save, myId).length - give.length + get.length > MAX_ROSTER) return 'The offer is off. You do not have the roster room.';
+    executeTrade(save, myId, d.them, give, get, giveK, getK);
+    return 'Trade done: ' + listOf(get, getK) + ' for ' + listOf(give, giveK) + '.';
+  }
+  /* Two CPU clubs make a real deal: several players and picks can change hands. */
+  function aiTrade(save, myId, teams) {
+    var others = teams.filter(function (t) { return t.id !== myId; });
+    var a = others[Math.floor(Math.random() * others.length)], b = others[Math.floor(Math.random() * others.length)];
+    if (!a || !b || a.id === b.id) return false;
+    var ra = rosterOf(save, a.id).filter(function (p) { return !p.inj; }).sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; });
+    if (ra.length < 10) return false;
+    var give = [ra[2 + Math.floor(Math.random() * 7)]], giveK = [], pk = picksOf(save, a.id);
+    if (Math.random() < 0.35) { var q = ra[2 + Math.floor(Math.random() * 7)]; if (q !== give[0]) give.push(q); }
+    if (Math.random() < 0.25 && pk.length) giveK = [pk[Math.floor(Math.random() * pk.length)]];
+    var o = bestFrom(save, a.id, b.id, give, giveK, MAX_ROSTER);
+    if (!o || !(o.get.length + o.getK.length)) return false;
+    var cost = sum(give, function (p) { return tradeValue(p); }) + sum(giveK, function (k) { return pickValue(save, k); });
+    var back = sum(o.get, function (p) { return tradeValue(p); }) + sum(o.getK, function (k) { return pickValue(save, k); });
+    if (back < cost * 0.75) return false;
+    if (rosterOf(save, a.id).length - give.length + o.get.length > MAX_ROSTER) return false;
+    executeTrade(save, a.id, b.id, give, o.get, giveK, o.getK);
+    wire(save, a.city + ' trade ' + listOf(give, giveK) + ' to ' + b.city + ' for ' + listOf(o.get, o.getK) + '.');
+    return true;
+  }
   function doOffer(save, myId, themId, giveId, getId) {
     var a = byId(save, giveId), b = byId(save, getId);
     if (!a || !b || a.team !== myId || b.team !== themId) return 'The offer is off. The situation changed.';
@@ -1066,7 +1105,7 @@
     setNumbers: setNumbers, fixNumbers: fixNumbers, normName: normName,
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
-    wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
+    wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, makeDeal: makeDeal, doDeal: doDeal, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,

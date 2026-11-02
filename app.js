@@ -1545,6 +1545,14 @@
     if (save.phase === 'regular') results.forEach(function (g) { League.noteTeamGame(save, g.home, g.away, g.hs, g.as); });
     Season.record(save, results);
     League.aiMoves(save, save.myId, save.ids.map(teamById));
+    if (typeof Coach !== 'undefined' && save.coach && save.phase === 'regular' && (save.day || 0) % 4 === 0) {
+      var strength = {};
+      save.ids.forEach(function (id) {
+        var top = League.rosterOf(save, id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
+        strength[id] = Math.max(0.12, Math.min(0.85, 0.5 + (top.reduce(function (a, b) { return a + b; }, 0) / (top.length || 1) - 58) * 0.022));
+      });
+      Coach.inSeason(save, save.myId, strength);
+    }
     rosterCache = {};
     if (League.formCheck(save)) rosterCache = {};
     if (Social.has(save.year)) Social.day(save, results, results.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
@@ -4728,7 +4736,15 @@
     } else {
       var pl = ev.pid ? rosterOf(save.myId).filter(function (p) { return p.id === ev.pid; })[0] : null;
       var who = ev.pid ? ev.who : ev.coach ? 'Coach' : 'Group chat';
-      if (pl) {
+      if (ev.cslug) {
+        var hch = el('div', 'ph-head');
+        hch.appendChild(makeAvatar({ id: ev.cslug, name: ev.who }));
+        var hw = el('div', 'ph-who');
+        hw.appendChild(el('b', null, 'Coach ' + ev.who.split(' ').slice(-1)[0]));
+        hw.appendChild(el('small', null, 'Messages \u00B7 Head coach \u00B7 now'));
+        hch.appendChild(hw);
+        card.appendChild(hch);
+      } else if (pl) {
         var h = el('div', 'ph-head');
         h.appendChild(makeAvatar(pl));
         var w = el('div', 'ph-who');

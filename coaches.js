@@ -105,6 +105,33 @@
     if (s[role]) save.coach.pool.push(s[role]);
     c.role = role; s[role] = c; save.coach.since[teamId + role] = save.year; return true;
   }
+  function teamName(id) { return id.split('-').map(function (w) { return w[0].toUpperCase() + w.slice(1); }).join(' '); }
+  function sack(save, id, why) {
+    var C = save.coach, out = fire(save, id, 'hc');
+    if (!out) return false;
+    var nw = bestFor(C.pool.filter(function (c) { return c !== out; }), 'hc');
+    if (nw) hire(save, id, 'hc', nw);
+    var f = C.fy && C.fy.y === save.year ? C.fy : (C.fy = { y: save.year, n: 0 }); f.n++;
+    C.since[id + 'hcd'] = (save.year * 1000) + (save.day || 0);
+    if (root.League && root.League.wire) root.League.wire(save, teamName(id) + ' ' + (why || 'fire') + ' head coach ' + out.n + (nw ? ' and name ' + nw.n + ' to replace him.' : '.'));
+    return true;
+  }
+  /* In-season: AI clubs that badly underperform their roster, or sink far below .500, can fire the head coach. About a third of the league's yearly changes happen mid-season. */
+  function inSeason(save, myId, strength) {
+    if (!save.coach || save.phase !== 'regular') return;
+    var C = save.coach, f = C.fy && C.fy.y === save.year ? C.fy : (C.fy = { y: save.year, n: 0 });
+    if (f.n >= 4) return;
+    var now = save.year * 1000 + (save.day || 0);
+    Object.keys(C.staff).forEach(function (id) {
+      if (id === myId || !C.staff[id].hc || f.n >= 4) return;
+      var r = save.rec && save.rec[id]; if (!r) return;
+      var g = r.w + r.l; if (g < 20) return;
+      if (C.since[id + 'hcd'] && now - C.since[id + 'hcd'] < 60) return;
+      var wp = r.w / g, exp = strength && strength[id] !== undefined ? strength[id] : 0.5;
+      var gap = exp - wp, pressure = (wp < 0.3 ? 0.5 : wp < 0.38 ? 0.25 : 0) + Math.max(0, gap - 0.12) * 2;
+      if (pressure > 0 && Math.random() < 0.012 * pressure * 4) sack(save, id, wp < 0.3 ? 'fire' : 'part ways with');
+    });
+  }
   /* after each season: ages, small rating drift, AI clubs fire weak head coaches and refill empty chairs */
   function offseason(save, myId, rec) {
     if (!save.coach) return;
@@ -117,8 +144,10 @@
     Object.keys(C.staff).forEach(function (id) {
       if (id === myId) return;
       var s = C.staff[id], r = recOf[id], wp = r && r.w + r.l ? r.w / (r.w + r.l) : 0.5;
-      if (s.hc && wp < 0.34 && Math.random() < 0.45) {
+      var fy = C.fy && C.fy.y === save.year ? C.fy.n : 0;
+      if (s.hc && fy < 8 && Math.random() < (wp < 0.3 ? 0.4 : wp < 0.4 ? 0.2 : wp < 0.5 ? 0.04 : 0.01)) {
         var out = fire(save, id, 'hc'), nw = bestFor(C.pool.filter(function (c) { return c !== out; }), 'hc');
+        if (!C.fy || C.fy.y !== save.year) C.fy = { y: save.year, n: 0 }; C.fy.n++;
         if (nw) { hire(save, id, 'hc', nw); if (root.League && root.League.wire) root.League.wire(save, id.split('-').map(function (w) { return w[0].toUpperCase() + w.slice(1); }).join(' ') + ' part ways with ' + out.n + ' and hire ' + nw.n + ' as head coach.'); }
       }
       ['hc', 'ao', 'ad'].forEach(function (rl) { if (!s[rl]) { var b = bestFor(C.pool, rl); if (b) hire(save, id, rl, b); } });
@@ -127,5 +156,5 @@
   }
   function owned(save, myId) { var s = staff(save, myId); return s ? [['hc', 'Head coach'], ['ao', 'Assistant coach'], ['ad', 'Assistant coach']].map(function (x) { return { role: x[0], label: x[1], c: s[x[0]] }; }) : []; }
 
-  root.Coach = { build: build, staff: staff, bonus: bonus, apply: apply, devBonus: devBonus, fromRetired: fromRetired, leadership: leadership, fire: fire, hire: hire, offseason: offseason, owned: owned, bestFor: bestFor, score: score, slug: slug };
+  root.Coach = { build: build, staff: staff, bonus: bonus, apply: apply, devBonus: devBonus, fromRetired: fromRetired, leadership: leadership, fire: fire, hire: hire, offseason: offseason, inSeason: inSeason, sack: sack, owned: owned, bestFor: bestFor, score: score, slug: slug };
 })(typeof window !== 'undefined' ? window : globalThis);
