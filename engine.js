@@ -70,9 +70,10 @@
   }
 
   /* stars take a bigger share of the shots, but their efficiency flattens out above the 60s */
-  var USEADD = -0.5, REBEXP = 1.25, ASTEXP = 1.6;
+  var USEADD = -0.5, REBEXP = 1.0, ASTEXP = 1.6;
+  function hf(p) { return p.hgt ? Math.pow(p.hgt / 79, 2) : 1; }   /* the taller man gets more of the rebounds */
   function soft(v) { return v > 60 ? 60 + (v - 60) * SOFT : v; }
-  var SOFT = 0.8;
+  var SOFT = 0.92;
   var SHARE = [1, 1, 1, 1, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
 
   /* Real leagues are tighter than raw ratings suggest: comp pulls every skill toward 55 so rating gaps decide fewer games. */
@@ -148,7 +149,7 @@
     ev.who = shooter.p.name;
     var pts = 0;
     var si = ni(shooter), sd = nd(shooter);
-    var fouled = r() < pr.foul + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + (sd.double ? 0.015 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
+    var fouled = r() < pr.foul + Math.max(0, shooter.p.ratings.sco - 55) * 0.0005 + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + (sd.double ? 0.015 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
     if (fouled) {
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1) * (ni(x).press || ni(x).paint ? 1.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
@@ -196,14 +197,14 @@
     }
     var offRebP = pr.orb * (0.85 + (avg(O, function (x) { return x.p.ratings.orb; }) - avg(D, function (x) { return x.p.ratings.drb; })) / 250) + 0.014 * cnt(O, 'crash') - 0.01 * cnt(D, 'crash');
     if (r() < offRebP) {
-      var reb = pick(r, O, function (x) { return x.share * Math.pow(x.p.ratings.orb, REBEXP) * (ni(x).crash ? 1.9 : 1); });
+      var reb = pick(r, O, function (x) { return x.share * Math.pow(x.p.ratings.orb, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); });
       reb.s.orb++;
       var first = ev;
       var more = possession(r, O, D, pr, st, mo, md);
       st.ev.second = true;
       return pts + more;
     }
-    pick(r, D, function (x) { return x.share * Math.pow(x.p.ratings.drb, REBEXP) * (ni(x).crash ? 1.9 : 1); }).s.drb++;
+    pick(r, D, function (x) { return x.share * Math.pow(x.p.ratings.drb, REBEXP) * hf(x.p) * (ni(x).crash ? 1.9 : 1); }).s.drb++;
     return pts;
   }
 
