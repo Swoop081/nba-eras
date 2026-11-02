@@ -2813,11 +2813,11 @@
     document.getElementById('club-title').textContent = me.city + ' ' + me.name;
     var c1 = (me.colors && me.colors[0]) || '#C8102E', c2 = (me.colors && me.colors[1]) || '#FFFFFF';
     var abaYrs = (mid === 'brooklyn-nets' || mid === 'indiana-pacers') ? 1976 : 0;
-    var titles = (fh.champs || []).filter(function (y) { return y <= save.year; }).map(function (y) { return { y: y, aba: abaYrs && y <= abaYrs }; });
+    var titles = (fh.champs || []).filter(function (y) { return y <= save.year; }).map(function (y) { return { y: y, aba: (abaYrs && y <= abaYrs) || (mid === 'los-angeles-lakers' && y === 1948), lgn: mid === 'los-angeles-lakers' && y === 1948 ? 'NBL' : 'ABA' }; });
     (save.lg.history || []).forEach(function (h) { if (h.champion === save.myId && h.year >= save.year) titles.push({ y: h.year + 1, you: true }); });
     titles.sort(function (a, b) { return b.y - a.y; });
     var nba = titles.filter(function (t) { return !t.aba; }).length;
-    document.getElementById('club-sub').textContent = titles.length ? (nba + ' championship' + (nba === 1 ? '' : 's') + (titles.length > nba ? ' + ' + (titles.length - nba) + ' ABA' : '')) : 'Still chasing the first banner';
+    document.getElementById('club-sub').textContent = titles.length ? (nba + ' championship' + (nba === 1 ? '' : 's') + (titles.length > nba ? ' + ' + (titles.length - nba) + (mid === 'los-angeles-lakers' ? ' NBL' : ' ABA') : '')) : 'Still chasing the first banner';
     var rafters = el('div', 'rafters');
     rafters.style.setProperty('--c1', c1); rafters.style.setProperty('--c2', c2);
     rafters.appendChild(el('div', 'rf-beam'));
@@ -2828,7 +2828,7 @@
       var b = el('div', 'bn' + (t.aba ? ' aba' : '') + (t.you ? ' new' : ''));
       b.appendChild(el('i', 'rope'));
       var cl = el('div', 'cloth');
-      cl.appendChild(el('small', null, t.aba ? 'ABA' : 'NBA'));
+      cl.appendChild(el('small', null, t.aba ? t.lgn : 'NBA'));
       cl.appendChild(el('b', null, String(t.y)));
       cl.appendChild(el('small', null, 'CHAMPIONS'));
       b.appendChild(cl); row1.appendChild(b);
@@ -2852,6 +2852,17 @@
         else if (!isNum) st = { bg: '#E03A3E', fg: '#FFFFFF', trim: '#FFFFFF', mark: '', nm: '#FFFFFF' };
         else st = { bg: '#FFFFFF', fg: '#E03A3E', trim: '#E03A3E', mark: 'ATLANTA HAWKS' };
       } else if (!isNum) st = { bg: c1, fg: c2, trim: c2, mark: '', nm: c2 };
+      if (mid === 'los-angeles-lakers' && isNum) {
+        var gid = 'ar' + Math.floor(Math.random() * 1e9), s2 = sur.replace('&', '&amp;'), fz = s2.length > 10 ? 10 : s2.length > 7 ? 12 : 14;
+        j.insertAdjacentHTML('beforeend', '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true"><defs><path id="' + gid + '" d="M26 40 Q60 22 94 40"/></defs>' +
+          '<path d="M34 6 L46 6 Q60 24 74 6 L86 6 L112 30 L98 50 L96 50 L96 142 Q60 148 24 142 L24 50 L22 50 L8 30 Z" fill="#FDB927"/>' +
+          '<path d="M34 6 L46 6 Q60 24 74 6 L86 6" fill="none" stroke="#552583" stroke-width="3.5"/>' +
+          '<path d="M8 30 L22 50 M112 30 L98 50" stroke="#552583" stroke-width="3.5" fill="none"/>' +
+          '<path d="M25 52 L25 140 M95 52 L95 140" stroke="#552583" stroke-width="2.5" fill="none"/>' +
+          '<text font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + fz + '" letter-spacing="1" fill="#552583" text-anchor="middle"><textPath href="#' + gid + '" startOffset="50%">' + s2 + '</textPath></text>' +
+          '<text x="60" y="' + (num.length > 1 ? 106 : 108) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + (num.length > 1 ? 52 : 60) + '" fill="#FFFFFF" stroke="#552583" stroke-width="3" paint-order="stroke">' + num + '</text></svg>');
+        row2.appendChild(j); return;
+      }
       var bn = el('div', 'rb');
       bn.style.cssText = 'background:' + st.bg + ';border-color:' + st.trim + ';color:' + st.fg;
       if (st.mark) bn.appendChild(el('small', 'rbm', st.mark));
