@@ -1460,7 +1460,9 @@
     });
     byOvr.forEach(function (p) { if (st.length < 5 && st.indexOf(p) < 0) st.push(p); });
     st.sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
-    return st.concat(byOvr.filter(function (p) { return st.indexOf(p) < 0; }));
+    var rest = byOvr.filter(function (p) { return st.indexOf(p) < 0; });
+    if (save.year === 2026) rest.sort(function (a, b) { return (b.mp !== undefined ? b.mp : 3 + (b.ratings.ovr - 40) * 0.55) - (a.mp !== undefined ? a.mp : 3 + (a.ratings.ovr - 40) * 0.55); });
+    return st.concat(rest);
   }
   function rotOrder(id) {
     var ros = League.rosterOf(save, id), hurt = ros.filter(function (p) { return p.inj > 0; });
@@ -1474,7 +1476,7 @@
   function openDepth(team) {
     save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
     var ord = rotOrder(team.id).filter(function (p) { return !(p.inj > 0); }).slice(0, 10);
-    function cur() { var m = (save.plan.mins && save.plan.mins.slice()) || Engine.DEFMIN.slice(); while (m.length < 10) m.push(4); return m; }
+    function cur() { var m = (save.plan.mins && save.plan.mins.slice()) || Engine.defaultMins(ord); while (m.length < 10) m.push(4); return m; }
     hubSheet('Depth chart', function (sh, close) {
       sh.classList.add('tall');
       var box = el('div', 'dc-list'); sh.appendChild(box);

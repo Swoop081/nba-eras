@@ -30,6 +30,7 @@ for p in P:
         g = lambda c: round(float(s[c]), 2)
         stats.append([p['name'], int(s.G), g('MP'), g('FG'), g('FGA'), g('3P'), g('3PA'), g('FT'), g('FTA'), g('ORB'), g('DRB'), g('AST'), g('STL'), g('BLK'), g('TOV'), g('PF'), g('PTS')])
         has[p['id']] = 1
+        p['mp'] = round(float(s.MP), 1)   # last season's minutes: how much the coach really plays him
 with open(tmp + '/raw/rosters.csv', 'w', encoding='utf-8', newline='') as fh:
     w = csv.writer(fh); w.writerow(['team', 'Player', 'Pos', 'Ht', 'Age', 'GP']); w.writerows(rows)
 with open(tmp + '/raw/stats.csv', 'w', encoding='utf-8', newline='') as fh:

@@ -210,8 +210,11 @@
   /* Who is on the floor: the best five start; the bench spells them in a window each quarter. */
   /* minutes each rotation slot plays in a normal game; the coach can change these (plan.mins) */
   var DEFMIN = [34, 33, 31, 29, 27, 24, 21, 17, 13, 11];
-  function targets(plan, n) {
-    var base = (plan && plan.mins && plan.mins.length ? plan.mins : DEFMIN).slice(0, n), mn = plan && plan.minutes, tot = 0, i;
+  /* minutes a player is expected to play: last season's real figure when we have it, else a guess from his rating */
+  function wantMin(p) { return p.mp !== undefined ? p.mp : Math.max(4, 3 + (p.ratings.ovr - 40) * 0.55); }
+  function targets(plan, n, T) {
+    var custom = plan && plan.mins && plan.mins.length;
+    var base = (custom ? plan.mins : (T ? T.map(function (x, i) { var p = x.p || x; return p.mp !== undefined ? 0.5 * DEFMIN[Math.min(i, 9)] + 0.5 * p.mp : DEFMIN[Math.min(i, 9)]; }) : DEFMIN)).slice(0, n), mn = plan && plan.minutes, tot = 0, i;
     while (base.length < n) base.push(4);
     for (i = 0; i < n; i++) {
       if (mn === 'heavy') base[i] *= i < 5 ? 1.1 : 0.7;
@@ -231,7 +234,7 @@
     var rest = (g.rest && g.rest[side]) || {};
     function out(i) { return T[i].s.pf >= 6 || (rest[T[i].p.id] || 0) > g.n; }
     if (n >= 7 && g.q < 4 && !late) {
-      var S = (g.seg = g.seg || {})[side] = (g.seg || {})[side] || { k: -1, idx: base, played: T.map(function () { return 0; }), tg: targets(g.plan && g.plan[side], n) };
+      var S = (g.seg = g.seg || {})[side] = (g.seg || {})[side] || { k: -1, idx: base, played: T.map(function () { return 0; }), tg: targets(g.plan && g.plan[side], n, T) };
       var segIdx = Math.min(31, g.q * 8 + Math.floor((g.k / g.limit) * 8));
       if (segIdx !== S.k) {
         S.k = segIdx;
@@ -354,5 +357,5 @@
     return finalize(g);
   }
 
-  root.Engine = { DEFMIN: DEFMIN, simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
+  root.Engine = { DEFMIN: DEFMIN, defaultMins: function (ps) { return targets(null, ps.length, ps).map(function (m) { return Math.round(m); }); }, simulate: simulate, columnsFor: columnsFor, params: params, register: register, setRules: setRules, start: start, step: step, finalize: finalize };
 })(window);

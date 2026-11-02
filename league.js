@@ -284,6 +284,7 @@
       if (p.status !== 'active') return;
       var before = p.ratings.ovr, age = p.age || 26;
       p.prev = JSON.parse(JSON.stringify(p.ratings)); p.prevPot = p.pot;
+      delete p.mp;   /* last season's minutes no longer describe him */
       (p.ovrHist || (p.ovrHist = [])).push({ y: save.year, o: before, a: age });
       p.age = age + 1;
       var d = ageDelta(age + 1) + (age + 1 <= 25 ? (p.pot - before) * 0.2 : 0) + gauss() * 1.3 + (p.team && root.Coach && age + 1 <= 27 ? root.Coach.devBonus(save, p.team) * 0.9 : 0);

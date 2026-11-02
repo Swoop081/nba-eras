@@ -30,7 +30,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.8
   },
   {
    "id": "luka-doncic",
@@ -60,7 +61,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.8
   },
   {
    "id": "shai-gilgeousalexander",
@@ -90,7 +92,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.2
   },
   {
    "id": "giannis-antetokounmpo",
@@ -120,7 +123,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.9
   },
   {
    "id": "anthony-edwards",
@@ -150,7 +154,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.0
   },
   {
    "id": "victor-wembanyama",
@@ -180,7 +185,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.2
   },
   {
    "id": "jayson-tatum",
@@ -210,7 +216,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.6
   },
   {
    "id": "donovan-mitchell",
@@ -240,7 +247,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.5
   },
   {
    "id": "cade-cunningham",
@@ -270,7 +278,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.9
   },
   {
    "id": "kevin-durant",
@@ -300,7 +309,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 36.4
   },
   {
    "id": "jalen-brunson",
@@ -330,7 +340,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.0
   },
   {
    "id": "paolo-banchero",
@@ -360,7 +371,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.8
   },
   {
    "id": "tyrese-maxey",
@@ -390,7 +402,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 38.0
   },
   {
    "id": "devin-booker",
@@ -420,7 +433,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.5
   },
   {
    "id": "jalen-johnson",
@@ -450,7 +464,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.2
   },
   {
    "id": "tyrese-haliburton",
@@ -509,7 +524,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.9
   },
   {
    "id": "joel-embiid",
@@ -539,7 +555,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.6
   },
   {
    "id": "domantas-sabonis",
@@ -569,7 +586,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.7
   },
   {
    "id": "alperen-sengun",
@@ -599,7 +617,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.3
   },
   {
    "id": "karlanthony-towns",
@@ -629,7 +648,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.0
   },
   {
    "id": "jaylen-brown",
@@ -659,7 +679,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.4
   },
   {
    "id": "cooper-flagg",
@@ -689,7 +710,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.5
   },
   {
    "id": "jamal-murray",
@@ -719,7 +741,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.4
   },
   {
    "id": "chet-holmgren",
@@ -749,7 +772,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.9
   },
   {
    "id": "jalen-williams",
@@ -779,7 +803,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.4
   },
   {
    "id": "kawhi-leonard",
@@ -809,7 +834,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.1
   },
   {
    "id": "anthony-davis",
@@ -839,7 +865,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.3
   },
   {
    "id": "trae-young",
@@ -869,7 +896,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.6
   },
   {
    "id": "evan-mobley",
@@ -899,7 +927,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.9
   },
   {
    "id": "amen-thompson",
@@ -929,7 +958,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 37.4
   },
   {
    "id": "bam-adebayo",
@@ -959,7 +989,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.4
   },
   {
    "id": "lebron-james",
@@ -989,7 +1020,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.2
   },
   {
    "id": "ja-morant",
@@ -1019,7 +1051,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.5
   },
   {
    "id": "james-harden",
@@ -1049,7 +1082,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.8
   },
   {
    "id": "zion-williamson",
@@ -1079,7 +1113,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.7
   },
   {
    "id": "deni-avdija",
@@ -1109,7 +1144,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.3
   },
   {
    "id": "deaaron-fox",
@@ -1139,7 +1175,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.0
   },
   {
    "id": "scottie-barnes",
@@ -1169,7 +1206,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.5
   },
   {
    "id": "lauri-markkanen",
@@ -1199,7 +1237,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.4
   },
   {
    "id": "michael-porter-jr",
@@ -1229,7 +1268,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.5
   },
   {
    "id": "julius-randle",
@@ -1259,7 +1299,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.0
   },
   {
    "id": "brandon-miller",
@@ -1289,7 +1330,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.3
   },
   {
    "id": "kyrie-irving",
@@ -1348,7 +1390,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.2
   },
   {
    "id": "austin-reaves",
@@ -1378,7 +1421,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.5
   },
   {
    "id": "lamelo-ball",
@@ -1408,7 +1452,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.0
   },
   {
    "id": "og-anunoby",
@@ -1438,7 +1483,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.2
   },
   {
    "id": "desmond-bane",
@@ -1468,7 +1514,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.6
   },
   {
    "id": "franz-wagner",
@@ -1498,7 +1545,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.0
   },
   {
    "id": "jaren-jackson-jr",
@@ -1528,7 +1576,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.3
   },
   {
    "id": "jarrett-allen",
@@ -1558,7 +1607,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.1
   },
   {
    "id": "darius-garland",
@@ -1588,7 +1638,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.9
   },
   {
    "id": "tyler-herro",
@@ -1618,7 +1669,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.3
   },
   {
    "id": "derrick-white",
@@ -1648,7 +1700,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.1
   },
   {
    "id": "aaron-gordon",
@@ -1678,7 +1731,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.9
   },
   {
    "id": "jabari-smith-jr",
@@ -1708,7 +1762,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.1
   },
   {
    "id": "ivica-zubac",
@@ -1738,7 +1793,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.1
   },
   {
    "id": "damian-lillard",
@@ -1797,7 +1853,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.4
   },
   {
    "id": "stephon-castle",
@@ -1827,7 +1884,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.0
   },
   {
    "id": "paul-george",
@@ -1857,7 +1915,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.7
   },
   {
    "id": "norman-powell",
@@ -1887,7 +1946,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.6
   },
   {
    "id": "jalen-duren",
@@ -1917,7 +1977,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.2
   },
   {
    "id": "trey-murphy-iii",
@@ -1947,7 +2008,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.5
   },
   {
    "id": "jalen-green",
@@ -1977,7 +2039,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.9
   },
   {
    "id": "dylan-harper",
@@ -2007,7 +2070,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.6
   },
   {
    "id": "keyonte-george",
@@ -2037,7 +2101,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.1
   },
   {
    "id": "dyson-daniels",
@@ -2067,7 +2132,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.2
   },
   {
    "id": "naz-reid",
@@ -2097,7 +2163,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.1
   },
   {
    "id": "demar-derozan",
@@ -2126,7 +2193,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.2
   },
   {
    "id": "mikal-bridges",
@@ -2156,7 +2224,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.8
   },
   {
    "id": "ajay-mitchell",
@@ -2185,7 +2254,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.8
   },
   {
    "id": "nickeil-alexanderwalker",
@@ -2215,7 +2285,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.4
   },
   {
    "id": "onyeka-okongwu",
@@ -2245,7 +2316,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.0
   },
   {
    "id": "cameron-boozer",
@@ -2304,7 +2376,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.9
   },
   {
    "id": "rudy-gobert",
@@ -2334,7 +2407,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.3
   },
   {
    "id": "jaden-mcdaniels",
@@ -2364,7 +2438,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.7
   },
   {
    "id": "dejounte-murray",
@@ -2394,7 +2469,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.8
   },
   {
    "id": "miles-bridges",
@@ -2424,7 +2500,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.0
   },
   {
    "id": "jrue-holiday",
@@ -2453,7 +2530,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.4
   },
   {
    "id": "immanuel-quickley",
@@ -2483,7 +2561,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.9
   },
   {
    "id": "josh-giddey",
@@ -2513,7 +2592,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.1
   },
   {
    "id": "fred-vanvleet",
@@ -2572,7 +2652,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.3
   },
   {
    "id": "ty-jerome",
@@ -2602,7 +2683,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.6
   },
   {
    "id": "josh-hart",
@@ -2632,7 +2714,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.2
   },
   {
    "id": "donovan-clingan",
@@ -2662,7 +2745,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.2
   },
   {
    "id": "devin-vassell",
@@ -2692,7 +2776,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.5
   },
   {
    "id": "darryn-peterson",
@@ -2751,7 +2836,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.2
   },
   {
    "id": "aj-dybantsa",
@@ -2810,7 +2896,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.8
   },
   {
    "id": "grayson-allen",
@@ -2839,7 +2926,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.8
   },
   {
    "id": "peyton-watson",
@@ -2869,7 +2957,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.6
   },
   {
    "id": "pj-washington",
@@ -2899,7 +2988,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.0
   },
   {
    "id": "cameron-johnson",
@@ -2929,7 +3019,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.5
   },
   {
    "id": "ausar-thompson",
@@ -2959,7 +3050,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.0
   },
   {
    "id": "walker-kessler",
@@ -2989,7 +3081,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.8
   },
   {
    "id": "jerami-grant",
@@ -3018,7 +3111,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.7
   },
   {
    "id": "cedric-coward",
@@ -3048,7 +3142,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.8
   },
   {
    "id": "zach-edey",
@@ -3078,7 +3173,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.8
   },
   {
    "id": "jaime-jaquez-jr",
@@ -3108,7 +3204,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.3
   },
   {
    "id": "jonathan-kuminga",
@@ -3138,7 +3235,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.1
   },
   {
    "id": "herbert-jones",
@@ -3167,7 +3265,8 @@
     "y": 4,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.4
   },
   {
    "id": "jordan-poole",
@@ -3196,7 +3295,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.9
   },
   {
    "id": "isaiah-hartenstein",
@@ -3226,7 +3326,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.2
   },
   {
    "id": "alex-caruso",
@@ -3255,7 +3356,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.2
   },
   {
    "id": "jalen-suggs",
@@ -3285,7 +3387,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.6
   },
   {
    "id": "vj-edgecombe",
@@ -3315,7 +3418,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 35.0
   },
   {
    "id": "toumani-camara",
@@ -3345,7 +3449,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.3
   },
   {
    "id": "deandre-hunter",
@@ -3375,7 +3480,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.1
   },
   {
    "id": "jakob-poeltl",
@@ -3405,7 +3511,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.0
   },
   {
    "id": "matas-buzelis",
@@ -3435,7 +3542,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.2
   },
   {
    "id": "caleb-wilson",
@@ -3494,7 +3602,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.8
   },
   {
    "id": "yaxel-lendeborg",
@@ -3552,7 +3661,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.5
   },
   {
    "id": "tari-eason",
@@ -3581,7 +3691,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.8
   },
   {
    "id": "reed-sheppard",
@@ -3610,7 +3721,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.2
   },
   {
    "id": "ryan-rollins",
@@ -3640,7 +3752,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.1
   },
   {
    "id": "kelel-ware",
@@ -3669,7 +3782,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.1
   },
   {
    "id": "derik-queen",
@@ -3698,7 +3812,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.0
   },
   {
    "id": "dillon-brooks",
@@ -3728,7 +3843,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.4
   },
   {
    "id": "deandre-ayton",
@@ -3757,7 +3873,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.2
   },
   {
    "id": "duncan-robinson",
@@ -3787,7 +3904,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.4
   },
   {
    "id": "aaron-nesmith",
@@ -3817,7 +3935,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.7
   },
   {
    "id": "obi-toppin",
@@ -3846,7 +3965,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.7
   },
   {
    "id": "klay-thompson",
@@ -3876,7 +3996,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.7
   },
   {
    "id": "andrew-wiggins",
@@ -3906,7 +4027,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.3
   },
   {
    "id": "bennedict-mathurin",
@@ -3935,7 +4057,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.0
   },
   {
    "id": "wendell-carter-jr",
@@ -3965,7 +4088,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.3
   },
   {
    "id": "keegan-murray",
@@ -3995,7 +4119,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 34.5
   },
   {
    "id": "dennis-schroder",
@@ -4024,7 +4149,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.2
   },
   {
    "id": "daniel-gafford",
@@ -4054,7 +4180,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.7
   },
   {
    "id": "draymond-green",
@@ -4084,7 +4211,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.5
   },
   {
    "id": "kelly-oubre-jr",
@@ -4113,7 +4241,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.5
   },
   {
    "id": "brook-lopez",
@@ -4142,7 +4271,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.8
   },
   {
    "id": "keaton-wagler",
@@ -4200,7 +4330,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.4
   },
   {
    "id": "bobby-portis",
@@ -4229,7 +4360,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.2
   },
   {
    "id": "jeremiah-fears",
@@ -4259,7 +4391,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.8
   },
   {
    "id": "cason-wallace",
@@ -4289,7 +4422,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.6
   },
   {
    "id": "malik-monk",
@@ -4318,7 +4452,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.0
   },
   {
    "id": "ace-bailey",
@@ -4347,7 +4482,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.6
   },
   {
    "id": "bilal-coulibaly",
@@ -4376,7 +4512,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.2
   },
   {
    "id": "kyshawn-george",
@@ -4406,7 +4543,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.0
   },
   {
    "id": "mikel-brown-jr",
@@ -4464,7 +4602,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.1
   },
   {
    "id": "naji-marshall",
@@ -4493,7 +4632,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.5
   },
   {
    "id": "al-horford",
@@ -4522,7 +4662,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.5
   },
   {
    "id": "collin-sexton",
@@ -4551,7 +4692,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.7
   },
   {
    "id": "davion-mitchell",
@@ -4581,7 +4723,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.6
   },
   {
    "id": "ayo-dosunmu",
@@ -4610,7 +4753,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.3
   },
   {
    "id": "saddiq-bey",
@@ -4639,7 +4783,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.2
   },
   {
    "id": "jared-mccain",
@@ -4668,7 +4813,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.3
   },
   {
    "id": "tristan-da-silva",
@@ -4697,7 +4843,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.7
   },
   {
    "id": "darius-acuff-jr",
@@ -4755,7 +4902,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.6
   },
   {
    "id": "keldon-johnson",
@@ -4784,7 +4932,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.3
   },
   {
    "id": "khris-middleton",
@@ -4813,7 +4962,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.8
   },
   {
    "id": "jalen-smith",
@@ -4842,7 +4992,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.7
   },
   {
    "id": "sam-merrill",
@@ -4871,7 +5022,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.5
   },
   {
    "id": "jaylon-tyson",
@@ -4900,7 +5052,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.9
   },
   {
    "id": "anthony-black",
@@ -4929,7 +5082,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.8
   },
   {
    "id": "luguentz-dort",
@@ -4958,7 +5112,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.8
   },
   {
    "id": "kingston-flemings",
@@ -5015,7 +5170,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.9
   },
   {
    "id": "mario-hezonja",
@@ -5072,7 +5228,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.4
   },
   {
    "id": "jarace-walker",
@@ -5101,7 +5258,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.7
   },
   {
    "id": "rui-hachimura",
@@ -5131,7 +5289,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.3
   },
   {
    "id": "pelle-larsson",
@@ -5160,7 +5319,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.4
   },
   {
    "id": "kyle-kuzma",
@@ -5190,7 +5350,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.2
   },
   {
    "id": "rj-barrett",
@@ -5220,7 +5381,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.3
   },
   {
    "id": "tre-johnson",
@@ -5249,7 +5411,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.1
   },
   {
    "id": "nolan-traore",
@@ -5278,7 +5441,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.2
   },
   {
    "id": "egor-demin",
@@ -5308,7 +5472,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.2
   },
   {
    "id": "moussa-diabate",
@@ -5338,7 +5503,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.0
   },
   {
    "id": "derrick-jones-jr",
@@ -5368,7 +5534,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.0
   },
   {
    "id": "kasparas-jakucionis",
@@ -5397,7 +5564,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.8
   },
   {
    "id": "khaman-maluach",
@@ -5427,7 +5595,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.9
   },
   {
    "id": "precious-achiuwa",
@@ -5456,7 +5625,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.9
   },
   {
    "id": "luke-kornet",
@@ -5485,7 +5655,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.0
   },
   {
    "id": "aaron-wiggins",
@@ -5514,7 +5685,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.8
   },
   {
    "id": "payton-pritchard",
@@ -5543,7 +5715,8 @@
     "y": 4,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.4
   },
   {
    "id": "john-collins",
@@ -5573,7 +5746,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.1
   },
   {
    "id": "paul-reed",
@@ -5602,7 +5776,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.9
   },
   {
    "id": "kris-dunn",
@@ -5632,7 +5807,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.2
   },
   {
    "id": "quentin-grimes",
@@ -5661,7 +5837,8 @@
     "y": 4,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.4
   },
   {
    "id": "sandro-mamukelashvili",
@@ -5690,7 +5867,8 @@
     "y": 4,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.9
   },
   {
    "id": "matisse-thybulle",
@@ -5720,7 +5898,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.0
   },
   {
    "id": "ziaire-williams",
@@ -5750,7 +5929,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.9
   },
   {
    "id": "jakobe-walter",
@@ -5779,7 +5959,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.5
   },
   {
    "id": "daniss-jenkins",
@@ -5808,7 +5989,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.2
   },
   {
    "id": "kentavious-caldwellpope",
@@ -5837,7 +6019,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.3
   },
   {
    "id": "keon-ellis",
@@ -5867,7 +6050,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.5
   },
   {
    "id": "trevon-brazile",
@@ -5924,7 +6108,8 @@
     "y": 3,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.5
   },
   {
    "id": "terrence-shannon-jr",
@@ -5953,7 +6138,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.5
   },
   {
    "id": "landry-shamet",
@@ -5982,7 +6168,8 @@
     "y": 4,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.0
   },
   {
    "id": "dean-wade",
@@ -6011,7 +6198,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.3
   },
   {
    "id": "harrison-barnes",
@@ -6040,7 +6228,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.8
   },
   {
    "id": "sam-hauser",
@@ -6069,7 +6258,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.8
   },
   {
    "id": "noah-clowney",
@@ -6098,7 +6288,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.0
   },
   {
    "id": "dayron-sharpe",
@@ -6128,7 +6319,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.7
   },
   {
    "id": "sion-james",
@@ -6157,7 +6349,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.5
   },
   {
    "id": "tyrese-proctor",
@@ -6186,7 +6379,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.9
   },
   {
    "id": "isaiah-jackson",
@@ -6216,7 +6410,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.5
   },
   {
    "id": "kobe-sanders",
@@ -6245,7 +6440,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.9
   },
   {
    "id": "anfernee-simons",
@@ -6274,7 +6470,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.9
   },
   {
    "id": "collin-gillespie",
@@ -6303,7 +6500,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.5
   },
   {
    "id": "jamal-shead",
@@ -6332,7 +6530,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.6
   },
   {
    "id": "neemias-queta",
@@ -6361,7 +6560,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.3
   },
   {
    "id": "mitchell-robinson",
@@ -6391,7 +6591,8 @@
     "o": "player"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.6
   },
   {
    "id": "leonard-miller",
@@ -6420,7 +6621,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.6
   },
   {
    "id": "alpha-diallo",
@@ -6477,7 +6679,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.0
   },
   {
    "id": "marcus-smart",
@@ -6506,7 +6709,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.5
   },
   {
    "id": "jake-laravia",
@@ -6535,7 +6739,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.1
   },
   {
    "id": "aj-green",
@@ -6564,7 +6769,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.1
   },
   {
    "id": "miles-mcbride",
@@ -6593,7 +6799,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.3
   },
   {
    "id": "josh-dix",
@@ -6646,7 +6853,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.1
   },
   {
    "id": "mo-bamba",
@@ -6703,7 +6911,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.1
   },
   {
    "id": "jordan-walsh",
@@ -6733,7 +6942,8 @@
     "o": "team"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.8
   },
   {
    "id": "chaney-johnson",
@@ -6763,7 +6973,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.5
   },
   {
    "id": "tre-jones",
@@ -6792,7 +7003,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.0
   },
   {
    "id": "marcus-sasser",
@@ -6821,7 +7033,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.0
   },
   {
    "id": "javonte-green",
@@ -6850,7 +7063,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.6
   },
   {
    "id": "quenton-jackson",
@@ -6879,7 +7093,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.3
   },
   {
    "id": "cam-spencer",
@@ -6908,7 +7123,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.8
   },
   {
    "id": "tim-hardaway-jr",
@@ -6937,7 +7153,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.6
   },
   {
    "id": "yves-missi",
@@ -6967,7 +7184,8 @@
     "o": "none"
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.7
   },
   {
    "id": "jordan-goodwin",
@@ -6996,7 +7214,8 @@
     "y": 3,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.5
   },
   {
    "id": "baylor-scheierman",
@@ -7025,7 +7244,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.6
   },
   {
    "id": "moritz-wagner",
@@ -7054,7 +7274,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.9
   },
   {
    "id": "ryan-kalkbrenner",
@@ -7083,7 +7304,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.4
   },
   {
    "id": "meleek-thomas",
@@ -7140,7 +7362,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.4
   },
   {
    "id": "georges-niang",
@@ -7197,7 +7420,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.0
   },
   {
    "id": "gradey-dick",
@@ -7226,7 +7450,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.0
   },
   {
    "id": "isaiah-stewart",
@@ -7255,7 +7480,8 @@
     "y": 1,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.7
   },
   {
    "id": "jaylin-williams",
@@ -7284,7 +7510,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.6
   },
   {
    "id": "scoot-henderson",
@@ -7313,7 +7540,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.9
   },
   {
    "id": "robert-williams-iii",
@@ -7342,7 +7570,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.1
   },
   {
    "id": "daeqwon-plowden",
@@ -7371,7 +7600,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.4
   },
   {
    "id": "bub-carrington",
@@ -7400,7 +7630,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.7
   },
   {
    "id": "justin-champagnie",
@@ -7429,7 +7660,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.0
   },
   {
    "id": "royce-oneale",
@@ -7458,7 +7690,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.4
   },
   {
    "id": "buddy-hield",
@@ -7487,7 +7720,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.1
   },
   {
    "id": "bryce-hopkins",
@@ -7540,7 +7774,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.2
   },
   {
    "id": "graham-ike",
@@ -7593,7 +7828,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.8
   },
   {
    "id": "jay-huff",
@@ -7622,7 +7858,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.0
   },
   {
    "id": "quinten-post",
@@ -7651,7 +7888,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.3
   },
   {
    "id": "nikola-jovic",
@@ -7680,7 +7918,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.2
   },
   {
    "id": "trey-lyles",
@@ -7737,7 +7976,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.6
   },
   {
    "id": "trendon-watford",
@@ -7766,7 +8006,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.3
   },
   {
    "id": "jamal-cain",
@@ -7795,7 +8036,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.2
   },
   {
    "id": "jabari-walker",
@@ -7824,7 +8066,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.9
   },
   {
    "id": "jamison-battle",
@@ -7853,7 +8096,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.5
   },
   {
    "id": "collin-murrayboyles",
@@ -7882,7 +8126,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.9
   },
   {
    "id": "brice-sensabaugh",
@@ -7911,7 +8156,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.5
   },
   {
    "id": "tidjane-salaun",
@@ -7940,7 +8186,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.5
   },
   {
    "id": "isaiah-joe",
@@ -7969,7 +8216,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.2
   },
   {
    "id": "bogdan-bogdanovic",
@@ -7998,7 +8246,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.7
   },
   {
    "id": "jarred-vanderbilt",
@@ -8027,7 +8276,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.4
   },
   {
    "id": "scotty-pippen-jr",
@@ -8056,7 +8306,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.2
   },
   {
    "id": "joan-beringer",
@@ -8085,7 +8336,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 7.9
   },
   {
    "id": "karlo-matkovic",
@@ -8114,7 +8366,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.7
   },
   {
    "id": "tyler-kolek",
@@ -8143,7 +8396,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.7
   },
   {
    "id": "bennett-stirtz",
@@ -8200,7 +8454,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.4
   },
   {
    "id": "luke-kennard",
@@ -8229,7 +8484,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.6
   },
   {
    "id": "emanuel-sharp",
@@ -8344,7 +8600,8 @@
     "o": "team"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.4
   },
   {
    "id": "gary-payton-ii",
@@ -8373,7 +8630,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.6
   },
   {
    "id": "clint-capela",
@@ -8402,7 +8660,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.3
   },
   {
    "id": "gg-jackson-ii",
@@ -8431,7 +8690,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.4
   },
   {
    "id": "brayden-burries",
@@ -8516,7 +8776,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.5
   },
   {
    "id": "aday-mara",
@@ -8573,7 +8834,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.3
   },
   {
    "id": "ryan-dunn",
@@ -8602,7 +8864,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.4
   },
   {
    "id": "oso-ighodaro",
@@ -8631,7 +8894,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.0
   },
   {
    "id": "jonathan-mogbo",
@@ -8656,7 +8920,8 @@
     "fou": 21
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 6.2
   },
   {
    "id": "allen-graves",
@@ -8713,7 +8978,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.8
   },
   {
    "id": "noa-essengue",
@@ -8770,7 +9036,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.8
   },
   {
    "id": "marvin-bagley-iii",
@@ -8799,7 +9066,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.0
   },
   {
    "id": "tyus-jones",
@@ -8828,7 +9096,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.6
   },
   {
    "id": "ron-holland-ii",
@@ -8857,7 +9126,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.9
   },
   {
    "id": "oscar-tshiebwe",
@@ -8887,7 +9157,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.6
   },
   {
    "id": "jalen-slawson",
@@ -8917,7 +9188,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.9
   },
   {
    "id": "ben-sheppard",
@@ -8946,7 +9218,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.4
   },
   {
    "id": "ousmane-dieng",
@@ -8975,7 +9248,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.3
   },
   {
    "id": "jose-alvarado",
@@ -9004,7 +9278,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.9
   },
   {
    "id": "adem-bona",
@@ -9033,7 +9308,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.4
   },
   {
    "id": "luka-garza",
@@ -9062,7 +9338,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.2
   },
   {
    "id": "josh-minott",
@@ -9091,7 +9368,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.0
   },
   {
    "id": "jaylin-sellers",
@@ -9177,7 +9455,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.8
   },
   {
    "id": "jase-richardson",
@@ -9206,7 +9485,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.9
   },
   {
    "id": "goga-bitadze",
@@ -9235,7 +9515,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.2
   },
   {
    "id": "vit-krejci",
@@ -9264,7 +9545,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.4
   },
   {
    "id": "micah-potter",
@@ -9293,7 +9575,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.3
   },
   {
    "id": "branden-carlson",
@@ -9322,7 +9605,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.6
   },
   {
    "id": "terance-mann",
@@ -9351,7 +9635,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.3
   },
   {
    "id": "zach-collins",
@@ -9380,7 +9665,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.4
   },
   {
    "id": "dailyn-swain",
@@ -9465,7 +9751,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.7
   },
   {
    "id": "bones-hyland",
@@ -9494,7 +9781,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.6
   },
   {
    "id": "nikola-vucevic",
@@ -9523,7 +9811,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.4
   },
   {
    "id": "trayce-jacksondavis",
@@ -9552,7 +9841,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.4
   },
   {
    "id": "hugo-gonzalez",
@@ -9581,7 +9871,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.6
   },
   {
    "id": "drake-powell",
@@ -9610,7 +9901,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.0
   },
   {
    "id": "christian-anderson-jr",
@@ -9668,7 +9960,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.3
   },
   {
    "id": "jordan-hawkins",
@@ -9698,7 +9991,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.6
   },
   {
    "id": "cam-whitmore",
@@ -9728,7 +10022,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.9
   },
   {
    "id": "taurean-prince",
@@ -9757,7 +10052,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.5
   },
   {
    "id": "charles-bassey",
@@ -9786,7 +10082,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.8
   },
   {
    "id": "lj-cryer",
@@ -9811,7 +10108,8 @@
     "fou": 36
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.2
   },
   {
    "id": "steven-adams",
@@ -9840,7 +10138,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.8
   },
   {
    "id": "kris-murray",
@@ -9869,7 +10168,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.4
   },
   {
    "id": "dru-smith",
@@ -9898,7 +10198,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.3
   },
   {
    "id": "gary-trent-jr",
@@ -9927,7 +10228,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.2
   },
   {
    "id": "jaylen-clark",
@@ -9956,7 +10258,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.1
   },
   {
    "id": "duop-reath",
@@ -9981,7 +10284,8 @@
     "fou": 24
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.1
   },
   {
    "id": "nique-clifford",
@@ -10010,7 +10314,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.1
   },
   {
    "id": "alex-karaban",
@@ -10067,7 +10372,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.4
   },
   {
    "id": "hannes-steinbach",
@@ -10124,7 +10430,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.9
   },
   {
    "id": "jalen-pickett",
@@ -10149,7 +10456,8 @@
     "fou": 80
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.1
   },
   {
    "id": "jaden-hardy",
@@ -10178,7 +10486,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.8
   },
   {
    "id": "james-wiseman",
@@ -10283,7 +10592,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.2
   },
   {
    "id": "yang-hansen",
@@ -10307,7 +10617,8 @@
     "tov": 3,
     "fou": 5
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 7.0
   },
   {
    "id": "carter-bryant",
@@ -10336,7 +10647,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.5
   },
   {
    "id": "tarris-reed-jr",
@@ -10393,7 +10705,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.4
   },
   {
    "id": "zuby-ejiofor",
@@ -10450,7 +10763,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.6
   },
   {
    "id": "ron-harper-jr",
@@ -10479,7 +10793,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.0
   },
   {
    "id": "moussa-cisse",
@@ -10508,7 +10823,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.9
   },
   {
    "id": "jett-howard",
@@ -10533,7 +10849,8 @@
     "fou": 40
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.6
   },
   {
    "id": "zeke-nnaji",
@@ -10562,7 +10879,8 @@
     "y": 2,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.0
   },
   {
    "id": "cam-christie",
@@ -10592,7 +10910,8 @@
     "o": "team"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.7
   },
   {
    "id": "bryce-mcgowens",
@@ -10621,7 +10940,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.0
   },
   {
    "id": "brooks-barnhizer",
@@ -10646,7 +10966,8 @@
     "fou": 49
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.7
   },
   {
    "id": "micah-peavy",
@@ -10676,7 +10997,8 @@
     "o": "team"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.0
   },
   {
    "id": "labaron-philon-jr",
@@ -10733,7 +11055,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.0
   },
   {
    "id": "pat-spencer",
@@ -10758,7 +11081,8 @@
     "fou": 70
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.6
   },
   {
    "id": "jayson-kent",
@@ -10831,7 +11155,8 @@
     "fou": 55
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 28.9
   },
   {
    "id": "jordan-mclaughlin",
@@ -10860,7 +11185,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 6.4
   },
   {
    "id": "jaden-bradley",
@@ -10945,7 +11271,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.8
   },
   {
    "id": "svi-mykhailiuk",
@@ -10974,7 +11301,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.1
   },
   {
    "id": "josh-green",
@@ -11003,7 +11331,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.7
   },
   {
    "id": "tony-bradley",
@@ -11032,7 +11361,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.0
   },
   {
    "id": "dorian-finneysmith",
@@ -11061,7 +11391,8 @@
     "y": 3,
     "o": "player"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.8
   },
   {
    "id": "liam-mcneeley",
@@ -11090,7 +11421,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.9
   },
   {
    "id": "daron-holmes-ii",
@@ -11119,7 +11451,8 @@
     "y": 3,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.4
   },
   {
    "id": "ryan-nembhard",
@@ -11149,7 +11482,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.5
   },
   {
    "id": "tolu-smith",
@@ -11202,7 +11536,8 @@
     "fou": 49
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.0
   },
   {
    "id": "jaesean-tate",
@@ -11231,7 +11566,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.8
   },
   {
    "id": "bruce-thornton",
@@ -11365,7 +11701,8 @@
     "y": 2,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.9
   },
   {
    "id": "simone-fontecchio",
@@ -11394,7 +11731,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.8
   },
   {
    "id": "nick-richards",
@@ -11423,7 +11761,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.6
   },
   {
    "id": "jericho-sims",
@@ -11452,7 +11791,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.7
   },
   {
    "id": "zyon-pullin",
@@ -11562,7 +11902,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.3
   },
   {
    "id": "josh-okogie",
@@ -11591,7 +11932,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.4
   },
   {
    "id": "felix-okpara",
@@ -11644,7 +11986,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.8
   },
   {
    "id": "ebuka-okorie",
@@ -11701,7 +12044,8 @@
     "y": 3,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 7.7
   },
   {
    "id": "malevy-leons",
@@ -11726,7 +12070,8 @@
     "fou": 29
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.0
   },
   {
    "id": "isaiah-crawford",
@@ -11783,7 +12128,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.9
   },
   {
    "id": "oliviermaxence-prosper",
@@ -11812,7 +12158,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.6
   },
   {
    "id": "ryan-conwell",
@@ -11869,7 +12216,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.1
   },
   {
    "id": "bogoljub-markovic",
@@ -11950,7 +12298,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.7
   },
   {
    "id": "will-riley",
@@ -11979,7 +12328,8 @@
     "y": 4,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.1
   },
   {
    "id": "tre-mann",
@@ -12008,7 +12358,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.6
   },
   {
    "id": "asa-newell",
@@ -12037,7 +12388,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.4
   },
   {
    "id": "chris-cenac-jr",
@@ -12143,7 +12495,8 @@
     "o": "none"
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.8
   },
   {
    "id": "isaiah-evans",
@@ -12200,7 +12553,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.3
   },
   {
    "id": "justin-edwards",
@@ -12229,7 +12583,8 @@
     "y": 2,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.3
   },
   {
    "id": "caleb-love",
@@ -12254,7 +12609,8 @@
     "fou": 75
    },
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.7
   },
   {
    "id": "maliq-brown",
@@ -12365,7 +12721,8 @@
     "y": 1,
     "o": "none"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.3
   },
   {
    "id": "karim-lopez",
@@ -12450,7 +12807,8 @@
     "y": 4,
     "o": "team"
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.2
   },
   {
    "id": "jonathan-isaac",
@@ -12480,7 +12838,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.0
   },
   {
    "id": "noah-penda",
@@ -12510,7 +12869,8 @@
     "o": "team"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.8
   },
   {
    "id": "brandon-ingram",
@@ -12548,7 +12908,8 @@
     "stl": 0.8,
     "blk": 0.7
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.8
   },
   {
    "id": "max-strus",
@@ -12586,7 +12947,8 @@
     "stl": 0.3,
     "blk": 0
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.0
   },
   {
    "id": "bradley-beal",
@@ -12653,7 +13015,8 @@
     "stl": 0.8,
     "blk": 0.2
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.1
   },
   {
    "id": "yanic-konan-niederhauser",
@@ -12683,7 +13046,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.3
   },
   {
    "id": "shaedon-sharpe",
@@ -12721,7 +13085,8 @@
     "stl": 1.4,
     "blk": 0.1
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 29.4
   },
   {
    "id": "hansen-yang",
@@ -12788,7 +13153,8 @@
     "stl": 0.5,
     "blk": 0.1
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.0
   },
   {
    "id": "cole-anthony",
@@ -12818,7 +13184,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.1
   },
   {
    "id": "jusuf-nurkic",
@@ -12857,7 +13224,8 @@
     "blk": 0.5
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.4
   },
   {
    "id": "ben-simmons",
@@ -12924,7 +13292,8 @@
     "stl": 0.5,
     "blk": 0.5
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 26.5
   },
   {
    "id": "dylan-cardwell",
@@ -12954,7 +13323,8 @@
     "o": "team"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.6
   },
   {
    "id": "aj-johnson",
@@ -12984,7 +13354,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.5
   },
   {
    "id": "caleb-houstan",
@@ -13043,7 +13414,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.3
   },
   {
    "id": "henri-veesaar",
@@ -13111,7 +13483,8 @@
     "blk": 0.1
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.0
   },
   {
    "id": "grant-williams",
@@ -13141,7 +13514,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.8
   },
   {
    "id": "kon-knueppel",
@@ -13180,7 +13554,8 @@
     "blk": 0.2
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 31.5
   },
   {
    "id": "rob-dillingham",
@@ -13210,7 +13585,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.9
   },
   {
    "id": "nicolas-claxton",
@@ -13249,7 +13625,8 @@
     "blk": 1.1
    },
    "st": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.8
   },
   {
    "id": "patrick-williams",
@@ -13279,7 +13656,8 @@
     "o": "player"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 20.5
   },
   {
    "id": "t-j-mcconnell",
@@ -13317,7 +13695,8 @@
     "stl": 1.0,
     "blk": 0.2
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.2
   },
   {
    "id": "johnny-furphy",
@@ -13347,7 +13726,8 @@
     "o": "team"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 18.4
   },
   {
    "id": "tobias-harris",
@@ -13385,7 +13765,8 @@
     "stl": 0.9,
     "blk": 0.4
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.7
   },
   {
    "id": "dominick-barlow",
@@ -13415,7 +13796,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.8
   },
   {
    "id": "ariel-hukporti",
@@ -13445,7 +13827,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.2
   },
   {
    "id": "johni-broome",
@@ -13504,7 +13887,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 22.1
   },
   {
    "id": "julian-strawther",
@@ -13534,7 +13918,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.1
   },
   {
    "id": "nikola-topic",
@@ -13564,7 +13949,8 @@
     "o": "team"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.0
   },
   {
    "id": "thomas-sorber",
@@ -13711,7 +14097,8 @@
    },
    "src": "est",
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.2
   },
   {
    "id": "cameron-carr",
@@ -13770,7 +14157,8 @@
     "o": "team"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 6.0
   },
   {
    "id": "mark-williams",
@@ -13808,7 +14196,8 @@
     "stl": 0.9,
     "blk": 0.9
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.6
   },
   {
    "id": "drew-timme",
@@ -13839,7 +14228,8 @@
    },
    "src": "est",
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.7
   },
   {
    "id": "ej-liddell",
@@ -13869,7 +14259,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.4
   },
   {
    "id": "caris-levert",
@@ -13899,7 +14290,8 @@
     "o": "none"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.2
   },
   {
    "id": "santi-aldama",
@@ -13937,7 +14329,8 @@
     "stl": 0.9,
     "blk": 0.7
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 27.9
   },
   {
    "id": "dereck-lively-ii",
@@ -14025,7 +14418,8 @@
     "o": "team"
    },
    "src": "est",
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.7
   },
   {
    "id": "ochai-agbaji",
@@ -14057,7 +14451,8 @@
     2.7,
     1.1
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.7
   },
   {
    "id": "thanasis-antetokounmpo",
@@ -14213,7 +14608,8 @@
     4.7,
     3.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.5
   },
   {
    "id": "marjon-beauchamp",
@@ -14245,7 +14641,8 @@
     1.9,
     0.6
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.0
   },
   {
    "id": "bismack-biyombo",
@@ -14308,7 +14705,8 @@
     4.2,
     2.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 24.4
   },
   {
    "id": "amir-coffey",
@@ -14340,7 +14738,8 @@
     1.8,
     1.1
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.7
   },
   {
    "id": "sharife-cooper",
@@ -14372,7 +14771,8 @@
     1.7,
     2.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.1
   },
   {
    "id": "seth-curry",
@@ -14435,7 +14835,8 @@
     1.0,
     1.1
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 7.8
   },
   {
    "id": "tyson-etienne",
@@ -14467,7 +14868,8 @@
     1.2,
     1.7
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.8
   },
   {
    "id": "drew-eubanks",
@@ -14499,7 +14901,8 @@
     4.3,
     0.9
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.1
   },
   {
    "id": "hayden-gray",
@@ -14562,7 +14965,8 @@
     3.9,
     1.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 5.8
   },
   {
    "id": "mouhamadou-gueye",
@@ -14625,7 +15029,8 @@
     2.2,
     1.8
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.8
   },
   {
    "id": "killian-hayes",
@@ -14657,7 +15062,8 @@
     2.9,
     5.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.7
   },
   {
    "id": "aaron-holiday",
@@ -14689,7 +15095,8 @@
     1.5,
     1.9
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.7
   },
   {
    "id": "joe-ingles",
@@ -14721,7 +15128,8 @@
     3.0,
     3.5
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 5.7
   },
   {
    "id": "harrison-ingram",
@@ -14847,7 +15255,8 @@
     0.0,
     0.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.6
   },
   {
    "id": "trevor-keels",
@@ -14910,7 +15319,8 @@
     2.0,
     0.6
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.7
   },
   {
    "id": "christian-koloko",
@@ -14942,7 +15352,8 @@
     0.0,
     0.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.2
   },
   {
    "id": "john-konchar",
@@ -14974,7 +15385,8 @@
     4.3,
     2.1
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 19.9
   },
   {
    "id": "aj-lawson",
@@ -15006,7 +15418,8 @@
     1.8,
     0.3
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.4
   },
   {
    "id": "isaiah-livers",
@@ -15038,7 +15451,8 @@
     1.7,
     0.6
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.6
   },
   {
    "id": "kevin-love",
@@ -15070,7 +15484,8 @@
     5.8,
     1.8
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.6
   },
   {
    "id": "tyrese-martin",
@@ -15102,7 +15517,8 @@
     2.5,
     1.7
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.9
   },
   {
    "id": "bez-mbeng",
@@ -15134,7 +15550,8 @@
     0.0,
     0.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 32.8
   },
   {
    "id": "mac-mcclung",
@@ -15197,7 +15614,8 @@
     1.3,
     0.8
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.1
   },
   {
    "id": "wendell-moore-jr",
@@ -15291,7 +15709,8 @@
     3.0,
     1.1
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 9.3
   },
   {
    "id": "kelly-olynyk",
@@ -15323,7 +15742,8 @@
     1.8,
     1.2
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.6
   },
   {
    "id": "norchad-omier",
@@ -15387,7 +15807,8 @@
     0.0
    ],
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.9
   },
   {
    "id": "mason-plumlee",
@@ -15419,7 +15840,8 @@
     2.7,
     1.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 8.6
   },
   {
    "id": "dwight-powell",
@@ -15451,7 +15873,8 @@
     0.0,
     0.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 14.3
   },
   {
    "id": "antonio-reeves",
@@ -15608,7 +16031,8 @@
     0.0
    ],
    "tw": 1,
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 23.9
   },
   {
    "id": "nick-smith-jr",
@@ -15640,7 +16064,8 @@
     0.8,
     1.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.5
   },
   {
    "id": "garrett-temple",
@@ -15703,7 +16128,8 @@
     0.0,
     0.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.5
   },
   {
    "id": "xavier-tillman",
@@ -15735,7 +16161,8 @@
     1.4,
     0.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 6.1
   },
   {
    "id": "jonas-valanciunas",
@@ -15767,7 +16194,8 @@
     5.1,
     1.2
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 13.4
   },
   {
    "id": "gabe-vincent",
@@ -15799,7 +16227,8 @@
     1.0,
     1.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 16.6
   },
   {
    "id": "keaton-wallace",
@@ -15831,7 +16260,8 @@
     1.1,
     1.8
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 10.1
   },
   {
    "id": "tyty-washington-jr",
@@ -15894,7 +16324,8 @@
     0.7,
     0.5
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 7.1
   },
   {
    "id": "blake-wesley",
@@ -15926,7 +16357,8 @@
     4.0,
     0.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 11.6
   },
   {
    "id": "nate-williams",
@@ -15958,7 +16390,8 @@
     2.1,
     1.0
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 17.1
   },
   {
    "id": "jahmir-young",
@@ -16021,7 +16454,8 @@
     5.2,
     7.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 33.2
   },
   {
    "id": "cam-thomas",
@@ -16053,7 +16487,8 @@
     2.3,
     2.4
    ],
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 21.0
   },
   {
    "id": "rayj-dennis",
@@ -16078,7 +16513,8 @@
     "fou": 38
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 12.1
   },
   {
    "id": "keshon-gilbert",
@@ -16128,7 +16564,8 @@
     "fou": 40
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 15.9
   },
   {
    "id": "devin-carter",
@@ -16153,7 +16590,8 @@
     "fou": 56
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 18.4
   },
   {
    "id": "dillon-mitchell",
@@ -16351,7 +16789,8 @@
     "tov": 50,
     "fou": 21
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 12.2
   },
   {
    "id": "khalifa-diop",
@@ -16449,7 +16888,8 @@
     "tov": 68,
     "fou": 18
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 15.7
   },
   {
    "id": "ernest-udeh-jr",
@@ -16524,7 +16964,8 @@
     "fou": 89
    },
    "stats": "2025-26",
-   "st": 1
+   "st": 1,
+   "mp": 31.1
   },
   {
    "id": "moses-moody",
@@ -16548,7 +16989,8 @@
     "tov": 67,
     "fou": 56
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 25.7
   },
   {
    "id": "kristaps-porzingis",
@@ -16573,7 +17015,8 @@
     "fou": 32
    },
    "stats": "2025-26",
-   "st": 1
+   "st": 1,
+   "mp": 24.0
   },
   {
    "id": "quadir-copeland",
@@ -16698,7 +17141,8 @@
     "fou": 47
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 21.7
   },
   {
    "id": "javon-small",
@@ -16723,7 +17167,8 @@
     "fou": 47
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 20.2
   },
   {
    "id": "tre-donaldson",
@@ -16798,7 +17243,8 @@
     "fou": 28
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 8.8
   },
   {
    "id": "kam-jones",
@@ -16823,7 +17269,8 @@
     "fou": 68
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 16.6
   },
   {
    "id": "pete-nance",
@@ -16848,7 +17295,8 @@
     "fou": 48
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 15.7
   },
   {
    "id": "cormac-ryan",
@@ -16873,7 +17321,8 @@
     "fou": 35
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 24.6
   },
   {
    "id": "donte-divincenzo",
@@ -16897,7 +17346,8 @@
     "tov": 56,
     "fou": 59
    },
-   "stats": "2025-26"
+   "stats": "2025-26",
+   "mp": 30.4
   },
   {
    "id": "enrique-freeman",
@@ -17022,7 +17472,8 @@
     "fou": 42
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 30.9
   },
   {
    "id": "tyler-nickel",
@@ -17122,7 +17573,8 @@
     "fou": 31
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 16.8
   },
   {
    "id": "chris-youngblood",
@@ -17147,7 +17599,8 @@
     "fou": 26
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 5.4
   },
   {
    "id": "sean-pedulla",
@@ -17296,7 +17749,8 @@
     "fou": 21
    },
    "stats": "2025-26",
-   "tw": 1
+   "tw": 1,
+   "mp": 20.6
   }
  ],
  "dead": {
