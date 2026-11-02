@@ -568,3 +568,25 @@ body[data-modern="1"] .lp-grid div{text-align:center;background:rgba(255,255,255
 body[data-modern="1"] .lp-grid b{display:block;font:800 18px var(--font)}
 body[data-modern="1"] .lp-grid small{font:700 9.5px var(--font);opacity:.55;letter-spacing:.08em}
 body[data-modern="1"] .sheet.lp .sub{margin:0 0 10px}
+
+/* a full modern box score fits the phone */
+body[data-modern="1"] .box.wide td,body[data-modern="1"] .box.wide th{padding:9px 4px;font-size:12.5px;text-align:center}
+body[data-modern="1"] .box.wide td:first-child,body[data-modern="1"] .box.wide th:first-child{text-align:left;padding-left:10px;white-space:nowrap}
+
+/* player of the game */
+body[data-modern="1"] .potg{border-radius:18px;padding:12px 14px;background:linear-gradient(135deg,color-mix(in srgb,var(--team,#C8102E) 45%,#14161d),#14161d);margin:10px 0 4px}
+body[data-modern="1"] .potg-k{font:700 10.5px var(--font);letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+body[data-modern="1"] .potg-row{display:flex;align-items:center;gap:12px;margin:6px 0 10px}
+body[data-modern="1"] .potg-row .avatar{width:68px;height:68px}
+body[data-modern="1"] .potg-row b{display:block;font:800 22px var(--disp)}
+body[data-modern="1"] .potg-row span{opacity:.65;font-size:13px}
+body[data-modern="1"] .potg-st{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+body[data-modern="1"] .potg-st div{text-align:center;background:rgba(255,255,255,.07);border-radius:12px;padding:6px 2px}
+body[data-modern="1"] .potg-st b{display:block;font:800 17px var(--font)}
+body[data-modern="1"] .potg-st small{font:700 9.5px var(--font);opacity:.6;letter-spacing:.08em}
+body[data-modern="1"] .box.wide{table-layout:fixed;width:100%;min-width:0}
+body[data-modern="1"] .box.wide td,body[data-modern="1"] .box.wide th{padding:9px 0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-modern="1"] .box.wide th{width:23px;font-size:10.5px}
+body[data-modern="1"] .box.wide th:first-child{width:88px;padding-left:8px}
+body[data-modern="1"] .box.wide th:nth-child(9),body[data-modern="1"] .box.wide th:nth-child(10),body[data-modern="1"] .box.wide th:nth-child(11){width:38px}
+body[data-modern="1"] .box.wide td:first-child{padding-left:8px;font-weight:600}

@@ -1117,7 +1117,7 @@
     var wrap = el('div');
     wrap.appendChild(el('h3', 'box-title', team.city + ' ' + team.name));
     var scroll = el('div', 'boxwrap');
-    var table = el('table', 'box');
+    var table = el('table', 'box' + (cols.length > 9 ? ' wide' : ''));
     var thead = el('thead'), hr = el('tr');
     hr.appendChild(el('th', null, 'Player'));
     cols.forEach(function (c) { hr.appendChild(el('th', null, c.label)); });
@@ -1128,7 +1128,7 @@
     var totals = {};
     lines.forEach(function (l) {
       var tr = el('tr');
-      tr.appendChild(el('td', null, l.name));
+      tr.appendChild(el('td', null, cols.length > 9 ? l.name.split(' ')[0][0] + '. ' + lastName(l.name) : l.name));
       cols.forEach(function (c) {
         var v = c.pair ? l.s[c.pair[0]] + '-' + l.s[c.pair[1]] : String(l.s[c.key]);
         tr.appendChild(el('td', c.key === 'pts' && l.s.pts === topPts && topPts > 0 ? 'top' : null, v));
@@ -1201,9 +1201,37 @@
         });
         bodyEl.appendChild(cb);
       }
+      (function () {
+        var best = null, bs = -1e9;
+        [[res.homeLines, me, res.home > res.away], [res.awayLines, opp, res.away > res.home]].forEach(function (t) {
+          t[0].forEach(function (l) {
+            var s = l.s, gs = s.pts + 0.4 * s.fg - 0.7 * s.fga - 0.4 * (s.fta - s.ft) + 0.7 * s.orb + 0.3 * s.drb + s.stl + 0.7 * s.ast + 0.7 * s.blk - 0.4 * s.pf - s.tov + (t[2] ? 3 : 0);
+            if (gs > bs) { bs = gs; best = { l: l, t: t[1] }; }
+          });
+        });
+        if (!best) return;
+        var s = best.l.s, card = el('div', 'potg');
+        card.appendChild(el('small', 'potg-k', 'Player of the game'));
+        var row = el('div', 'potg-row');
+        row.appendChild(makeAvatar({ id: best.l.id, name: best.l.name }));
+        var tx = el('div');
+        tx.appendChild(el('b', null, best.l.name));
+        tx.appendChild(el('span', null, best.t.city));
+        row.appendChild(tx);
+        card.appendChild(row);
+        var parts = [[s.pts, 'PTS']];
+        if (year >= 1950) parts.push([s.orb + s.drb, 'REB']);
+        parts.push([s.ast, 'AST']);
+        if (year >= 1973) { if (s.stl >= 2) parts.push([s.stl, 'STL']); if (s.blk >= 2) parts.push([s.blk, 'BLK']); }
+        parts.push([s.fg + '-' + s.fga, 'FG']);
+        var gr = el('div', 'potg-st');
+        parts.slice(0, 5).forEach(function (k) { var c = el('div'); c.appendChild(el('b', null, String(k[0]))); c.appendChild(el('small', null, k[1])); gr.appendChild(c); });
+        card.appendChild(gr);
+        bodyEl.appendChild(card);
+      })();
       bodyEl.appendChild(boxTable(me, res.homeLines, cols));
       bodyEl.appendChild(boxTable(opp, res.awayLines, cols));
-      bodyEl.appendChild(el('p', 'sub how', 'This box score only shows what the league recorded in ' + seasonLabel(save.year) + '. Later eras add rebounds, steals, blocks and more.'));
+      if (cols.length <= 9) bodyEl.appendChild(el('p', 'sub how', 'This box score only shows what the league recorded in ' + seasonLabel(save.year) + '. Later eras add rebounds, steals, blocks and more.'));
       dockEl.hidden = false;
     }
     function step() {

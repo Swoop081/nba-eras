@@ -50,8 +50,12 @@
     return (RCACHE[key] = p);
   }
 
+  var MODERN_ORDER = ['min', 'pts', 'trb', 'ast', 'stl', 'blk', 'tov', 'fg', 'tp', 'ft', 'pf'];
   function columnsFor(year) {
-    return COLUMNS.filter(function (c) { return c.from <= year; });
+    var cols = COLUMNS.filter(function (c) { return c.from <= year; });
+    if (year < 1979) return cols;
+    /* today's box score: minutes first, then the headline numbers, shooting splits last */
+    return MODERN_ORDER.map(function (k) { return cols.filter(function (c) { return c.key === k; })[0]; }).filter(Boolean);
   }
 
   function rng(seed) {
