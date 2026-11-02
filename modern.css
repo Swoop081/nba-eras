@@ -1159,3 +1159,6 @@ body[data-modern="1"] .tb-card{display:flex;flex-direction:column;align-items:ce
 body[data-modern="1"] .fa-pic.tb{width:min(56vw,34vh);margin-top:2px}
 body[data-modern="1"] .tb-card .fa-terms{align-self:stretch}
 body[data-modern="1"] .tb-card .fa-by{margin:4px 0 0;text-align:center}
+body[data-modern="1"] .br-t{display:flex;align-items:center;gap:8px}
+body[data-modern="1"] .br-t .br-lg{width:26px;height:26px;flex:none}
+body[data-modern="1"] .br-t .br-n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

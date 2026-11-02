@@ -3737,7 +3737,8 @@
         var card = el('div', 'br-s');
         [s.a, s.b].forEach(function (id, k) {
           var row = el('div', 'br-t' + (s.winner === id ? ' win' : '') + (s.winner && s.winner !== id ? ' out' : '') + (id === save.myId ? ' me' : ''));
-          row.appendChild(el('span', null, teamById(id).city));
+          var lgo = teamBadge(teamById(id)); lgo.classList.add('br-lg'); row.appendChild(lgo);
+          row.appendChild(el('span', 'br-n', teamById(id).city));
           row.appendChild(el('b', null, String(s.w[k])));
           card.appendChild(row);
         });
