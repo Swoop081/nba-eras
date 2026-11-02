@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/runner/work/nba-eras/nba-eras/tools/fetch_coaches.py", line 11, in <module>
+    det = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+          ^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'cv2' has no attribute 'CascadeClassifier'
