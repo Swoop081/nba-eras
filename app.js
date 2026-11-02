@@ -1076,14 +1076,20 @@
     bd.appendChild(teamBadge(team));
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
     var squad = team.id === save.myId ? rotOrder(team.id) : League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    if (team.id === save.myId && modernUI()) {
+      var PO = { G: 0, 'G-F': 1, F: 2, 'F-C': 3, C: 4 };
+      var starters = squad.slice(0, 5).sort(function (a, b) { return (PO[a.pos] === undefined ? 2 : PO[a.pos]) - (PO[b.pos] === undefined ? 2 : PO[b.pos]) || (b.ratings.ply - a.ratings.ply) * (a.pos === 'G' && b.pos === 'G' ? 1 : 0) || (a.hgt || 0) - (b.hgt || 0); });
+      squad = starters.concat(squad.slice(5));
+    }
     var pay = League.payroll(save, team.id);
     if (team.id === save.myId && save.phase !== 'done') {
       var fab = el('button', 'btn wide fa-open', 'Free agents \u00B7 ' + League.freeAgents(save).length); fab.type = 'button';
       fab.addEventListener('click', function () { openFAList(team); });
       var dcb = el('button', 'btn wide fa-open', 'Depth chart'); dcb.type = 'button';
       dcb.addEventListener('click', function () { openDepth(team); });
-      list.appendChild(dcb);
-      list.appendChild(fab);
+      var brow = el('div', 'roster-btns');
+      brow.appendChild(dcb); brow.appendChild(fab);
+      list.appendChild(brow);
     }
     document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
     squad.forEach(function (p) {
@@ -1092,7 +1098,7 @@
       card.type = 'button';
       card.appendChild(makeAvatar(p));
       var text = el('span');
-      text.appendChild(el('strong', null, (team.id === save.myId ? (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ' : '') + p.name));
+      text.appendChild(el('strong', null, (team.id === save.myId ? (modernUI() ? (squad.indexOf(p) < 5 ? '' : ordinal(squad.indexOf(p) + 1) + ' \u00B7 ') : (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ') : '') + p.name));
       text.appendChild(starsEl(League.starsOf(save, p)));
       text.appendChild(el('span', 'meta', (p.no !== undefined ? '#' + p.no + ' \u00B7 ' : '') + (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?') + (p.tw ? ' \u00B7 Two-way' : '') + (isRookie(p) ? ' \u00B7 Rookie' : '')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));

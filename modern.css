@@ -885,3 +885,7 @@ body[data-modern="1"] .dc-tot.off{opacity:.55}
 body[data-modern="1"] #screen-live{padding-top:0}
 body[data-modern="1"] #screen-live .live-top{padding-top:calc(8px + env(safe-area-inset-top))}
 body[data-modern="1"] #screen-live #live-dock{padding-bottom:calc(4px + env(safe-area-inset-bottom) * .55)}
+
+/* roster: depth chart and free agents share one slim row so the five starters fit on the first page */
+body[data-modern="1"] .roster-btns{display:flex;gap:8px}
+body[data-modern="1"] .roster-btns .btn{flex:1;min-height:0;padding:9px 8px;font-size:14px;margin:0}
