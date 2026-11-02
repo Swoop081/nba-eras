@@ -1044,3 +1044,9 @@ body[data-modern="1"] #era-list .card.era.e2{grid-row:3}
 body[data-modern="1"] #era-list .card.era.e3{grid-row:4}
 body[data-modern="1"] #era-list .pg.era-pg{grid-template-rows:1fr 1fr auto auto}
 body[data-modern="1"] #era-list .card.era.e0,body[data-modern="1"] #era-list .card.era.e1{justify-content:center}
+body[data-modern="1"] #era-list .pg.era-pg{grid-template-rows:auto auto auto auto}
+body[data-modern="1"] #era-list .card.era.e0,body[data-modern="1"] #era-list .card.era.e1{padding:8px 12px}
+body[data-modern="1"] #era-list .card.era.e0 .year{font-size:38px}
+body[data-modern="1"] #era-list .card.era.e1 .year{font-size:28px}
+body[data-modern="1"] #era-list .card.era.e0 .meta,body[data-modern="1"] #era-list .card.era.e1 .meta{font-size:11px;line-height:1.25}
+body[data-modern="1"] #era-list .era-photo img{object-position:75% 35%}
