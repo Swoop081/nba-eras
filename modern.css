@@ -1081,3 +1081,12 @@ body[data-modern="1"] .aw-full .aw-bigph,body[data-modern="1"] .aw-bigph{border-
 body[data-modern="1"] .aw-full .aw-rph,body[data-modern="1"] .aw-rph{border-radius:14px}
 body[data-modern="1"] .aw-full .aw-bigph img,body[data-modern="1"] .aw-full .aw-rph img,body[data-modern="1"] .aw-bigph img,body[data-modern="1"] .aw-rph img{object-position:50% 0}
 body[data-modern="1"] .aw-ph{border-radius:14px}
+body[data-modern="1"] #screen-live #live-top{order:1}
+body[data-modern="1"] #screen-live #live-rail{order:2}
+body[data-modern="1"] #screen-live #ticker{order:3;margin:8px 10px 0}
+body[data-modern="1"] #screen-live #court{order:4}
+body[data-modern="1"] #screen-live #pdetail{order:5}
+body[data-modern="1"] #screen-live #live-dock{order:6}
+body[data-modern="1"] #screen-live #court.full+#ticker{order:3;flex:none;margin:6px 12px -62px;max-height:136px;min-height:0}
+body[data-modern="1"] #screen-live:has(.dec-title) #court.full+#ticker{margin:6px 12px -44px;max-height:48px}
+body[data-modern="1"] #screen-live #court.full{padding-top:0}
