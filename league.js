@@ -813,6 +813,18 @@
     return ok.length >= 5 ? ok : all;
   }
   /* Each player who took the floor has a small chance of getting hurt; sturdier players less so. */
+  /* what the injury actually is, by how long it keeps him out ({s} becomes left or right) */
+  var INJ = {
+    short: ['{s} ankle sprain', '{s} knee soreness', 'back spasms', '{s} hamstring tightness', '{s} calf tightness', '{s} hip soreness', '{s} thumb sprain', 'bruised {s} thigh', '{s} wrist soreness', 'a stomach illness', 'an eye contusion', '{s} Achilles soreness', '{s} toe sprain', '{s} quad contusion'],
+    mid: ['Grade 2 {s} ankle sprain', '{s} hamstring strain', '{s} groin strain', '{s} knee sprain', '{s} shoulder sprain', 'fractured {s} finger', '{s} quad strain', '{s} plantar fasciitis', '{s} calf strain', '{s} hip flexor strain', 'bruised ribs', 'bone bruise in the {s} knee'],
+    long: ['{s} MCL sprain', '{s} high ankle sprain', 'fractured {s} hand', 'stress reaction in the {s} foot', 'partially torn {s} meniscus', 'concussion', 'sports hernia', 'fractured {s} wrist', 'Grade 3 {s} hamstring strain', 'strained {s} hip flexor'],
+    out: ['torn {s} ACL', 'fractured {s} tibia', 'torn {s} Achilles', 'torn {s} labrum', 'stress fracture in the {s} foot', 'torn {s} meniscus', 'broken {s} wrist', 'torn {s} patellar tendon', 'dislocated {s} shoulder']
+  };
+  function injuryFor(n) {
+    var pool = n <= 5 ? INJ.short : n <= 12 ? INJ.mid : n <= 29 ? INJ.long : INJ.out;
+    return pool[Math.floor(Math.random() * pool.length)].replace('{s}', Math.random() < 0.5 ? 'left' : 'right');
+  }
+  function injText(t) { if (!t) return 'an injury'; return /^(an? |bruised ribs|back spasms)/.test(t) ? t : (/^[aeiou]/i.test(t) ? 'an ' : 'a ') + t; }
   function rollInjuries(save, lines, teamId, mul) {
     var hurt = [];
     lines.forEach(function (ln) {
@@ -823,9 +835,9 @@
       if (Math.random() < 0.0055 * (mul || 1) * (1.6 - dur / 100)) {
         var r = Math.random();
         var n = r < 0.55 ? 2 + Math.floor(Math.random() * 4) : r < 0.85 ? 6 + Math.floor(Math.random() * 7) : r < 0.97 ? 13 + Math.floor(Math.random() * 13) : 30 + Math.floor(Math.random() * 30);
-        p.inj = n;
-        (p.injHist || (p.injHist = [])).push({ y: save.year, d: save.day || 0, n: n, t: teamId });
-        hurt.push({ id: p.id, name: p.name, team: teamId, games: n });
+        p.inj = n; p.injType = injuryFor(n);
+        (p.injHist || (p.injHist = [])).push({ y: save.year, d: save.day || 0, n: n, t: teamId, k: p.injType });
+        hurt.push({ id: p.id, name: p.name, team: teamId, games: n, type: p.injType });
       }
     });
     if (hurt.length) bump(save);
@@ -833,7 +845,7 @@
   }
   function tickInjuries(save, teamId) {
     var any = false;
-    rosterOf(save, teamId).forEach(function (p) { if (p.inj > 0) { p.inj--; any = true; } });
+    rosterOf(save, teamId).forEach(function (p) { if (p.inj > 0) { p.inj--; any = true; if (p.inj === 0) delete p.injType; } });
     if (any) bump(save);
   }
 
@@ -1106,7 +1118,7 @@
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, makeDeal: makeDeal, doDeal: doDeal, injuryChoice: injuryChoice, doOffer: doOffer,
-    healthy: healthy, rollInjuries: rollInjuries, tickInjuries: tickInjuries,
+    healthy: healthy, rollInjuries: rollInjuries, injuryFor: injuryFor, injText: injText, tickInjuries: tickInjuries,
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,

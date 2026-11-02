@@ -1019,7 +1019,7 @@
     var dur = p.ratings.dur || 60, hist = p.injHist || [];
     body.appendChild(el('div', 'group-title', 'Status'));
     var cc = el('div', 'stat-card');
-    cc.appendChild(el('p', 'sub', p.inj > 0 ? 'Injured. Out for ' + p.inj + (p.inj === 1 ? ' more game.' : ' more games.') : 'Healthy and available.'));
+    cc.appendChild(el('p', 'sub', p.inj > 0 ? 'Injured' + (p.injType ? ' (' + p.injType + ')' : '') + '. Out for ' + p.inj + (p.inj === 1 ? ' more game.' : ' more games.') : 'Healthy and available.'));
     body.appendChild(cc);
     var missed = hist.reduce(function (a, h) { return a + h.n; }, 0);
     body.appendChild(boxes([['Durability', String(dur)], ['Injuries', String(hist.length)], ['Games out', String(missed)], ['Risk', dur >= 75 ? 'Low' : dur >= 45 ? 'Average' : 'High']]));
@@ -1100,7 +1100,7 @@
       text.appendChild(el('strong', null, (team.id === save.myId ? (modernUI() ? (squad.indexOf(p) < 5 ? '' : ordinal(squad.indexOf(p) + 1) + ' \u00B7 ') : (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ') : '') + p.name));
       text.appendChild(starsEl(League.starsOf(save, p)));
       text.appendChild(el('span', 'meta', (p.no !== undefined ? '#' + p.no + ' \u00B7 ' : '') + (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?') + (p.tw ? ' \u00B7 Two-way' : '') + (isRookie(p) ? ' \u00B7 Rookie' : '')));
-      if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
+      if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 ' + (p.injType ? p.injType + ' \u00B7 ' : '') + 'out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
       var detail = el('button', 'detail quick');
@@ -4618,18 +4618,25 @@
       if (ev.scores && ev.scores.length) {
         var lg = wrap([]); lg.classList.add('lgp');
         ev.scores.forEach(function (g) {
-          var r = el('div', 'lg-row');
-          var l = el('span', 'lg-g');
-          var wn = el('b', 'lg-w', g.w); wn.style.color = tcol(g.wid);
-          l.appendChild(wn);
-          l.appendChild(el('b', 'lg-n', ' ' + g.ws));
-          l.appendChild(el('span', 'lg-l', ', ' + g.l + ' ' + g.ls));
-          r.appendChild(l);
+          var r = el('div', 'lg-card');
+          var teams = el('div', 'lg-teams');
+          [[g.wid, g.w, g.ws, 'win'], [g.lid, g.l, g.ls, '']].forEach(function (t) {
+            var row = el('div', 'lg-tr ' + t[3]);
+            row.appendChild(sm(t[0]));
+            row.appendChild(el('span', 'lg-city', t[1]));
+            row.appendChild(el('b', 'lg-sc', String(t[2])));
+            teams.appendChild(row);
+          });
+          r.appendChild(teams);
           if (g.topName) {
-            var tp = el('span', 'lg-t');
+            var tp = el('div', 'lg-top');
+            tp.appendChild(makeAvatar({ id: g.topId, name: g.topFull || g.topName }));
+            var tx = el('div', 'lg-tx');
             var tn = el('i', null, g.topName); tn.style.color = tcol(g.topTid);
-            tp.appendChild(tn);
-            tp.appendChild(el('b', null, ' ' + g.topPts));
+            tx.appendChild(tn);
+            var sb = el('b', null, String(g.topPts)); sb.appendChild(el('span', 'pf-rest', '/' + g.topReb + '/' + g.topAst));
+            tx.appendChild(sb);
+            tp.appendChild(tx);
             r.appendChild(tp);
           }
           lg.appendChild(r);

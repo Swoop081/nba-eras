@@ -184,7 +184,7 @@
     }
     (inj || []).slice(0, 2).forEach(function (i) {
       if (i.games < 4) return;
-      post(save, 'insider', acct(INSIDER), 'Sources: ' + i.name + ' (' + tc(save, i.team) + ') is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + ' with a ' + rnd(['sprained ankle', 'hamstring strain', 'knee injury', 'wrist injury', 'back issue', 'calf strain']) + '.', { v: true, big: 1.3 });
+      post(save, 'insider', acct(INSIDER), 'Sources: ' + i.name + ' (' + tc(save, i.team) + ') is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + ' with ' + (i.type && root.League ? root.League.injText(i.type) : 'a ' + rnd(['sprained ankle', 'hamstring strain', 'knee injury', 'wrist injury', 'back issue', 'calf strain'])) + '.', { v: true, big: 1.3 });
     });
     var wire = (save.lg.wire || []).filter(function (w) { return w.d === save.day && w.y === save.year; }).slice(0, 2);
     wire.forEach(function (w) { post(save, chance(0.5) ? 'insider' : 'media', acct(chance(0.5) ? INSIDER : MEDIA), 'Transaction wire: ' + w.t, { big: 1.1 }); });

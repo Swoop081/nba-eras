@@ -368,7 +368,7 @@
       var all2 = g.lines.h.map(function (x) { return [x, g.home]; }).concat(g.lines.a.map(function (x) { return [x, g.away]; })).sort(function (a, b) { return b[0].s.pts - a[0].s.pts; });
       var top = all2[0] ? last(all2[0][0].name) + ' ' + all2[0][0].s.pts : '';
       var win = g.hs > g.as;
-      return { w: names(win ? g.home : g.away), ws: win ? g.hs : g.as, l: names(win ? g.away : g.home), ls: win ? g.as : g.hs, top: top, at: names(g.home), wid: win ? g.home : g.away, lid: win ? g.away : g.home, topName: all2[0] ? last(all2[0][0].name) : '', topPts: all2[0] ? all2[0][0].s.pts : 0, topTid: all2[0] ? all2[0][1] : null };
+      return { w: names(win ? g.home : g.away), ws: win ? g.hs : g.as, l: names(win ? g.away : g.home), ls: win ? g.as : g.hs, top: top, at: names(g.home), wid: win ? g.home : g.away, lid: win ? g.away : g.home, topName: all2[0] ? last(all2[0][0].name) : '', topPts: all2[0] ? all2[0][0].s.pts : 0, topTid: all2[0] ? all2[0][1] : null, topId: all2[0] ? all2[0][0].id : null, topFull: all2[0] ? all2[0][0].name : '', topReb: all2[0] ? (all2[0][0].s.orb || 0) + (all2[0][0].s.drb || 0) : 0, topAst: all2[0] ? all2[0][0].s.ast || 0 : 0 };
     });
 
     // wire briefs: close games, blowouts, rivalry, streaks, milestones, first place
@@ -421,7 +421,7 @@
     });
 
     // injuries
-    var inj = (ctx.day.inj || []).map(function (i) { return i.name + ' (' + names(i.team) + ') was hurt and is expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + '.'; });
+    var inj = (ctx.day.inj || []).map(function (i) { return i.name + ' (' + names(i.team) + ') ' + (i.type && root.League ? 'suffered ' + root.League.injText(i.type) + ' and is' : 'was hurt and is') + ' expected to miss ' + (i.games >= 30 ? 'the rest of the season' : i.games + ' games') + '.'; });
     (ctx.rest ? [] : ctx.rosterAll).filter(function (p) { return p.inj > 0 && !(ctx.day.inj || []).some(function (i) { return i.id === p.id; }); }).forEach(function (p) {
       inj.push(p.name + ' (' + ctx.me.city + ') remains on the injured list, ' + p.inj + ' more ' + (p.inj === 1 ? 'game' : 'games') + '.');
     });
@@ -524,7 +524,7 @@
       var hurtMine = (ctx.myInj || []).filter(function (h) { return h.team === ctx.me.id && h.games >= 4 && top7.indexOf(h.id) >= 0; })[0];
       if (hurtMine && save.phase === 'regular') {
         m.cool.inj = 6;
-        out.push({ kind: 'talk', who: hurtMine.name, pid: hurtMine.id, text: 'The club doctor says ' + hurtMine.name + ' will miss about ' + hurtMine.games + ' games. "I can play through it, boss," he insists. The coach is watching you.', choices: [
+        out.push({ kind: 'talk', who: hurtMine.name, pid: hurtMine.id, text: 'The club doctor says ' + hurtMine.name + ' has ' + (hurtMine.type && root.League ? root.League.injText(hurtMine.type) : 'an injury') + ' and will miss about ' + hurtMine.games + ' games. "I can play through it, boss," he insists. The coach is watching you.', choices: [
           { label: 'Rush him back early', fx: { s: { m: 3, t: 2 }, inj: { id: hurtMine.id, mode: 'rush' } }, say: 'Rushed back' },
           { label: 'Let him heal properly', fx: { s: { m: 1, t: 3 }, inj: { id: hurtMine.id, mode: 'rest' }, coach: 1 }, say: 'Rested' },
           { label: 'Sign a free agent to cover', fx: { inj: { id: hurtMine.id, mode: 'sign' } }, say: 'Signed cover' }
