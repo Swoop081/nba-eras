@@ -3611,7 +3611,7 @@
     return u;
   }
   function saveUi(u) { store.set('ui', u); }
-  var TABS = { table: 'Table', leaders: 'Leaders', team: 'Team', club: 'Club' };
+  var TABS = { table: 'Table', leaders: 'Leaders', team: 'Team', club: 'Office' };
 
   function formAll() {
     var f = {};
@@ -3854,8 +3854,8 @@
     var sm = Events.summary(save, rosterOf(me.id));
     ow.appendChild(ratingRow('Team morale', sm.morale));
     if (u.detail !== 'basic') { ow.appendChild(ratingRow('Fan interest', sm.fans)); ow.appendChild(ratingRow('Coach trust', sm.coach)); }
-    pages.push({ title: 'The owner', node: ow });
     if (save.coach) pages.push({ title: 'Coaching staff', node: staffNode() });
+    pages.push({ title: 'The owner', node: ow });
     var mo = Events.mood(save);
     var feed = el('div', 'hc feed');
     var items = [];
