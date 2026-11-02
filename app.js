@@ -1068,6 +1068,11 @@
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
     var squad = team.id === save.myId ? rotOrder(team.id) : League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     var pay = League.payroll(save, team.id);
+    if (team.id === save.myId && save.phase !== 'done') {
+      var fab = el('button', 'btn wide fa-open', 'Free agents \u00B7 ' + League.freeAgents(save).length); fab.type = 'button';
+      fab.addEventListener('click', function () { openFAList(team); });
+      list.appendChild(fab);
+    }
     document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
     squad.forEach(function (p) {
       var holder = el('div', 'player');
@@ -1808,6 +1813,36 @@
     var before = {};
     save.pending = [Events.restPaper(save, { me: me, opp: opp, res: { homeLines: hw ? best.lines.h : best.lines.a, awayLines: hw ? best.lines.a : best.lines.h }, us: Math.max(best.hs, best.as), them: Math.min(best.hs, best.as), label: 'Marquee game', seriesLine: '', day: { games: dayGames, inj: inj }, before: before, teamOf: teamById, standing: '' })];
   }
+
+  /* the free-agent pool, open any time during the season */
+  function openFAList(team) {
+    hubSheet('Free agents', function (sh, close) {
+      sh.classList.add('tall');
+      var box = el('div', 'pr-list fa-list');
+      function draw() {
+        box.textContent = '';
+        var n = League.rosterOf(save, team.id).length, pool = League.freeAgents(save).slice(0, 40);
+        sh.querySelector('h3').textContent = 'Free agents · ' + n + '/' + League.MAX_ROSTER;
+        if (!pool.length) box.appendChild(el('p', 'sub', 'The pool is empty.'));
+        pool.forEach(function (p) {
+          var row = el('div', 'fa-row');
+          row.appendChild(makeAvatar(p));
+          var tx = el('span'); tx.appendChild(el('b', null, p.name)); if (isRookie(p)) tx.appendChild(el('em', 'rk-tag', 'R'));
+          tx.appendChild(el('small', null, (p.pos || '') + ' · ' + p.age + ' · ovr ' + p.ratings.ovr + ' · pot ' + p.pot));
+          row.appendChild(tx);
+          var ask = League.salaryFor(p.ratings.ovr), can = n < League.MAX_ROSTER && League.canSign(save, team.id, ask);
+          var b = el('button', 'btn small', can ? money(ask) : (n >= League.MAX_ROSTER ? 'Full' : 'Cap')); b.type = 'button'; b.disabled = !can;
+          b.addEventListener('click', function () { League.sign(save, p, team.id, ask, 1); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); draw(); renderRoster(team); });
+          row.appendChild(b);
+          box.appendChild(row);
+        });
+      }
+      draw();
+      sh.appendChild(box);
+      var d = el('button', 'btn wide', 'Done'); d.type = 'button'; d.addEventListener('click', close); sh.appendChild(d);
+    });
+  }
+
   /* the scoreboard for a day our club did not play */
   function restScores() {
     var r = save.rest; if (!r || !r.games || !r.games.length) return;

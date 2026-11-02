@@ -862,3 +862,8 @@ body[data-modern="1"] .aw-full .aw-bigph img,body[data-modern="1"] .aw-full .aw-
 .aw-full .aw-r b{color:#F4F2EE}
 .aw-full .aw-next{background:#E8C46A;color:#1b1500;border:0;font-weight:800}
 .aw-full .aw-next{background:#E8C46A!important;color:#1b1500!important}
+
+body[data-modern="1"] .fa-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:10px;padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.06)}
+body[data-modern="1"] .fa-row b{font:700 14px var(--font)}
+body[data-modern="1"] .fa-row small{display:block;font:500 11px var(--font);color:#8d92a3}
+body[data-modern="1"] .fa-open{margin:0 0 10px}
