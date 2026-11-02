@@ -1,6 +1,6 @@
 {
  "season": "2026-27",
- "source": "Head coaches: Wikipedia list of current NBA head coaches. Ratings are the game's own estimates from results and reputation. Assistants are generated; the real assistants were not available.",
+ "source": "Head coaches: Wikipedia list of current NBA head coaches. Assistants (asst): first two per team staff the bench, the rest join the unemployed pool. Ratings are estimates.",
  "hc": {
   "atlanta-hawks": [
    "Quin Snyder",
@@ -243,24 +243,24 @@
    60
   ]
  },
- "ao": {
+ "asst": {
   "toronto-raptors": [
-   "Jama Mahlalela",
-   "Jama_Mahlalela",
-   62,
-   60,
-   66,
-   64
-  ]
- },
- "ad": {
-  "toronto-raptors": [
-   "Pat Delany",
-   "Pat_Delany_(basketball)",
-   58,
-   64,
-   60,
-   60
+   [
+    "Jama Mahlalela",
+    "Jama_Mahlalela",
+    62,
+    60,
+    66,
+    64
+   ],
+   [
+    "Pat Delany",
+    "Pat_Delany_(basketball)",
+    58,
+    64,
+    60,
+    60
+   ]
   ]
  }
 }

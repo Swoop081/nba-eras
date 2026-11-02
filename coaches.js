@@ -18,20 +18,31 @@
       dev: clamp(56 + (r() - 0.5) * 30, 30, 90), mot: clamp(58 + (r() - 0.5) * 28, 30, 90) };
     return c;
   }
+  /* a real assistant: a name, or [name, wiki, off, def, dev, mot]; unrated ones get stable estimates */
+  function real_(x, tid) {
+    var row = typeof x === 'string' ? [x] : x, r = rng(hash(row[0] + tid));
+    function v(i, base) { return typeof row[i] === 'number' ? row[i] : clamp(base + (r() - 0.5) * 20, 35, 82); }
+    return { id: slug(row[0]), n: row[0], wiki: row[1] || row[0].replace(/ /g, '_'), age: 48, role: 'ao', real: 1, off: v(2, 58), def: v(3, 58), dev: v(4, 58), mot: v(5, 58) };
+  }
   function build(save, data, teamIds) {
-    var st = {};
+    var st = {}, extra = [];
     teamIds.forEach(function (id) {
       var r = rng(hash(id + 'staff')), row = data && data.hc && data.hc[id], s = {};
       if (row) s.hc = { id: slug(row[0]), n: row[0], wiki: row[1], age: 52, role: 'hc', real: 1, off: row[2], def: row[3], dev: row[4], mot: row[5] };
       else s.hc = made(r, 'hc', id.slice(0, 3));
-      var ra = data && data.ao && data.ao[id], rd = data && data.ad && data.ad[id];
-      s.ao = ra ? { id: slug(ra[0]), n: ra[0], wiki: ra[1], age: 48, role: 'ao', real: 1, off: ra[2], def: ra[3], dev: ra[4], mot: ra[5] } : made(r, 'ao', id.slice(0, 3) + 'o');
-      s.ad = rd ? { id: slug(rd[0]), n: rd[0], wiki: rd[1], age: 48, role: 'ad', real: 1, off: rd[2], def: rd[3], dev: rd[4], mot: rd[5] } : made(r, 'ad', id.slice(0, 3) + 'd');
+      var list = (data && data.asst && data.asst[id]) || [];
+      if (!list.length) { var lg = [data && data.ao && data.ao[id], data && data.ad && data.ad[id]].filter(Boolean); list = lg; }
+      var real = list.map(function (x) { return real_(x, id); });
+      s.ao = real[0] || made(r, 'ao', id.slice(0, 3) + 'o');
+      s.ad = real[1] || made(r, 'ad', id.slice(0, 3) + 'd');
+      s.ao.role = 'ao'; s.ad.role = 'ad';
+      real.slice(2).forEach(function (c) { extra.push(c); });
       st[id] = s;
     });
     var pr = rng(hash('pool' + save.year)), pool = [];
     for (var i = 0; i < 18; i++) pool.push(made(pr, i % 3 === 0 ? 'hc' : i % 3 === 1 ? 'ao' : 'ad', 'f' + i));
-    save.coach = { staff: st, pool: pool, since: {} };
+    extra.forEach(function (c) { c.role = 'ao'; });
+    save.coach = { staff: st, pool: extra.concat(pool), since: {} };
   }
   function staff(save, id) { return save.coach && save.coach.staff[id]; }
   function score(c) { return c ? (c.off + c.def + c.dev + c.mot) / 4 : 50; }
