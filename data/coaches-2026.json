@@ -261,6 +261,98 @@
     60,
     60
    ]
+  ],
+  "boston-celtics": [
+   [
+    "Sam Cassell",
+    "Sam_Cassell",
+    60,
+    58,
+    70,
+    66
+   ],
+   [
+    "Tony Dobbins",
+    "Tony_Dobbins",
+    50,
+    68,
+    60,
+    60
+   ],
+   [
+    "D.J. MacLeay",
+    "D.J._MacLeay",
+    62,
+    56,
+    58,
+    58
+   ],
+   [
+    "Tyler Lashbrook",
+    "Tyler_Lashbrook",
+    66,
+    50,
+    64,
+    58
+   ]
+  ],
+  "brooklyn-nets": [
+   [
+    "Steve Hetzel",
+    "Steve_Hetzel",
+    64,
+    62,
+    60,
+    64
+   ],
+   [
+    "Juwan Howard",
+    "Juwan_Howard",
+    60,
+    58,
+    66,
+    66
+   ],
+   [
+    "Jay Hernandez",
+    "Jay_Hernandez",
+    56,
+    56,
+    62,
+    58
+   ],
+   [
+    "Deividas Dulkys",
+    "Deividas_Dulkys",
+    58,
+    56,
+    64,
+    56
+   ],
+   [
+    "Ryan Forehan-Kelly",
+    "Ryan_Forehan-Kelly",
+    56,
+    58,
+    58,
+    56
+   ],
+   [
+    "Travis Bader",
+    "Travis_Bader",
+    60,
+    52,
+    62,
+    56
+   ],
+   [
+    "Connor Griffin",
+    "Connor_Griffin",
+    58,
+    56,
+    58,
+    54
+   ]
   ]
  }
 }
