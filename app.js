@@ -1417,8 +1417,24 @@
   function offRating(id) { return sideRating(id, { sco: 0.4, sht: 0.25, ft: 0.1, ply: 0.15, orb: 0.1 }); }
   function defRating(id) { return sideRating(id, { drb: 0.35, stl: 0.25, blk: 0.25, fou: 0.15 }); }
   /* Your rotation: the order you set, then everyone else by overall. The first five start. */
+  /* Who starts: the real opening-week fives in 2026-27, otherwise the best five that still make a lineup (no five centres, no five guards). */
+  function isBig(p) { return p.pos === 'C' || p.pos === 'F-C'; }
+  function isGuard(p) { return p.pos === 'G' || p.pos === 'G-F'; }
+  function defaultOrder(list) {
+    var byOvr = list.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var st = save.year === 2026 ? byOvr.filter(function (p) { return p.st; }).slice(0, 5) : [];
+    byOvr.forEach(function (p) {
+      if (st.length >= 5 || st.indexOf(p) >= 0) return;
+      var nb = st.filter(isBig).length, ng = st.filter(isGuard).length;
+      if ((isBig(p) && nb >= 2) || (isGuard(p) && ng >= 3) || (!isBig(p) && !isGuard(p) && st.length - nb - ng >= 3)) return;
+      st.push(p);
+    });
+    byOvr.forEach(function (p) { if (st.length < 5 && st.indexOf(p) < 0) st.push(p); });
+    st.sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    return st.concat(byOvr.filter(function (p) { return st.indexOf(p) < 0; }));
+  }
   function rotOrder(id) {
-    var all = League.rosterOf(save, id).slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+    var all = defaultOrder(League.rosterOf(save, id));
     if (id !== save.myId || !save.rot || !save.rot.length) return all;
     var out = [];
     save.rot.forEach(function (pid) { var p = all.filter(function (q) { return q.id === pid; })[0]; if (p) out.push(p); });
@@ -1435,7 +1451,7 @@
   }
   function rosterFor(id) {
     var h = League.healthy(save, id);
-    if (id !== save.myId) return Coach.apply(save, id, h);
+    if (id !== save.myId) { var co = defaultOrder(h), cp = {}; co.forEach(function (p, i) { cp[p.id] = i; }); return Coach.apply(save, id, h).map(function (p) { return Object.assign({}, p, { slot: cp[p.id] }); }); }
     var ord = rotOrder(id), pos = {};
     ord.forEach(function (p, i) { pos[p.id] = i; });
     return Coach.apply(save, id, Events.moraleRoster(save, h), Events.mood(save).coach).map(function (p) { return Object.assign({}, p, { slot: pos[p.id] === undefined ? 99 : pos[p.id] }); });
