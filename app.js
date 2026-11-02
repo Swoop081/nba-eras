@@ -1855,6 +1855,7 @@
   /* a zone look: guards outside the arc, wings at the elbows of the key, the centre under the ring; the opponent's man sits beside each */
   /* the floor is cropped a little past the three-point line, so everything is placed on the 12%-100% band */
   function band(list) { return list.map(function (q) { return [q[0], Math.round((q[1] - 12) / 0.88 * 10) / 10]; }); }
+  function fieldY(y) { return Math.round((100 - y) * 0.42 * 10) / 10; }
   var ME_FULL = band([[33, 31], [67, 31], [76, 66], [24, 66], [50, 80]]);
   var OP_FULL = band([[18, 31], [82, 31], [91, 76], [9, 76], [66, 86]]);
   function rankOrder(list) { return list.map(function (m, i) { return i; }).sort(function (u, v) { return slotRank(list[u].p) - slotRank(list[v].p); }); }
@@ -1946,21 +1947,24 @@
     });
     var court = document.getElementById('court');
     court.textContent = '';
-    var full = modernUI();
-    court.innerHTML = full ? FULL_SVG : COURT_SVG;
+    var full = modernUI(), field = court;
+    court.innerHTML = full ? '' : COURT_SVG;
     court.classList.toggle('full', full);
     if (full) {
       var home = mine && mine.home === me.id ? me : opp;
       court.style.setProperty('--home', (home.colors && home.colors[0]) || '#C8102E');
-      var cc = el('div', 'cc-logo');
-      cc.appendChild(teamBadge(home));
-      court.appendChild(cc);
       court.style.setProperty('--home2', (home.colors && home.colors[1]) || '#fff');
-      court.appendChild(el('div', 'cc-wm', (home.city + ' ' + home.name).toUpperCase()));
-      // the real floor, rotated to a half court, when one has been added for this club
+      // a full-length floor at true proportions: the live action is the top half, the far end fades out
+      court.textContent = '';
+      field = el('div', 'cfield');
+      ['t', 'b'].forEach(function (k) { var h = el('div', 'ch ' + k); h.innerHTML = FULL_SVG; field.appendChild(h); });
+      court.appendChild(field);
       (function (exts) {
         var im = new Image(), k = 0;
-        im.onload = function () { var bg = el('div', 'court-bg'); bg.style.backgroundImage = 'url(' + im.src + ')'; court.insertBefore(bg, court.firstChild); court.classList.add('real'); };
+        im.onload = function () {
+          Array.prototype.forEach.call(field.querySelectorAll('.ch'), function (h) { h.style.backgroundImage = 'url(' + im.src + ')'; });
+          court.classList.add('real');
+        };
         im.onerror = function () { k++; if (k < exts.length) im.src = 'assets/courts/' + home.id + '.' + exts[k]; };
         im.src = 'assets/courts/' + home.id + '.' + exts[0];
       })(['webp', 'png', 'jpg']);
@@ -1974,18 +1978,18 @@
       var d = el('div', 'op');
       attachFace(d, o);
       d.style.left = (full ? OP_FULL : OPP_SPOTS)[i][0] + '%';
-      d.style.top = (full ? OP_FULL : OPP_SPOTS)[i][1] + '%';
+      d.style.top = (full ? fieldY(OP_FULL[i][1]) : OPP_SPOTS[i][1]) + '%';
       (function (i2) { d.addEventListener('click', function () { openLivePlayer(lv.g.onA[slotIdx(lv.g.onA)[i2]].p, false); }); })(i);
-      court.appendChild(d); lv.op.push(d);
+      field.appendChild(d); lv.op.push(d);
       var b = el('button', 'pl');
       b.type = 'button';
       if (full) sp = ME_FULL[i];
-      b.style.left = sp[0] + '%'; b.style.top = sp[1] + '%';
+      b.style.left = sp[0] + '%'; b.style.top = (full ? fieldY(sp[1]) : sp[1]) + '%';
       b.appendChild(makeAvatar(p));
       b.appendChild(el('span', 'nm', lastName(p.name)));
       var pp = el('span', 'pp', '0'); b.appendChild(pp);
       (function (i2) { b.addEventListener('click', function () { if (b.classList.contains('pick')) return; openLivePlayer(lv.g.onH[slotIdx(lv.g.onH)[i2]].p, true); }); })(i);
-      court.appendChild(b); lv.pl.push({ el: b, pp: pp });
+      field.appendChild(b); lv.pl.push({ el: b, pp: pp });
     });
     lv.rank = full;
     document.getElementById('ticker').textContent = '';
@@ -1999,7 +2003,7 @@
   /* teams swap ends after the break: the floor turns round and everyone is mirrored */
   function flipCourt() {
     var court = document.getElementById('court');
-    if (!court || !court.classList.contains('full') || lv.flipped) return;
+    if (!court || !court.classList.contains('full') || lv.flipped || court.querySelector('.cfield')) return;
     lv.flipped = true;
     court.classList.add('flip');
     Array.prototype.forEach.call(court.querySelectorAll('.pl, .op'), function (e) {
