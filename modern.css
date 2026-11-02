@@ -1154,7 +1154,6 @@ body[data-modern="1"] .fa-terms b{display:block;font-family:var(--disp);font-wei
 body[data-modern="1"] .fa-terms small{font-size:10px;opacity:.6;letter-spacing:.1em;text-transform:uppercase}
 body[data-modern="1"] .fa-by{margin:2px 0 auto;font-size:12px;opacity:.6}
 body[data-modern="1"] .fa-flash .btn{align-self:stretch}
-body[data-modern="1"] #screen-off{position:relative}
 body[data-modern="1"] .tb-card{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-height:0}
 body[data-modern="1"] .fa-pic.tb{width:min(56vw,34vh);margin-top:2px}
 body[data-modern="1"] .tb-card .fa-terms{align-self:stretch}
