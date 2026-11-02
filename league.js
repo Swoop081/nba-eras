@@ -195,6 +195,7 @@
     // unsigned veterans, so a short club can fill its roster on opening night
     // the free-agent pool is only real players: the clubs' extras beyond the opening-night limit
     openingRosters(lg, teams);
+    fixNumbers(save);
     ensurePicks(save, teams);
   }
 
@@ -203,7 +204,31 @@
   function deadOf(save, id) { return ((save.lg.dead || {})[id] || []).reduce(function (a, x) { return a + x.s; }, 0); }
   function payroll(save, id) { return rosterOf(save, id).reduce(function (a, p) { return a + p.salary; }, 0) + deadOf(save, id); }
   function byId(save, id) { return save.lg.players.filter(function (p) { return p.id === id; })[0]; }
-  function bump(save) { save.lg.rev++; }
+  /* ---------- jersey numbers: unique on a club, never a retired one ---------- */
+  var NUMS = {}, RETIRED = null;
+  function normName(n) { return String(n || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function setNumbers(map, retiredFn) { NUMS = map || {}; RETIRED = retiredFn || null; }
+  function hashNo(id) { var h = 7; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 997; return h; }
+  function fixNumbers(save) {
+    var lg = save.lg, by = {};
+    lg.players.forEach(function (p) { if (p.team && p.status !== 'prospect') (by[p.team] = by[p.team] || []).push(p); });
+    Object.keys(by).forEach(function (t) {
+      var ret = {}; (RETIRED ? RETIRED(t) : []).forEach(function (n) { ret[String(n)] = 1; });
+      var used = {}, need = [];
+      by[t].sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).forEach(function (p) {
+        /* a number a player already wears at this club stays his (real rosters honour a few retired ones); a newcomer cannot take a retired or worn one */
+        if (p.no === undefined || p.no === null) { var m = NUMS[t] && NUMS[t][normName(p.name)]; if (m !== undefined) { p.no = String(m); p.noT = t; } }
+        var ok = p.no !== undefined && p.no !== null && !used[p.no] && (p.noT === t || !ret[p.no]);
+        if (ok) { used[p.no] = 1; p.noT = t; } else need.push(p);
+      });
+      need.forEach(function (p) {
+        var start = hashNo(p.id) % 55, pick = null, k;
+        for (k = 0; k < 100 && pick === null; k++) { var c = String((start + k) % 100); if (!ret[c] && !used[c]) pick = c; }
+        p.no = pick === null ? '99' : pick; p.noT = t; used[p.no] = 1;
+      });
+    });
+  }
+  function bump(save) { save.lg.rev++; fixNumbers(save); }
 
   /* ---------- season stats ---------- */
   var STAT_KEYS = ['min', 'pts', 'ast', 'trb', 'stl', 'blk', 'tov', 'pf', 'fg', 'fga', 'ft', 'fta', 'tp', 'tpa'];
@@ -1031,6 +1056,7 @@
   }
 
   root.League = {
+    setNumbers: setNumbers, fixNumbers: fixNumbers, normName: normName,
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, injuryChoice: injuryChoice, doOffer: doOffer,
