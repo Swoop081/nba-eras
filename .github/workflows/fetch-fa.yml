@@ -1,0 +1,22 @@
+name: Fetch free agents
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          pip install playwright && python3 -m playwright install --with-deps chromium
+          python3 tools/fetch_fa.py 2>&1 | tee tools/fetch-fa-log.txt
+          python3 tools/build_fa.py 2>&1 | tee -a tools/fetch-fa-log.txt
+        shell: bash
+      - if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/free-agents-2026.json data/players-2026.json tools/fetch-fa-log.txt tools/fa-screen.png
+          git diff --cached --quiet || git commit -m "Add real unsigned free agents from the nba.com tracker"
+          git pull --rebase
+          git push
