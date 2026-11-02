@@ -4957,7 +4957,7 @@
       });
       strack.addEventListener('scroll', function () {
         var i = Math.round(strack.scrollLeft / (strack.firstChild.offsetWidth + 10));
-        Array.prototype.forEach.call(snav.children, function (b, k) { b.classList.toggle('on', k === i); if (k === i) b.scrollIntoView({ inline: 'center', block: 'nearest' }); });
+        Array.prototype.forEach.call(snav.children, function (b, k) { b.classList.toggle('on', k === i); if (k === i) snav.scrollLeft = b.offsetLeft - (snav.clientWidth - b.offsetWidth) / 2; });
       });
       site.appendChild(snav);
       site.appendChild(rail);
