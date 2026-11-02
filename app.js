@@ -3898,7 +3898,6 @@
     var sm = Events.summary(save, rosterOf(me.id));
     ow.appendChild(ratingRow('Team morale', sm.morale));
     if (u.detail !== 'basic') { ow.appendChild(ratingRow('Fan interest', sm.fans)); ow.appendChild(ratingRow('Coach trust', sm.coach)); }
-    if (save.coach) pages.push({ title: 'Coaching staff', node: staffNode() });
     pages.push({ title: 'The owner', node: ow });
     var mo = Events.mood(save);
     var feed = el('div', 'hc feed');
@@ -4070,7 +4069,7 @@
   /* Coaching: the head coach, the game plan, the rotation and the staff in one place */
   function openPlan() {
     hubSheet('Coaching', function (sh, close) {
-      sh.classList.add('tall');
+      sh.classList.add('tall', 'coachsheet');
       save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
       var pl = save.plan, st = Coach.staff(save, save.myId), hc = st && st.hc;
       if (hc) {
@@ -4083,6 +4082,17 @@
         head.appendChild(tx);
         head.addEventListener('click', function () { close(); openCoachSheet('hc'); });
         sh.appendChild(head);
+      }
+      var asst = Coach.owned(save, save.myId).filter(function (o) { return o.role !== 'hc'; });
+      if (asst.length) {
+        var al = el('div', 'hc staff');
+        asst.forEach(function (o) {
+          if (o.c) al.appendChild(coachRow(o.c, o.label, function () { close(); openCoachSheet(o.role); }));
+          else { var e2 = el('button', 'coach-row empty', 'Hire an ' + o.label.toLowerCase()); e2.type = 'button'; e2.addEventListener('click', function () { close(); openCoachSheet(o.role); }); al.appendChild(e2); }
+        });
+        var bn = Coach.bonus(save, save.myId, Events.mood(save).coach);
+        if (bn) { var ff = function (v) { return (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%'; }; al.appendChild(el('p', 'staff-fx', 'Staff effect: offence ' + ff(bn.off) + ' \u00B7 defence ' + ff(bn.def))); }
+        sh.appendChild(al);
       }
       [['pace', 'Pace', [[1, 'Run'], [0, 'Balanced'], [-1, 'Grind']]],
        ['focus', 'Offence', [['inside', 'Inside'], ['', 'Balanced'], ['ball', 'Ball movement'], ['defence', 'Lock down']]],
@@ -4100,12 +4110,8 @@
         });
         sh.appendChild(row);
       });
-      var more = el('div', 'dock-row');
       var dc = el('button', 'btn wide', 'Depth chart'); dc.type = 'button'; dc.addEventListener('click', function () { close(); openDepth(teamById(save.myId)); });
-      var sf = el('button', 'btn wide', 'Coaching staff'); sf.type = 'button';
-      sf.addEventListener('click', function () { close(); hubSheet('Coaching staff', function (s2, c2) { s2.classList.add('tall'); s2.appendChild(staffNode()); var d2 = el('button', 'btn primary wide', 'Done'); d2.type = 'button'; d2.addEventListener('click', c2); s2.appendChild(d2); }); });
-      more.appendChild(dc); more.appendChild(sf);
-      sh.appendChild(more);
+      sh.appendChild(dc);
       var d = el('button', 'btn primary wide', 'Done'); d.type = 'button'; d.addEventListener('click', close); sh.appendChild(d);
     });
   }
