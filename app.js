@@ -2198,16 +2198,19 @@
         };
         // the City Edition floor goes down for about a quarter of the home dates between November and March
         var kind = 'full', dt = save && save.phase === 'regular' && save.dates && save.dates[save.day];
-        if (dt && dt >= '2026-11-01' && dt < '2027-04-01' && home.id) {
+        var gm = save && save.phase === 'regular' && save.gmeta && save.gmeta[save.day], gi = -1;
+        if (gm) (save.days[save.day] || []).forEach(function (x, i) { if (x[0] === home.id) gi = i; });
+        if (gm && gi >= 0 && gm[gi] && /Cup/.test(gm[gi][0] || '')) kind = 'cup';
+        else if (dt && dt >= '2026-11-01' && dt < '2027-04-01' && home.id) {
           var hh = 0, key = home.id + dt;
           for (var q = 0; q < key.length; q++) hh = (hh * 31 + key.charCodeAt(q)) >>> 0;
           if (hh % 100 < 24) kind = 'city';
         }
-        if (kind === 'city') {
+        if (kind === 'city' || kind === 'cup') {
           var im2 = new Image();
           im2.onload = function () { field.style.backgroundImage = 'url(' + im2.src + ')'; court.classList.add('real', 'whole'); };
           im2.onerror = function () { im.src = 'assets/courts/full/' + home.id + '.webp'; };
-          im2.src = 'assets/courts/city/' + home.id + '.webp';
+          im2.src = 'assets/courts/' + kind + '/' + home.id + '.webp';
         } else im.src = 'assets/courts/full/' + home.id + '.webp';
       })();
     }
