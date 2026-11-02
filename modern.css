@@ -825,3 +825,5 @@ body[data-modern="1"] .aw-row b{font:700 14px var(--font)}
 body[data-modern="1"] .aw-row small{display:block;font:500 11px var(--font);color:#8d92a3}
 body[data-modern="1"] .aw-row em{font:600 11px var(--font);font-style:normal;color:#c9ccd8;text-align:right;max-width:120px}
 body[data-modern="1"] .aw-row em{max-width:none;font-size:10.5px;white-space:nowrap}
+body[data-modern="1"] .ye-list .ye-k{font:700 10px var(--font);letter-spacing:.1em;text-transform:uppercase;color:#E8C46A}
+body[data-modern="1"] .ye-list .aw-row{grid-template-columns:44px minmax(0,1fr)}

@@ -1494,6 +1494,7 @@
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     cupNews();
     awardsCheck();
+    yearEndCheck();
     return results;
     // a day without our game still gets its scores, shown on the hub until the next day is played
     var mineToday = results.some(function (g) { return g.home === save.myId || g.away === save.myId; });
@@ -1600,9 +1601,69 @@
     return box;
   }
 
+
+  /* ---------- year-end awards, kept for every season in the save ---------- */
+  function perfScore(o, win) { return (o.pts + 1.2 * o.trb + 1.5 * o.ast + 1.5 * o.stl + 1.2 * o.blk - o.tov) / o.g * (0.7 + 0.6 * win); }
+  function yearEnd() { var ya = save.lg.ya || (save.lg.ya = []), e = ya.filter(function (x) { return x.y === save.year; })[0]; return e; }
+  function yearEndCheck() {
+    if (!save || !save.lg || !save.lg.stats) return;
+    var e = yearEnd();
+    if (save.phase !== 'regular' && !e) {
+      var st = save.lg.stats, rows = [];
+      save.lg.players.forEach(function (p) {
+        var o = st[p.id]; if (!o || !p.team || p.status !== 'active') return;
+        var rc = save.rec[p.team]; if (!rc) return; var gp = rc.w + rc.l; if (!gp || o.g < Math.max(8, gp * 0.5)) return;
+        var win = rc.w / gp, ordR = rosterOf(p.team).slice().sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).indexOf(p);
+        var rk = isRookie(p);
+        rows.push({ p: p, o: o, tid: p.team, win: win, sc: perfScore(o, win), rk: rk, bench: ordR >= 5 && (o.min || 0) / o.g >= 14,
+          df: (2.2 * (o.stl || 0) + 2.2 * (o.blk || 0) + 0.4 * (o.trb || 0)) / o.g * (0.8 + 0.4 * win) * (0.6 + ((p.ratings.stl || 50) + (p.ratings.blk || 50)) / 250) });
+      });
+      var card = function (r) { return { id: r.p.id, name: r.p.name, tid: r.tid, line: (r.o.pts / r.o.g).toFixed(1) + ' pts · ' + (r.o.trb / r.o.g).toFixed(1) + ' reb · ' + (r.o.ast / r.o.g).toFixed(1) + ' ast' }; };
+      var top = function (list, key, n, f) { return list.filter(f || function () { return true; }).sort(function (x, y) { return y[key] - x[key]; }).slice(0, n); };
+      var y = { y: save.year, label: seasonLabel(save.year) };
+      var pick = function (list, key, f) { var t = top(list, key, 1, f)[0]; return t ? card(t) : null; };
+      y.mvp = pick(rows, 'sc'); y.dpoy = pick(rows, 'df');
+      y.roy = pick(rows, 'sc', function (r) { return r.rk; }); y.smoy = pick(rows, 'sc', function (r) { return r.bench; });
+      var mip = rows.filter(function (r) { return !r.rk && (r.p.formAdj || 0) > 0; }).sort(function (x, z) { return ((z.p.formAdj || 0) * 3 + z.sc * 0.1) - ((x.p.formAdj || 0) * 3 + x.sc * 0.1); })[0];
+      y.mip = mip ? card(mip) : null;
+      var an = top(rows, 'sc', 15).map(card); y.allnba = [an.slice(0, 5), an.slice(5, 10), an.slice(10, 15)];
+      var ad = top(rows, 'df', 10).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
+      var ar = top(rows, 'sc', 10, function (r) { return r.rk; }).map(card); y.allrook = [ar.slice(0, 5), ar.slice(5, 10)];
+      var best = null, bi = -1;
+      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; var gain = rc.w / (rc.w + rc.l) - lr.w / Math.max(1, lr.w + lr.l); if (gain > bi) { bi = gain; best = id; } });
+      if (best) { var s = Coach.staff(save, best), t = teamById(best); y.coy = { id: '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: best, line: save.rec[best].w + '-' + save.rec[best].l }; }
+      (save.lg.ya = save.lg.ya || []).push(y); e = y;
+      (save.lg.awq || (save.lg.awq = [])).push({ kind: 'ye', y: save.year });
+    }
+    if (save.phase === 'done' && save.champion) {
+      e = yearEnd();
+      if (e && !e.fmvp) {
+        var st2 = save.lg.stats, bestP = null, bs = -1;
+        rosterOf(save.champion).forEach(function (p) { var o = st2[p.id]; if (!o || !o.g) return; var sc = perfScore(o, 0.6); if (sc > bs) { bs = sc; bestP = p; } });
+        if (bestP) e.fmvp = { id: bestP.id, name: bestP.name, tid: save.champion, line: 'NBA champions' };
+      }
+    }
+  }
+  function yearEndPop(a) {
+    var e = (save.lg.ya || []).filter(function (x) { return x.y === a.y; })[0]; if (!e) return;
+    hubSheet(e.label + ' awards', function (sh, close) {
+      sh.classList.add('tall');
+      var box = el('div', 'pr-list ye-list');
+      [['mvp', 'MVP'], ['dpoy', 'Defensive Player'], ['roy', 'Rookie of the Year'], ['smoy', 'Sixth Man'], ['mip', 'Most Improved'], ['coy', 'Coach of the Year']].forEach(function (x) {
+        var c = e[x[0]]; if (!c) return;
+        var row = el('div', 'aw-row');
+        if (c.id) row.appendChild(makeAvatar({ id: c.id, name: c.name })); else { var tb = teamBadge(teamById(c.tid)); row.appendChild(tb); }
+        var tx = el('span'); tx.appendChild(el('small', 'ye-k', x[1])); tx.appendChild(el('b', null, c.name)); tx.appendChild(el('small', null, (teamById(c.tid) || {}).city + ' · ' + c.line)); row.appendChild(tx);
+        box.appendChild(row);
+      });
+      sh.appendChild(box);
+      var b = el('button', 'btn wide', 'Done'); b.type = 'button'; b.addEventListener('click', close); sh.appendChild(b);
+    }, function () { setTimeout(awardsPop, 250); });
+  }
+
   /* ---------- weekly and monthly awards ---------- */
   function confOf(tid) { var d = save.division[tid] || ''; return /east/i.test(d) ? 'East' : /west/i.test(d) ? 'West' : 'League'; }
-  var ROOK26 = {}; ['AJ Dybantsa', 'Darryn Peterson', 'Cameron Boozer', 'Caleb Wilson', 'Keaton Wagler', 'Mikel Brown Jr.', 'Darius Acuff Jr.', 'Kingston Flemings', 'Morez Johnson Jr.', 'Brayden Burries', 'Yaxel Lendeborg', 'Aday Mara', 'Nate Ament', 'Hannes Steinbach', 'Dailyn Swain', 'Bennett Stirtz', 'Ebuka Okorie', 'Christian Anderson Jr.', 'Allen Graves', 'Jayden Quaintance', 'Karim Lopez', 'Labaron Philon Jr.', 'Zuby Ejiofor', 'Cameron Carr', 'Sergio De Larrea', 'Tarris Reed Jr.', 'Chris Cenac Jr.', 'Joshua Jefferson', 'Alex Karaban', 'Koa Peat'].forEach(function (n) { ROOK26[n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()] = 1; });
+  var ROOK26 = {}; ['AJ Dybantsa', 'Darryn Peterson', 'Cameron Boozer', 'Caleb Wilson', 'Keaton Wagler', 'Mikel Brown Jr.', 'Darius Acuff Jr.', 'Kingston Flemings', 'Morez Johnson Jr.', 'Brayden Burries', 'Yaxel Lendeborg', 'Aday Mara', 'Nate Ament', 'Hannes Steinbach', 'Dailyn Swain', 'Bennett Stirtz', 'Ebuka Okorie', 'Christian Anderson Jr.', 'Allen Graves', 'Jayden Quaintance', 'Karim Lopez', 'Labaron Philon Jr.', 'Zuby Ejiofor', 'Cameron Carr', 'Sergio De Larrea', 'Tarris Reed Jr.', 'Chris Cenac Jr.', 'Joshua Jefferson', 'Alex Karaban', 'Koa Peat', 'Bruce Thornton', 'Richie Saunders', 'Isaiah Evans', 'Meleek Thomas', 'Trevon Brazile', 'Baba Miller', 'Ryan Conwell', 'Braden Smith', 'Jack Kayil', 'Dillon Mitchell', 'Otega Oweh', "Ja'Kobi Gillespie", 'Tyler Bilodeau', 'Maliq Brown', 'Emanuel Sharp', 'Felix Okpara', 'Tyler Nickel', 'Tobi Lawal', 'Bryce Hopkins', 'Jaden Bradley', 'Izaiyah Nelson', 'Henri Veesaar', 'Ugonna Onyenso', 'Lajae Jones', 'Nick Martinelli', 'Vsevolod Ishchenko', 'Narcisse Ngoy', 'Jaron Pierre Jr.', 'Trey Kaufman-Renn', 'Malique Lewis'].forEach(function (n) { ROOK26[n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()] = 1; });
   function isRookie(p) {
     if (p.rookie || p.draftedYear === save.year) return true;
     return save.eraId === '2026' && save.year === 2026 && !!ROOK26[String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()];
@@ -1652,6 +1713,7 @@
     var q = save && save.lg && save.lg.awq;
     if (!q || !q.length || document.querySelector('.sheet-ov') || document.body.dataset.screen !== 'screen-season') return;
     var a = q.shift(); persist();
+    if (a.kind === 'ye') { yearEndPop(a); return; }
     if (a.kind === 'pr') {
       if (!save.lg.pr) return;
       hubSheet('Power rankings', function (sh, close) {
@@ -2055,6 +2117,7 @@
     if (Social.has(save.year)) Social.day(save, dayGames, dayInj);
     cupNews();
     awardsCheck();
+    yearEndCheck();
     save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, myInj: myInj, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
     persist();
     renderMatch(me, opp, res, save.year, label, true);
@@ -3072,8 +3135,19 @@
       body.appendChild(prList(save.lg.pr)); return;
     }
     if (RV.tab === 'Awards') {
+      var ya = (save.lg.ya || []).slice().reverse();
+      [['mvp', 'Most Valuable Player'], ['fmvp', 'Finals MVP'], ['dpoy', 'Defensive Player of the Year'], ['roy', 'Rookie of the Year'], ['smoy', 'Sixth Man of the Year'], ['mip', 'Most Improved Player'], ['coy', 'Coach of the Year']].forEach(function (k) {
+        var rows = ya.filter(function (e) { return e[k[0]]; }).map(function (e) { var c = e[k[0]]; return { cells: [e.label, c.name, (teamById(c.tid) || { city: '\u2013' }).city] }; });
+        if (rows.length) section(k[1], ['Season', 'Winner', 'Team'], rows);
+      });
+      [['allnba', 'All-NBA', ['First', 'Second', 'Third']], ['alldef', 'All-Defensive', ['First', 'Second']], ['allrook', 'All-Rookie', ['First', 'Second']]].forEach(function (k) {
+        var rows = [];
+        ya.forEach(function (e) { (e[k[0]] || []).forEach(function (tm, i) { if (tm.length) rows.push({ cells: [e.label + ' \u00B7 ' + k[2][i], tm.map(function (c) { return c.name; }).join(', ')] }); }); });
+        if (rows.length) section(k[1], ['Team', 'Players'], rows);
+      });
       var ah = (save.lg.awh || []).filter(function (x) { return x.y === save.year; }).reverse();
-      if (!ah.length) { body.appendChild(el('p', 'sub', 'Weekly and monthly awards will be listed here as the season goes on.')); return; }
+      if (!ah.length) { if (!ya.length) body.appendChild(el('p', 'sub', 'Awards will be listed here as the season goes on.')); return; }
+      body.appendChild(el('h3', 'box-title', 'This season: weekly and monthly'));
       var lastT = '';
       ah.forEach(function (x) {
         body.appendChild(el('h3', 'box-title', x.title + (x.date ? ' \u00B7 ' + dateText(x.date) : '')));
