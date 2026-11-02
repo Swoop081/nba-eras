@@ -1741,13 +1741,16 @@
     var e = yearEnd();
     if (save.phase !== 'regular' && !e) {
       var st = save.lg.stats, rows = [];
+      var fm = {}; try { fm = formAll(); } catch (e) {}
+      var dEff = {}, dIds = save.ids.filter(function (id) { return fm[id] && fm[id].g; }).sort(function (u, v) { return fm[u].pa / fm[u].g - fm[v].pa / fm[v].g; });
+      dIds.forEach(function (id, i) { dEff[id] = 1.15 - 0.5 * i / Math.max(1, dIds.length - 1); });
       save.lg.players.forEach(function (p) {
         var o = st[p.id]; if (!o || !p.team || p.status !== 'active') return;
         var rc = save.rec[p.team]; if (!rc) return; var gp = rc.w + rc.l; if (!gp || o.g < Math.max(8, gp * 0.5)) return;
         var win = rc.w / gp, ordR = rosterOf(p.team).slice().sort(function (x, y) { return y.ratings.ovr - x.ratings.ovr; }).indexOf(p);
         var rk = isRookie(p);
-        rows.push({ p: p, o: o, tid: p.team, win: win, sc: perfScore(o, win), rk: rk, bench: ordR >= 5 && (o.min || 0) / o.g >= 14,
-          df: (2.2 * (o.stl || 0) + 2.2 * (o.blk || 0) + 0.4 * (o.trb || 0)) / o.g * (0.8 + 0.4 * win) * (0.6 + ((p.ratings.stl || 50) + (p.ratings.blk || 50)) / 250) });
+        rows.push({ p: p, o: o, tid: p.team, win: win, el: o.g >= Math.round(gp * 65 / 82), sc: perfScore(o, win), rk: rk, bench: ordR >= 5 && (o.min || 0) / o.g >= 14,
+          df: (2.4 * (o.stl || 0) + 3 * (o.blk || 0) + 0.12 * (o.trb || 0)) / o.g * (dEff[p.team] || 1) * Math.pow(((p.ratings.stl || 50) + (p.ratings.blk || 50)) / 2 / 55, 1.5) });
       });
       var card = function (r) { return { id: r.p.id, name: r.p.name, tid: r.tid, line: (r.o.pts / r.o.g).toFixed(1) + ' pts · ' + (r.o.trb / r.o.g).toFixed(1) + ' reb · ' + (r.o.ast / r.o.g).toFixed(1) + ' ast' }; };
       var top = function (list, key, n, f) { return list.filter(f || function () { return true; }).sort(function (x, y) { return y[key] - x[key]; }).slice(0, n); };
@@ -1766,18 +1769,18 @@
       };
       var M5 = [10, 7, 5, 3, 1], M3 = [5, 3, 1];
       y.t = {
-        mvp: vote(rows, function (r) { return r.sc; }, card, M5),
-        dpoy: vote(rows, function (r) { return r.df; }, card, M3),
+        mvp: vote(rows.filter(function (r) { return r.el; }), function (r) { return r.sc; }, card, M5),
+        dpoy: vote(rows.filter(function (r) { return r.el; }), function (r) { return r.df; }, card, M3),
         roy: vote(rows.filter(function (r) { return r.rk; }), function (r) { return r.sc; }, card, M3),
-        smoy: vote(rows.filter(function (r) { return r.bench; }), function (r) { return r.sc; }, card, M3),
-        mip: vote(rows.filter(function (r) { return !r.rk && (r.p.formAdj || 0) > 0; }), function (r) { return Math.max(0.01, (r.p.formAdj || 0) * 3 + r.sc * 0.1); }, card, M3)
+        smoy: vote(rows.filter(function (r) { return r.bench && r.el; }), function (r) { return r.sc; }, card, M3),
+        mip: vote(rows.filter(function (r) { return r.el && !r.rk && (r.p.formAdj || 0) > 0; }), function (r) { return Math.max(0.01, (r.p.formAdj || 0) * 3 + r.sc * 0.1); }, card, M3)
       };
       var gains = [];
-      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; gains.push({ id: id, g: rc.w / (rc.w + rc.l) - lr.w / Math.max(1, lr.w + lr.l) + 0.5 }); });
+      save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; if (save.coach && save.coach.since && Math.floor((save.coach.since[id + 'hcd'] || 0) / 1000) === save.year) return; gains.push({ id: id, g: rc.w / (rc.w + rc.l) - lr.w / Math.max(1, lr.w + lr.l) + 0.5 }); });
       y.t.coy = vote(gains, function (g) { return g.g; }, function (g) { var s = Coach.staff(save, g.id), t = teamById(g.id); return { id: '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: g.id, line: save.rec[g.id].w + '-' + save.rec[g.id].l }; }, M3);
       ['mvp', 'dpoy', 'roy', 'smoy', 'mip', 'coy'].forEach(function (k) { y[k] = y.t[k][0] || null; });
-      var an = top(rows, 'sc', 15).map(card); y.allnba = [an.slice(0, 5), an.slice(5, 10), an.slice(10, 15)];
-      var ad = top(rows, 'df', 10).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
+      var an = top(rows, 'sc', 15, function (r) { return r.el; }).map(card); y.allnba = [an.slice(0, 5), an.slice(5, 10), an.slice(10, 15)];
+      var ad = top(rows, 'df', 10, function (r) { return r.el; }).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
       var ar = top(rows, 'sc', 10, function (r) { return r.rk; }).map(card); y.allrook = [ar.slice(0, 5), ar.slice(5, 10)];
       (save.lg.ya = save.lg.ya || []).push(y); e = y;
       (save.lg.awq || (save.lg.awq = [])).push({ kind: 'ye', y: save.year });
