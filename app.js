@@ -1666,6 +1666,7 @@
     });
     if (save.phase === 'regular') results.forEach(function (g) { League.noteTeamGame(save, g.home, g.away, g.hs, g.as); });
     Season.record(save, results);
+    League.boardTick(save);
     League.aiMoves(save, save.myId, save.ids.map(teamById));
     if (typeof Coach !== 'undefined' && save.coach && save.phase === 'regular' && (save.day || 0) % 4 === 0) {
       var strength = {};
@@ -2390,6 +2391,7 @@
     Object.keys(stb).forEach(function (d) { before[d] = stb[d][0].id; });
     if (save.phase === 'regular') others.concat([mineResult]).forEach(function (g) { League.noteTeamGame(save, g.home, g.away, g.hs, g.as); });
     Season.record(save, others.concat([mineResult]));
+    League.boardTick(save);
     League.aiMoves(save, me.id, save.ids.map(teamById));
     rosterCache = {};
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
@@ -3992,6 +3994,65 @@
     return hubRail(pages);
   }
 
+
+  /* ---------- draft big board (rail page on Standings) ---------- */
+  var boardAvail;
+  function boardPage() {
+    var node = el('div', 'board');
+    function paint() {
+      node.textContent = '';
+      var B = save.lg.board;
+      if (!B) { node.appendChild(el('p', 'sh-l', 'No scouting data for this class.')); return; }
+      var me = save.myId, order = League.projOrder(save), picks = (save.lg.picks || []).filter(function (k) { return k.y === B.year && k.r === 1; });
+      var holder = function (tid) { var k = picks.filter(function (x) { return x.o === tid; })[0]; return k ? k.t : tid; };
+      var slotTeam = order.map(holder);
+      var mine = []; slotTeam.forEach(function (t, i) { if (t === me) mine.push(i + 1); });
+      var needs = League.teamNeeds(save, me), nk = needs.slice(0, 2).map(function (n) { return n.k; });
+      var head = el('div', 'bd-head');
+      head.appendChild(el('strong', null, mine.length ? 'Your projected pick: ' + mine.map(function (n) { return '#' + n; }).join(', ') : 'You hold no 2027 first-rounder'));
+      var nl = { G: 'guard', F: 'forward', C: 'big' };
+      head.appendChild(el('span', 'meta', 'Needs: ' + nk.map(function (k) { return nl[k]; }).join(' \u00B7 ') + ' \u00B7 Scout reports: ' + B.pts));
+      if (mine.length) { var tg = B.list[mine[0] - 1]; if (tg) head.appendChild(el('span', 'meta', 'Board has ' + tg.name + ' at your slot')); }
+      node.appendChild(head);
+      B.list.forEach(function (bp) {
+        var row = el('div', 'bd-row' + (slotTeam[bp.rank - 1] === me ? ' me' : ''));
+        row.appendChild(el('span', 'bd-n', String(bp.rank)));
+        row.appendChild(makeAvatar({ id: bp.id, name: bp.name }));
+        var tx = el('span', 'bd-tx');
+        var d = bp.prev - bp.rank;
+        var nm = el('strong', null, bp.name);
+        if (d) nm.appendChild(el('em', d > 0 ? 'up' : 'dn', (d > 0 ? ' \u25B2' : ' \u25BC') + Math.abs(d)));
+        tx.appendChild(nm);
+        tx.appendChild(el('span', 'meta', bp.pos + ' \u00B7 ' + bp.college + ' \u00B7 ' + bp.age));
+        var tm = slotTeam[bp.rank - 1] ? teamById(slotTeam[bp.rank - 1]) : null;
+        if (bp.rank <= 30 && tm) tx.appendChild(el('span', 'meta', 'Proj. to ' + tm.city));
+        if (bp.lvl >= 1) {
+          var av = function (k, pct) { var v = bp.g ? bp.tot[k] / bp.g : 0; return pct ? (v * 100).toFixed(0) + '%' : v.toFixed(1); };
+          tx.appendChild(el('span', 'meta bd-st', Math.floor(bp.ht / 12) + '\u2019' + (bp.ht % 12) + '\u201D \u00B7 ' + av('pts') + ' pts ' + av('reb') + ' reb ' + av('ast') + ' ast \u00B7 FG ' + av('fg', 1) + ' 3P ' + av('tp', 1)));
+          var fit = nk.indexOf(/C/.test(bp.pos) ? 'C' : /^G/.test(bp.pos) ? 'G' : 'F') >= 0;
+          if (fit) tx.appendChild(el('span', 'meta bd-fit', 'Fits a need'));
+        }
+        if (bp.lvl >= 2) { var g = League.boardGrade(bp); tx.appendChild(el('span', 'meta bd-st', 'Scout grade ' + g.ovr + ' now \u00B7 ' + g.pot + ' ceiling \u00B7 form ' + (bp.form > 0.8 ? 'hot' : bp.form < -0.8 ? 'cold' : 'steady'))); }
+        row.appendChild(tx);
+        var b = el('button', 'bd-sc', bp.lvl >= 2 ? 'Full' : bp.lvl === 1 ? 'Deep scout' : 'Scout');
+        b.type = 'button'; b.disabled = bp.lvl >= 2 || B.pts < 1;
+        b.addEventListener('click', function () { if (League.boardScout(save, bp.id)) { persist(); paint(); } });
+        row.appendChild(b);
+        node.appendChild(row);
+      });
+    }
+    if (save.lg.board && save.lg.board.year === save.year + 1) paint();
+    else if (boardAvail === false) paint();
+    else {
+      node.appendChild(el('p', 'sh-l', 'Loading board\u2026'));
+      fetch('data/draft-' + (save.year + 1) + '.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }).then(function (d) {
+        if (d && d.prospects && d.prospects.length) { League.boardInit(save, d.prospects); persist(); boardAvail = true; } else { boardAvail = false; save.lg.board = null; }
+        paint();
+      });
+    }
+    return node;
+  }
+
   function hubTable(u, f) {
     var st = Season.standings(save), me = save.myId;
     var divs = Object.keys(st).sort(function (x, y) {
@@ -4068,6 +4129,7 @@
         pages.push({ title: 'Cup \u00B7 ' + String(cf).replace('ern', ''), node: wrapC });
       });
     }
+    if (!save.off && boardAvail !== false) pages.push({ title: 'Draft board', node: boardPage() });
     return hubRail(pages);
   }
 
@@ -6161,7 +6223,7 @@
       fetch('data/draft-' + year + '.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; })
         .catch(function () { return { prospects: [] }; })
         .then(function (d) {
-          League.startDraft(save, save.ids.map(teamById), d.prospects, League.draftRounds());
+          League.startDraft(save, save.ids.map(teamById), League.applyBoard(save, d.prospects), League.draftRounds());
           offStep('draft');
         });
     });

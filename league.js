@@ -782,6 +782,93 @@
     return list;
   }
 
+
+  /* ---------- draft big board (in-season scouting of next year's class) ---------- */
+  function hashN(str) { var h = 2166136261; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return ((h >>> 0) % 10000) / 10000; }
+  function boardLine(b, bp) {
+    var q = clamp(1.25 - (bp.base - 1) / 55, 0.35, 1.25), big = /C/.test(bp.pos), guard = /^G/.test(bp.pos);
+    var f = 1 + bp.form * 0.07;
+    return {
+      pts: Math.max(4, (11 + q * 9) * f + gauss() * 2.5),
+      reb: Math.max(1.2, (big ? 6.5 : guard ? 2.8 : 4.6) * (0.7 + q * 0.4) + gauss() * 1.1),
+      ast: Math.max(0.4, (guard ? 4.4 : big ? 1.3 : 2.4) * (0.7 + q * 0.4) + gauss() * 0.8),
+      fg: clamp(0.43 + q * 0.04 + (big ? 0.06 : 0) + bp.form * 0.008 + gauss() * 0.03, 0.34, 0.68),
+      tp: clamp(big ? 0.22 + gauss() * 0.08 : 0.32 + q * 0.03 + gauss() * 0.05, 0.1, 0.46)
+    };
+  }
+  function boardInit(save, prospects) {
+    var L = save.lg;
+    var list = (prospects || []).slice(0, 60).map(function (p, i) {
+      var seed = hashN(p.id), base = p.realPick || i + 1;
+      var bp = { id: p.id, name: p.name, pos: p.pos, college: p.college, age: p.age || 19, base: base, form: 0, rank: i + 1, prev: i + 1, g: 0, tot: { pts: 0, reb: 0, ast: 0, fg: 0, tp: 0 }, lvl: 0,
+        ht: (/C/.test(p.pos) ? 82 : /^G/.test(p.pos) ? 75 : 79) + Math.round((seed - 0.5) * 4), nz: (seed - 0.5) * 2, nz2: (hashN(p.id + 'p') - 0.5) * 2 };
+      return bp;
+    });
+    L.board = { year: save.year + 1, list: list, pts: 3, last: save.day || 0, ticks: 0 };
+    for (var k = 0; k < 3; k++) boardGames(L.board, 1);
+    boardRank(L.board, true);
+  }
+  function boardGames(B, n) {
+    B.list.forEach(function (bp) { for (var i = 0; i < n; i++) { var l = boardLine(B, bp); bp.g++; Object.keys(l).forEach(function (k) { bp.tot[k] += l[k]; }); } });
+  }
+  function boardRank(B, quiet) {
+    var prevOrder = B.list.slice().sort(function (a, b) { return a.rank - b.rank; });
+    prevOrder.forEach(function (bp, i) { bp.prev = i + 1; });
+    var sc = function (bp) { return -bp.base + bp.form * 2.4 + (bp.g ? (bp.tot.pts / bp.g - 15) * 0.25 : 0); };
+    var sorted = B.list.slice().sort(function (a, b) { return sc(b) - sc(a); });
+    sorted.forEach(function (bp, i) { bp.rank = i + 1; if (quiet) bp.prev = i + 1; });
+    B.list = sorted;
+  }
+  function boardTick(save) {
+    var B = save.lg && save.lg.board;
+    if (!B || save.phase !== 'regular') return;
+    var d = save.day || 0;
+    if (d - B.last < 7) return;
+    B.last = d; B.ticks++;
+    B.list.forEach(function (bp) { bp.form = clamp(bp.form * 0.8 + gauss() * 0.9, -3, 3); });
+    boardGames(B, 2);
+    if (B.ticks % 4 === 0) B.pts = Math.min(8, B.pts + 1);
+    boardRank(B);
+  }
+  function boardScout(save, id) {
+    var B = save.lg.board, bp = B && B.list.filter(function (x) { return x.id === id; })[0];
+    if (!bp || bp.lvl >= 2 || B.pts < 1) return false;
+    B.pts--; bp.lvl++; return true;
+  }
+  function boardGrade(bp) {
+    var tgt = 68 - (bp.base - 1) * 0.42 + bp.form * 0.8, sp = bp.lvl >= 2 ? 1.5 : 4;
+    var pot = tgt + (bp.age <= 18 ? 17 : bp.age <= 19 ? 14 : bp.age <= 20 ? 11 : bp.age <= 22 ? 7 : 4) * (1.15 - bp.base / 120);
+    return { ovr: Math.round(clamp(tgt + bp.nz * sp, 38, 78)), pot: Math.round(clamp(pot + bp.nz2 * sp * 1.6, 45, 92)) };
+  }
+  function projOrder(save) {
+    var teams = save.ids, st = {};
+    teams.forEach(function (id) {
+      var r = save.rec[id] || { w: 0, l: 0 }, g = r.w + r.l;
+      var top = rosterOf(save, id).map(function (p) { return p.ratings.ovr; }).sort(function (a, b) { return b - a; }).slice(0, 8);
+      var prior = clamp(0.5 + (top.reduce(function (a, b) { return a + b; }, 0) / (top.length || 1) - 58) * 0.022, 0.1, 0.9);
+      st[id] = (r.w + prior * 14) / (g + 14);
+    });
+    return teams.slice().sort(function (a, b) { return st[a] - st[b]; });
+  }
+  function teamNeeds(save, id) {
+    var ro = rosterOf(save, id).slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, 9);
+    var grp = { G: [], F: [], C: [] };
+    ro.forEach(function (p) { var s = String(p.pos || p.position || 'F'); (/C/.test(s) ? grp.C : /^G/.test(s) ? grp.G : grp.F).push(p.ratings.ovr); });
+    var want = { G: 3, F: 3, C: 2 }, out = [];
+    ['G', 'F', 'C'].forEach(function (k) {
+      var top2 = grp[k].slice(0, 2), avg = top2.length ? top2.reduce(function (a, b) { return a + b; }, 0) / top2.length : 40;
+      out.push({ k: k, n: grp[k].length, score: (grp[k].length - want[k]) * 6 + (avg - 60) });
+    });
+    out.sort(function (a, b) { return a.score - b.score; });
+    return out;
+  }
+  function applyBoard(save, prospects) {
+    var B = save.lg && save.lg.board;
+    if (!B || B.year !== save.year + 1) return prospects;
+    var rk = {}; B.list.forEach(function (bp) { rk[bp.id] = bp.rank; });
+    return prospects.map(function (p) { var q = {}; Object.keys(p).forEach(function (k) { q[k] = p[k]; }); if (rk[p.id]) { q.realPick = rk[p.id]; q.round = rk[p.id] <= 30 ? 1 : 2; } return q; });
+  }
+
   /* Reverse order of record, champions last. */
   function draftOrder(save, teams, rounds, first) {
     var rec = save.rec, firstIds = first || [];
@@ -1455,6 +1542,7 @@
     setNumbers: setNumbers, fixNumbers: fixNumbers, normName: normName,
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
+    boardInit: boardInit, boardTick: boardTick, boardScout: boardScout, boardGrade: boardGrade, projOrder: projOrder, teamNeeds: teamNeeds, applyBoard: applyBoard,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, makeDeal: makeDeal, doDeal: doDeal, injuryChoice: injuryChoice, doOffer: doOffer,
     healthy: healthy, rollInjuries: rollInjuries, injuryFor: injuryFor, injText: injText, tickInjuries: tickInjuries,
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
