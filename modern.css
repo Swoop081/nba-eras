@@ -1050,3 +1050,4 @@ body[data-modern="1"] #era-list .card.era.e0 .year{font-size:38px}
 body[data-modern="1"] #era-list .card.era.e1 .year{font-size:28px}
 body[data-modern="1"] #era-list .card.era.e0 .meta,body[data-modern="1"] #era-list .card.era.e1 .meta{font-size:11px;line-height:1.25}
 body[data-modern="1"] #era-list .era-photo img{object-position:75% 35%}
+body[data-modern="1"] #era-list .era-photo img[src*="2018."]{object-position:45% 50%}
