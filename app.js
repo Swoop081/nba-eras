@@ -2797,6 +2797,10 @@
     'new-orleans-pelicans': 'New Orleans Hornets 2002–13 · New Orleans Pelicans 2013–',
     'memphis-grizzlies': 'Vancouver Grizzlies 1995–2001 · Memphis Grizzlies 2001–'
   };
+  var JERSEYS = {
+    'los-angeles-lakers': { body: '#FDB927', trim: '#552583', ink: '#552583', num: '#FFFFFF', numStroke: '#552583' },
+    'san-antonio-spurs': { body: '#F1F1EE', trim: '#151515', ink: '#151515', num: '#151515', panel: 1, years: { SILAS13: '1973-81', GERVIN44: '1974-85*', MOORE0: '1980-90', MOORE00: '1980-90', ROBINSON50: '1989-03*', ELLIOTT32: '1989-01', JOHNSON6: '1991-01', BOWEN12: '2001-09', DUNCAN21: '1997-16*', 'GIN\u00D3BILI20': '2002-18', GINOBILI20: '2002-18', PARKER9: '2001-18' } }
+  };
   var FHIST = null;
   function loadFHist(cb) {
     if (FHIST) { cb(FHIST); return; }
@@ -2836,14 +2840,14 @@
     rafters.appendChild(row1);
     rafters.appendChild(el('div', 'rf-beam low'));
     rafters.appendChild(el('h3', 'rf-label', 'Retired numbers'));
-    var ret = (fh.retired || []).filter(function (r) { return r.p && r.p !== 'Player' && r.n !== 'No.' && /^\d{1,2}$/.test(String(r.n).trim()) && (!r.y || r.y <= save.year); });
+    var ret = (fh.retired || []).filter(function (r) { return r.p && r.p !== 'Player' && r.n !== 'No.' && /^(\d{1,2})(\s\d)?$/.test(String(r.n).trim()) && r.p !== 'Kasim Reed' && (!r.y || r.y <= save.year); });
     var row2 = el('div', 'rf-row jerseys');
     if (!ret.length) row2.appendChild(el('p', 'rf-empty', 'No number has been retired yet.'));
     ret.sort(function (a, b) { return (b.y || 0) - (a.y || 0) || parseInt(a.n, 10) - parseInt(b.n, 10); }).forEach(function (r) {
       var j = el('div', 'jy'); j.appendChild(el('i', 'rope'));
       var nm = r.p.replace(/\s*\(.*$/, '').replace(/\s*\[.*$/, '').trim(), sur = nm.split(' ').slice(-1)[0].toUpperCase();
       if (/^(jr|sr|ii|iii|iv)\.?$/i.test(sur)) sur = nm.split(' ').slice(-2)[0].toUpperCase();
-      var isNum = /^\d{1,2}$/.test(String(r.n).trim()), num = isNum ? String(r.n).trim() : '';
+      var nm1 = /^(\d{1,2})(\s\d)?$/.exec(String(r.n).trim()), isNum = !!nm1, num = isNum ? nm1[1] : '';
       var st = { bg: '#FFFFFF', fg: c1, trim: c1, mark: me.city.toUpperCase() + ' ' + me.name.toUpperCase() };
       // some banners hang in their own colours: the real ones differ by era and player
       if (mid === 'atlanta-hawks') {
@@ -2852,15 +2856,20 @@
         else if (!isNum) st = { bg: '#E03A3E', fg: '#FFFFFF', trim: '#FFFFFF', mark: '', nm: '#FFFFFF' };
         else st = { bg: '#FFFFFF', fg: '#E03A3E', trim: '#E03A3E', mark: 'ATLANTA HAWKS' };
       } else if (!isNum) st = { bg: c1, fg: c2, trim: c2, mark: '', nm: c2 };
-      if (mid === 'los-angeles-lakers' && isNum) {
+      var JS = JERSEYS[mid];
+      if (JS && isNum) {
         var gid = 'ar' + Math.floor(Math.random() * 1e9), s2 = sur.replace('&', '&amp;'), fz = s2.length > 10 ? 10 : s2.length > 7 ? 12 : 14;
-        j.insertAdjacentHTML('beforeend', '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true"><defs><path id="' + gid + '" d="M30 52 Q60 36 90 52"/></defs>' +
-          '<path d="M34 4 L48 4 Q60 30 72 4 L86 4 Q88 40 104 56 L100 142 Q60 150 20 142 L16 56 Q32 40 34 4 Z" fill="#FDB927"/>' +
-          '<path d="M34 4 L48 4 Q60 30 72 4 L86 4" fill="none" stroke="#552583" stroke-width="3.5"/>' +
-          '<path d="M34 4 Q32 40 16 56 M86 4 Q88 40 104 56" stroke="#552583" stroke-width="3.5" fill="none"/>' +
-          '<path d="M17 60 L21 140 M103 60 L99 140" stroke="#552583" stroke-width="2.5" fill="none"/>' +
-          '<text font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + fz + '" letter-spacing="1" fill="#552583" text-anchor="middle"><textPath href="#' + gid + '" startOffset="50%">' + s2 + '</textPath></text>' +
-          '<text x="60" y="' + (num.length > 1 ? 106 : 108) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + (num.length > 1 ? 52 : 60) + '" fill="#FFFFFF" stroke="#552583" stroke-width="3" paint-order="stroke">' + num + '</text></svg>');
+        var yrs = JS.years && JS.years[sur + num] || '', hof = yrs && /\*$/.test(yrs), ytxt = yrs.replace(/\*$/, '');
+        var svg = '<svg class="jsv" viewBox="0 0 120 150" aria-hidden="true"><defs><path id="' + gid + '" d="M30 52 Q60 36 90 52"/></defs>' +
+          '<path d="M34 4 L48 4 Q60 30 72 4 L86 4 Q88 40 104 56 L100 142 Q60 150 20 142 L16 56 Q32 40 34 4 Z" fill="' + JS.body + '"/>';
+        if (JS.panel) svg += '<path d="M16 56 Q32 40 34 4 L40 4 Q38 44 26 60 L28 142 L20 142 Z M104 56 Q88 40 86 4 L80 4 Q82 44 94 60 L92 142 L100 142 Z" fill="' + JS.trim + '"/>';
+        svg += '<path d="M34 4 L48 4 Q60 30 72 4 L86 4" fill="none" stroke="' + JS.trim + '" stroke-width="3.5"/>' +
+          '<path d="M34 4 Q32 40 16 56 M86 4 Q88 40 104 56" stroke="' + JS.trim + '" stroke-width="3.5" fill="none"/>' +
+          (JS.panel ? '' : '<path d="M17 60 L21 140 M103 60 L99 140" stroke="' + JS.trim + '" stroke-width="2.5" fill="none"/>') +
+          '<text font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + fz + '" letter-spacing="1" fill="' + JS.ink + '" text-anchor="middle"><textPath href="#' + gid + '" startOffset="50%">' + s2 + '</textPath></text>' +
+          '<text x="60" y="' + (ytxt ? 94 : num.length > 1 ? 106 : 108) + '" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="' + (num.length > 1 ? 46 : 54) + '" fill="' + JS.num + '"' + (JS.numStroke ? ' stroke="' + JS.numStroke + '" stroke-width="3" paint-order="stroke"' : '') + '>' + num + '</text>';
+        if (ytxt) svg += '<text x="60" y="116" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="800" font-size="11" fill="' + JS.ink + '">' + ytxt + '</text>' + (hof ? '<text x="60" y="128" text-anchor="middle" font-family="Big Shoulders Display,Impact,sans-serif" font-weight="700" font-size="6.5" letter-spacing=".5" fill="' + JS.ink + '">HALL OF FAME</text>' : '');
+        j.insertAdjacentHTML('beforeend', svg + '</svg>');
         row2.appendChild(j); return;
       }
       var bn = el('div', 'rb');
