@@ -1042,3 +1042,5 @@ body[data-modern="1"] #era-list .card.era.e1{grid-column:1;grid-row:2;flex-direc
 body[data-modern="1"] #era-list .card.era.e1 .year{font-size:30px}
 body[data-modern="1"] #era-list .card.era.e2{grid-row:3}
 body[data-modern="1"] #era-list .card.era.e3{grid-row:4}
+body[data-modern="1"] #era-list .pg.era-pg{grid-template-rows:1fr 1fr auto auto}
+body[data-modern="1"] #era-list .card.era.e0,body[data-modern="1"] #era-list .card.era.e1{justify-content:center}
