@@ -1493,6 +1493,7 @@
     if (Social.has(save.year)) Social.day(save, results, results.reduce(function (acc, g) { return acc.concat(g.inj || []); }, []));
     if (save.phase !== 'regular') save.pd = (save.pd || 0) + 1;
     cupNews();
+    awardsCheck();
     return results;
     // a day without our game still gets its scores, shown on the hub until the next day is played
     var mineToday = results.some(function (g) { return g.home === save.myId || g.away === save.myId; });
@@ -1554,6 +1555,61 @@
         fetch('data/schedule-2026.json').then(function (r) { return r.json(); }).then(go).catch(function () { go(null); });
       } else go(null);
     });
+  }
+
+
+  /* ---------- weekly and monthly awards ---------- */
+  function confOf(tid) { var d = save.division[tid] || ''; return /east/i.test(d) ? 'East' : /west/i.test(d) ? 'West' : 'League'; }
+  function isRookie(p) { return !!(p.rookie || p.draftedYear === save.year || (save.eraId === '2026' && p.age <= 20)); }
+  function pickAwards(bucket, minG, rookieOnly) {
+    var best = {};
+    Object.keys(bucket).forEach(function (id) {
+      var o = bucket[id]; if (o.g < minG) return;
+      var p = save.lg.players.filter(function (q) { return q.id === id; })[0]; if (!p) return;
+      if (rookieOnly && !isRookie(p)) return;
+      var sc = (o.pts + 1.2 * o.trb + 1.5 * o.ast + o.stl + o.blk) / o.g * (0.85 + 0.3 * o.w / o.g), c = confOf(o.tid);
+      if (!best[c] || sc > best[c].sc) best[c] = { sc: sc, p: p, o: o, c: c };
+    });
+    return ['East', 'West', 'League'].filter(function (c) { return best[c]; }).map(function (c) { var b = best[c], o = b.o; return { conf: c, p: b.p, tid: o.tid, line: (o.pts / o.g).toFixed(1) + ' pts · ' + (o.trb / o.g).toFixed(1) + ' reb · ' + (o.ast / o.g).toFixed(1) + ' ast', rec: o.w + '-' + (o.g - o.w) }; });
+  }
+  function awardsCheck() {
+    if (!save || save.phase !== 'regular' || !save.lg.aw) return;
+    var aw = save.lg.aw, last = save.lg.awLast || (save.lg.awLast = { wk: 0, mo: '' }), q = save.lg.awq || (save.lg.awq = []), d = save.day;
+    if (d >= 7 && d - last.wk >= 7) {
+      last.wk = d;
+      var wk = pickAwards(aw.wk, 2, false);
+      if (wk.length) q.push({ title: 'Players of the Week', cards: wk });
+      aw.wk = {};
+    }
+    var dt = save.dates && save.dates[d], pd = save.dates && save.dates[d - 1];
+    var newMonth = dt && pd ? dt.slice(0, 7) !== pd.slice(0, 7) : (!dt && d >= 30 && d - (last.moDay || 0) >= 30);
+    if (newMonth && d - (last.moDay || 0) >= 10) {
+      last.moDay = d;
+      var mo = pickAwards(aw.mo, 5, false), rk = pickAwards(aw.mo, 4, true);
+      if (mo.length) q.push({ title: 'Players of the Month', cards: mo });
+      if (rk.length) q.push({ title: 'Rookies of the Month', cards: rk });
+      aw.mo = {};
+    }
+  }
+  function awardsPop() {
+    var q = save && save.lg && save.lg.awq;
+    if (!q || !q.length || document.querySelector('.sheet-ov') || document.body.dataset.screen !== 'screen-season') return;
+    var a = q.shift(); persist();
+    hubSheet(a.title, function (sh, close) {
+      var grid = el('div', 'awards');
+      a.cards.forEach(function (c) {
+        var t = teamById(c.tid), card = el('div', 'aw-card');
+        card.appendChild(el('small', 'aw-conf', c.conf === 'League' ? 'League' : c.conf === 'East' ? 'Eastern Conference' : 'Western Conference'));
+        var ph = makeAvatar({ id: c.p.id, name: c.p.name }); ph.classList.add('aw-ph'); card.appendChild(ph);
+        card.appendChild(el('b', 'aw-n', c.p.name));
+        var tm = el('span', 'aw-t'); if (t) { var bd = teamBadge(t); bd.classList.add('sm'); tm.appendChild(bd); tm.appendChild(document.createTextNode(t.city)); } card.appendChild(tm);
+        card.appendChild(el('span', 'aw-l', c.line));
+        card.appendChild(el('small', 'aw-r', 'Team ' + c.rec + ' in the period'));
+        grid.appendChild(card);
+      });
+      sh.appendChild(grid);
+      var b = el('button', 'btn wide', 'Done'); b.type = 'button'; b.addEventListener('click', close); sh.appendChild(b);
+    }, function () { setTimeout(awardsPop, 250); });
   }
 
   /* a night without our game: the front page leads with the marquee matchup between the best clubs playing */
@@ -1932,6 +1988,7 @@
     if (League.formCheck(save)) rosterCache = {};
     if (Social.has(save.year)) Social.day(save, dayGames, dayInj);
     cupNews();
+    awardsCheck();
     save.pending = Events.generate(save, { me: me, opp: opp, res: res, us: us, them: them, rosterMe: rosterOf(me.id), rosterAll: League.rosterOf(save, me.id), label: label, seriesLine: seriesLine, others: others2, myInj: myInj, day: { games: dayGames, inj: dayInj }, before: before, teamOf: teamById, standing: standingLine(me.id) });
     persist();
     renderMatch(me, opp, res, save.year, label, true);
@@ -3872,6 +3929,7 @@
     dk.appendChild(row);
     bodyEl.appendChild(dk);
     showTab(hubTab);
+    setTimeout(awardsPop, 400);
   }
 
   function renderSeason() {

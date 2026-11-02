@@ -218,6 +218,12 @@
       if (meta && played) {
         var home = i < meta.nh, tid = home ? meta.h : meta.a;
         noteHigh(save, l, tid, home ? meta.a : meta.h, meta.day);
+        var aw = save.lg.aw || (save.lg.aw = { wk: {}, mo: {} });
+        ['wk', 'mo'].forEach(function (k) {
+          var o = aw[k][l.id] || (aw[k][l.id] = { g: 0, pts: 0, trb: 0, ast: 0, stl: 0, blk: 0, w: 0, tid: tid });
+          o.g++; o.pts += l.s.pts || 0; o.trb += l.s.trb || 0; o.ast += l.s.ast || 0; o.stl += l.s.stl || 0; o.blk += l.s.blk || 0; o.tid = tid;
+          if (home ? meta.hs > meta.as : meta.as > meta.hs) o.w++;
+        });
         if (tid === save.myId) {
           (x.log || (x.log = [])).push([meta.day || 0, home ? meta.a : meta.h, home ? 1 : 0, home ? meta.hs : meta.as, home ? meta.as : meta.hs,
             l.s.min || 0, l.s.pts || 0, l.s.ast || 0, l.s.trb || 0, l.s.stl || 0, l.s.blk || 0, l.s.tov || 0, l.s.pf || 0, l.s.fg || 0, l.s.fga || 0, l.s.ft || 0, l.s.fta || 0]);

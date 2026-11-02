@@ -790,3 +790,13 @@ body[data-modern="1"] .rb{height:168px}
 body[data-modern="1"] .rbl{bottom:8px}
 body[data-modern="1"] .jy:has(.jsv){width:104px}
 body[data-modern="1"] .jy .jim{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 10px rgba(0,0,0,.55))}
+
+/* awards pop-in */
+body[data-modern="1"] .awards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body[data-modern="1"] .aw-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border-radius:18px;background:#1b1e2a;text-align:center;border:1px solid rgba(255,255,255,.07)}
+body[data-modern="1"] .aw-conf{font:700 10px var(--font);letter-spacing:.12em;text-transform:uppercase;color:#E8C46A}
+body[data-modern="1"] .aw-ph{width:76px;height:76px;border-radius:50%}
+body[data-modern="1"] .aw-n{font:800 17px "Big Shoulders Display",sans-serif;line-height:1.05}
+body[data-modern="1"] .aw-t{display:flex;align-items:center;gap:6px;font:600 12px var(--font);color:#c9ccd8}
+body[data-modern="1"] .aw-l{font:700 11.5px var(--font);color:#F4F2EE}
+body[data-modern="1"] .aw-r{font:500 10px var(--font);color:#8d92a3}
