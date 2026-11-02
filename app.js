@@ -213,12 +213,12 @@
     { c: [['1 / 3', '1', 1], ['1 / 3', '2', 1], ['2', '3'], ['2', '4']], p: ['1', '3 / 5'] },
     { c: [['1 / 3', '1', 1], ['1', '2'], ['1', '3'], ['1 / 3', '4', 1]], p: ['2', '2 / 4'] }
   ];
-  function eraPhoto(box, ids) {
+  function eraPhoto(box, ids, done) {
     var urls = [];
     ids.forEach(function (id) { ['webp', 'jpg', 'png'].forEach(function (x) { urls.push('assets/eras/' + id + '.' + x); }); });
     var i = 0, img = new Image();
     img.alt = '';
-    img.onload = function () { box.textContent = ''; box.classList.add('has'); box.appendChild(img); };
+    img.onload = function () { box.textContent = ''; box.classList.add('has'); box.appendChild(img); if (done) done(ids[Math.floor(i / 3)]); };
     img.onerror = function () { i++; if (i < urls.length) img.src = urls[i]; };
     img.src = urls[0];
   }
@@ -247,9 +247,14 @@
         if (k === 0) {
           var ph = el('div', 'era-photo');
           ph.style.gridColumn = LAY.p[0]; ph.style.gridRow = LAY.p[1];
-          ph.addEventListener('click', function () { openTeams(era); });
+          var src = k, mine = grp.slice();
+          card.classList.add('src');
+          ph.addEventListener('click', function () { openTeams(mine[src]); });
           ph.appendChild(el('span', 'big', String(+era.id + 1).slice(2)));
-          eraPhoto(ph, grp.map(function (g) { return g.id; }));
+          eraPhoto(ph, mine.map(function (g) { return g.id; }), function (id) {
+            mine.forEach(function (g, n) { if (g.id === id) src = n; });
+            Array.prototype.forEach.call(ph.parentNode.querySelectorAll('.card.era'), function (c, n) { c.classList.toggle('src', n === src); });
+          });
           pg.appendChild(ph);
         }
       });
