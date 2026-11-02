@@ -6056,16 +6056,6 @@
     document.getElementById('off-dock').textContent = '';
   }
 
-  function sntOffer(me, p) {
-    var sal = League.salaryFor(p.ratings.ovr);
-    if (p.ratings.ovr < 55) return null;
-    var ids = save.ids.filter(function (id) { return id !== me.id && League.rosterOf(save, id).length < League.maxR(save) && League.canSign(save, id, sal); })
-      .map(function (id) { return { id: id, v: League.suitScore(save, id, p) }; }).sort(function (a, b) { return b.v - a.v; });
-    if (!ids.length) return null;
-    var tid = ids[0].id, want = p.ratings.ovr >= 68 ? 1 : 2;
-    var pk = League.picksOf(save, tid).filter(function (x) { return x.o === tid && x.y > save.year && x.r === want; })[0];
-    return pk ? { tid: tid, y: pk.y, r: pk.r } : null;
-  }
   function offContracts(body, me) {
     if (!save.off.optDone) { save.off.optNotes = League.optionPass(save, me.id, true).map(function (n) { return { id: n.p.id, kind: n.kind, took: n.took }; }); save.off.optDone = 1; persist(); }
     offHeader('Contracts', money(League.payroll(save, me.id)) + ' payroll' + (League.deadOf(save, me.id) ? ' (' + money(League.deadOf(save, me.id)) + ' dead)' : '') + ' · cap ' + money(save.lg.cap));
@@ -6105,22 +6095,23 @@
       }
       holder.appendChild(row);
       if (d === 'out' && !team) {
-        holder.appendChild(el('p', 'sub', rfa ? 'He is restricted: if another club makes an offer sheet you can match it.' : 'You cannot re-sign him. He will walk unless you move him in a sign-and-trade.'));
-        if (!sn[p.id] && sn[p.id] !== 0) { sn[p.id] = sntOffer(me, p) || 0; persist(); }
-        var o = sn[p.id];
-        if (o) {
-          var tt = teamById(o.tid);
-          var sb = el('button', 'btn wide', 'Sign-and-trade to ' + tt.city + ' for a ' + o.y + ' ' + (o.r === 1 ? 'first' : 'second') + '-round pick'); sb.type = 'button';
+        holder.appendChild(el('p', 'sub', rfa ? 'He is restricted: if another club makes an offer sheet you can match it.' : 'You cannot re-sign him. He walks unless a club without cap room sends salary back in a sign-and-trade.'));
+        if (!sn[p.id]) { sn[p.id] = League.sntOffers(save, p, me.id, League.salaryFor(p.ratings.ovr), 2); persist(); }
+        sn[p.id].forEach(function (o, i) {
+          var tt = teamById(o.tid), names = o.back.map(function (id) { var q = League.byId(save, id); return q.name + ' (' + q.ratings.ovr + ', ' + money(q.salary) + ')'; });
+          var card = el('div', 'tb-card');
+          card.appendChild(el('b', null, tt.city + ' want him but have no cap room'));
+          card.appendChild(el('small', null, 'They send back ' + names.join(' and ') + (o.pk ? ' and a ' + o.pk.y + ' ' + (o.pk.r === 1 ? 'first' : 'second') + '-round pick' : '') + '. He signs ' + o.yrs + ' years, ' + money(o.X) + ' a year.'));
+          var sb = el('button', 'btn small', 'Accept sign-and-trade'); sb.type = 'button';
           sb.addEventListener('click', function () {
-            var pkk = League.picksOf(save, o.tid).filter(function (x) { return x.o === o.tid && x.y === o.y && x.r === o.r; })[0];
-            if (!pkk || !League.canSign(save, o.tid, League.salaryFor(p.ratings.ovr))) { sn[p.id] = 0; persist(); renderOff(); return; }
-            pkk.t = me.id;
-            League.sign(save, p, o.tid, League.salaryFor(p.ratings.ovr), 3);
-            League.wire(save, p.name + ' goes to ' + tt.city + ' in a sign-and-trade: ' + me.city + ' get a ' + o.y + ' ' + (o.r === 1 ? 'first' : 'second') + '-round pick');
+            var r = League.sntDo(save, p, o, me.id);
+            if (!r) { sn[p.id] = []; persist(); renderOff(); return; }
+            League.wire(save, p.name + ' goes to ' + tt.city + ' in a sign-and-trade: ' + me.city + ' get ' + r.back.map(function (q) { return q.name; }).join(' and ') + (r.pk ? ' and a ' + r.pk : ''));
             persist(); renderOff();
           });
-          holder.appendChild(sb);
-        }
+          card.appendChild(sb); holder.appendChild(card);
+        });
+        if (!sn[p.id].length) holder.appendChild(el('p', 'sub', 'No club has a sign-and-trade that works. Teams with room will just sign him.'));
       }
       var go = el('button', 'btn ghost wide', d === 'out' || team ? 'Let him go to free agency' : 'Test free agency (keep Bird rights)');
       go.type = 'button';
@@ -6425,6 +6416,21 @@
     var fas = League.freeAgents(save).filter(function (p) { return p.ratings.ovr >= 40; }).slice(0, n), made = [];
     fas.forEach(function (p) {
       var ask = faAsk(p), old = p.bird && p.bird !== me.id ? p.bird : null, tid = null, snt = null, re = false, mt = false;
+      if (old && f.day <= 3 && p.ratings.ovr >= 58 && !p.rfa && Math.random() < 0.35) {
+        var so = null, sdest = null;
+        League.sntOffers(save, p, old, ask, 1).forEach(function (o) { if (o.tid !== me.id) { so = o; sdest = o.tid; } });
+        if (so) {
+          var r = League.sntDo(save, p, so, old);
+          if (r) {
+            var bk = r.back.map(function (q) { return q.name; }).join(' and ') + (r.pk ? ' and a ' + r.pk : '');
+            var sg = { pid: p.id, team: sdest, salary: so.X, yrs: so.yrs, day: f.day, ovr: p.ratings.ovr, snt: old, bk: bk };
+            made.push(sg); f.log.unshift(sg);
+            try { Social.faAI && Social.faAI(save, p, sdest, so.X, so.yrs); } catch (e) {}
+            League.wire(save, p.name + ' goes to ' + teamById(sdest).city + ' in a sign-and-trade: ' + teamById(old).city + ' get ' + bk);
+            return;
+          }
+        }
+      }
       if (old && f.day <= 3 && p.ratings.ovr >= 52 && !p.rfa && Math.random() < 0.1 && League.canSign(save, old, ask) && League.rosterOf(save, old).length < League.maxR(save)) { tid = old; re = true; }
       if (!tid) {
         var pool = (f.rum[p.id] || []).filter(function (id) { return id !== me.id && League.canSign(save, id, ask) && League.rosterOf(save, id).length < League.maxR(save); });
@@ -6440,19 +6446,14 @@
           var oc = p.rfa, mp = p.ratings.ovr >= 70 ? 0.9 : 0.72;
           if (League.payroll(save, oc) + ask > save.lg.cap * 1.18) mp = 0.25;
           if (Math.random() < mp) { tid = oc; re = true; mt = true; }
-        } else if (old && old !== tid && p.ratings.ovr >= 62 && !p.rfa && Math.random() < 0.3) snt = old;
+        };
       }
-      var yrs = faYears(p, re || !!snt);
+      var yrs = faYears(p, re);
       League.sign(save, p, tid, ask, yrs);
-      var pk = null;
-      if (snt) {
-        var mk = League.picksOf(save, tid).filter(function (x) { return x.o === tid && x.y > save.year; }).sort(function (u, v) { return v.r - u.r; })[0];
-        if (mk) { mk.t = snt; pk = mk.y + ' ' + (mk.r === 1 ? 'first' : 'second') + '-round pick'; }
-      }
-      var sig = { pid: p.id, team: tid, salary: ask, yrs: yrs, day: f.day, ovr: p.ratings.ovr, re: re, snt: snt, pk: pk, mt: mt };
+      var sig = { pid: p.id, team: tid, salary: ask, yrs: yrs, day: f.day, ovr: p.ratings.ovr, re: re, mt: mt };
       made.push(sig); f.log.unshift(sig);
       try { Social.faAI && Social.faAI(save, p, tid, ask, yrs); } catch (e) {}
-      League.wire(save, mt ? teamById(tid).city + ' match the offer sheet for ' + p.name + ': ' + yrs + ' years, ' + money(ask) : re ? p.name + ' re-signs with ' + teamById(tid).city + ': ' + yrs + ' years, ' + money(ask) : snt ? p.name + ' goes to ' + teamById(tid).city + ' in a sign-and-trade: ' + teamById(snt).city + ' get ' + (pk || 'future considerations') : p.name + ' signs with ' + teamById(tid).city + ': ' + yrs + ' years, ' + money(ask));
+      League.wire(save, mt ? teamById(tid).city + ' match the offer sheet for ' + p.name + ': ' + yrs + ' years, ' + money(ask) : re ? p.name + ' re-signs with ' + teamById(tid).city + ': ' + yrs + ' years, ' + money(ask) : p.name + ' signs with ' + teamById(tid).city + ': ' + yrs + ' years, ' + money(ask));
     });
     made.sort(function (a, b) { return b.ovr - a.ovr; });
     f.flash = made.slice(0, f.day === 1 ? 4 : 3).filter(function (s) { return s.ovr >= 55 || f.day === 1 || s.os; });
@@ -6478,7 +6479,7 @@
     var terms = el('div', 'fa-terms');
     [[s.yrs + ' YRS', 'Length'], [money(s.salary), 'Per year'], [money(s.salary * s.yrs), 'Total']].forEach(function (x) { var c = el('div'); c.appendChild(el('b', null, x[0])); c.appendChild(el('small', null, x[1])); terms.appendChild(c); });
     ov.appendChild(terms);
-    ov.appendChild(el('p', 'fa-by', '— ESPN Insider'));
+    ov.appendChild(el('p', 'fa-by', s.snt ? teamById(s.snt).city + ' receive ' + s.bk : '\u2014 ESPN Insider'));
     if (s.os) {
       var of = f.offers && f.offers[s.pid] || { team: s.team, salary: s.salary, yrs: s.yrs };
       ov.appendChild(el('p', 'fa-by', 'You hold the right to match. ' + p.name + ' is restricted.'));

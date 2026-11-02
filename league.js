@@ -439,6 +439,57 @@
     bump(save);
   }
 
+  /* ---------- sign-and-trade ---------- */
+  /* Payroll without the contracts that are about to expire. */
+  function committedPay(save, id) { return payroll(save, id) - rosterOf(save, id).filter(function (p) { return p.yrs <= 0; }).reduce(function (a, p) { return a + p.salary; }, 0); }
+  /* A sign-and-trade is a cap tool: the new club cannot fit him outright, so it sends salary back. It must send out at least 80% of his new salary, and stay under the tax line after. */
+  function sntBack(save, dest, X) {
+    var lo = Math.max(MINSAL, (X - 100) / 1.25), cap = save.lg.cap;
+    var all = rosterOf(save, dest), core = all.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, 5).map(function (p) { return p.id; });
+    var c = all.filter(function (p) { return core.indexOf(p.id) < 0 && p.yrs > 0 && p.salary >= MINSAL * 1.2 && p.salary <= X; })
+      .sort(function (a, b) { return (b.salary - salaryFor(b.ratings.ovr)) - (a.salary - salaryFor(a.ratings.ovr)); });
+    var best = null;
+    c.forEach(function (a) { if (a.salary >= lo && !best) best = [a]; });
+    if (!best) { for (var i = 0; i < c.length && !best; i++) for (var j = i + 1; j < c.length && !best; j++) { var s = c[i].salary + c[j].salary; if (s >= lo && s <= X * 1.05) best = [c[i], c[j]]; } }
+    if (!best) return null;
+    var out = best.reduce(function (a, p) { return a + p.salary; }, 0);
+    if (committedPay(save, dest) + X - out > cap * 1.18) return null;
+    return best;
+  }
+  /* Clubs that could land the player this way: no room to sign him outright, but a package that works. */
+  function sntOffers(save, p, fromId, X, max) {
+    var offers = [];
+    save.ids.filter(function (id) { return id !== fromId && rosterOf(save, id).length < maxR(save) + 1; })
+      .filter(function (id) { return committedPay(save, id) + X > save.lg.cap && X > mleOf(save); })
+      .filter(function (id) { return interest(save, p, id).k !== 'no'; })
+      .map(function (id) { return { id: id, v: suitScore(save, id, p) }; }).sort(function (a, b) { return b.v - a.v; })
+      .forEach(function (x) {
+        if (offers.length >= max) return;
+        var back = sntBack(save, x.id, X);
+        if (!back) return;
+        var pk = null, o = p.ratings.ovr;
+        if (p.rfa === fromId && o >= 60 || o >= 70) {
+          var want = o >= 66 && p.rfa === fromId ? 1 : 2;
+          var q = picksOf(save, x.id).filter(function (z) { return z.o === x.id && z.y > save.year && z.r === want; })[0];
+          if (q) pk = { y: q.y, r: q.r };
+        }
+        offers.push({ tid: x.id, back: back.map(function (b) { return b.id; }), pk: pk, X: X, yrs: 3 + Math.floor(Math.random() * 2) });
+      });
+    return offers;
+  }
+  function sntDo(save, p, o, fromId) {
+    var back = o.back.map(function (id) { return byId(save, id); });
+    if (back.some(function (q) { return !q || q.team !== o.tid; })) return null;
+    var pk = null;
+    if (o.pk) { pk = picksOf(save, o.tid).filter(function (x) { return x.o === o.tid && x.y === o.pk.y && x.r === o.pk.r; })[0]; if (!pk) return null; pk.t = fromId; }
+    back.forEach(function (q) { q.team = fromId; });
+    delete p.bird; delete p.rfa;
+    p.team = o.tid; p.salary = o.X; p.yrs = o.yrs; p.status = 'active';
+    logDeal(save, p, 'Sign-and-trade');
+    bump(save);
+    return { back: back, pk: pk ? pk.y + ' ' + (pk.r === 1 ? 'first' : 'second') + '-round pick' : null };
+  }
+
   function freeAgents(save) {
     return save.lg.players.filter(function (p) { return p.status === 'active' && !p.team && !p.pend; })
       .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
@@ -1196,7 +1247,7 @@
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
-    aiReSign: aiReSign, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
+    aiReSign: aiReSign, sntOffers: sntOffers, sntDo: sntDo, committedPay: committedPay, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     maxR: maxR, makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);
