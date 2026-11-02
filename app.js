@@ -6105,7 +6105,7 @@
   function dnLive() { return save && save.off && (save.off.step === 'draft') && document.getElementById('screen-off').classList.contains('active'); }
   function dnTime(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
   function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
-  function dnRank(d, p) { return d.pool.filter(function (q) { return q.board > p.board; }).length + 1; }
+  function dnRank(d, p) { var ip = d.pool.indexOf(p); return d.pool.filter(function (q, i) { return q.board > p.board || (q.board === p.board && i < ip); }).length + 1; }
   function dnNote(d, p, slot) {
     var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = dnLast(p.name);
     var gap = n - r;
