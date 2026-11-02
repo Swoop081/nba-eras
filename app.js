@@ -220,8 +220,8 @@
     var all = ERAS.filter(function (era) { return era.current; });
     var pgr = el('div', 'pgr'), track = el('div', 'pgr-track era-track'), dots = el('div', 'pgr-dots');
     eraPages = [];
-    for (var i = 0; i < all.length; i += 3) {
-      var grp = all.slice(i, i + 3);
+    for (var i = 0; i < all.length; i += 4) {
+      var grp = all.slice(i, i + 4);
       var pg = el('section', 'pg era-pg');
       grp.forEach(function (era, k) {
         var card = el('button', 'card era e' + k);
