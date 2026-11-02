@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Roster sync for 2026-27 from the Wikipedia roster tables (data/rosters-wiki-2026.json):
- - every standard-contract player is on his real team; two-way players sit off the roster as that club's call-up pool (p.tw)
+ - every standard-contract player is on his real team; two-way players (p.tw) are on the roster too: fifteen standard plus up to three two-way
  - players missing from the game are rated by the normal pipeline from their 2025-26 Basketball Reference lines
  - jersey numbers come from the same tables; no invented injuries. Usage: python3 -I tools/sync_rosters.py"""
 import csv, json, os, re, shutil, sys, tempfile, unicodedata, datetime, collections
@@ -88,8 +88,8 @@ onrost = set()
 for x in rows:
     p = have[nm(x['name'])]
     if x['tw']:
-        p['teamId'] = None
-        p['tw'] = x['tid']
+        p['teamId'] = x['tid']
+        p['tw'] = 1
     else:
         p['teamId'] = x['tid']
         p.pop('tw', None)

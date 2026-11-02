@@ -17,7 +17,8 @@
     MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : Math.round(1000 * SCALE / 100) * 100;
     MIN_ROSTER = MODERN ? (year >= 1996 ? 13 : 11) : 9;
     OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
-    if (root.League) root.League.MIN_ROSTER = MIN_ROSTER;
+    MAX_ROSTER = year >= 2023 ? 18 : 15;   /* fifteen players plus three on two-way deals */
+    if (root.League) { root.League.MIN_ROSTER = MIN_ROSTER; root.League.MAX_ROSTER = MAX_ROSTER; }
   }
   function money(n, cap) {
     if (MODERN) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
@@ -52,11 +53,11 @@
   /* ---------- creation ---------- */
   /* Opening night: every club carries the same number of players. Extras go to the free-agent pool; short clubs sign from it. */
   function openingRosters(lg, teams) {
-    var real = lg.year === 2026;   /* the present day: every club already carries its real 14-16 players, nobody is trimmed or topped up */
+    var real = lg.year === 2026;   /* the present day: every club already carries its real roster, nobody is trimmed or topped up */
     teams.forEach(function (t) {
       lg.players.filter(function (p) { return p.team === t.id && p.status === 'active'; })
         .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })
-        .slice(real ? MAX_ROSTER : OPENING_ROSTER).forEach(function (p) { p.team = null; });
+        .slice(real ? 99 : OPENING_ROSTER).forEach(function (p) { p.team = null; });
     });
     var guard = 0, short = !real;
     while (short && guard++ < 40) {
@@ -986,8 +987,8 @@
       var t = others[Math.floor(Math.random() * others.length)];
       var roster = rosterOf(save, t.id), hurt = roster.filter(function (p) { return p.inj > 3; }).length;
       if (roster.length < MAX_ROSTER && (roster.length < 13 || hurt >= 2)) {
-        var fas = freeAgents(save).filter(function (p) { return (p.ratings.ovr >= 45 || p.tw === t.id) && canSign(save, t.id, salaryFor(p.ratings.ovr)); });
-        var fa = fas.filter(function (p) { return p.tw === t.id; })[0] || fas.filter(function (p) { return !p.tw || p.tw === t.id; })[0] || fas[0];   /* a club calls up its own two-way player first */
+        var fas = freeAgents(save).filter(function (p) { return p.ratings.ovr >= 45 && canSign(save, t.id, salaryFor(p.ratings.ovr)); });
+        var fa = fas[0];
         if (fa) {
           sign(save, fa, t.id, salaryFor(fa.ratings.ovr), 1);
           wire(save, t.city + ' sign free agent ' + fa.name + (hurt >= 2 ? ' to cover injuries.' : '.'));

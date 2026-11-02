@@ -1094,7 +1094,7 @@
       var text = el('span');
       text.appendChild(el('strong', null, (team.id === save.myId ? (squad.indexOf(p) < 5 ? 'S' : '') + (squad.indexOf(p) + 1) + ' \u00B7 ' : '') + p.name));
       text.appendChild(starsEl(League.starsOf(save, p)));
-      text.appendChild(el('span', 'meta', (p.no !== undefined ? '#' + p.no + ' \u00B7 ' : '') + (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?') + (isRookie(p) ? ' \u00B7 Rookie' : '')));
+      text.appendChild(el('span', 'meta', (p.no !== undefined ? '#' + p.no + ' \u00B7 ' : '') + (p.pos ? p.pos + ' \u00B7 ' : '') + (p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '\" \u00B7 ' : '') + 'Age ' + (p.age || '?') + (p.tw ? ' \u00B7 Two-way' : '') + (isRookie(p) ? ' \u00B7 Rookie' : '')));
       if (p.inj > 0) text.appendChild(el('span', 'meta injured', 'Injured \u00B7 out ' + p.inj + (p.inj === 1 ? ' more game' : ' more games')));
       card.appendChild(text);
       card.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
