@@ -1062,3 +1062,6 @@ body[data-modern="1"] #era-list .card.era.src{border-left:3px solid var(--team)}
 body[data-modern="1"] #screen-season .bar.star::before{right:-34px;top:-46px;width:250px;height:230px;background-position:center;background-size:contain;opacity:.42;mask-image:none;-webkit-mask-image:none}
 body[data-modern="1"] #screen-season .bar.star::before{right:-30px;top:-36px;width:220px;height:200px;opacity:.34}
 .pb-ic.photo,.ph-ic.photo,.avatar.fa.photo{background:#fff url(assets/photos/espn-insider.png) center 20%/cover no-repeat!important;color:transparent}
+body[data-modern="1"] .site-bar{background:transparent;padding:2px 0;margin:0 0 4px;justify-content:center;clip-path:none}
+body[data-modern="1"] .site-logo{height:46px;width:auto;max-width:100%;display:block}
+body[data-modern="1"] .site-logo{height:56px}

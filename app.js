@@ -4731,12 +4731,7 @@
     var mast = el('header', 'pp-mast');
     if (M) {
       pg.className = 'paper phone-feed';
-      var ic = el('span', 'ph-ic', 'C');
-      mast.appendChild(ic);
-      var mt = el('div', 'ph-who');
-      mt.appendChild(el('b', null, 'Courtside'));
-      mt.appendChild(el('small', null, 'Game recap \u00B7 now'));
-      mast.appendChild(mt);
+      mast.hidden = true;
     } else {
       mast.appendChild(el('div', 'pp-name', ev.paper));
       mast.appendChild(el('div', 'pp-meta', ev.date + ' \u00B7 ' + ev.edition + ' EDITION \u00B7 TWO CENTS'));
@@ -4943,8 +4938,12 @@
       rail.classList.add('recap');
       var site = el('div', 'site');
       var sbar = el('div', 'site-bar');
-      sbar.appendChild(el('span', 'site-lock', '\u25CF'));
-      sbar.appendChild(el('span', 'site-url', 'courtside.com/recap/' + (ev.slug || 'game')));
+      var SITES = ['nba', 'espn', 'realgm'];
+      save.siteN = ((save.siteN || 0) + 1) % 1000;
+      var logo = new Image();
+      logo.className = 'site-logo'; logo.alt = '';
+      logo.src = 'assets/sites/' + SITES[save.siteN % SITES.length] + '.png';
+      sbar.appendChild(logo);
       site.appendChild(sbar);
       var snav = el('div', 'site-nav'), strack = rail.querySelector('.hrail-track');
       pages.forEach(function (pg, i) {
