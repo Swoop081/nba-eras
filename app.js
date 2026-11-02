@@ -206,6 +206,13 @@
   eraList.parentNode.insertBefore(decTabs, eraList);
   function eraBlurb(era) { return eraBlurbs[era.id] && era.id !== '2026' ? eraBlurbs[era.id] : era.blurb; }
   var eraPages = [];
+  /* where each page puts its cards [column, row, fullWidth] and its photo [column, row] */
+  var ERA_LAYOUTS = [
+    { c: [['1', '1'], ['1', '2'], ['1 / 3', '3', 1], ['1 / 3', '4', 1]], p: ['2', '1 / 3'] },
+    { c: [['2', '1'], ['2', '2'], ['1 / 3', '3', 1], ['1 / 3', '4', 1]], p: ['1', '1 / 3'] },
+    { c: [['1 / 3', '1', 1], ['1 / 3', '2', 1], ['2', '3'], ['2', '4']], p: ['1', '3 / 5'] },
+    { c: [['1 / 3', '1', 1], ['1', '2'], ['1', '3'], ['1 / 3', '4', 1]], p: ['2', '2 / 4'] }
+  ];
   function eraPhoto(box, ids) {
     var urls = [];
     ids.forEach(function (id) { ['webp', 'jpg', 'png'].forEach(function (x) { urls.push('assets/eras/' + id + '.' + x); }); });
@@ -223,6 +230,7 @@
     for (var i = 0; i < all.length; i += 4) {
       var grp = all.slice(i, i + 4);
       var pg = el('section', 'pg era-pg');
+      var LAY = ERA_LAYOUTS[(i / 4) % ERA_LAYOUTS.length];
       grp.forEach(function (era, k) {
         var card = el('button', 'card era e' + k);
         card.type = 'button';
@@ -232,9 +240,13 @@
         text.appendChild(el('span', 'meta', eraBlurb(era)));
         card.appendChild(text);
         card.addEventListener('click', function () { openTeams(era); });
+        var cp = LAY.c[k];
+        card.style.gridColumn = cp[0]; card.style.gridRow = cp[1];
+        card.classList.add(cp[2] ? 'full' : 'half');
         pg.appendChild(card);
         if (k === 0) {
           var ph = el('div', 'era-photo');
+          ph.style.gridColumn = LAY.p[0]; ph.style.gridRow = LAY.p[1];
           ph.appendChild(el('span', 'big', String(+era.id + 1).slice(2)));
           eraPhoto(ph, grp.map(function (g) { return g.id; }));
           pg.appendChild(ph);
