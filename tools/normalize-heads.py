@@ -20,20 +20,26 @@ def face(im):
             return max(f, key=lambda r: r[2] - abs(r[0] + r[2] / 2 - cx) * 0.1)
     return None
 
-ok = bad = 0; miss = []
-for f in sorted(glob.glob(D + '/*.png') + glob.glob(D + '/*.jpg')):
+def work(f):
     im = Image.open(f).convert('RGBA')
     b = face(im)
     if b is None:
-        miss.append(os.path.basename(f)); bad += 1
         s = min(im.size); l = (im.width - s) // 2
-        crop = im.crop((l, 0, l + s, s)).resize((SIZE, SIZE), Image.LANCZOS)
+        crop = im.crop((l, 0, l + s, s)).resize((SIZE, SIZE), Image.LANCZOS); ok = False
     else:
         x, y, w, h = [float(v) for v in b]
         side = w / FACE_W
         left = x + w / 2 - CX * side; top = y + h / 2 - CY * side
         canvas = Image.new('RGBA', (int(side), int(side)), (0, 0, 0, 0))
         canvas.paste(im, (int(round(-left)), int(round(-top))))
-        crop = canvas.resize((SIZE, SIZE), Image.LANCZOS); ok += 1
-    crop.save(os.path.splitext(f)[0] + '.webp', 'WEBP', quality=82, method=6)
-print(ok, 'normalised;', bad, 'no face:', miss)
+        crop = canvas.resize((SIZE, SIZE), Image.LANCZOS); ok = True
+    out = os.path.splitext(f)[0] + '.webp'
+    crop.save(out + '.tmp', 'WEBP', quality=82, method=6); os.replace(out + '.tmp', out)
+    return f, ok
+
+if __name__ == '__main__':
+    from multiprocessing import Pool
+    todo = [f for f in sorted(glob.glob(D + '/*.png') + glob.glob(D + '/*.jpg')) if '--redo' in sys.argv or not os.path.exists(os.path.splitext(f)[0] + '.webp')]
+    with Pool() as pool:
+        res = pool.map(work, todo, chunksize=4)
+    print(sum(1 for r in res if r[1]), 'normalised;', [os.path.basename(r[0]) for r in res if not r[1]], 'no face')
