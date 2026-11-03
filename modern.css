@@ -1190,3 +1190,10 @@ body[data-modern="1"] #screen-live #court.full+#ticker .tk{font-size:13px;margin
 body[data-modern="1"] #screen-live #court.full+#ticker .tk:first-child{font-size:14.5px}
 body[data-modern="1"] #screen-live #pdetail{order:6}
 body[data-modern="1"] #screen-live #live-dock{order:7}
+/* title lockup: NBA logo beside ERAS, logo as tall as the letters */
+body[data-modern="1"] #screen-title .title-stack{--F:min(150px,40vw);display:grid;grid-template-columns:auto auto;grid-template-areas:"logo title" "tag tag";justify-content:center;align-items:center;column-gap:calc(var(--F)*.063);row-gap:22px}
+body[data-modern="1"] #screen-title .logo-wrap{grid-area:logo;min-height:0}
+body[data-modern="1"] #screen-title #logo{height:calc(var(--F)*.816);width:auto;max-width:none}
+body[data-modern="1"] #screen-title #game-title{grid-area:title;font-size:0;line-height:0;text-shadow:none;display:flex;align-items:center}
+body[data-modern="1"] #screen-title #game-title .era{display:block;font-size:var(--F);line-height:.816;height:calc(var(--F)*.816);color:#FF6A1F;-webkit-text-stroke:0;letter-spacing:0;transform:translateY(calc(var(--F)*.017))}
+body[data-modern="1"] #screen-title #tagline{grid-area:tag;text-align:center}
