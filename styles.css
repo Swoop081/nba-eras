@@ -413,3 +413,10 @@ body[data-modern="1"] .card .badge.has-logo,body[data-modern="1"] .badge{backgro
 .phone-feed .ph-who b{font-size:16px}
 body[data-modern="1"] .avatar img{filter:none}
 
+
+/* Desktop browsers: the game stays a phone-shaped column in the middle of the window, so a laptop test looks like the iPhone does. */
+@media (min-width:760px) and (min-height:560px){
+  html,body{background:radial-gradient(ellipse at 50% 20%,#1b2236 0%,#0a0d16 70%)}
+  #app{inset:0 auto 0 50%;width:min(540px,100vw);transform:translateX(-50%);box-shadow:0 0 0 1px #2a3150,0 0 80px rgba(0,0,0,.7);background:#000}
+  #logo{max-width:340px}
+}
