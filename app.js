@@ -486,7 +486,7 @@
     function pick(card, team) {
       selected = team;
       teamTheme();
-      takeBtn.textContent = 'Take over the ' + team.city + ' ' + team.name;
+      takeBtn.textContent = 'Take control of the ' + team.name;
       dock.hidden = false;
       var idx = cardEls.indexOf(card);
       count.textContent = (idx + 1) + ' of ' + cardEls.length;
@@ -606,7 +606,7 @@
           card.classList.add('selected');
           selected = team;
           teamTheme();
-          takeBtn.textContent = 'Take over the ' + team.city + ' ' + team.name;
+          takeBtn.textContent = 'Take control of the ' + team.name;
           dock.hidden = false;
         });
         teamList.appendChild(card);
