@@ -4129,7 +4129,6 @@
         pages.push({ title: 'Cup \u00B7 ' + String(cf).replace('ern', ''), node: wrapC });
       });
     }
-    if (!save.off && boardAvail !== false) pages.push({ title: 'Draft board', node: boardPage() });
     return hubRail(pages);
   }
 
@@ -4435,6 +4434,17 @@
       });
       var dc = el('button', 'btn wide', 'Depth chart'); dc.type = 'button'; dc.addEventListener('click', function () { close(); openDepth(teamById(save.myId)); });
       sh.appendChild(dc);
+      if (!save.off && boardAvail !== false) {
+        var sc = el('button', 'btn wide', 'Draft scouting'); sc.type = 'button';
+        sc.addEventListener('click', function () {
+          close();
+          hubSheet('Draft board', function (sh2, close2) {
+            sh2.appendChild(boardPage());
+            var d2 = el('button', 'btn primary wide', 'Done'); d2.type = 'button'; d2.addEventListener('click', close2); sh2.appendChild(d2);
+          });
+        });
+        sh.appendChild(sc);
+      }
       var d = el('button', 'btn primary wide', 'Done'); d.type = 'button'; d.addEventListener('click', close); sh.appendChild(d);
     });
   }

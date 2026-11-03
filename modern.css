@@ -1190,3 +1190,4 @@ body[data-modern="1"] #screen-live #court.full+#ticker .tk{font-size:13px;margin
 body[data-modern="1"] #screen-live #court.full+#ticker .tk:first-child{font-size:14.5px}
 body[data-modern="1"] #screen-live #pdetail{order:6}
 body[data-modern="1"] #screen-live #live-dock{order:7}
+body[data-modern="1"] .sheet .board{flex:none;max-height:min(62vh,520px)}
