@@ -948,8 +948,25 @@
   }
   function renderPlayer() {
     var p = League.byId(save, PV.id), team = PV.team;
-    document.getElementById('player-title').textContent = p.name;
-    document.getElementById('player-sub').textContent = (p.pos || '') + (p.hgt ? ' · ' + Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '"' : '') + ' · age ' + (p.age || '?') + (team ? ' · ' + team.city : '');
+    var hero = document.getElementById('player-hero');
+    hero.textContent = '';
+    var tc = (team && team.colors && team.colors[0]) || '#C8102E', tc2 = (team && team.colors && team.colors[1]) || '#111';
+    hero.style.setProperty('--hc', tc); hero.style.setProperty('--hc2', tc2);
+    var bk = el('button', 'back', '\u2190'); bk.type = 'button'; bk.setAttribute('aria-label', 'Back');
+    bk.addEventListener('click', function () { show('screen-roster'); });
+    hero.appendChild(bk);
+    var ph = makeAvatar(p); ph.className = 'avatar hero-photo'; hero.appendChild(ph);
+    var info = el('div', 'hero-info');
+    var nm = p.name.split(' '); var first = nm.shift();
+    info.appendChild(el('div', 'hero-team', team ? team.city + ' ' + (team.name || '') : (p.team ? oppName(p.team) : 'Free agent')));
+    info.appendChild(el('h2', 'hero-name', first)); info.appendChild(el('h2', 'hero-name b', nm.join(' ')));
+    info.appendChild(el('div', 'hero-sub', (p.pos || '') + (p.hgt ? ' \u00b7 ' + Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '"' : '') + ' \u00b7 Age ' + (p.age || '?')));
+    hero.appendChild(info);
+    var st = statsOf(p), g = st ? (st.x.g || 1) : 1, tiles = el('div', 'hero-stats');
+    [['PTS', st ? f1(st.x.pts, g) : '\u2013'], ['REB', st && st.x.trb !== undefined ? f1(st.x.trb, g) : '\u2013'], ['AST', st ? f1(st.x.ast, g) : '\u2013'], ['OVR', String(p.ratings.ovr)]].forEach(function (t) {
+      var d = el('div', 'hs' + (t[0] === 'OVR' ? ' ' + level(p.ratings.ovr) : '')); d.appendChild(el('small', null, t[0])); d.appendChild(el('b', null, t[1])); tiles.appendChild(d);
+    });
+    hero.appendChild(tiles);
     var tabs = document.getElementById('player-tabs');
     tabs.textContent = '';
     PTABS.forEach(function (t) {
@@ -960,14 +977,10 @@
     });
     var body = document.getElementById('player-body');
     body.textContent = '';
-    var head = el('div', 'stat-card phead');
-    head.appendChild(makeAvatar(p));
-    var tx = el('span');
-    tx.appendChild(el('strong', null, money(p.salary) + ' · ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' yr' : ' yrs') + ' left')));
-    tx.appendChild(starsEl(League.starsOf(save, p)));
-    tx.appendChild(el('span', 'meta', 'Potential ' + p.pot + (p.inj > 0 ? ' · injured, out ' + p.inj : '')));
-    head.appendChild(tx);
-    head.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
+    var head = el('div', 'phead-line');
+    head.appendChild(el('strong', null, money(p.salary) + ' \u00b7 ' + (p.yrs <= 0 ? 'expiring' : p.yrs + (p.yrs === 1 ? ' yr' : ' yrs') + ' left')));
+    head.appendChild(starsEl(League.starsOf(save, p)));
+    head.appendChild(el('span', 'meta', 'Potential ' + p.pot + (p.inj > 0 ? ' \u00b7 injured, out ' + p.inj : '')));
     body.appendChild(head);
     var fn = { 'Overview': pvOverview, 'Season': pvSeason, 'Game log': pvLog, 'Shooting': pvShooting, 'Ratings': pvRatings, 'Career': pvCareer, 'Contract': pvContract, 'Injuries': pvInjuries, 'Awards': pvAwards }[PV.tab];
     fn(body, p, team);

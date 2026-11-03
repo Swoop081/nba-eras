@@ -1217,3 +1217,23 @@ body[data-modern="1"] .lg-card .lg-teams{flex:1;width:100%}
 body[data-modern="1"] .lg-card .lg-tr{display:flex;align-items:center;gap:10px}
 body[data-modern="1"] .lg-card .lg-tr .lg-city{flex:1;min-width:0}
 body[data-modern="1"] .lg-card .lg-tr .lg-sc{font-size:28px;text-align:right}
+/* player hero */
+body[data-modern="1"] .phero{position:relative;overflow:hidden;padding:max(14px,env(safe-area-inset-top)) 16px 14px;min-height:300px;background:linear-gradient(160deg,var(--hc) 0%,color-mix(in srgb,var(--hc) 45%,#000) 70%,#0b0d12 100%);clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+body[data-modern="1"] .phero .back{position:relative;z-index:3;width:40px;height:40px;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:20px;border-radius:0;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+body[data-modern="1"] .phero .hero-photo{position:absolute;right:-6px;top:max(10px,env(safe-area-inset-top));width:62%;height:210px;border-radius:0;background:none;z-index:1;display:block}
+body[data-modern="1"] .phero .hero-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 8%;border-radius:0;-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}
+body[data-modern="1"] .phero .hero-photo span{font:800 56px var(--disp);color:rgba(255,255,255,.35);display:flex;height:100%;align-items:center;justify-content:center}
+body[data-modern="1"] .hero-info{position:relative;z-index:2;margin-top:18px;max-width:58%}
+body[data-modern="1"] .hero-team{font:700 12px var(--font);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.8);margin-bottom:4px}
+body[data-modern="1"] .hero-name{margin:0;font:800 34px/0.98 var(--disp);text-transform:uppercase;color:#fff;letter-spacing:.01em;overflow-wrap:anywhere}
+body[data-modern="1"] .hero-name.b{font-size:38px}
+body[data-modern="1"] .hero-sub{margin-top:8px;font:600 13px var(--font);color:rgba(255,255,255,.85)}
+body[data-modern="1"] .hero-stats{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:22px}
+body[data-modern="1"] .hero-stats .hs{background:rgba(0,0,0,.42);padding:8px 4px 7px;text-align:center}
+body[data-modern="1"] .hero-stats .hs small{display:block;font:700 11px var(--font);letter-spacing:.08em;color:rgba(255,255,255,.7)}
+body[data-modern="1"] .hero-stats .hs b{display:block;font:800 26px/1.1 var(--disp);color:#fff}
+body[data-modern="1"] .hero-stats .hs.high b,body[data-modern="1"] .hero-stats .hs.great b{color:#4ade80}
+body[data-modern="1"] .phead-line{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:4px 16px 8px}
+body[data-modern="1"] .phead-line strong{font-weight:800}
+body[data-modern="1"] .phead-line .meta{color:var(--muted);font-size:13px}
+body[data-modern="1"] #screen-player .stickyhead{background:var(--bg)}
