@@ -5290,7 +5290,7 @@
       var who = ev.pid ? ev.who : ev.coach ? 'Coach' : 'Group chat';
       if (ev.gm) {
         var gh = el('div', 'ph-head');
-        gh.appendChild(save.tm[ev.gm.tid] ? teamBadge(save.tm[ev.gm.tid]) : el('span', 'avatar', ev.gm.n[0]));
+        gh.appendChild(makeAvatar({ id: ev.gm.n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), name: ev.gm.n }));
         var gw = el('div', 'ph-who');
         gw.appendChild(el('b', null, ev.gm.n));
         gw.appendChild(el('small', null, 'Messages \u00B7 ' + ev.gm.city + ' general manager \u00B7 now'));
