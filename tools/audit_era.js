@@ -88,6 +88,11 @@ function fitLeague(rounds) {
   }
 }
 let r = run(S);
+if (process.env.TUNE && LG) {   // only the shooting level moves, so scoring lands on the real league average; ratings are untouched
+  for (let k = 0; k < 6; k++) { const f = Math.pow(LG.pts / r.ppg, 1.1); P.fg *= f; Engine.register({ [YEAR]: P }); r = run(S); if (Math.abs(r.ppg - LG.pts) < 0.35) break; }
+  const pf = path.join(R, 'data/params/' + ERA + '.json'); const all = fs.existsSync(pf) ? JSON.parse(fs.readFileSync(pf, 'utf8')) : {};
+  all[YEAR] = Object.assign({}, all[YEAR] || P, { fg: +P.fg.toFixed(4) }); fs.writeFileSync(pf, JSON.stringify(all));
+}
 { const sd = a => { const mu = a.reduce((x, y) => x + y) / a.length; return Math.sqrt(a.reduce((x, y) => x + (y - mu) ** 2, 0) / a.length); };
   let mw = 0, mc = 0; ids.forEach(i => { if (realW[i] >= 0) { mw += Math.abs(r.wins[i] - realW[i]); mc++; } });
   const m = lgOf((r.seasons = S, r));
