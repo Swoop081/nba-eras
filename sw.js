@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v343';
+var CACHE = 'nba-eras-v344';
 var SHELL = [
   './',
   'index.html',
@@ -22,7 +22,7 @@ var SHELL = [
   'data/teams-2026.json',
   'data/players-2026.json',
   'data/coaches-2026.json',
-  'data/gms-2026.json','data/gms-2025.json','data/schedule-2023.json','data/schedule-2024.json','data/schedule-2025.json','data/coaches-2025.json','data/players-2025-open.json','data/draft-2026.json','data/teams-2025.json'
+  'data/gms-2026.json','data/gms-2025.json','data/schedule-2025.json','data/coaches-2025.json','data/players-2025-open.json','data/draft-2026.json','data/teams-2025.json'
 ];
 
 self.addEventListener('install', function (event) {

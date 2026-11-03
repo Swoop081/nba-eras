@@ -773,7 +773,8 @@
   function level(v) { return v >= 75 ? 'hi' : v >= 55 ? 'mid' : 'lo'; }
 
   var SCHED = {};
-  [2023, 2024, 2025, 2026].forEach(function (y) { fetch('data/schedule-' + y + '.json').then(function (r) { return r.json(); }).then(function (d) { SCHED[y] = d; }).catch(function () {}); });
+  function prefetchSched(y) { if (SCHED[y] !== undefined) return; SCHED[y] = null; fetch('data/schedule-' + y + '.json').then(function (r) { return r.json(); }).then(function (d) { SCHED[y] = d; }).catch(function () {}); }
+  [2025, 2026].forEach(prefetchSched);
   var COACHDATA = null;
   /* jersey numbers: real ones for this season, and every club's retired numbers kept off the floor */
   (function () {
@@ -1867,6 +1868,7 @@
     loadPlayers(function (pl) {
       if (!pl) return;
       var go = function (sched) {
+      prefetchSched(parseInt(currentEra.years, 10) + 1);
       rosterCache = {};
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60, sched);
       Engine.setRules({});
@@ -1878,7 +1880,7 @@
       renderSeason();
       show('screen-season');
       };
-      if (currentEra.current && (parseInt(currentEra.years, 10) >= 2023 && parseInt(currentEra.years, 10) <= 2026)) {
+      if (currentEra.current) {
         fetch('data/schedule-' + parseInt(currentEra.years, 10) + '.json').then(function (r) { return r.json(); }).then(go).catch(function () { go(null); });
       } else go(null);
     });
@@ -6931,7 +6933,8 @@
     var teams = save.ids.map(teamById), me = teamById(save.myId);
     League.rightsOf(save, me.id).forEach(function (p) { League.release(save, p); });
     League.aiRosterPass(save, teams, me.id);
-    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1), SCHED[save.year + 1] && +save.eraId >= 2023 ? SCHED[save.year + 1] : undefined);
+    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1), SCHED[save.year + 1] || undefined);
+    prefetchSched(save.year + 2);
     save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
     next.tm = save.tm; next.ids = save.ids.slice();
     next.lg = save.lg; next.mood = save.mood; next.plan = save.plan; if (next.mood) next.mood.asked = false;
