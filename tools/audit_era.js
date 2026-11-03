@@ -87,7 +87,13 @@ function fitLeague(rounds) {
     console.log('league', i, 'pts', m.pts.toFixed(1), '/', LG.pts, 'fga', m.fga.toFixed(1), '/', LG.fga, '3pa', m.tpa.toFixed(1), '/', LG['3pa'], 'fta', m.fta.toFixed(1), '/', LG.fta, 'tov', m.tov.toFixed(1), '/', LG.tov, 'orb', m.orb.toFixed(1), '/', LG.orb, 'ast', m.ast.toFixed(1), '/', LG.ast, '| fg%', (m.fg/m.fga).toFixed(3), (LG.fg/LG.fga).toFixed(3), '3p%', (m.tp/m.tpa).toFixed(3), (LG['3p']/LG['3pa']).toFixed(3), 'ft%', (m.ft/m.fta).toFixed(3), (LG.ft/LG.fta).toFixed(3));
   }
 }
-let r = run(S);
+let r = run(S); if (process.env.SHOW) report(r, 'before');
+if (process.env.TUNEAST && LG) {   // assist rate only: league assists land on the real total
+  for (let k = 0; k < 6; k++) { const m = lgOf((r.seasons = S, r)); if (Math.abs(m.ast / LG.ast - 1) < 0.02) break; P.astp *= Math.pow(LG.ast / m.ast, 1.0); Engine.register({ [YEAR]: P }); r = run(S); }
+  if (process.env.SHOW) report(r, 'after');
+  const pf = path.join(R, 'data/params/' + ERA + '.json'); const all = fs.existsSync(pf) ? JSON.parse(fs.readFileSync(pf, 'utf8')) : {};
+  all[YEAR] = Object.assign({}, all[YEAR] || P, { astp: +P.astp.toFixed(4) }); fs.writeFileSync(pf, JSON.stringify(all));
+}
 if (process.env.TUNE && LG) {   // only the shooting level moves, so scoring lands on the real league average; ratings are untouched
   for (let k = 0; k < 6; k++) { const f = Math.pow(LG.pts / r.ppg, 1.1); P.fg *= f; Engine.register({ [YEAR]: P }); r = run(S); if (Math.abs(r.ppg - LG.pts) < 0.35) break; }
   const pf = path.join(R, 'data/params/' + ERA + '.json'); const all = fs.existsSync(pf) ? JSON.parse(fs.readFileSync(pf, 'utf8')) : {};
