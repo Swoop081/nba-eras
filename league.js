@@ -277,7 +277,8 @@
     if (age <= 20) return 4.5; if (age === 21) return 3.5; if (age === 22) return 2.5; if (age === 23) return 1.5;
     if (age === 24) return 1; if (age === 25) return 0.5; if (age <= 28) return 0; if (age === 29) return -0.5;
     if (age === 30) return -1; if (age === 31) return -1.5; if (age === 32) return -2; if (age === 33) return -2.5;
-    return -3.5;
+    if (age <= 36) return -2.8;
+    return -3.2;
   }
 
   /* Ages everyone a year, changes ratings, retires the old. Returns a report for the user's team. */
@@ -302,8 +303,12 @@
       p.ratings.ovr = ovrOf(p.ratings);
       if (p.p0 === undefined) p.p0 = 0;
       var pr = 0;
-      if (p.age >= 33) pr = (p.age - 32) * 0.16 + (p.ratings.ovr < 55 ? 0.15 : 0);
-      if (p.age >= 38) pr = 0.92;
+      /* Real veterans go on while they can play: a star at 37 is rarely gone, a fringe 34-year-old often is. */
+      if (p.age >= 33) {
+        var ov = p.ratings.ovr, k = ov >= 76 ? 0.12 : ov >= 70 ? 0.3 : ov >= 62 ? 0.6 : ov >= 55 ? 1 : 1.4;
+        pr = Math.min(0.9, (0.04 + (p.age - 33) * 0.07) * k + (ov < 55 ? 0.12 : 0));
+        if (p.age >= 40) pr = Math.min(0.9, pr + 0.15 * (p.age - 39));
+      }
       if (Math.random() < pr) {
         p.status = 'retired';
         if (p.team === myId) report.retired.push({ p: p, ovr: before });
