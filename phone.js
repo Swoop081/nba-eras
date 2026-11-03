@@ -101,6 +101,8 @@
       var cand = mid.map(function (p) { return { p: p, why: root.League.shopReason(save, p) }; }).filter(function (c) { return c.why; });
       if (cand.length) outs.push(function () {
         var c = rnd(cand), p = c.p, t = src.team(p.team);
+        var gmn = root.GMS && root.GMS[p.team];
+        if (gmn) return { app: 'Messages', c: '#5E5CE6', g: gmn[0], title: gmn, text: rnd(['We are listening on ' + p.name + ' (' + p.ratings.ovr + ' overall): ' + c.why + '. If you want him, call me.', p.name + ' (' + p.ratings.ovr + ') is available for the right price: ' + c.why + '. Interested?', 'Between us, ' + p.name + ' could move. ' + c.why + '. Want to talk?']), act: { type: 'shop', pid: p.id, tid: p.team } };
         return { app: 'Breaking', c: '#D8232A', g: '!', title: lead(), text: 'The ' + (t ? t.name : 'club') + ' are fielding calls on ' + p.name + ' (' + (p.age || '') + ', ' + p.ratings.ovr + ' overall): ' + c.why + '.', act: { type: 'shop', pid: p.id, tid: p.team } };
       });
     }
@@ -112,6 +114,19 @@
         var three = []; while (three.length < 3 && pickS.length) three.push(pickS.splice(Math.floor(Math.random() * pickS.length), 1)[0]);
         return { app: 'Group chat', c: '#5E5CE6', g: '\u2605', title: 'Front office', text: 'Scouting: three names worth a look before the deadline. ' + three.map(function (p) { var t = src.team(p.team); return p.name + ' (' + (t ? t.name : '') + ', ' + p.ratings.ovr + ')'; }).join(', ') + '.', act: { type: 'scout', pids: three.map(function (p) { return p.id; }) } };
       });
+    }
+    if (root.GMS && save.day < save.days.length * 0.8 && ros.length >= 3) {
+      var otherT = Object.keys(root.GMS).filter(function (id) { return id !== me && src.team(id); });
+      if (otherT.length) {
+        outs.push(function () {
+          var tid = rnd(otherT), gm = root.GMS[tid], tt = src.team(tid), mine = ros.slice(0, 6), pl = rnd(mine);
+          return { app: 'Messages', c: '#5E5CE6', g: gm[0], title: gm, text: rnd(['We have always liked ' + pl.name + '. If you ever move him, ' + (tt ? tt.city : 'we') + ' would be on the phone first.', 'What would it take to get ' + pl.name + ' (' + pl.ratings.ovr + ')? Call me when you have a minute.', 'I am building around a core and ' + pl.name + ' fits. Open to a conversation?']), act: { type: 'shop', pid: pl.id, tid: tid } };
+        });
+        outs.push(function () {
+          var tid = rnd(otherT), gm = root.GMS[tid], tt = src.team(tid);
+          return { app: 'Messages', c: '#5E5CE6', g: gm[0], title: gm, text: rnd(['Our scouts are high on this year\u2019s draft class. I would talk pick swaps if you are open.', 'Draft board is getting clearer. If you want to move a pick, ' + (tt ? tt.city : 'we') + ' will listen.', 'Quiet around the league, but I am working the phones before the deadline. You should too.']), act: { type: 'shop', pid: null, tid: tid } };
+        });
+      }
     }
     var cap = save.lg.cap, pay = ros.concat(save.lg.players.filter(function (p) { return p.team === me && p.inj > 0; })).reduce(function (a, p) { return a + (p.salary || 0); }, 0);
     var floor = ros[7] ? ros[7].ratings.ovr : 50;

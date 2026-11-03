@@ -1531,7 +1531,7 @@
     if (back < cost * 0.75) return false;
     if (rosterOf(save, a.id).length - give.length + o.get.length > MAX_ROSTER) return false;
     executeTrade(save, a.id, b.id, give, o.get, giveK, o.getK);
-    wire(save, a.city + ' trade ' + listOf(give, giveK) + ' to ' + b.city + ' for ' + listOf(o.get, o.getK) + '.');
+    var gmA = root.GMS && root.GMS[a.id]; wire(save, (gmA ? a.city + ' GM ' + gmA + ' trades ' : a.city + ' trade ') + listOf(give, giveK) + ' to ' + b.city + ' for ' + listOf(o.get, o.getK) + '.');
     return true;
   }
   function doOffer(save, myId, themId, giveId, getId) {
