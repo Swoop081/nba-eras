@@ -1246,3 +1246,10 @@ body[data-modern="1"] .dboard{overflow-x:hidden}
 body[data-modern="1"] .board-row{grid-template-columns:36px minmax(0,1fr) repeat(var(--qs,4),minmax(0,24px)) minmax(44px,auto);gap:4px;max-width:100%}
 body[data-modern="1"] .board-row .tot{font-size:26px;padding-right:4px}
 body[data-modern="1"] .board-row .badge,body[data-modern="1"] .board-row .badge.has-logo{width:36px;height:36px}
+/* live rail: bigger player cards, flush to the score divider */
+body[data-modern="1"] #screen-live .live-rail{padding:0 0 6px;gap:4px}
+body[data-modern="1"] .lr{padding:10px 0 8px;gap:3px}
+body[data-modern="1"] .lr .avatar{width:48px;height:48px}
+body[data-modern="1"] .lr b{font-size:12px}
+body[data-modern="1"] .lr .lr-pts{font-size:26px}
+body[data-modern="1"] .lr small{font-size:10px}
