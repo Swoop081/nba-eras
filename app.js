@@ -1527,6 +1527,7 @@
       opts.push(['Extend 3 years at ' + money(ask), function () {
         if (pay - p.salary + ask > save.lg.cap * 1.3) return 'Payroll cannot go that high.';
         p.salary = ask; p.yrs = Math.max(p.yrs, 0) + 3; League.bump && League.bump(save); rosterCache = {}; persist();
+        League.wire(save, teamById(save.myId).city + ' extend ' + p.name + ': 3 years, ' + money(ask) + '.');
         react('extend', { years: 3, salary: money(ask), payroll: money(League.payroll(save, save.myId)) });
         return fx({ s: { m: 8, t: 8 }, fans: 2 }) + ' \u00B7 ' + p.name + ' signs through ' + (save.year + p.yrs);
       }]);
@@ -1552,7 +1553,7 @@
       var sal = League.salaryFor(p.ratings.ovr);
       opts.push(['Sign for ' + money(sal) + ' (1 yr)', function () {
         if (ros.length >= League.maxR(save)) return 'Roster is full.';
-        League.sign(save, p, save.myId, sal, 1); rosterCache = {}; persist();
+        League.sign(save, p, save.myId, sal, 1); League.wire(save, teamById(save.myId).city + ' sign ' + p.name + ' (' + money(sal) + ', 1 year).'); rosterCache = {}; persist();
         react('sign', { salary: money(sal) });
         return fx({ fans: 2, team: { m: 1 } }) + ' \u00B7 ' + p.name + ' signed';
       }]);
@@ -2129,7 +2130,7 @@
           row.appendChild(tx);
           var ask = League.clampSal(save, p, League.salaryFor(p.ratings.ovr)), can = n < League.MAX_ROSTER && League.canSign(save, team.id, ask, p);
           var b = el('button', 'btn small', can ? money(ask) : (n >= League.MAX_ROSTER ? 'Full' : 'Cap')); b.type = 'button'; b.disabled = !can;
-          b.addEventListener('click', function () { League.sign(save, p, team.id, ask, 1); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); draw(); renderRoster(team); });
+          b.addEventListener('click', function () { League.sign(save, p, team.id, ask, 1); League.wire(save, team.city + ' sign ' + p.name + ' (' + money(ask) + ', 1 year).'); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); draw(); renderRoster(team); });
           row.appendChild(b);
           box.appendChild(row);
         });
@@ -5522,7 +5523,7 @@
         row.appendChild(el('span', 'ovr ' + level(p.ratings.ovr), String(p.ratings.ovr)));
         var ask = League.clampSal(save, p, League.salaryFor(p.ratings.ovr)), can = n < League.maxR(save) && League.canSign(save, me.id, ask, p);
         var b = el('button', 'btn small', can ? 'Sign ' + money(ask) : (n >= League.maxR(save) ? 'Roster full' : 'Over cap')); b.type = 'button'; b.disabled = !can;
-        b.addEventListener('click', function () { League.sign(save, p, me.id, ask, 1); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); trade.msg = 'Signed ' + p.name + ' for ' + money(ask) + '.'; renderTrade(); });
+        b.addEventListener('click', function () { League.sign(save, p, me.id, ask, 1); League.wire(save, me.city + ' sign ' + p.name + ' (' + money(ask) + ', 1 year).'); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); trade.msg = 'Signed ' + p.name + ' for ' + money(ask) + '.'; renderTrade(); });
         row.appendChild(b);
         list.appendChild(row);
       });
@@ -5636,6 +5637,7 @@
     if (Social.has(save.year)) Social.react(save, 'trade', { text: line.replace(/^Trade: /, '') + '.' });
     mo.news.push({ text: line, date: Events.dateFor(save) });
     if (mo.news.length > 12) mo.news.shift();
+    League.wire(save, line + '.');
     rosterCache = {};
     persist();
     return line;
@@ -6289,7 +6291,7 @@
       } else if (d !== 'out' && can) {
         for (var yy = 2; yy <= maxY; yy++) (function (yrs) {
           var b = el('button', 'btn small', yrs + ' yrs'); b.type = 'button';
-          b.addEventListener('click', function () { League.sign(save, p, me.id, offer, yrs); persist(); renderOff(); });
+          b.addEventListener('click', function () { League.sign(save, p, me.id, offer, yrs); League.wire(save, me.city + ' re-sign ' + p.name + ': ' + yrs + ' years, ' + money(offer) + '.'); persist(); renderOff(); });
           row.appendChild(b);
         })(yy);
       }
