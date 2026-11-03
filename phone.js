@@ -5,7 +5,7 @@
   var src = null, timer = null, allowed = false, last = '', lastApp = '';
   var OK = { 'screen-season': 1, 'screen-events': 1, 'screen-off': 1, 'screen-trade': 1, 'screen-roster': 1, 'screen-records': 1, 'screen-club': 1 };
 
-  var recent = [];
+  var recent = [], seenTexts = [];
   function rnd(a) {
     var pool = a;
     if (a.length > 1 && typeof a[0] === 'string') { pool = a.filter(function (x) { return recent.indexOf(x) < 0; }); if (!pool.length) pool = a; }
@@ -135,7 +135,16 @@
       save.ownerTalked = save.day || 1;
       return { app: 'Messages', c: '#5E5CE6', g: 'O', title: 'Owner', text: 'Payroll is ' + root.League.money(payNow, cap) + ' and the cap is ' + root.League.money(cap, cap) + '. I want to talk about it.', act: { type: 'ownercap' } };
     });
-    return outs.length ? rnd(outs)() : null;
+    /* never repeat a line the player has recently seen */
+    var seen = seenTexts, pick = null;
+    for (var tries = 0; outs.length && tries < 25; tries++) {
+      var c = rnd(outs)();
+      if (c && seen.indexOf(c.text) < 0) { pick = c; break; }
+      if (!pick && c) pick = c;
+    }
+    if (pick && seen.indexOf(pick.text) >= 0) return null;
+    if (pick) { seen.push(pick.text); if (seen.length > 40) seen.shift(); }
+    return pick;
   }
 
   function lead() { return root.Social && root.Social.lead ? (root.Social.has(src.save().year) ? root.Social.lead(src.save().year) : 'League Insider') : 'League Insider'; }
