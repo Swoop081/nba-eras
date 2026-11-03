@@ -778,6 +778,7 @@
     var nums = {}, ret = {};
     function wire() { League.setNumbers(nums, function (t) { return ret[FRANCHISE[t] || t] || []; }); }
     wire();
+    fetch('data/bios-2026.json').then(function (r) { return r.json(); }).then(function (d) { BIOS = {}; Object.keys(d).forEach(function (n) { BIOS[League.normName(n)] = d[n]; }); }).catch(function () {});
     fetch('data/jersey-numbers-2026.json').then(function (r) { return r.json(); }).then(function (d) { var m = {}; Object.keys(d).forEach(function (t) { m[t] = {}; Object.keys(d[t]).forEach(function (n) { m[t][League.normName(n)] = d[t][n]; }); }); nums = m; wire(); return fetch('data/jersey-numbers-extra.json'); }).then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { nums[t] = nums[t] || {}; Object.keys(d[t]).forEach(function (n) { nums[t][League.normName(n)] = d[t][n]; }); }); wire(); }).catch(function () {});
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
@@ -819,7 +820,7 @@
   }
 
   /* ---------- player profile ---------- */
-  var PV = null;
+  var PV = null, BIOS = {};
   var PTABS = ['Overview', 'Season', 'Game log', 'Shooting', 'Ratings', 'Career', 'Contract', 'Injuries', 'Awards'];
   var RGROUPS = [
     ['Offence', [['Scoring', 'sco'], ['Shooting', 'sht'], ['Free throws', 'ft'], ['Three-pointers', 'tpt'], ['Playmaking', 'ply'], ['Ball security', 'tov'], ['Off. rebounding', 'orb']]],
@@ -1001,6 +1002,7 @@
       var rows = x2.log.slice(-5).reverse().map(function (g) { return [(g[2] ? 'vs ' : 'at ') + oppName(g[1]), (g[3] > g[4] ? 'W ' : 'L ') + g[3] + '-' + g[4], g[6] + ' pts', g[7] + ' ast', g[13] + '/' + g[14] + ' FG']; });
       body.appendChild(dataTable(['Game', 'Result', 'PTS', 'AST', 'FG'], rows));
     }
+    pvBio(body, p, team);
     pvExtras(body, p);
     body.appendChild(el('div', 'group-title', 'Contract'));
     var cc = el('div', 'stat-card');
@@ -1050,6 +1052,24 @@
       if (g && (p.age || 25) >= 27) opt('Negotiate a buyout', 'He agrees to 75% of what is left, ' + money(Math.round(p.salary * 0.75)) + ' a year. He cannot be claimed.', 'buyout');
       var c = el('button', 'btn ghost wide', 'Cancel'); c.type = 'button'; c.addEventListener('click', close); sh.appendChild(c);
     });
+  }
+  /* bio facts: birth date and school are fixed; years pro and age move on each season */
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function pvBio(body, p, team) {
+    var b = BIOS[League.normName(p.name)] || {}, rows = [];
+    function cell(k, v) { if (v) rows.push([k, v]); }
+    cell('Height', p.hgt ? Math.floor(p.hgt / 12) + '\'' + (p.hgt % 12) + '"' : '');
+    cell('Weight', b.w ? b.w + ' lb' : '');
+    cell('Age', p.age ? p.age + ' years' : '');
+    if (b.b) { var d = b.b.split('-'); cell('Born', MON[+d[1] - 1] + ' ' + (+d[2]) + ', ' + d[0]); }
+    cell('College / last club', b.s);
+    if (b.e !== undefined) { var yp = b.e + Math.max(0, save.year - 2026); cell('Years pro', yp ? yp + (yp === 1 ? ' year' : ' years') : 'Rookie'); }
+    if (p.draftedYear) cell('Draft', p.draftedYear + (p.draftPick ? ' \u00b7 pick ' + p.draftPick : ''));
+    if (!rows.length) return;
+    body.appendChild(el('div', 'group-title', 'Bio'));
+    var g = el('div', 'bio-grid');
+    rows.forEach(function (r) { var c = el('div', 'bio-c'); c.appendChild(el('small', null, r[0])); c.appendChild(el('b', null, r[1])); g.appendChild(c); });
+    body.appendChild(g);
   }
   function pvExtras(body, p) {
     var c = (p.career || []).slice(), cur = save.lg.stats[p.id], tot = { g: 0, pts: 0, trb: 0, ast: 0 };

@@ -1237,3 +1237,7 @@ body[data-modern="1"] .phead-line{display:flex;flex-wrap:wrap;align-items:center
 body[data-modern="1"] .phead-line strong{font-weight:800}
 body[data-modern="1"] .phead-line .meta{color:var(--muted);font-size:13px}
 body[data-modern="1"] #screen-player .stickyhead{background:var(--bg)}
+body[data-modern="1"] .bio-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+body[data-modern="1"] .bio-c{background:var(--raised);padding:9px 12px 10px;min-width:0}
+body[data-modern="1"] .bio-c small{display:block;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+body[data-modern="1"] .bio-c b{display:block;font:700 16px/1.25 var(--font);margin-top:2px;overflow-wrap:anywhere}
