@@ -785,7 +785,8 @@
     fetch('data/jersey-numbers-2026.json').then(function (r) { return r.json(); }).then(function (d) { var m = {}; Object.keys(d).forEach(function (t) { m[t] = {}; Object.keys(d[t]).forEach(function (n) { m[t][League.normName(n)] = d[t][n]; }); }); nums = m; wire(); return fetch('data/jersey-numbers-extra.json'); }).then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { nums[t] = nums[t] || {}; Object.keys(d[t]).forEach(function (n) { nums[t][League.normName(n)] = d[t][n]; }); }); wire(); }).catch(function () {});
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
-  var GMS26 = {}, GMS25 = {}, COACH26 = null, COACH25 = null;
+  var GMS26 = {}, GMS25 = {}, COACH26 = null, COACH25 = null, COACHH = null;
+  fetch('data/coaches-hist.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { COACHH = d; }).catch(function () {});
   var GMH = null, GMC = {};
   fetch('data/gms-history.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { GMH = d; GMC = {}; }).catch(function () {});
   Object.defineProperty(window, 'GMS', { configurable: true, get: function () {
@@ -1885,7 +1886,7 @@
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60, sched);
       Engine.setRules({});
       League.init(save, pl.players, data.teams, pl.dead);
-      if (currentEra.current) { Coach.build(save, save.year < 2026 && COACH25 ? COACH25 : COACHDATA, save.ids); }
+      if (currentEra.current) { Coach.build(save, save.year >= 2026 ? COACHDATA : save.year === 2025 && COACH25 ? COACH25 : { hc: (COACHH && COACHH[save.year]) || {} }, save.ids); }
       if (currentEra.current) { save.lastRec = {}; data.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w, l: t.l }; }); }
       ensureTm();
       persist();
