@@ -1402,6 +1402,7 @@
     var bodyEl = document.getElementById('match-body');
     var dockEl = document.getElementById('match-dock');
     bodyEl.textContent = '';
+    bodyEl._pi = 0; PGMEM['match-body'] = 0;
     dockEl.hidden = true;
     document.getElementById('match-title').textContent = me.city + ' vs ' + opp.city;
     document.getElementById('match-sub').textContent = label || seasonLabel(save.year);
@@ -5314,6 +5315,7 @@
     var bodyEl = document.getElementById('ev-body');
     var dock = document.getElementById('ev-dock');
     bodyEl.textContent = '';
+    bodyEl._pi = 0; PGMEM['ev-body'] = 0;
     dock.textContent = '';
     document.getElementById('ev-title').textContent = modernUI() ? 'Notifications' : 'Today';
     document.getElementById('ev-sub').textContent = Events.dateFor(save) + ' · ' + save.pending.length + (modernUI() ? (save.pending.length === 1 ? ' unread' : ' unread') : (save.pending.length === 1 ? ' item' : ' items') + ' left');
