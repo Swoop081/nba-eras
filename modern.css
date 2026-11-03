@@ -1241,3 +1241,8 @@ body[data-modern="1"] .bio-grid{display:grid;grid-template-columns:1fr 1fr;gap:6
 body[data-modern="1"] .bio-c{background:var(--raised);padding:9px 12px 10px;min-width:0}
 body[data-modern="1"] .bio-c small{display:block;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 body[data-modern="1"] .bio-c b{display:block;font:700 16px/1.25 var(--font);margin-top:2px;overflow-wrap:anywhere}
+/* match scoreboard: keep total inside the screen */
+body[data-modern="1"] .dboard{overflow-x:hidden}
+body[data-modern="1"] .board-row{grid-template-columns:36px minmax(0,1fr) repeat(var(--qs,4),minmax(0,24px)) minmax(44px,auto);gap:4px;max-width:100%}
+body[data-modern="1"] .board-row .tot{font-size:26px;padding-right:4px}
+body[data-modern="1"] .board-row .badge,body[data-modern="1"] .board-row .badge.has-logo{width:36px;height:36px}
