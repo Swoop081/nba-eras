@@ -4394,6 +4394,15 @@
       sh.classList.add('tall', 'coachsheet');
       save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
       var pl = save.plan, st = Coach.staff(save, save.myId), hc = st && st.hc;
+      var P = { staff: el('div', 'cs-pane'), plan: el('div', 'cs-pane'), scout: el('div', 'cs-pane') }, tabs = el('div', 'chips cs-tabs'), built = {};
+      var TL = [['staff', 'Staff'], ['plan', 'Game plan']]; if (!save.off && boardAvail !== false) TL.push(['scout', 'Scouting']);
+      function show(k) {
+        Object.keys(P).forEach(function (x) { P[x].hidden = x !== k; });
+        Array.prototype.forEach.call(tabs.children, function (b) { b.classList.toggle('on', b.dataset.k === k); });
+        if (k === 'scout' && !built.scout) { built.scout = 1; P.scout.appendChild(boardPage()); }
+      }
+      TL.forEach(function (t) { var b = el('button', null, t[1]); b.type = 'button'; b.dataset.k = t[0]; b.addEventListener('click', function () { show(t[0]); }); tabs.appendChild(b); });
+      sh.appendChild(tabs); sh.appendChild(P.staff); sh.appendChild(P.plan); sh.appendChild(P.scout);
       if (hc) {
         var head = el('button', 'coach-head'); head.type = 'button';
         head.appendChild(makeAvatar({ id: hc.id, name: hc.n }));
@@ -4403,7 +4412,7 @@
         tx.appendChild(ratingRow('Coach trust', Events.mood(save).coach));
         head.appendChild(tx);
         head.addEventListener('click', function () { close(); openCoachSheet('hc'); });
-        sh.appendChild(head);
+        P.staff.appendChild(head);
       }
       var asst = Coach.owned(save, save.myId).filter(function (o) { return o.role !== 'hc'; });
       if (asst.length) {
@@ -4414,13 +4423,13 @@
         });
         var bn = Coach.bonus(save, save.myId, Events.mood(save).coach);
         if (bn) { var ff = function (v) { return (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%'; }; al.appendChild(el('p', 'staff-fx', 'Staff effect: offence ' + ff(bn.off) + ' \u00B7 defence ' + ff(bn.def))); }
-        sh.appendChild(al);
+        P.staff.appendChild(al);
       }
       [['pace', 'Pace', [[1, 'Run'], [0, 'Balanced'], [-1, 'Grind']]],
        ['focus', 'Offence', [['inside', 'Inside'], ['', 'Balanced'], ['ball', 'Ball movement'], ['defence', 'Lock down']]],
        ['scheme', 'Defence', [['', 'Standard'], ['press', 'Full-court press'], ['pack', 'Pack the paint'], ['switch', 'Switch everything']]],
        ['minutes', 'Starters', [['heavy', 'Heavy minutes'], ['', 'Normal'], ['deep', 'Share the load']]]].forEach(function (rr) {
-        sh.appendChild(el('p', 'sh-l', rr[1]));
+        P.plan.appendChild(el('p', 'sh-l', rr[1]));
         var row = el('div', 'chips');
         rr[2].forEach(function (it) {
           var b = el('button', (pl[rr[0]] || 0) === it[0] || (!pl[rr[0]] && it[0] === '') ? 'on' : '', it[1]); b.type = 'button';
@@ -4430,21 +4439,11 @@
           });
           row.appendChild(b);
         });
-        sh.appendChild(row);
+        P.plan.appendChild(row);
       });
       var dc = el('button', 'btn wide', 'Depth chart'); dc.type = 'button'; dc.addEventListener('click', function () { close(); openDepth(teamById(save.myId)); });
       sh.appendChild(dc);
-      if (!save.off && boardAvail !== false) {
-        var sc = el('button', 'btn wide', 'Draft scouting'); sc.type = 'button';
-        sc.addEventListener('click', function () {
-          close();
-          hubSheet('Draft board', function (sh2, close2) {
-            sh2.appendChild(boardPage());
-            var d2 = el('button', 'btn primary wide', 'Done'); d2.type = 'button'; d2.addEventListener('click', close2); sh2.appendChild(d2);
-          });
-        });
-        sh.appendChild(sc);
-      }
+      show('staff');
       var d = el('button', 'btn primary wide', 'Done'); d.type = 'button'; d.addEventListener('click', close); sh.appendChild(d);
     });
   }

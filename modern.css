@@ -1191,3 +1191,6 @@ body[data-modern="1"] #screen-live #court.full+#ticker .tk:first-child{font-size
 body[data-modern="1"] #screen-live #pdetail{order:6}
 body[data-modern="1"] #screen-live #live-dock{order:7}
 body[data-modern="1"] .sheet .board{flex:none;max-height:min(62vh,520px)}
+body[data-modern="1"] .cs-pane{display:grid;gap:10px;min-height:0}
+body[data-modern="1"] .cs-pane[hidden]{display:none}
+body[data-modern="1"] .sheet .cs-pane .board{max-height:min(52vh,440px)}
