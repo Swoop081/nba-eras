@@ -19,7 +19,7 @@ if (!Object.keys(realW).length) {
   const CODE = { atlanta: 'ATL', boston: 'BOS', brooklyn: 'BKN', charlotte: 'CHA', chicago: 'CHI', cleveland: 'CLE', dallas: 'DAL', denver: 'DEN', detroit: 'DET', 'golden-state': 'GSW', houston: 'HOU', indiana: 'IND', 'la-clippers': 'LAC', 'los-angeles-lakers': 'LAL', memphis: 'MEM', miami: 'MIA', milwaukee: 'MIL', minnesota: 'MIN', 'new-orleans': 'NOP', 'new-york': 'NYK', 'oklahoma-city': 'OKC', orlando: 'ORL', philadelphia: 'PHI', phoenix: 'PHX', portland: 'POR', sacramento: 'SAC', 'san-antonio': 'SAS', toronto: 'TOR', utah: 'UTA', washington: 'WAS' };
   teams.forEach(t => { const k = Object.keys(CODE).find(c => (t.id === c || t.id.startsWith(c + '-'))); realW[t.id] = stand[CODE[k]]; });
 }
-const players = doc.players;
+const players = doc.players.filter(p => p.prev && !p.tw && p.teamId);
 players.forEach(p => { p.ovr0 = p.ratings.ovr; p.ratings.ovr = ovrOf(p.ratings); p.avail = Math.min(1, (p.prev.g || 0) / GAMES); });
 function ovrOf(r) { let s = 0; for (const k in W) s += W[k] * r[k]; return Math.round(35 + 0.6 * s); }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
