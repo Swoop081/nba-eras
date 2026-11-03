@@ -5129,17 +5129,6 @@
             teams.appendChild(row);
           });
           r.appendChild(teams);
-          if (g.topName) {
-            var tp = el('div', 'lg-top');
-            tp.appendChild(makeAvatar({ id: g.topId, name: g.topFull || g.topName }));
-            var tx = el('div', 'lg-tx');
-            var tn = el('i', null, g.topName); tn.style.color = tcol(g.topTid);
-            tx.appendChild(tn);
-            var sb = el('b', null, String(g.topPts)); sb.appendChild(el('span', 'pf-rest', '/' + g.topReb + '/' + g.topAst));
-            tx.appendChild(sb);
-            tp.appendChild(tx);
-            r.appendChild(tp);
-          }
           lg.appendChild(r);
         });
         pages.push({ title: 'Around the league', node: lg });
@@ -5190,6 +5179,9 @@
         showSt(0);
         pages.push({ title: 'Standings', node: sp });
       }
+      /* Around the league comes before Top performers */
+      var ai = -1, ti = -1; pages.forEach(function (pg, i) { if (pg.title === 'Around the league') ai = i; if (pg.title === 'Top performers') ti = i; });
+      if (ai > ti && ti >= 0) { var mv = pages.splice(ai, 1)[0]; pages.splice(ti, 0, mv); }
       var rail = hubRail(pages);
       rail.classList.add('recap');
       var site = el('div', 'site');

@@ -1213,3 +1213,7 @@ body[data-modern="1"] #screen-season>.bar{flex:none}
 body[data-modern="1"] #screen-season .hpanel{min-height:0}
 body[data-modern="1"] .pg{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body[data-modern="1"] .paper .site-logo{height:64px;width:auto;max-width:70%;object-fit:contain;object-position:left center;margin:2px 0 6px 0;align-self:flex-start}
+body[data-modern="1"] .lg-card .lg-teams{flex:1;width:100%}
+body[data-modern="1"] .lg-card .lg-tr{display:flex;align-items:center;gap:10px}
+body[data-modern="1"] .lg-card .lg-tr .lg-city{flex:1;min-width:0}
+body[data-modern="1"] .lg-card .lg-tr .lg-sc{font-size:28px;text-align:right}
