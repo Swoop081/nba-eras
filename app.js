@@ -1065,6 +1065,8 @@
     cell('College / last club', b.s);
     if (b.e !== undefined) { var yp = b.e + Math.max(0, save.year - 2026); cell('Years pro', yp ? yp + (yp === 1 ? ' year' : ' years') : 'Rookie'); }
     if (p.draftedYear) cell('Draft', p.draftedYear + (p.draftPick ? ' \u00b7 pick ' + p.draftPick : ''));
+    else if (b.dy) cell('Draft', b.dy + ' \u00b7 R' + (b.dp <= 30 ? 1 : 2) + ' pick ' + b.dp);
+    else if (b.b) cell('Draft', 'Undrafted');
     if (!rows.length) return;
     body.appendChild(el('div', 'group-title', 'Bio'));
     var g = el('div', 'bio-grid');
