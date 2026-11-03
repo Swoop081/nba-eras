@@ -1354,7 +1354,7 @@
     document.getElementById('match-title').textContent = me.city + ' vs ' + opp.city;
     document.getElementById('match-sub').textContent = label || seasonLabel(save.year);
     var nq = res.quarters.length;
-    var board = el('div', 'board');
+    var board = el('div', 'dboard');
     board.style.setProperty('--qs', nq);
     var head = el('div', 'board-row head');
     head.appendChild(el('span'));
@@ -4075,7 +4075,7 @@
   /* ---------- draft big board (rail page on Standings) ---------- */
   var boardAvail;
   function boardPage() {
-    var node = el('div', 'board');
+    var node = el('div', 'dboard');
     function paint() {
       node.textContent = '';
       var B = save.lg.board;
@@ -4697,22 +4697,9 @@
       requestAnimationFrame(fitRows);
     }
     function fitRows() {
-      var tbs = panel.querySelectorAll('table.ht');
-      for (var t = 0; t < tbs.length; t++) {
-        var tb = tbs[t], rows = tb.tBodies[0].rows, avail = panel.clientHeight, rh = 26;
-        var max = Math.max(5, Math.floor((avail - 66) / rh));
-        for (var i = 0; i < rows.length; i++) rows[i].hidden = false;
-        if (rows.length > max) {
-          var keep = max - 1;
-          for (var j = 0; j < rows.length; j++) {
-            var mineRow = rows[j].classList.contains('me');
-            rows[j].hidden = !(j < keep || (mineRow && j >= keep && j === rows.length - 1) || (mineRow && j >= keep));
-          }
-          // always leave room for the user's own row
-          var shown = 0; for (var k2 = 0; k2 < rows.length; k2++) if (!rows[k2].hidden) shown++;
-          if (shown > max) for (var m = rows.length - 1; m >= 0 && shown > max; m--) if (!rows[m].hidden && !rows[m].classList.contains('me')) { rows[m].hidden = true; shown--; }
-        }
-      }
+      /* every row is shown; the page scrolls when the table is longer than the space */
+      var rs = panel.querySelectorAll('table.ht tbody tr');
+      for (var i = 0; i < rs.length; i++) rs[i].hidden = false;
     }
     tabs.forEach(function (k) {
       var b = el('button', k === hubTab ? 'on' : '', TABS[k]); b.type = 'button'; b.dataset.k = k;
