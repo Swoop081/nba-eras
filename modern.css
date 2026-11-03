@@ -1209,8 +1209,5 @@ body[data-modern="1"] .sheet.full .cs-pane .dboard{max-height:none;overflow:visi
 body[data-modern="1"] .sheet.full.coachsheet{overflow:hidden;grid-template-rows:auto auto minmax(0,1fr) auto auto}
 body[data-modern="1"] .sheet.full.coachsheet .cs-pane{overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 body[data-modern="1"] .sheet.full.coachsheet .cs-pane .dboard{overflow:visible}
-/* agent / phone banners drop in at the very top of the screen */
-body[data-modern="1"] #phone-banners{position:fixed;top:max(8px,env(safe-area-inset-top));left:10px;right:10px;flex:none;order:0;z-index:90;margin:0;min-height:0;display:grid;gap:8px;pointer-events:none}
-body[data-modern="1"] #phone-banners[hidden]{display:none}
-body[data-modern="1"] #phone-banners .pb{pointer-events:auto;box-shadow:0 8px 24px rgba(0,0,0,.55);background:rgba(28,31,44,.97)}
-body[data-modern="1"] #screen-season .bar>#phone-banners{position:fixed;z-index:90;flex:none;margin:0;min-height:0}
+body[data-modern="1"] #screen-season>.bar{flex:none}
+body[data-modern="1"] #screen-season .hpanel{min-height:0}
