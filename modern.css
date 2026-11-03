@@ -1216,7 +1216,7 @@ body[data-modern="1"] .paper .site-logo{height:64px;width:auto;max-width:70%;obj
 body[data-modern="1"] .lg-card .lg-teams{flex:1;width:100%}
 body[data-modern="1"] .lg-card .lg-tr{display:flex;align-items:center;gap:10px}
 body[data-modern="1"] .lg-card .lg-tr .lg-city{flex:1;min-width:0}
-body[data-modern="1"] .lg-card .lg-tr .lg-sc{font-size:28px;text-align:right}
+body[data-modern="1"] .lg-card .lg-tr .lg-sc{font-size:17px;font-weight:700;text-align:right}
 /* player hero */
 body[data-modern="1"] .phero{position:relative;overflow:hidden;padding:max(14px,env(safe-area-inset-top)) 16px 14px;min-height:300px;background:linear-gradient(160deg,var(--hc) 0%,color-mix(in srgb,var(--hc) 45%,#000) 70%,#0b0d12 100%);clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
 body[data-modern="1"] .phero .back{position:relative;z-index:3;width:40px;height:40px;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:20px;border-radius:0;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
