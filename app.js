@@ -782,6 +782,7 @@
     fetch('data/jersey-numbers-2026.json').then(function (r) { return r.json(); }).then(function (d) { var m = {}; Object.keys(d).forEach(function (t) { m[t] = {}; Object.keys(d[t]).forEach(function (n) { m[t][League.normName(n)] = d[t][n]; }); }); nums = m; wire(); return fetch('data/jersey-numbers-extra.json'); }).then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { nums[t] = nums[t] || {}; Object.keys(d[t]).forEach(function (n) { nums[t][League.normName(n)] = d[t][n]; }); }); wire(); }).catch(function () {});
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
+  fetch('data/gms-2026.json').then(function (r) { return r.json(); }).then(function (d) { window.GMS = d.gm; }).catch(function () {});
   fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACHDATA = d; }).catch(function () {});
   var NBAIDS = {};
   fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(d, NBAIDS); }).catch(function () {});
@@ -5287,7 +5288,15 @@
     } else {
       var pl = ev.pid ? rosterOf(save.myId).filter(function (p) { return p.id === ev.pid; })[0] : null;
       var who = ev.pid ? ev.who : ev.coach ? 'Coach' : 'Group chat';
-      if (ev.cslug) {
+      if (ev.gm) {
+        var gh = el('div', 'ph-head');
+        gh.appendChild(save.tm[ev.gm.tid] ? teamBadge(save.tm[ev.gm.tid]) : el('span', 'avatar', ev.gm.n[0]));
+        var gw = el('div', 'ph-who');
+        gw.appendChild(el('b', null, ev.gm.n));
+        gw.appendChild(el('small', null, 'Messages \u00B7 ' + ev.gm.city + ' general manager \u00B7 now'));
+        gh.appendChild(gw);
+        card.appendChild(gh);
+      } else if (ev.cslug) {
         var hch = el('div', 'ph-head');
         hch.appendChild(makeAvatar({ id: ev.cslug, name: ev.who }));
         var hw = el('div', 'ph-who');

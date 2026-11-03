@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v322';
+var CACHE = 'nba-eras-v323';
 var SHELL = [
   './',
   'index.html',
@@ -21,7 +21,8 @@ var SHELL = [
   'data/draft-2027.json',
   'data/teams-2026.json',
   'data/players-2026.json',
-  'data/coaches-2026.json'
+  'data/coaches-2026.json',
+  'data/gms-2026.json'
 ];
 
 self.addEventListener('install', function (event) {

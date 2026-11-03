@@ -1500,7 +1500,8 @@
     });
     if (!best) return null;
     best.city = cityOf(teams, best.tid);
-    best.text = 'The ' + best.city + ' offer ' + listOf(best.get, best.getK) + ' for ' + listOf(best.give, best.giveK) + '.';
+    best.offerGet = listOf(best.get, best.getK); best.offerGive = listOf(best.give, best.giveK);
+    best.text = best.city + ' offer ' + best.offerGet + ' for ' + best.offerGive + '.';
     return best;
   }
   function doDeal(save, myId, d) {

@@ -537,7 +537,8 @@
       var dl = root.League.makeDeal(save, ctx.me.id, ctx.others.concat([ctx.opp]));
       if (dl) {
         m.cool.offer = 5;
-        out.push({ kind: 'rumour', who: dl.city, text: dl.text + ' What do you say?', choices: [
+        var gmN = root.GMS && root.GMS[dl.tid];
+        out.push({ kind: gmN ? 'talk' : 'rumour', gm: gmN ? { n: gmN, tid: dl.tid, city: dl.city } : null, who: gmN || dl.city, text: gmN ? 'We\u2019ll send ' + dl.offerGet + ' for ' + dl.offerGive + '. What do you say?' : dl.text + ' What do you say?', choices: [
           { label: 'Accept the deal', fx: { deal: { them: dl.tid, give: dl.give.map(function (p) { return p.id; }), get: dl.get.map(function (p) { return p.id; }), giveK: dl.giveK.map(root.League.pickId), getK: dl.getK.map(root.League.pickId) } }, say: 'Accepted' },
           { label: 'Decline', fx: {}, say: 'Declined' }
         ] });
