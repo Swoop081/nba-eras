@@ -807,6 +807,7 @@
   var NBAIDS = {};
   fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(d, NBAIDS); }).catch(function () {});
   fetch('data/nba-ids-extra.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(NBAIDS, d); }).catch(function () {});
+  fetch('data/careers.json').then(function (r) { return r.json(); }).then(function (d) { League.setCareers(d); }).catch(function () {});
   fetch('data/era-params.json').then(function (r) { return r.json(); }).then(function (d) { Engine.register(d); }).catch(function () {});
 
   /* Uses assets/players/<player-id>.jpg (or .png / .webp) when present; assets/photos works too. */

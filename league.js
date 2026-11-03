@@ -272,6 +272,10 @@
       .sort(function (a, b) { return b.v - a.v; }).slice(0, n || 5);
   }
 
+  /* Real career spans (data/careers.json): the season a player really played his last game and any real sabbaticals. */
+  var CAREERS = null;
+  function setCareers(o) { CAREERS = o; }
+
   /* ---------- ageing ---------- */
   function ageDelta(age) {
     if (age <= 20) return 4.5; if (age === 21) return 3.5; if (age === 22) return 2.5; if (age === 23) return 1.5;
@@ -285,6 +289,9 @@
   function progress(save, myId) {
     var report = { mine: [], retired: [], leagueRetired: 0, notable: [] };
     report.tax = settleTax(save);
+    var ny = save.year + 1;
+    /* Real sabbaticals end: Jordan in 1995, Magic in 1996. The comeback joins the free-agent pool. */
+    save.lg.players.forEach(function (p) { if (p.status === 'retired' && p.comeback && p.comeback <= ny) { p.status = 'active'; p.team = null; delete p.comeback; p.yrs = 0; } });
     save.lg.players.forEach(function (p) {
       if (p.status !== 'active') return;
       var before = p.ratings.ovr, age = p.age || 26;
@@ -302,18 +309,24 @@
       });
       p.ratings.ovr = ovrOf(p.ratings);
       if (p.p0 === undefined) p.p0 = 0;
-      var pr = 0;
+      var pr = 0, real = CAREERS && CAREERS[p.id] && ny <= 2026 ? CAREERS[p.id] : null, forced = false;
+      if (real) {
+        var gap = (real[1] || []).filter(function (g) { return g[0] <= ny && ny < g[1]; })[0];
+        if (real[0] && real[0] < ny) { pr = 1; forced = true; }          /* his real last season is behind us */
+        else if (gap) { pr = 1; forced = true; p.comeback = gap[1]; }     /* a real sabbatical */
+        else pr = -1;                                                      /* he really plays on */
+      }
       /* Real veterans go on while they can play: a star at 37 is rarely gone, a fringe 34-year-old often is. */
-      if (p.age >= 33) {
+      if (pr === 0 && p.age >= 33) {
         var ov = p.ratings.ovr, k = ov >= 76 ? 0.12 : ov >= 70 ? 0.3 : ov >= 62 ? 0.6 : ov >= 55 ? 1 : 1.4;
         pr = Math.min(0.9, (0.04 + (p.age - 33) * 0.07) * k + (ov < 55 ? 0.12 : 0));
         if (p.age >= 40) pr = Math.min(0.9, pr + 0.15 * (p.age - 39));
       }
-      if (Math.random() < pr) {
+      if (pr > 0 && (forced || Math.random() < pr)) {
         p.status = 'retired';
         if (p.team === myId) report.retired.push({ p: p, ovr: before });
         else { report.leagueRetired++; var cg = (p.career || []).reduce(function (a, c) { return a + (c.g || 0); }, 0); if (before >= 62 || cg >= 500) report.notable.push({ p: p, ovr: before, g: cg }); }
-        if (root.Coach) try { root.Coach.fromRetired(save, p); } catch (e) {}
+        if (root.Coach && !p.comeback) try { root.Coach.fromRetired(save, p); } catch (e) {}
         p.retiredTeam = p.team; p.team = null;
       } else if (p.team === myId) {
         report.mine.push({ p: p, from: before, to: p.ratings.ovr });
@@ -1556,7 +1569,7 @@
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
-    aiReSign: aiReSign, rightsLevel: rightsLevel, reSignLimit: reSignLimit, tpeList: tpeList, honours: honours, aiTrade: aiTrade, starMoves: starMoves, cbaOf: cbaOf, signRoute: signRoute, tradeIssue: tradeIssue, taxBill: taxBill, repeater: repeater, settleTax: settleTax, holdOf: holdOf, holdsOf: holdsOf, minFor: minFor, maxFor: maxFor, clampSal: clampSal, scaleFor: scaleFor, yosOf: yosOf, lyear: lyear, isHard: isHard, sntOffers: sntOffers, sntDo: sntDo, committedPay: committedPay, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
+    setCareers: setCareers, aiReSign: aiReSign, rightsLevel: rightsLevel, reSignLimit: reSignLimit, tpeList: tpeList, honours: honours, aiTrade: aiTrade, starMoves: starMoves, cbaOf: cbaOf, signRoute: signRoute, tradeIssue: tradeIssue, taxBill: taxBill, repeater: repeater, settleTax: settleTax, holdOf: holdOf, holdsOf: holdsOf, minFor: minFor, maxFor: maxFor, clampSal: clampSal, scaleFor: scaleFor, yosOf: yosOf, lyear: lyear, isHard: isHard, sntOffers: sntOffers, sntDo: sntDo, committedPay: committedPay, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
     maxR: maxR, makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);
