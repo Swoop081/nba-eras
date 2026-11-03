@@ -773,7 +773,7 @@
   function level(v) { return v >= 75 ? 'hi' : v >= 55 ? 'mid' : 'lo'; }
 
   var SCHED = {};
-  [2025, 2026].forEach(function (y) { fetch('data/schedule-' + y + '.json').then(function (r) { return r.json(); }).then(function (d) { SCHED[y] = d; }).catch(function () {}); });
+  [2023, 2024, 2025, 2026].forEach(function (y) { fetch('data/schedule-' + y + '.json').then(function (r) { return r.json(); }).then(function (d) { SCHED[y] = d; }).catch(function () {}); });
   var COACHDATA = null;
   /* jersey numbers: real ones for this season, and every club's retired numbers kept off the floor */
   (function () {
@@ -785,7 +785,7 @@
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
   var GMS26 = {}, GMS25 = {}, COACH26 = null, COACH25 = null;
-  Object.defineProperty(window, 'GMS', { configurable: true, get: function () { return (typeof save !== 'undefined' && save && save.year < 2026) ? GMS25 : GMS26; }, set: function () {} });
+  Object.defineProperty(window, 'GMS', { configurable: true, get: function () { var y = typeof save !== 'undefined' && save ? save.year : 2026; return y < 2025 ? {} : y < 2026 ? GMS25 : GMS26; }, set: function () {} });
   fetch('data/gms-2026.json').then(function (r) { return r.json(); }).then(function (d) { GMS26 = d.gm; }).catch(function () {});
   fetch('data/gms-2025.json').then(function (r) { return r.json(); }).then(function (d) { GMS25 = d.gm; }).catch(function () {});
   fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACH26 = d; COACHDATA = COACH26; }).catch(function () {});
@@ -1878,7 +1878,7 @@
       renderSeason();
       show('screen-season');
       };
-      if (currentEra.current && (parseInt(currentEra.years, 10) === 2026 || parseInt(currentEra.years, 10) === 2025)) {
+      if (currentEra.current && (parseInt(currentEra.years, 10) >= 2023 && parseInt(currentEra.years, 10) <= 2026)) {
         fetch('data/schedule-' + parseInt(currentEra.years, 10) + '.json').then(function (r) { return r.json(); }).then(go).catch(function () { go(null); });
       } else go(null);
     });
@@ -6931,7 +6931,7 @@
     var teams = save.ids.map(teamById), me = teamById(save.myId);
     League.rightsOf(save, me.id).forEach(function (p) { League.release(save, p); });
     League.aiRosterPass(save, teams, me.id);
-    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1), save.year + 1 === 2026 && SCHED[2026] && /^20(25|26)$/.test(save.eraId) ? SCHED[2026] : undefined);
+    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1), SCHED[save.year + 1] && +save.eraId >= 2023 ? SCHED[save.year + 1] : undefined);
     save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
     next.tm = save.tm; next.ids = save.ids.slice();
     next.lg = save.lg; next.mood = save.mood; next.plan = save.plan; if (next.mood) next.mood.asked = false;

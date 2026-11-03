@@ -115,7 +115,7 @@
         return { app: 'Group chat', c: '#5E5CE6', g: '\u2605', title: 'Front office', text: 'Scouting: three names worth a look before the deadline. ' + three.map(function (p) { var t = src.team(p.team); return p.name + ' (' + (t ? t.name : '') + ', ' + p.ratings.ovr + ')'; }).join(', ') + '.', act: { type: 'scout', pids: three.map(function (p) { return p.id; }) } };
       });
     }
-    if (root.GMS && save.day < save.days.length * 0.8 && ros.length >= 3) {
+    if (root.GMS && Object.keys(root.GMS).length && save.day < save.days.length * 0.8 && ros.length >= 3) {
       var otherT = Object.keys(root.GMS).filter(function (id) { return id !== me && src.team(id); });
       if (otherT.length) {
         outs.push(function () {
