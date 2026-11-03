@@ -772,6 +772,8 @@
 
   function level(v) { return v >= 75 ? 'hi' : v >= 55 ? 'mid' : 'lo'; }
 
+  var SCHED = {};
+  [2025, 2026].forEach(function (y) { fetch('data/schedule-' + y + '.json').then(function (r) { return r.json(); }).then(function (d) { SCHED[y] = d; }).catch(function () {}); });
   var COACHDATA = null;
   /* jersey numbers: real ones for this season, and every club's retired numbers kept off the floor */
   (function () {
@@ -1876,8 +1878,8 @@
       renderSeason();
       show('screen-season');
       };
-      if (currentEra.current && parseInt(currentEra.years, 10) === 2026) {
-        fetch('data/schedule-2026.json').then(function (r) { return r.json(); }).then(go).catch(function () { go(null); });
+      if (currentEra.current && (parseInt(currentEra.years, 10) === 2026 || parseInt(currentEra.years, 10) === 2025)) {
+        fetch('data/schedule-' + parseInt(currentEra.years, 10) + '.json').then(function (r) { return r.json(); }).then(go).catch(function () { go(null); });
       } else go(null);
     });
   }
@@ -2893,7 +2895,7 @@
         var gm = save && save.phase === 'regular' && save.gmeta && save.gmeta[save.day], gi = -1;
         if (gm) (save.days[save.day] || []).forEach(function (x, i) { if (x[0] === home.id) gi = i; });
         if (gm && gi >= 0 && gm[gi] && /Cup/.test(gm[gi][0] || '')) kind = 'cup';
-        else if (dt && dt >= '2026-11-01' && dt < '2027-04-01' && home.id) {
+        else if (dt && dt >= (save.year + '-11-01') && dt < ((save.year + 1) + '-04-01') && home.id) {
           var hh = 0, key = home.id + dt;
           for (var q = 0; q < key.length; q++) hh = (hh * 31 + key.charCodeAt(q)) >>> 0;
           if (hh % 100 < 24) kind = 'city';
@@ -6929,7 +6931,7 @@
     var teams = save.ids.map(teamById), me = teamById(save.myId);
     League.rightsOf(save, me.id).forEach(function (p) { League.release(save, p); });
     League.aiRosterPass(save, teams, me.id);
-    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1));
+    var next = Season.create(save.eraId, save.year + 1, teams, save.myId, Rules.games(save.year + 1), save.year + 1 === 2026 && SCHED[2026] && /^20(25|26)$/.test(save.eraId) ? SCHED[2026] : undefined);
     save.lg.players.forEach(function (p) { if (p.imp) p.imp = Math.round(p.imp * 500) / 1000; });
     next.tm = save.tm; next.ids = save.ids.slice();
     next.lg = save.lg; next.mood = save.mood; next.plan = save.plan; if (next.mood) next.mood.asked = false;

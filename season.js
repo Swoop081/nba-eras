@@ -43,14 +43,14 @@
     order.sort();
     var days = [], dates = [], meta = [], cupAt = -1;
     order.forEach(function (d) {
-      if (cupAt < 0 && d >= '2026-12-04') cupAt = days.length;
+      if (cupAt < 0 && d >= ((sched.cup && sched.cup.from) || '2026-12-04')) cupAt = days.length;
       days.push(by[d].map(function (g) { return [g.h, g.a]; }));
       dates.push(d);
       meta.push(by[d].map(function (g) { return g.lab ? [g.lab, g.sub || '', g.arena || '', g.city || ''] : (g.city ? ['', '', g.arena || '', g.city] : 0); }));
     });
     var cup = null;
     if (cupAt > 0) {
-      [[ '2026-12-05' ], [ '2026-12-08' ], [ '2026-12-11' ]].forEach(function (d, k) {
+      (sched.cup && sched.cup.days ? sched.cup.days : ['2026-12-05', '2026-12-08', '2026-12-11']).map(function (x) { return [x]; }).forEach(function (d, k) {
         days.splice(cupAt + k, 0, []); meta.splice(cupAt + k, 0, []); dates.splice(cupAt + k, 0, d[0]);
       });
       cup = { at: cupAt, groups: cupGroups(sched) };
