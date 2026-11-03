@@ -29,7 +29,8 @@
       var r = rnd(res), hw = r.hs > r.as;
       return { app: 'Scores', c: '#34C759', g: 'F', title: 'FINAL', text: nm(hw ? r.h : r.a) + ' ' + Math.max(r.hs, r.as) + ', ' + nm(hw ? r.a : r.h) + ' ' + Math.min(r.hs, r.as) };
     });
-    if (stars.length) outs.push(function () {
+    var gpAny = (save.rec && save.rec[me]) ? save.rec[me].w + save.rec[me].l : 0;
+    if (stars.length && gpAny >= 1) outs.push(function () {
       var p = rnd(stars), t = src.team(p.team);
       return { app: 'Clips', c: '#8E3AF0', g: '▶', title: 'New clip', text: p.name + ' (' + (t ? t.name : '') + ') ' + rnd(['with the dunk of the night', 'hits a step-back from the logo', 'blocks it into the third row', 'has the whole arena on its feet', 'is not human right now']) };
     });

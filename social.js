@@ -262,6 +262,9 @@
         extend: [['team', teamAcct(save, save.myId), 'OFFICIAL | ' + d.name + ' signs a ' + d.years + '-year extension with the ' + CN + '.'], ['insider', acct(INSIDER), 'Sources: ' + d.name + ' has agreed to a ' + d.years + '-year extension with ' + C + ', worth about ' + d.salary + ' a season.'], ['cap', acct(CAP), d.name + '’s new deal pushes the ' + CN + ' payroll to ' + d.payroll + '.']],
         sign: [['team', teamAcct(save, save.myId), 'OFFICIAL | The ' + CN + ' sign ' + d.name + '.'], ['insider', acct(INSIDER), 'Sources: ' + d.name + ' lands with ' + C + ' on a ' + d.salary + ' deal.']],
         owner: [['insider', acct(INSIDER), 'Ownership pressure is building in ' + C + '. The GM has been told what is expected.']],
+        fire: [['team', teamAcct(save, save.myId), 'OFFICIAL | The ' + CN + ' have parted ways with ' + (d.role || 'coach') + ' ' + d.name + '.'], ['insider', acct(INSIDER), 'Sources: ' + d.name + ' has been let go by ' + C + '. The search for a replacement starts now.'], ['fan', fan(), 'Did not see that coming. ' + d.name + ' is out.']],
+        hire: [['team', teamAcct(save, save.myId), 'OFFICIAL | The ' + CN + ' have hired ' + d.name + ' as ' + (d.role || 'coach') + '.'], ['insider', acct(INSIDER), 'Sources: ' + d.name + ' is taking over the ' + C + ' bench.']],
+        cutp: [['team', teamAcct(save, save.myId), 'OFFICIAL | The ' + CN + ' have waived ' + d.name + '.'], ['insider', acct(INSIDER), 'Sources: ' + d.name + ' is hitting the market after the ' + CN + ' made a roster move.']],
         trade: [['team', teamAcct(save, save.myId), 'OFFICIAL | ' + d.text], ['insider', acct(INSIDER), 'Sources: ' + d.text], ['fan', fan(), 'Trade grade? ' + rnd(['B+', 'C', 'A-', 'incomplete', 'we will see in a month']) + '.']]
       }[kind] || [];
       m.forEach(function (x) { post(save, x[0], x[1], x[2], { v: x[0] !== 'fan' }); });

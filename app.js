@@ -1006,13 +1006,30 @@
   }
 
   /* Waive, stretch or buy out: guaranteed money stays on your books. */
+  /* a second chance before anything that cannot be undone */
+  function confirmSheet(msg, yes, onYes) {
+    hubSheet('Are you sure?', function (sh, close) {
+      sh.appendChild(el('p', 'sub', msg));
+      var y = el('button', 'btn primary wide', yes); y.type = 'button';
+      y.addEventListener('click', function () { close(); onYes(); });
+      var n = el('button', 'btn ghost wide', 'Go back'); n.type = 'button'; n.addEventListener('click', close);
+      sh.appendChild(y); sh.appendChild(n);
+    });
+  }
   function releaseSheet(p, done) {
     hubSheet('Release ' + p.name, function (sh, close) {
       var g = p.yrs > 0 && p.salary > 0;
       sh.appendChild(el('p', 'sub', g ? money(p.salary) + ' a year for ' + p.yrs + (p.yrs === 1 ? ' more year' : ' more years') + ' is guaranteed. Releasing him leaves it on your payroll as dead money unless another club claims him.' : 'His contract is up, so there is nothing to pay.'));
       function opt(label, sub, mode) {
         var b = el('button', 'btn wide', label); b.type = 'button';
-        b.addEventListener('click', function () { var n = League.release(save, p, mode); if (n) League.wire(save, n); persist(); close(); if (done) done(); });
+        b.addEventListener('click', function () {
+          confirmSheet((g ? 'Release ' : 'Let go of ') + p.name + ' (' + label.toLowerCase() + ')? This cannot be undone.', 'Yes, ' + label.toLowerCase(), function () {
+            var n = League.release(save, p, mode); if (n) League.wire(save, n);
+            var tn = teamById(save.myId); League.wire(save, (tn ? tn.city : 'The team') + ' ' + (g ? 'waive ' : 'release ') + p.name + '.');
+            if (Social.has(save.year)) Social.react(save, 'cutp', { name: p.name });
+            persist(); close(); if (done) done();
+          });
+        });
         sh.appendChild(b); if (sub) sh.appendChild(el('p', 'sub how', sub));
       }
       opt(g ? 'Waive him' : 'Release him', g ? 'Full amount stays as dead money. A fairly paid useful player may be claimed on waivers and cost you nothing.' : '', undefined);
@@ -4354,9 +4371,14 @@
         sh.appendChild(coachRow(cur, '', null));
         var fb = el('button', 'btn small', 'Fire ' + cur.n); fb.type = 'button';
         fb.addEventListener('click', function () {
-          Coach.fire(save, save.myId, role);
-          if (role === 'hc') Events.apply(save, { choices: [{ fx: { team: { m: -2 } } }], pid: null, who: '' }, 0, rosterOf(save.myId));
-          rosterCache = {}; persist(); close(); openCoachSheet(role); refreshHub();
+          confirmSheet('Fire ' + cur.n + (role === 'hc' ? ' as head coach? The locker room will notice.' : '?') + ' This cannot be undone.', 'Yes, fire ' + cur.n, function () {
+            Coach.fire(save, save.myId, role);
+            if (role === 'hc') Events.apply(save, { choices: [{ fx: { team: { m: -2 } } }], pid: null, who: '' }, 0, rosterOf(save.myId));
+            var tn = teamById(save.myId), rl = role === 'hc' ? 'head coach' : 'assistant coach';
+            League.wire(save, (tn ? tn.city : 'The team') + ' fire ' + rl + ' ' + cur.n + '.');
+            if (Social.has(save.year)) Social.react(save, 'fire', { name: cur.n, role: rl });
+            rosterCache = {}; persist(); close(); openCoachSheet(role); refreshHub();
+          });
         });
         sh.appendChild(fb);
       }
@@ -4371,6 +4393,9 @@
           e.stopPropagation();
           Coach.hire(save, save.myId, role, c);
           if (role === 'hc') Events.mood(save).coach = 50;
+          var tn2 = teamById(save.myId), rl2 = role === 'hc' ? 'head coach' : 'assistant coach';
+          League.wire(save, (tn2 ? tn2.city : 'The team') + ' hire ' + rl2 + ' ' + c.n + '.');
+          if (Social.has(save.year)) Social.react(save, 'hire', { name: c.n, role: rl2 });
           rosterCache = {}; persist(); close(); refreshHub();
         });
         sh.appendChild(coachRow(c, c.role === 'hc' ? 'HC' : 'Assistant', null, hb));
@@ -4383,7 +4408,7 @@
   function hubSheet(title, build, onClose) {
     var ov = el('div', 'sheet-ov');
     var sh = el('div', 'sheet');
-    var small = title === 'Sim' || /^Release /.test(title);
+    var small = title === 'Sim' || /^Release /.test(title) || title === 'Are you sure?';
     if (!small) sh.classList.add('full');
     sh.appendChild(el('h3', null, title));
     if (!small) { var xb = el('button', 'sheet-x', '\u2715'); xb.type = 'button'; xb.setAttribute('aria-label', 'Close'); xb.addEventListener('click', function () { ov.remove(); if (onClose) onClose(); }); sh.appendChild(xb); }
@@ -6585,7 +6610,7 @@
     body.appendChild(el('p', 'sub how', 'Players you drafted. They only count against your roster and payroll once you sign them. Unsigned rights are released when the season starts.'));
     var all = el('button', 'btn small', 'Let all go');
     all.type = 'button';
-    all.addEventListener('click', function () { list.forEach(function (p) { League.release(save, p); }); persist(); renderOff(); });
+    all.addEventListener('click', function () { confirmSheet('Let all ' + list.length + ' draft picks go? You lose their rights.', 'Yes, let them all go', function () { list.forEach(function (p) { League.release(save, p); League.wire(save, 'The team let draft pick ' + p.name + ' go.'); }); persist(); renderOff(); }); });
     body.appendChild(all);
     list.forEach(function (p) {
       var can = n < League.maxR(save);
@@ -6594,7 +6619,7 @@
       sg.addEventListener('click', function () { League.signRights(save, p); Social.rightsSigned(save, p); persist(); renderOff(); });
       var rl = el('button', 'btn small', 'Let go');
       rl.type = 'button';
-      rl.addEventListener('click', function () { League.release(save, p); persist(); renderOff(); });
+      rl.addEventListener('click', function () { confirmSheet('Let ' + p.name + ' go? You lose his draft rights.', 'Yes, let him go', function () { League.release(save, p); League.wire(save, 'The team let draft pick ' + p.name + ' go.'); persist(); renderOff(); }); });
       var right = el('span'); right.style.marginLeft = 'auto'; right.appendChild(sg); right.appendChild(rl);
       body.appendChild(personRow(p, [(p.pos || '') + ' \u00B7 age ' + p.age + ' \u00B7 overall ' + p.ratings.ovr, 'Potential ' + p.pot], right));
     });
