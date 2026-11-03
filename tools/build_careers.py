@@ -3,7 +3,6 @@
 A gap of two or more missing seasons is a real sabbatical (Jordan 1998-2000, Magic 1992-94); EXTRA lists one-year sit-outs
 that the box-score filter cannot tell from an injury."""
 import json, glob, re, collections
-EXTRA = {'michael-jordan': [[1993, 1994]]}
 yrs = collections.defaultdict(set)
 for f in glob.glob('data/players-[0-9][0-9][0-9][0-9].json'):
     y = int(re.findall(r'(\d{4})', f)[0])
@@ -13,8 +12,7 @@ out = {}
 for i, s in yrs.items():
     s = sorted(s); gaps = []
     for a, b in zip(s, s[1:]):
-        if b - a >= 3: gaps.append([a + 1, b])
-    gaps += EXTRA.get(i, [])
+        pass   # sabbaticals are ignored: a player stays until his real last season
     out[i] = [0 if s[-1] >= 2026 else s[-1], sorted(gaps)] if gaps else [0 if s[-1] >= 2026 else s[-1]]
 json.dump(out, open('data/careers.json', 'w'), separators=(',', ':'))
 print(len(out), sum(1 for v in out.values() if len(v) > 1), out.get('michael-jordan'), out.get('magic-johnson'), out.get('kobe-bryant'))
