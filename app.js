@@ -786,7 +786,19 @@
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
   var GMS26 = {}, GMS25 = {}, COACH26 = null, COACH25 = null;
-  Object.defineProperty(window, 'GMS', { configurable: true, get: function () { var y = typeof save !== 'undefined' && save ? save.year : 2026; return y < 2025 ? {} : y < 2026 ? GMS25 : GMS26; }, set: function () {} });
+  var GMH = null, GMC = {};
+  fetch('data/gms-history.json').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) { GMH = d; GMC = {}; }).catch(function () {});
+  Object.defineProperty(window, 'GMS', { configurable: true, get: function () {
+    var y = typeof save !== 'undefined' && save ? save.year : 2026;
+    if (y >= 2026) return GMS26;
+    if (y === 2025) return GMS25;
+    if (!GMH || typeof save === 'undefined' || !save || !save.ids) return {};
+    var k = save.eraId + '|' + y;
+    if (GMC[k]) return GMC[k];
+    var m = {};
+    save.ids.forEach(function (id) { var l = GMH[FRANCHISE[id] || id], n = null; if (!l) return; l.forEach(function (e) { if (e[0] <= y) n = e[1]; }); if (n) m[id] = n; });
+    return (GMC[k] = m);
+  }, set: function () {} });
   fetch('data/gms-2026.json').then(function (r) { return r.json(); }).then(function (d) { GMS26 = d.gm; }).catch(function () {});
   fetch('data/gms-2025.json').then(function (r) { return r.json(); }).then(function (d) { GMS25 = d.gm; }).catch(function () {});
   fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACH26 = d; COACHDATA = COACH26; }).catch(function () {});
