@@ -4383,7 +4383,10 @@
   function hubSheet(title, build, onClose) {
     var ov = el('div', 'sheet-ov');
     var sh = el('div', 'sheet');
+    var small = title === 'Sim' || /^Release /.test(title);
+    if (!small) sh.classList.add('full');
     sh.appendChild(el('h3', null, title));
+    if (!small) { var xb = el('button', 'sheet-x', '\u2715'); xb.type = 'button'; xb.setAttribute('aria-label', 'Close'); xb.addEventListener('click', function () { ov.remove(); if (onClose) onClose(); }); sh.appendChild(xb); }
     build(sh, function () { ov.remove(); if (onClose) onClose(); });
     ov.addEventListener('click', function (e) { if (e.target === ov) { ov.remove(); if (onClose) onClose(); } });
     ov.appendChild(sh);
@@ -4468,7 +4471,7 @@
   /* Coaching: the head coach, the game plan, the rotation and the staff in one place */
   function openPlan() {
     hubSheet('Coaching', function (sh, close) {
-      sh.classList.add('tall', 'coachsheet');
+      sh.classList.add('coachsheet');
       save.plan = save.plan || { pace: 0, focus: '', minutes: '' };
       var pl = save.plan, st = Coach.staff(save, save.myId), hc = st && st.hc;
       var P = { staff: el('div', 'cs-pane'), plan: el('div', 'cs-pane'), scout: el('div', 'cs-pane') }, tabs = el('div', 'chips cs-tabs'), built = {};

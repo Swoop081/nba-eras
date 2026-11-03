@@ -1194,3 +1194,15 @@ body[data-modern="1"] .sheet .board{flex:none;max-height:min(62vh,520px)}
 body[data-modern="1"] .cs-pane{display:grid;gap:10px;min-height:0}
 body[data-modern="1"] .cs-pane[hidden]{display:none}
 body[data-modern="1"] .sheet .cs-pane .board{max-height:min(52vh,440px)}
+
+/* full-screen sheets (coaching, depth chart, power rankings, free agents, league news, customise) */
+body[data-modern="1"] .sheet.full,body[data-modern="1"] .sheet.full.tall,body[data-modern="1"] .sheet.full.coachsheet{position:relative;height:100%;max-height:100%;border-radius:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:calc(16px + env(safe-area-inset-top));align-content:start;grid-auto-rows:min-content}
+body[data-modern="1"] .sheet.full.tall{grid-template-rows:auto minmax(0,1fr) auto;align-content:stretch}
+body[data-modern="1"] .sheet-ov:has(.sheet.full){background:#14161f}
+body[data-modern="1"] .sheet-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border:0;border-radius:12px;background:#222634;color:#F4F2EE;font-size:18px}
+/* season lists scroll when they're longer than the screen */
+body[data-modern="1"] #screen-season .hrail-track .hpage{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+body[data-modern="1"] #screen-season .hrail-track .hpage>*{flex:none}
+body[data-modern="1"] .sheet.full.coachsheet{grid-template-rows:auto auto minmax(min-content,1fr) auto auto;align-content:stretch}
+body[data-modern="1"] .sheet.full.coachsheet .cs-pane{align-content:start}
+body[data-modern="1"] .sheet.full .cs-pane .board{max-height:none;overflow:visible}
