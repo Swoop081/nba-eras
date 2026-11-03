@@ -3914,7 +3914,9 @@
       var pgs = Array.prototype.slice.call(track.children);
       for (var pi = 0; pi < pgs.length; pi++) {
         var pgx = pgs[pi];
-        while (pgx.children.length > 1 && pgx.scrollHeight > pgx.clientHeight + 1) {
+        var isHead = function (k) { return k.classList.contains('group-title') || k.classList.contains('box-title') || k.tagName === 'H3'; };
+        var bodyKids = function () { return Array.prototype.filter.call(pgx.children, function (k) { return !isHead(k); }).length; };
+        while (bodyKids() > 1 && pgx.scrollHeight > pgx.clientHeight + 1) {
           if (!pgs[pi + 1]) { var np = el('section', 'pg'); track.appendChild(np); dots.appendChild(el('i', '')); pgs.push(np); }
           pgs[pi + 1].insertBefore(pgx.lastChild, pgs[pi + 1].firstChild);
         }

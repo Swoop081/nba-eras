@@ -1211,3 +1211,4 @@ body[data-modern="1"] .sheet.full.coachsheet .cs-pane{overflow-y:auto;min-height
 body[data-modern="1"] .sheet.full.coachsheet .cs-pane .dboard{overflow:visible}
 body[data-modern="1"] #screen-season>.bar{flex:none}
 body[data-modern="1"] #screen-season .hpanel{min-height:0}
+body[data-modern="1"] .pg{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
