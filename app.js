@@ -4411,7 +4411,7 @@
   function hubSheet(title, build, onClose) {
     var ov = el('div', 'sheet-ov');
     var sh = el('div', 'sheet');
-    var small = title === 'Sim' || /^Release /.test(title) || title === 'Are you sure?';
+    var small = title === 'Sim' || /^Release /.test(title) || title === 'Are you sure?' || title === 'Trade completed';
     if (!small) sh.classList.add('full');
     sh.appendChild(el('h3', null, title));
     if (!small) { var xb = el('button', 'sheet-x', '\u2715'); xb.type = 'button'; xb.setAttribute('aria-label', 'Close'); xb.addEventListener('click', function () { ov.remove(); if (onClose) onClose(); }); sh.appendChild(xb); }
@@ -5604,6 +5604,13 @@
       trade.give = {}; trade.get = {};
       trade.msg = 'Deal done. ' + line.replace('Trade: ', '');
       renderTrade();
+      hubSheet('Trade completed', function (sh, close) {
+        sh.appendChild(el('p', 'sub', line.replace('Trade: ', '') + '.'));
+        var back = el('button', 'btn primary wide', 'Back to the season'); back.type = 'button';
+        back.addEventListener('click', function () { close(); if (trade.back === 'off') { renderOff(); show('screen-off'); } else { renderSeason(); show('screen-season'); } });
+        var stay = el('button', 'btn wide', 'Keep trading'); stay.type = 'button'; stay.addEventListener('click', close);
+        sh.appendChild(back); sh.appendChild(stay);
+      });
     });
     btnRow.appendChild(send);
     var ask = el('button', 'btn', 'What would it take?');
