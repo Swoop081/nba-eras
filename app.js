@@ -260,7 +260,7 @@
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
     { years: '1990s-2000s', title: 'The Multimedia Era', blurb: 'Locked for now' },
     { id: '2026', years: '2026-27', title: 'The Present Day', blurb: 'Opening night of the current NBA season. 30 teams, 82 games, the three-point line, a 16-team playoff and a salary cap. Real rosters; build forward from here.', open: true, current: true, teams: 'data/teams-2026.json', players: 'data/players-2026.json' },
-    { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Real rosters as they were.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025.json' }
+    { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Play it, then the offseason, then straight into 2026-27.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025-open.json' }
   ];
 
   /* Every season back to 1951-52, built from the real box scores: opening night, real rosters, the league as it stood. */
@@ -782,8 +782,12 @@
     fetch('data/jersey-numbers-2026.json').then(function (r) { return r.json(); }).then(function (d) { var m = {}; Object.keys(d).forEach(function (t) { m[t] = {}; Object.keys(d[t]).forEach(function (n) { m[t][League.normName(n)] = d[t][n]; }); }); nums = m; wire(); return fetch('data/jersey-numbers-extra.json'); }).then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { nums[t] = nums[t] || {}; Object.keys(d[t]).forEach(function (n) { nums[t][League.normName(n)] = d[t][n]; }); }); wire(); }).catch(function () {});
     fetch('data/franchise-history.json').then(function (r) { return r.json(); }).then(function (d) { Object.keys(d).forEach(function (t) { ret[t] = d[t].retired.filter(function (x) { return /^(00|\d{1,2})$/.test(x.n); }).map(function (x) { return x.n; }); }); wire(); }).catch(function () {});
   })();
-  fetch('data/gms-2026.json').then(function (r) { return r.json(); }).then(function (d) { window.GMS = d.gm; }).catch(function () {});
-  fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACHDATA = d; }).catch(function () {});
+  var GMS26 = {}, GMS25 = {}, COACH26 = null, COACH25 = null;
+  Object.defineProperty(window, 'GMS', { configurable: true, get: function () { return (typeof save !== 'undefined' && save && save.year < 2026) ? GMS25 : GMS26; }, set: function () {} });
+  fetch('data/gms-2026.json').then(function (r) { return r.json(); }).then(function (d) { GMS26 = d.gm; }).catch(function () {});
+  fetch('data/gms-2025.json').then(function (r) { return r.json(); }).then(function (d) { GMS25 = d.gm; }).catch(function () {});
+  fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACH26 = d; COACHDATA = COACH26; }).catch(function () {});
+  fetch('data/coaches-2025.json').then(function (r) { return r.json(); }).then(function (d) { COACH25 = d; }).catch(function () {});
   var NBAIDS = {};
   fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(d, NBAIDS); }).catch(function () {});
   fetch('data/nba-ids-extra.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(NBAIDS, d); }).catch(function () {});
@@ -1680,7 +1684,7 @@
   function isGuard(p) { return p.pos === 'G' || p.pos === 'G-F'; }
   function defaultOrder(list) {
     var byOvr = list.slice().sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
-    var st = save.year === 2026 ? byOvr.filter(function (p) { return p.st; }).slice(0, 5) : [];
+    var st = save.year === parseInt(save.eraId, 10) && save.year >= 2025 ? byOvr.filter(function (p) { return p.st; }).slice(0, 5) : [];
     byOvr.forEach(function (p) {
       if (st.length >= 5 || st.indexOf(p) >= 0) return;
       var nb = st.filter(isBig).length, ng = st.filter(isGuard).length;
@@ -1690,7 +1694,7 @@
     byOvr.forEach(function (p) { if (st.length < 5 && st.indexOf(p) < 0) st.push(p); });
     st.sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     var rest = byOvr.filter(function (p) { return st.indexOf(p) < 0; });
-    if (save.year === 2026) rest.sort(function (a, b) { return (b.mp !== undefined ? b.mp : 3 + (b.ratings.ovr - 40) * 0.55) - (a.mp !== undefined ? a.mp : 3 + (a.ratings.ovr - 40) * 0.55); });
+    if (save.year === parseInt(save.eraId, 10) && save.year >= 2025) rest.sort(function (a, b) { return (b.mp !== undefined ? b.mp : 3 + (b.ratings.ovr - 40) * 0.55) - (a.mp !== undefined ? a.mp : 3 + (a.ratings.ovr - 40) * 0.55); });
     return st.concat(rest);
   }
   function rotOrder(id) {
@@ -1865,7 +1869,7 @@
       save = Season.create(currentEra.id, parseInt(currentEra.years, 10), data.teams, selected.id, data.games || 60, sched);
       Engine.setRules({});
       League.init(save, pl.players, data.teams, pl.dead);
-      if (currentEra.current) { Coach.build(save, COACHDATA, save.ids); }
+      if (currentEra.current) { Coach.build(save, save.year < 2026 && COACH25 ? COACH25 : COACHDATA, save.ids); }
       if (currentEra.current) { save.lastRec = {}; data.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w, l: t.l }; }); }
       ensureTm();
       persist();
@@ -2061,6 +2065,7 @@
   var ROOK26 = {}; ['AJ Dybantsa', 'Darryn Peterson', 'Cameron Boozer', 'Caleb Wilson', 'Keaton Wagler', 'Mikel Brown Jr.', 'Darius Acuff Jr.', 'Kingston Flemings', 'Morez Johnson Jr.', 'Brayden Burries', 'Yaxel Lendeborg', 'Aday Mara', 'Nate Ament', 'Hannes Steinbach', 'Dailyn Swain', 'Bennett Stirtz', 'Ebuka Okorie', 'Christian Anderson Jr.', 'Allen Graves', 'Jayden Quaintance', 'Karim Lopez', 'Labaron Philon Jr.', 'Zuby Ejiofor', 'Cameron Carr', 'Sergio De Larrea', 'Tarris Reed Jr.', 'Chris Cenac Jr.', 'Joshua Jefferson', 'Alex Karaban', 'Koa Peat', 'Bruce Thornton', 'Richie Saunders', 'Isaiah Evans', 'Meleek Thomas', 'Trevon Brazile', 'Baba Miller', 'Ryan Conwell', 'Braden Smith', 'Jack Kayil', 'Dillon Mitchell', 'Otega Oweh', "Ja'Kobi Gillespie", 'Tyler Bilodeau', 'Maliq Brown', 'Emanuel Sharp', 'Felix Okpara', 'Tyler Nickel', 'Tobi Lawal', 'Bryce Hopkins', 'Jaden Bradley', 'Izaiyah Nelson', 'Henri Veesaar', 'Ugonna Onyenso', 'Lajae Jones', 'Nick Martinelli', 'Vsevolod Ishchenko', 'Narcisse Ngoy', 'Jaron Pierre Jr.', 'Trey Kaufman-Renn', 'Malique Lewis'].forEach(function (n) { ROOK26[n.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()] = 1; });
   function isRookie(p) {
     if (p.rookie || p.draftedYear === save.year) return true;
+    if (save.eraId === '2025' && save.year === 2025) { var bb = BIOS && BIOS[League.normName(p.name)]; return !!(bb && bb.dy === 2025); }
     return save.eraId === '2026' && save.year === 2026 && !!ROOK26[String(p.name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()];
   }
   function pickAwards(bucket, minG, rookieOnly) {
@@ -2216,15 +2221,16 @@
 
 
   /* ---------- tonight: starters and keys to the game ---------- */
-  var PREVSTATS = {};
-  fetch('data/players-2025.json').then(function (r) { return r.json(); }).then(function (d) { (d.players || []).forEach(function (p) { if (p.prev) PREVSTATS[p.id] = p.prev; }); }).catch(function () {});
+  var PREVSTATS26 = {}, PREVSTATS25 = {};
+  fetch('data/players-2025.json').then(function (r) { return r.json(); }).then(function (d) { (d.players || []).forEach(function (p) { if (p.prev) PREVSTATS26[p.id] = p.prev; }); }).catch(function () {});
+  fetch('data/players-2025-open.json').then(function (r) { return r.json(); }).then(function (d) { (d.players || []).forEach(function (p) { if (p.prev) PREVSTATS25[p.id] = p.prev; }); }).catch(function () {});
   /* what a player is averaging: this season once he has a few games, otherwise last season (the saved one, then the real one) */
   function statOf(p) {
     var x = save && save.lg && save.lg.stats && save.lg.stats[p.id];
     if (x && x.g >= 4) return { ls: false, g: x.g, pts: x.pts / x.g, trb: x.trb / x.g, ast: x.ast / x.g, stl: (x.stl || 0) / x.g, blk: (x.blk || 0) / x.g };
     var c = p.career && p.career.length ? p.career[p.career.length - 1] : null;
     if (c && c.g >= 10) return { ls: true, g: c.g, pts: c.pts / c.g, trb: c.trb / c.g, ast: c.ast / c.g, stl: (c.stl || 0) / c.g, blk: (c.blk || 0) / c.g };
-    var q = p.ls || PREVSTATS[p.id];
+    var q = p.ls || (save.year < 2026 ? PREVSTATS25 : PREVSTATS26)[p.id];
     if (q && q.g >= 10) return { ls: true, g: q.g, pts: q.pts, trb: q.trb, ast: q.ast, stl: q.stl || 0, blk: q.blk || 0 };
     if (x && x.g) return { ls: false, g: x.g, pts: x.pts / x.g, trb: x.trb / x.g, ast: x.ast / x.g, stl: (x.stl || 0) / x.g, blk: (x.blk || 0) / x.g };
     return null;
@@ -4143,7 +4149,7 @@
       var mine = []; slotTeam.forEach(function (t, i) { if (t === me) mine.push(i + 1); });
       var needs = League.teamNeeds(save, me), nk = needs.slice(0, 2).map(function (n) { return n.k; });
       var head = el('div', 'bd-head');
-      head.appendChild(el('strong', null, mine.length ? 'Your projected pick: ' + mine.map(function (n) { return '#' + n; }).join(', ') : 'You hold no 2027 first-rounder'));
+      head.appendChild(el('strong', null, mine.length ? 'Your projected pick: ' + mine.map(function (n) { return '#' + n; }).join(', ') : 'You hold no ' + (save.year + 1) + ' first-rounder'));
       var nl = { G: 'guard', F: 'forward', C: 'big' };
       head.appendChild(el('span', 'meta', 'Needs: ' + nk.map(function (k) { return nl[k]; }).join(' \u00B7 ') + ' \u00B7 Scout reports: ' + B.pts));
       if (mine.length) { var tg = B.list[mine[0] - 1]; if (tg) head.appendChild(el('span', 'meta', 'Board has ' + tg.name + ' at your slot')); }

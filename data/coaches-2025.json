@@ -1,0 +1,2100 @@
+{
+ "season": "2025-26",
+ "source": "2026-27 staffs with the six head-coach changes of the 2026 offseason reversed (Donovan, Kidd, Mosley, Rivers, Green, Billups). Ratings for those six are estimates.",
+ "hc": {
+  "atlanta-hawks": [
+   "Quin Snyder",
+   "Quin Snyder",
+   78,
+   58,
+   70,
+   66
+  ],
+  "boston-celtics": [
+   "Joe Mazzulla",
+   "Joe Mazzulla",
+   74,
+   72,
+   68,
+   78
+  ],
+  "brooklyn-nets": [
+   "Jordi Fernández",
+   "Jordi Fernández",
+   66,
+   64,
+   74,
+   66
+  ],
+  "charlotte-hornets": [
+   "Charles Lee",
+   "Charles Lee",
+   68,
+   62,
+   66,
+   64
+  ],
+  "chicago-bulls": [
+   "Billy Donovan",
+   "Billy_Donovan",
+   62,
+   60,
+   66,
+   72
+  ],
+  "cleveland-cavaliers": [
+   "Kenny Atkinson",
+   "Kenny Atkinson",
+   78,
+   70,
+   76,
+   72
+  ],
+  "dallas-mavericks": [
+   "Jason Kidd",
+   "Jason_Kidd",
+   66,
+   64,
+   62,
+   68
+  ],
+  "denver-nuggets": [
+   "David Adelman",
+   "David Adelman",
+   70,
+   62,
+   66,
+   66
+  ],
+  "detroit-pistons": [
+   "J. B. Bickerstaff",
+   "J. B. Bickerstaff",
+   66,
+   80,
+   70,
+   74
+  ],
+  "golden-state-warriors": [
+   "Steve Kerr",
+   "Steve Kerr",
+   86,
+   70,
+   72,
+   86
+  ],
+  "houston-rockets": [
+   "Ime Udoka",
+   "Ime Udoka",
+   62,
+   86,
+   66,
+   76
+  ],
+  "indiana-pacers": [
+   "Rick Carlisle",
+   "Rick Carlisle",
+   86,
+   66,
+   68,
+   78
+  ],
+  "la-clippers": [
+   "Tyronn Lue",
+   "Tyronn Lue",
+   72,
+   74,
+   66,
+   72
+  ],
+  "los-angeles-lakers": [
+   "JJ Redick",
+   "JJ Redick",
+   76,
+   64,
+   66,
+   68
+  ],
+  "memphis-grizzlies": [
+   "Tuomas Iisalo",
+   "Tuomas Iisalo",
+   70,
+   60,
+   72,
+   64
+  ],
+  "miami-heat": [
+   "Erik Spoelstra",
+   "Erik Spoelstra",
+   82,
+   82,
+   78,
+   88
+  ],
+  "milwaukee-bucks": [
+   "Doc Rivers",
+   "Doc_Rivers",
+   68,
+   60,
+   64,
+   72
+  ],
+  "minnesota-timberwolves": [
+   "Chris Finch",
+   "Chris Finch",
+   74,
+   74,
+   68,
+   70
+  ],
+  "new-orleans-pelicans": [
+   "Willie Green",
+   "Willie_Green",
+   60,
+   62,
+   60,
+   70
+  ],
+  "new-york-knicks": [
+   "Mike Brown",
+   "Mike Brown (basketball)",
+   78,
+   70,
+   70,
+   74
+  ],
+  "oklahoma-city-thunder": [
+   "Mark Daigneault",
+   "Mark Daigneault",
+   82,
+   82,
+   82,
+   78
+  ],
+  "orlando-magic": [
+   "Jamahl Mosley",
+   "Jamahl_Mosley",
+   64,
+   70,
+   70,
+   68
+  ],
+  "philadelphia-76ers": [
+   "Nick Nurse",
+   "Nick Nurse",
+   80,
+   76,
+   70,
+   76
+  ],
+  "phoenix-suns": [
+   "Jordan Ott",
+   "Jordan Ott",
+   66,
+   62,
+   64,
+   64
+  ],
+  "portland-trail-blazers": [
+   "Chauncey Billups",
+   "Chauncey_Billups",
+   58,
+   56,
+   60,
+   62
+  ],
+  "sacramento-kings": [
+   "Doug Christie",
+   "Doug Christie",
+   62,
+   64,
+   62,
+   66
+  ],
+  "san-antonio-spurs": [
+   "Mitch Johnson",
+   "Mitch Johnson (basketball)",
+   70,
+   72,
+   80,
+   72
+  ],
+  "toronto-raptors": [
+   "Darko Rajaković",
+   "Darko Rajaković",
+   64,
+   68,
+   70,
+   64
+  ],
+  "utah-jazz": [
+   "Will Hardy",
+   "Will Hardy",
+   70,
+   64,
+   76,
+   68
+  ],
+  "washington-wizards": [
+   "Brian Keefe",
+   "Brian Keefe",
+   56,
+   56,
+   64,
+   60
+  ]
+ },
+ "asst": {
+  "toronto-raptors": [
+   [
+    "Stephen Silas",
+    "Stephen_Silas",
+    66,
+    60,
+    62,
+    64
+   ],
+   [
+    "Pat Delany",
+    "Pat_Delany_(basketball)",
+    50,
+    70,
+    60,
+    60
+   ],
+   [
+    "Jama Mahlalela",
+    "Jama_Mahlalela",
+    68,
+    52,
+    66,
+    64
+   ],
+   [
+    "Matt Vest",
+    "Matt_Vest",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Tiago Splitter",
+    "Tiago Splitter",
+    56,
+    58,
+    66,
+    60
+   ],
+   [
+    "Dusty May",
+    "Dusty May",
+    66,
+    62,
+    72,
+    64
+   ],
+   [
+    "Sean Sweeney",
+    "Sean Sweeney",
+    60,
+    64,
+    66,
+    60
+   ],
+   [
+    "Taylor Jenkins",
+    "Taylor Jenkins",
+    74,
+    66,
+    70,
+    70
+   ],
+   [
+    "Micah Nori",
+    "Micah Nori",
+    62,
+    62,
+    64,
+    62
+   ]
+  ],
+  "boston-celtics": [
+   [
+    "Sam Cassell",
+    "Sam_Cassell",
+    60,
+    58,
+    72,
+    66
+   ],
+   [
+    "Tony Dobbins",
+    "Tony_Dobbins",
+    50,
+    70,
+    64,
+    60
+   ],
+   [
+    "D.J. MacLeay",
+    "D.J._MacLeay",
+    52,
+    70,
+    60,
+    58
+   ],
+   [
+    "Tyler Lashbrook",
+    "Tyler_Lashbrook",
+    68,
+    50,
+    66,
+    58
+   ]
+  ],
+  "brooklyn-nets": [
+   [
+    "Steve Hetzel",
+    "Steve_Hetzel",
+    64,
+    62,
+    60,
+    64
+   ],
+   [
+    "Juwan Howard",
+    "Juwan_Howard",
+    58,
+    60,
+    68,
+    66
+   ],
+   [
+    "Jay Hernandez",
+    "Jay_Hernandez",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Deividas Dulkys",
+    "Deividas_Dulkys",
+    58,
+    56,
+    64,
+    56
+   ],
+   [
+    "Ryan Forehan-Kelly",
+    "Ryan_Forehan-Kelly",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Travis Bader",
+    "Travis_Bader",
+    58,
+    52,
+    64,
+    56
+   ],
+   [
+    "Dutch Gaitley",
+    "Dutch_Gaitley",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Connor Griffin",
+    "Connor_Griffin",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Corey Vinson",
+    "Corey_Vinson",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "new-york-knicks": [
+   [
+    "Chris Jent",
+    "Chris_Jent",
+    70,
+    52,
+    62,
+    66
+   ],
+   [
+    "Brendan O'Connor",
+    "Brendan_O'Connor",
+    50,
+    70,
+    60,
+    60
+   ],
+   [
+    "T.J. Saint",
+    "T.J._Saint",
+    62,
+    58,
+    66,
+    60
+   ],
+   [
+    "Rick Brunson",
+    "Rick_Brunson",
+    60,
+    56,
+    60,
+    66
+   ],
+   [
+    "Maurice Cheeks",
+    "Maurice_Cheeks",
+    58,
+    60,
+    60,
+    70
+   ],
+   [
+    "Darren Erman",
+    "Darren_Erman",
+    52,
+    66,
+    58,
+    58
+   ],
+   [
+    "Mark Bryant",
+    "Mark_Bryant",
+    54,
+    60,
+    66,
+    58
+   ],
+   [
+    "Riccardo Fois",
+    "Riccardo_Fois",
+    60,
+    56,
+    64,
+    56
+   ],
+   [
+    "Charles Allen",
+    "Charles_Allen",
+    54,
+    52,
+    66,
+    60
+   ]
+  ],
+  "philadelphia-76ers": [
+   [
+    "Rico Hines",
+    "Rico_Hines",
+    60,
+    56,
+    70,
+    64
+   ],
+   [
+    "Doug West",
+    "Doug_West",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Matt Brase",
+    "Matt_Brase",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Bryan Gates",
+    "Bryan_Gates",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Michael Longabardi",
+    "Michael_Longabardi",
+    58,
+    60,
+    60,
+    58
+   ],
+   [
+    "Phil Handy",
+    "Phil_Handy",
+    60,
+    54,
+    72,
+    62
+   ],
+   [
+    "Dice Yoshimoto",
+    "Dice_Yoshimoto",
+    56,
+    54,
+    58,
+    54
+   ],
+   [
+    "Fabulous Flournoy",
+    "Fabulous_Flournoy",
+    56,
+    54,
+    66,
+    56
+   ],
+   [
+    "Demetris Nichols",
+    "Demetris_Nichols",
+    56,
+    54,
+    64,
+    56
+   ],
+   [
+    "Toure' Khalid-Murry",
+    "Toure'_Khalid-Murry",
+    54,
+    54,
+    64,
+    56
+   ],
+   [
+    "TJ Dileo",
+    "TJ_Dileo",
+    54,
+    54,
+    64,
+    56
+   ],
+   [
+    "Eric Dawson",
+    "Eric_Dawson",
+    54,
+    54,
+    64,
+    56
+   ]
+  ],
+  "chicago-bulls": [
+   [
+    "Wes Unseld Jr.",
+    "Wes_Unseld_Jr.",
+    60,
+    64,
+    60,
+    64
+   ],
+   [
+    "Blake Ahearn",
+    "Blake_Ahearn",
+    58,
+    52,
+    66,
+    56
+   ],
+   [
+    "Jamelle McMillan",
+    "Jamelle_McMillan",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Rex Kalamian",
+    "Rex_Kalamian",
+    58,
+    60,
+    58,
+    60
+   ],
+   [
+    "Jonah Herscu",
+    "Jonah_Herscu",
+    56,
+    52,
+    64,
+    56
+   ],
+   [
+    "Taj Gibson",
+    "Taj_Gibson",
+    50,
+    62,
+    60,
+    64
+   ]
+  ],
+  "cleveland-cavaliers": [
+   [
+    "Johnnie Bryant",
+    "Johnnie_Bryant",
+    64,
+    58,
+    70,
+    66
+   ],
+   [
+    "Mike Gerrity",
+    "Mike_Gerrity",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Trevor Hendry",
+    "Trevor_Hendry",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Nate Reinking",
+    "Nate_Reinking",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Omar Cook",
+    "Omar_Cook",
+    56,
+    52,
+    64,
+    56
+   ],
+   [
+    "Jawad Williams",
+    "Jawad_Williams",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Andrew Olson",
+    "Andrew_Olson",
+    60,
+    50,
+    64,
+    54
+   ]
+  ],
+  "detroit-pistons": [
+   [
+    "Luke Walton",
+    "Luke_Walton",
+    58,
+    68,
+    66,
+    68
+   ],
+   [
+    "Fred Vinson",
+    "Fred_Vinson",
+    62,
+    50,
+    70,
+    56
+   ],
+   [
+    "Sidney Lowe",
+    "Sidney_Lowe",
+    54,
+    64,
+    58,
+    62
+   ],
+   [
+    "Vitaly Potapenko",
+    "Vitaly_Potapenko",
+    52,
+    60,
+    68,
+    56
+   ],
+   [
+    "Kevin Burleson",
+    "Kevin_Burleson",
+    56,
+    54,
+    68,
+    56
+   ],
+   [
+    "Jerome Allen",
+    "Jerome_Allen",
+    58,
+    56,
+    60,
+    58
+   ]
+  ],
+  "indiana-pacers": [
+   [
+    "Lloyd Pierce",
+    "Lloyd_Pierce",
+    58,
+    66,
+    62,
+    64
+   ],
+   [
+    "Jenny Boucek",
+    "Jenny_Boucek",
+    64,
+    56,
+    64,
+    62
+   ],
+   [
+    "Jim Boylen",
+    "Jim_Boylen",
+    54,
+    62,
+    56,
+    62
+   ],
+   [
+    "Isaac Yacob",
+    "Isaac_Yacob",
+    56,
+    54,
+    62,
+    56
+   ]
+  ],
+  "milwaukee-bucks": [
+   [
+    "Darvin Ham",
+    "Darvin_Ham",
+    58,
+    62,
+    58,
+    66
+   ],
+   [
+    "Pat St. Andrews",
+    "Pat_St._Andrews",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Vince Legarza",
+    "Vince_Legarza",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Brad Jones",
+    "Brad_Jones",
+    56,
+    54,
+    62,
+    56
+   ],
+   [
+    "Johnny Carpenter",
+    "Johnny_Carpenter",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "T.J. Ford",
+    "T.J._Ford",
+    54,
+    52,
+    62,
+    60
+   ],
+   [
+    "Schuyler Rimmer",
+    "Schuyler_Rimmer",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jack Herum",
+    "Jack_Herum",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "Isaiah Wilkins",
+    "Isaiah_Wilkins",
+    52,
+    56,
+    64,
+    56
+   ]
+  ],
+  "atlanta-hawks": [
+   [
+    "Bryan Bailey",
+    "Bryan_Bailey",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Mike Brey",
+    "Mike_Brey",
+    58,
+    56,
+    58,
+    66
+   ],
+   [
+    "Steve Klei",
+    "Steve_Klei",
+    58,
+    60,
+    58,
+    58
+   ],
+   [
+    "Antonio Lang",
+    "Antonio_Lang",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jason Love",
+    "Jason_Love",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Sanjay Lumpkin",
+    "Sanjay_Lumpkin",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Reggis Onwukamuche",
+    "Reggis_Onwukamuche",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Ryan Schmidt",
+    "Ryan_Schmidt",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Ashton Smith",
+    "Ashton_Smith",
+    54,
+    52,
+    64,
+    56
+   ],
+   [
+    "Ekpe Udoh",
+    "Ekpe_Udoh",
+    52,
+    58,
+    62,
+    56
+   ],
+   [
+    "Jeff Watkinson",
+    "Jeff_Watkinson",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "charlotte-hornets": [
+   [
+    "John Bryant",
+    "John_Bryant",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jordan Sears",
+    "Jordan_Sears",
+    56,
+    52,
+    68,
+    56
+   ],
+   [
+    "Kyle Neptune",
+    "Kyle_Neptune",
+    58,
+    54,
+    60,
+    58
+   ],
+   [
+    "Jermaine Bucknor",
+    "Jermaine_Bucknor",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Ryan Frazier",
+    "Ryan_Frazier",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Matt Hill",
+    "Matt_Hill",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Josh Longstaff",
+    "Josh_Longstaff",
+    54,
+    52,
+    66,
+    56
+   ],
+   [
+    "Blaine Mueller",
+    "Blaine_Mueller",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Lamar Skeeter",
+    "Lamar_Skeeter",
+    58,
+    56,
+    60,
+    60
+   ]
+  ],
+  "miami-heat": [
+   [
+    "Chris Quinn",
+    "Chris_Quinn",
+    66,
+    60,
+    64,
+    68
+   ],
+   [
+    "Malik Allen",
+    "Malik_Allen",
+    54,
+    60,
+    62,
+    62
+   ],
+   [
+    "Caron Butler",
+    "Caron_Butler",
+    56,
+    56,
+    62,
+    64
+   ],
+   [
+    "Wayne Ellington",
+    "Wayne_Ellington",
+    58,
+    52,
+    62,
+    58
+   ],
+   [
+    "Vin Baker",
+    "Vin_Baker",
+    52,
+    56,
+    58,
+    56
+   ],
+   [
+    "Eric Glass",
+    "Eric_Glass",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Octavio De La Grana",
+    "Octavio_De_La_Grana",
+    54,
+    52,
+    68,
+    56
+   ]
+  ],
+  "orlando-magic": [
+   [
+    "Joe Prunty",
+    "Joe_Prunty",
+    58,
+    60,
+    58,
+    62
+   ],
+   [
+    "Greg Buckner",
+    "Greg_Buckner",
+    54,
+    58,
+    58,
+    60
+   ],
+   [
+    "Popeye Jones",
+    "Popeye_Jones",
+    52,
+    58,
+    66,
+    60
+   ],
+   [
+    "Tom Bialaszewski",
+    "Tom_Bialaszewski",
+    54,
+    52,
+    58,
+    54
+   ],
+   [
+    "Riley Crean",
+    "Riley_Crean",
+    56,
+    52,
+    58,
+    54
+   ],
+   [
+    "Jon Harris",
+    "Jon_Harris",
+    60,
+    54,
+    58,
+    56
+   ],
+   [
+    "Ben Johnson",
+    "Ben_Johnson",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jacqlyn Poss",
+    "Jacqlyn_Poss",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Mfon Udofia",
+    "Mfon_Udofia",
+    52,
+    52,
+    66,
+    54
+   ],
+   [
+    "D.J. Bakker",
+    "D.J._Bakker",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "Shannan Lum",
+    "Shannan_Lum",
+    50,
+    50,
+    56,
+    56
+   ],
+   [
+    "Josh Broghamer",
+    "Josh_Broghamer",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "washington-wizards": [
+   [
+    "Adam Caporn",
+    "Adam_Caporn",
+    62,
+    58,
+    62,
+    64
+   ],
+   [
+    "Patrick Ewing",
+    "Patrick_Ewing",
+    50,
+    62,
+    64,
+    66
+   ],
+   [
+    "Cody Toppert",
+    "Cody_Toppert",
+    58,
+    54,
+    62,
+    56
+   ],
+   [
+    "J.J. Outlaw",
+    "J.J._Outlaw",
+    54,
+    54,
+    66,
+    56
+   ],
+   [
+    "Alexis Ajinça",
+    "Alexis_Ajinça",
+    50,
+    56,
+    62,
+    54
+   ],
+   [
+    "James Fraschilla",
+    "James_Fraschilla",
+    56,
+    54,
+    58,
+    54
+   ],
+   [
+    "T.J. Sorrentine",
+    "T.J._Sorrentine",
+    56,
+    54,
+    58,
+    54
+   ],
+   [
+    "Tevon Saddler",
+    "Tevon_Saddler",
+    54,
+    52,
+    62,
+    56
+   ]
+  ],
+  "denver-nuggets": [
+   [
+    "Dave Joerger",
+    "Dave_Joerger",
+    64,
+    60,
+    60,
+    68
+   ],
+   [
+    "Jared Dudley",
+    "Jared_Dudley",
+    52,
+    68,
+    60,
+    66
+   ],
+   [
+    "J.J. Barea",
+    "J.J._Barea",
+    58,
+    52,
+    66,
+    64
+   ],
+   [
+    "Mike Moser",
+    "Mike_Moser",
+    52,
+    64,
+    62,
+    56
+   ],
+   [
+    "Andrew Munson",
+    "Andrew_Munson",
+    60,
+    54,
+    58,
+    54
+   ],
+   [
+    "Ognjen Stojakovic",
+    "Ognjen_Stojakovic",
+    60,
+    52,
+    64,
+    54
+   ],
+   [
+    "Chase Buford",
+    "Chase_Buford",
+    58,
+    56,
+    58,
+    54
+   ],
+   [
+    "John Beckett",
+    "John_Beckett",
+    58,
+    58,
+    58,
+    54
+   ]
+  ],
+  "minnesota-timberwolves": [
+   [
+    "Pablo Prigioni",
+    "Pablo_Prigioni",
+    68,
+    52,
+    62,
+    62
+   ],
+   [
+    "Elston Turner",
+    "Elston_Turner",
+    54,
+    62,
+    60,
+    62
+   ],
+   [
+    "Kevin Hanson",
+    "Kevin_Hanson",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Chris Hines",
+    "Chris_Hines",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Jeff Newton",
+    "Jeff_Newton",
+    54,
+    52,
+    68,
+    56
+   ],
+   [
+    "James White",
+    "James_White",
+    54,
+    52,
+    66,
+    56
+   ],
+   [
+    "Daniel Brady",
+    "Daniel_Brady",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Tim Lewis",
+    "Tim_Lewis",
+    54,
+    60,
+    58,
+    58
+   ],
+   [
+    "Max Lefevre",
+    "Max_Lefevre",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Nathan Bubes",
+    "Nathan_Bubes",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Joey Dorsey",
+    "Joey_Dorsey",
+    50,
+    56,
+    58,
+    54
+   ]
+  ],
+  "oklahoma-city-thunder": [
+   [
+    "Dave Bliss",
+    "Dave_Bliss",
+    58,
+    58,
+    62,
+    64
+   ],
+   [
+    "David Akinyooye",
+    "David_Akinyooye",
+    56,
+    52,
+    66,
+    56
+   ],
+   [
+    "Mike Wilks",
+    "Mike_Wilks",
+    58,
+    54,
+    60,
+    60
+   ],
+   [
+    "Grant Gibbs",
+    "Grant_Gibbs",
+    60,
+    52,
+    64,
+    56
+   ],
+   [
+    "Kameron Woods",
+    "Kameron_Woods",
+    54,
+    54,
+    62,
+    56
+   ],
+   [
+    "Eric Maynor",
+    "Eric_Maynor",
+    56,
+    52,
+    64,
+    56
+   ]
+  ],
+  "portland-trail-blazers": [
+   [
+    "Jay Triano",
+    "Jay_Triano",
+    60,
+    60,
+    60,
+    64
+   ],
+   [
+    "Mike Williams",
+    "Mike_Williams",
+    56,
+    56,
+    62,
+    58
+   ],
+   [
+    "Quinton Crawford",
+    "Quinton_Crawford",
+    56,
+    54,
+    62,
+    56
+   ],
+   [
+    "Gilbert Abraham",
+    "Gilbert_Abraham",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Leron Black",
+    "Leron_Black",
+    52,
+    54,
+    60,
+    54
+   ]
+  ],
+  "utah-jazz": [
+   [
+    "Sean Sheldon",
+    "Sean_Sheldon",
+    54,
+    68,
+    60,
+    60
+   ],
+   [
+    "Chad Forcier",
+    "Chad_Forcier",
+    58,
+    56,
+    58,
+    56
+   ],
+   [
+    "Steve Wojciechowski",
+    "Steve_Wojciechowski",
+    58,
+    56,
+    60,
+    60
+   ],
+   [
+    "Andrew Warren",
+    "Andrew_Warren",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Chris Jones",
+    "Chris_Jones",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Scott Morrison",
+    "Scott_Morrison",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Evan Bradds",
+    "Evan_Bradds",
+    54,
+    52,
+    62,
+    54
+   ],
+   [
+    "Jason Terry",
+    "Jason_Terry",
+    56,
+    52,
+    60,
+    66
+   ]
+  ],
+  "golden-state-warriors": [
+   [
+    "Frank Vogel",
+    "Frank_Vogel",
+    54,
+    70,
+    62,
+    68
+   ],
+   [
+    "Seth Cooper",
+    "Seth_Cooper",
+    64,
+    52,
+    60,
+    58
+   ],
+   [
+    "Kris Weems",
+    "Kris_Weems",
+    58,
+    56,
+    58,
+    58
+   ]
+  ],
+  "la-clippers": [
+   [
+    "Jeff Van Gundy",
+    "Jeff_Van_Gundy",
+    52,
+    72,
+    58,
+    68
+   ],
+   [
+    "Jay Larranaga",
+    "Jay_Larranaga",
+    62,
+    58,
+    64,
+    60
+   ],
+   [
+    "Brian Shaw",
+    "Brian_Shaw",
+    56,
+    58,
+    60,
+    64
+   ],
+   [
+    "Larry Drew",
+    "Larry_Drew",
+    58,
+    56,
+    58,
+    64
+   ],
+   [
+    "Cookie Belcher",
+    "Cookie_Belcher",
+    56,
+    52,
+    62,
+    58
+   ],
+   [
+    "Tim Dather",
+    "Tim_Dather",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Chris Holguin",
+    "Chris_Holguin",
+    54,
+    52,
+    66,
+    56
+   ],
+   [
+    "Shaun Fein",
+    "Shaun_Fein",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Dahntay Jones",
+    "Dahntay_Jones",
+    52,
+    54,
+    60,
+    56
+   ],
+   [
+    "Jeremy Castleberry",
+    "Jeremy_Castleberry",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Conor Dunleavy",
+    "Conor_Dunleavy",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "los-angeles-lakers": [
+   [
+    "Nate McMillan",
+    "Nate_McMillan",
+    54,
+    70,
+    58,
+    68
+   ],
+   [
+    "Scott Brooks",
+    "Scott_Brooks",
+    58,
+    60,
+    60,
+    68
+   ],
+   [
+    "Greg St. Jean",
+    "Greg_St._Jean",
+    64,
+    54,
+    58,
+    56
+   ],
+   [
+    "Lindsey Harding",
+    "Lindsey_Harding",
+    54,
+    54,
+    66,
+    58
+   ],
+   [
+    "Beau Levesque",
+    "Beau_Levesque",
+    58,
+    50,
+    66,
+    54
+   ],
+   [
+    "Zach Guthrie",
+    "Zach_Guthrie",
+    54,
+    52,
+    64,
+    54
+   ],
+   [
+    "Michael Wexler",
+    "Michael_Wexler",
+    56,
+    52,
+    56,
+    54
+   ],
+   [
+    "Ty Abbott",
+    "Ty_Abbott",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "phoenix-suns": [
+   [
+    "Jesse Mermuys",
+    "Jesse_Mermuys",
+    54,
+    66,
+    60,
+    62
+   ],
+   [
+    "DeMarre Carroll",
+    "DeMarre_Carroll",
+    54,
+    60,
+    58,
+    58
+   ],
+   [
+    "Mike Muscala",
+    "Mike_Muscala",
+    58,
+    54,
+    58,
+    56
+   ],
+   [
+    "Brian Randle",
+    "Brian_Randle",
+    54,
+    54,
+    62,
+    56
+   ],
+   [
+    "Chaisson Allen",
+    "Chaisson_Allen",
+    52,
+    52,
+    64,
+    54
+   ],
+   [
+    "John Little",
+    "John_Little",
+    54,
+    52,
+    62,
+    54
+   ],
+   [
+    "Sean Dwyer",
+    "Sean_Dwyer",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Mateen Cleaves",
+    "Mateen_Cleaves",
+    50,
+    52,
+    62,
+    62
+   ]
+  ],
+  "sacramento-kings": [
+   [
+    "Mike Woodson",
+    "Mike_Woodson",
+    56,
+    66,
+    58,
+    68
+   ],
+   [
+    "Brendan Suhr",
+    "Brendan_Suhr",
+    56,
+    58,
+    58,
+    60
+   ],
+   [
+    "DJ Ham",
+    "DJ_Ham",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Leandro Barbosa",
+    "Leandro_Barbosa",
+    56,
+    52,
+    58,
+    60
+   ],
+   [
+    "Mike Miller",
+    "Mike_Miller",
+    58,
+    54,
+    58,
+    58
+   ],
+   [
+    "Chris Darnell",
+    "Chris_Darnell",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "dallas-mavericks": [
+   [
+    "Garrett Temple",
+    "Garrett_Temple",
+    54,
+    56,
+    60,
+    68
+   ],
+   [
+    "Joe Boylan",
+    "Joe_Boylan",
+    56,
+    54,
+    62,
+    56
+   ]
+  ],
+  "houston-rockets": [
+   [
+    "Ben Sullivan",
+    "Ben_Sullivan",
+    52,
+    66,
+    60,
+    60
+   ],
+   [
+    "Royal Ivey",
+    "Royal_Ivey",
+    56,
+    56,
+    62,
+    66
+   ],
+   [
+    "Garrett Jackson",
+    "Garrett_Jackson",
+    58,
+    52,
+    62,
+    54
+   ],
+   [
+    "Chip Engelland",
+    "Chip_Engelland",
+    66,
+    50,
+    66,
+    60
+   ],
+   [
+    "Cam Hodges",
+    "Cam_Hodges",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Josh Bostic",
+    "Josh_Bostic",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Will Dunn",
+    "Will_Dunn",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Robbie Lemons",
+    "Robbie_Lemons",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "memphis-grizzlies": [
+   [
+    "Ryan Saunders",
+    "Ryan_Saunders",
+    62,
+    56,
+    60,
+    66
+   ],
+   [
+    "Julius Thomas",
+    "Julius_Thomas",
+    56,
+    52,
+    56,
+    58
+   ],
+   [
+    "Darnell Lazare",
+    "Darnell_Lazare",
+    54,
+    52,
+    66,
+    54
+   ],
+   [
+    "Jason March",
+    "Jason_March",
+    56,
+    52,
+    62,
+    54
+   ],
+   [
+    "Erik Schmidt",
+    "Erik_Schmidt",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "new-orleans-pelicans": [
+   [
+    "Bret Brielmaier",
+    "Bret_Brielmaier",
+    66,
+    50,
+    60,
+    58
+   ],
+   [
+    "Dale Osbourne",
+    "Dale_Osbourne",
+    50,
+    66,
+    58,
+    58
+   ],
+   [
+    "God Shammgod",
+    "God_Shammgod",
+    56,
+    52,
+    68,
+    56
+   ],
+   [
+    "Will Bynum",
+    "Will_Bynum",
+    54,
+    52,
+    62,
+    56
+   ],
+   [
+    "Mike Hopkins",
+    "Mike_Hopkins",
+    58,
+    60,
+    56,
+    58
+   ],
+   [
+    "Greg Monroe",
+    "Greg_Monroe",
+    54,
+    52,
+    64,
+    54
+   ],
+   [
+    "Brandon Demas",
+    "Brandon_Demas",
+    58,
+    58,
+    60,
+    58
+   ]
+  ],
+  "san-antonio-spurs": [
+   [
+    "Brett Brown",
+    "Brett_Brown",
+    62,
+    60,
+    74,
+    66
+   ],
+   [
+    "Corliss Williamson",
+    "Corliss_Williamson",
+    52,
+    60,
+    62,
+    64
+   ],
+   [
+    "Matt Nielsen",
+    "Matt_Nielsen",
+    58,
+    52,
+    66,
+    54
+   ],
+   [
+    "Scott King",
+    "Scott_King",
+    58,
+    54,
+    62,
+    54
+   ],
+   [
+    "Mike Noyes",
+    "Mike_Noyes",
+    58,
+    58,
+    60,
+    58
+   ],
+   [
+    "Kenny Trevino",
+    "Kenny_Trevino",
+    54,
+    52,
+    60,
+    54
+   ]
+  ]
+ }
+}

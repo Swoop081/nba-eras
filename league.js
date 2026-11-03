@@ -53,7 +53,7 @@
   /* ---------- creation ---------- */
   /* Opening night: every club carries the same number of players. Extras go to the free-agent pool; short clubs sign from it. */
   function openingRosters(lg, teams) {
-    var real = lg.year === 2026;   /* the present day: every club already carries its real roster, nobody is trimmed or topped up */
+    var real = lg.year === 2026 || lg.year === 2025;   /* the present day: every club already carries its real roster, nobody is trimmed or topped up */
     teams.forEach(function (t) {
       lg.players.filter(function (p) { return p.team === t.id && p.status === 'active'; })
         .sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })

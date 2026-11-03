@@ -1,0 +1,526 @@
+{
+ "year": 2026,
+ "note": "The real 2026 draft: first rounds and second rounds as they were picked.",
+ "prospects": [
+  {
+   "id": "aj-dybantsa",
+   "name": "AJ Dybantsa",
+   "pos": "F",
+   "college": "Brigham Young",
+   "age": 19,
+   "realPick": 1,
+   "round": 1,
+   "hgt": 81
+  },
+  {
+   "id": "darryn-peterson",
+   "name": "Darryn Peterson",
+   "pos": "G",
+   "college": "Kansas",
+   "age": 19,
+   "realPick": 2,
+   "round": 1,
+   "hgt": 78
+  },
+  {
+   "id": "cameron-boozer",
+   "name": "Cameron Boozer",
+   "pos": "F",
+   "college": "Duke",
+   "age": 18,
+   "realPick": 3,
+   "round": 1,
+   "hgt": 80
+  },
+  {
+   "id": "caleb-wilson",
+   "name": "Caleb Wilson",
+   "pos": "F",
+   "college": "North Carolina",
+   "age": 19,
+   "realPick": 4,
+   "round": 1,
+   "hgt": 82
+  },
+  {
+   "id": "keaton-wagler",
+   "name": "Keaton Wagler",
+   "pos": "G",
+   "college": "Illinois",
+   "age": 19,
+   "realPick": 5,
+   "round": 1,
+   "hgt": 78
+  },
+  {
+   "id": "mikel-brown-jr",
+   "name": "Mikel Brown Jr.",
+   "pos": "G",
+   "college": "Louisville",
+   "age": 20,
+   "realPick": 6,
+   "round": 1,
+   "hgt": 76
+  },
+  {
+   "id": "darius-acuff-jr",
+   "name": "Darius Acuff Jr.",
+   "pos": "G",
+   "college": "Arkansas",
+   "age": 19,
+   "realPick": 7,
+   "round": 1,
+   "hgt": 74
+  },
+  {
+   "id": "kingston-flemings",
+   "name": "Kingston Flemings",
+   "pos": "G",
+   "college": "Houston",
+   "age": 19,
+   "realPick": 8,
+   "round": 1,
+   "hgt": 75
+  },
+  {
+   "id": "morez-johnson-jr",
+   "name": "Morez Johnson Jr.",
+   "pos": "F",
+   "college": "Michigan",
+   "age": 20,
+   "realPick": 9,
+   "round": 1,
+   "hgt": 82
+  },
+  {
+   "id": "brayden-burries",
+   "name": "Brayden Burries",
+   "pos": "G",
+   "college": "Arizona",
+   "age": 20,
+   "realPick": 10,
+   "round": 1,
+   "hgt": 76
+  },
+  {
+   "id": "yaxel-lendeborg",
+   "name": "Yaxel Lendeborg",
+   "pos": "F",
+   "college": "Michigan",
+   "age": 23,
+   "realPick": 11,
+   "round": 1,
+   "hgt": 81
+  },
+  {
+   "id": "aday-mara",
+   "name": "Aday Mara",
+   "pos": "C",
+   "college": "Michigan",
+   "age": 21,
+   "realPick": 12,
+   "round": 1,
+   "hgt": 87
+  },
+  {
+   "id": "nate-ament",
+   "name": "Nate Ament",
+   "pos": "F",
+   "college": "Tennessee",
+   "age": 19,
+   "realPick": 13,
+   "round": 1,
+   "hgt": 82
+  },
+  {
+   "id": "hannes-steinbach",
+   "name": "Hannes Steinbach",
+   "pos": "F",
+   "college": "Washington",
+   "age": 20,
+   "realPick": 14,
+   "round": 1,
+   "hgt": 82
+  },
+  {
+   "id": "dailyn-swain",
+   "name": "Dailyn Swain",
+   "pos": "F",
+   "college": "Texas",
+   "age": 20,
+   "realPick": 15,
+   "round": 1,
+   "hgt": 78
+  },
+  {
+   "id": "bennett-stirtz",
+   "name": "Bennett Stirtz",
+   "pos": "G",
+   "college": "Iowa",
+   "age": 22,
+   "realPick": 16,
+   "round": 1,
+   "hgt": 75
+  },
+  {
+   "id": "ebuka-okorie",
+   "name": "Ebuka Okorie",
+   "pos": "G",
+   "college": "Stanford",
+   "age": 19,
+   "realPick": 17,
+   "round": 1,
+   "hgt": 74
+  },
+  {
+   "id": "allen-graves",
+   "name": "Allen Graves",
+   "pos": "F",
+   "college": "Santa Clara",
+   "age": 19,
+   "realPick": 19,
+   "round": 1,
+   "hgt": 80
+  },
+  {
+   "id": "jayden-quaintance",
+   "name": "Jayden Quaintance",
+   "pos": "F",
+   "college": "Kentucky",
+   "age": 18,
+   "realPick": 20,
+   "round": 1,
+   "hgt": 81
+  },
+  {
+   "id": "karim-lopez",
+   "name": "Karim López",
+   "pos": "F",
+   "college": "",
+   "age": 19,
+   "realPick": 21,
+   "round": 1,
+   "hgt": 80
+  },
+  {
+   "id": "labaron-philon-jr",
+   "name": "Labaron Philon Jr.",
+   "pos": "G",
+   "college": "Alabama",
+   "age": 20,
+   "realPick": 22,
+   "round": 1,
+   "hgt": 75
+  },
+  {
+   "id": "zuby-ejiofor",
+   "name": "Zuby Ejiofor",
+   "pos": "F",
+   "college": "St. John's",
+   "age": 22,
+   "realPick": 23,
+   "round": 1,
+   "hgt": 80
+  },
+  {
+   "id": "cameron-carr",
+   "name": "Cameron Carr",
+   "pos": "G",
+   "college": "Baylor",
+   "age": 21,
+   "realPick": 24,
+   "round": 1,
+   "hgt": 78
+  },
+  {
+   "id": "sergio-de-larrea",
+   "name": "Sergio de Larrea",
+   "pos": "G",
+   "college": "Valencia, Spain",
+   "age": 20,
+   "realPick": 25,
+   "round": 1,
+   "hgt": 78
+  },
+  {
+   "id": "tarris-reed-jr",
+   "name": "Tarris Reed Jr.",
+   "pos": "C",
+   "college": "Connecticut",
+   "age": 22,
+   "realPick": 26,
+   "round": 1,
+   "hgt": 82
+  },
+  {
+   "id": "chris-cenac-jr",
+   "name": "Chris Cenac Jr.",
+   "pos": "F",
+   "college": "Houston",
+   "age": 19,
+   "realPick": 27,
+   "round": 1,
+   "hgt": 83
+  },
+  {
+   "id": "joshua-jefferson",
+   "name": "Joshua Jefferson",
+   "pos": "F",
+   "college": "Iowa State",
+   "age": 22,
+   "realPick": 28,
+   "round": 1,
+   "hgt": 80
+  },
+  {
+   "id": "alex-karaban",
+   "name": "Alex Karaban",
+   "pos": "F",
+   "college": "Connecticut",
+   "age": 23,
+   "realPick": 29,
+   "round": 1,
+   "hgt": 79
+  },
+  {
+   "id": "koa-peat",
+   "name": "Koa Peat",
+   "pos": "F",
+   "college": "Arizona",
+   "age": 19,
+   "realPick": 30,
+   "round": 1,
+   "hgt": 80
+  },
+  {
+   "id": "bruce-thornton",
+   "name": "Bruce Thornton",
+   "pos": "G",
+   "college": "Ohio State",
+   "age": 22,
+   "realPick": 31,
+   "round": 2,
+   "hgt": 72
+  },
+  {
+   "id": "isaiah-evans",
+   "name": "Isaiah Evans",
+   "pos": "F",
+   "college": "Duke",
+   "age": 20,
+   "realPick": 33,
+   "round": 2,
+   "hgt": 78
+  },
+  {
+   "id": "meleek-thomas",
+   "name": "Meleek Thomas",
+   "pos": "G",
+   "college": "Arkansas",
+   "age": 19,
+   "realPick": 34,
+   "round": 2,
+   "hgt": 75
+  },
+  {
+   "id": "trevon-brazile",
+   "name": "Trevon Brazile",
+   "pos": "F",
+   "college": "Arkansas",
+   "age": 23,
+   "realPick": 35,
+   "round": 2,
+   "hgt": 82
+  },
+  {
+   "id": "baba-miller",
+   "name": "Baba Miller",
+   "pos": "F",
+   "college": "Cincinnati",
+   "age": 22,
+   "realPick": 36,
+   "round": 2,
+   "hgt": 83
+  },
+  {
+   "id": "ryan-conwell",
+   "name": "Ryan Conwell",
+   "pos": "G",
+   "college": "Louisville",
+   "age": 22,
+   "realPick": 37,
+   "round": 2,
+   "hgt": 74
+  },
+  {
+   "id": "braden-smith",
+   "name": "Braden Smith",
+   "pos": "G",
+   "college": "Purdue",
+   "age": 22,
+   "realPick": 38,
+   "round": 2,
+   "hgt": 71
+  },
+  {
+   "id": "dillon-mitchell",
+   "name": "Dillon Mitchell",
+   "pos": "F",
+   "college": "St. John's",
+   "age": 22,
+   "realPick": 40,
+   "round": 2,
+   "hgt": 78
+  },
+  {
+   "id": "otega-oweh",
+   "name": "Otega Oweh",
+   "pos": "G-F",
+   "college": "Kentucky",
+   "age": 23,
+   "realPick": 41,
+   "round": 2,
+   "hgt": 76
+  },
+  {
+   "id": "jakobi-gillespie",
+   "name": "Ja'Kobi Gillespie",
+   "pos": "G",
+   "college": "Tennessee",
+   "age": 22,
+   "realPick": 42,
+   "round": 2,
+   "hgt": 72
+  },
+  {
+   "id": "tyler-bilodeau",
+   "name": "Tyler Bilodeau",
+   "pos": "F",
+   "college": "UCLA",
+   "age": 22,
+   "realPick": 43,
+   "round": 2,
+   "hgt": 80
+  },
+  {
+   "id": "maliq-brown",
+   "name": "Maliq Brown",
+   "pos": "F",
+   "college": "Duke",
+   "age": 22,
+   "realPick": 44,
+   "round": 2,
+   "hgt": 80
+  },
+  {
+   "id": "emanuel-sharp",
+   "name": "Emanuel Sharp",
+   "pos": "G",
+   "college": "Houston",
+   "age": 22,
+   "realPick": 45,
+   "round": 2,
+   "hgt": 75
+  },
+  {
+   "id": "felix-okpara",
+   "name": "Felix Okpara",
+   "pos": "C",
+   "college": "Tennessee",
+   "age": 22,
+   "realPick": 46,
+   "round": 2,
+   "hgt": 83
+  },
+  {
+   "id": "tyler-nickel",
+   "name": "Tyler Nickel",
+   "pos": "F",
+   "college": "Vanderbilt",
+   "age": 22,
+   "realPick": 47,
+   "round": 2,
+   "hgt": 79
+  },
+  {
+   "id": "tobi-lawal",
+   "name": "Tobi Lawal",
+   "pos": "F",
+   "college": "Virginia Tech",
+   "age": 23,
+   "realPick": 48,
+   "round": 2,
+   "hgt": 79
+  },
+  {
+   "id": "bryce-hopkins",
+   "name": "Bryce Hopkins",
+   "pos": "F",
+   "college": "St. John's",
+   "age": 23,
+   "realPick": 49,
+   "round": 2,
+   "hgt": 79
+  },
+  {
+   "id": "jaden-bradley",
+   "name": "Jaden Bradley",
+   "pos": "G",
+   "college": "Arizona",
+   "age": 22,
+   "realPick": 50,
+   "round": 2,
+   "hgt": 75
+  },
+  {
+   "id": "izaiyah-nelson",
+   "name": "Izaiyah Nelson",
+   "pos": "F",
+   "college": "South Florida",
+   "age": 22,
+   "realPick": 51,
+   "round": 2,
+   "hgt": 82
+  },
+  {
+   "id": "henri-veesaar",
+   "name": "Henri Veesaar",
+   "pos": "C",
+   "college": "North Carolina",
+   "age": 22,
+   "realPick": 52,
+   "round": 2,
+   "hgt": 84
+  },
+  {
+   "id": "ugonna-onyenso",
+   "name": "Ugonna Onyenso",
+   "pos": "C",
+   "college": "Virginia",
+   "age": 21,
+   "realPick": 53,
+   "round": 2,
+   "hgt": 83
+  },
+  {
+   "id": "nick-martinelli",
+   "name": "Nick Martinelli",
+   "pos": "F",
+   "college": "Northwestern",
+   "age": 22,
+   "realPick": 55,
+   "round": 2,
+   "hgt": 79
+  },
+  {
+   "id": "jaron-pierre-jr",
+   "name": "Jaron Pierre Jr.",
+   "pos": "G",
+   "college": "Southern Methodist",
+   "age": 23,
+   "realPick": 58,
+   "round": 2,
+   "hgt": 78
+  }
+ ]
+}

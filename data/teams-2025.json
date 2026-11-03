@@ -6,15 +6,15 @@
   "Eastern",
   "Western"
  ],
- "source": "NBA 2025-26. Colours are approximations.",
+ "source": "NBA 2025-26. Colours are approximations. Records are the 2024-25 final standings.",
  "teams": [
   {
    "id": "atlanta-hawks",
    "city": "Atlanta",
    "name": "Hawks",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 40,
+   "l": 42,
    "colors": [
     "#E03A3E",
     "#FFFFFF"
@@ -26,8 +26,8 @@
    "city": "Boston",
    "name": "Celtics",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 61,
+   "l": 21,
    "colors": [
     "#007A33",
     "#FFFFFF"
@@ -39,8 +39,8 @@
    "city": "Brooklyn",
    "name": "Nets",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 26,
+   "l": 56,
    "colors": [
     "#111111",
     "#FFFFFF"
@@ -52,8 +52,8 @@
    "city": "Charlotte",
    "name": "Hornets",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 19,
+   "l": 63,
    "colors": [
     "#1D1160",
     "#00A3B4"
@@ -65,8 +65,8 @@
    "city": "Chicago",
    "name": "Bulls",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 39,
+   "l": 43,
    "colors": [
     "#CE1141",
     "#FFFFFF"
@@ -78,8 +78,8 @@
    "city": "Cleveland",
    "name": "Cavaliers",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 64,
+   "l": 18,
    "colors": [
     "#860038",
     "#FDBB30"
@@ -91,8 +91,8 @@
    "city": "Dallas",
    "name": "Mavericks",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 39,
+   "l": 43,
    "colors": [
     "#00538C",
     "#B8C4CA"
@@ -104,8 +104,8 @@
    "city": "Denver",
    "name": "Nuggets",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 50,
+   "l": 32,
    "colors": [
     "#0E2240",
     "#FEC524"
@@ -117,8 +117,8 @@
    "city": "Detroit",
    "name": "Pistons",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 44,
+   "l": 38,
    "colors": [
     "#1D42BA",
     "#C8102E"
@@ -130,8 +130,8 @@
    "city": "Golden State",
    "name": "Warriors",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 48,
+   "l": 34,
    "colors": [
     "#1D428A",
     "#FFC72C"
@@ -143,8 +143,8 @@
    "city": "Houston",
    "name": "Rockets",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 52,
+   "l": 30,
    "colors": [
     "#CE1141",
     "#C4CED4"
@@ -156,8 +156,8 @@
    "city": "Indiana",
    "name": "Pacers",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 50,
+   "l": 32,
    "colors": [
     "#002D62",
     "#FDBB30"
@@ -169,8 +169,8 @@
    "city": "LA",
    "name": "Clippers",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 50,
+   "l": 32,
    "colors": [
     "#1D428A",
     "#C8102E"
@@ -182,8 +182,8 @@
    "city": "Los Angeles",
    "name": "Lakers",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 50,
+   "l": 32,
    "colors": [
     "#552583",
     "#FDB927"
@@ -195,8 +195,8 @@
    "city": "Memphis",
    "name": "Grizzlies",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 48,
+   "l": 34,
    "colors": [
     "#5D76A9",
     "#12173F"
@@ -208,8 +208,8 @@
    "city": "Miami",
    "name": "Heat",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 37,
+   "l": 45,
    "colors": [
     "#98002E",
     "#F9A01B"
@@ -221,8 +221,8 @@
    "city": "Milwaukee",
    "name": "Bucks",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 48,
+   "l": 34,
    "colors": [
     "#00471B",
     "#EEE1C6"
@@ -234,8 +234,8 @@
    "city": "Minnesota",
    "name": "Timberwolves",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 49,
+   "l": 33,
    "colors": [
     "#0C2340",
     "#78BE20"
@@ -247,8 +247,8 @@
    "city": "New Orleans",
    "name": "Pelicans",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 21,
+   "l": 61,
    "colors": [
     "#0C2340",
     "#C8A15B"
@@ -260,8 +260,8 @@
    "city": "New York",
    "name": "Knicks",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 51,
+   "l": 31,
    "colors": [
     "#006BB6",
     "#F58426"
@@ -273,8 +273,8 @@
    "city": "Oklahoma City",
    "name": "Thunder",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 68,
+   "l": 14,
    "colors": [
     "#007AC1",
     "#EF3B24"
@@ -286,8 +286,8 @@
    "city": "Orlando",
    "name": "Magic",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 41,
+   "l": 41,
    "colors": [
     "#0077C0",
     "#C4CED4"
@@ -299,8 +299,8 @@
    "city": "Philadelphia",
    "name": "76ers",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 24,
+   "l": 58,
    "colors": [
     "#006BB6",
     "#ED174C"
@@ -312,8 +312,8 @@
    "city": "Phoenix",
    "name": "Suns",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 36,
+   "l": 46,
    "colors": [
     "#1D1160",
     "#E56020"
@@ -325,8 +325,8 @@
    "city": "Portland",
    "name": "Trail Blazers",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 36,
+   "l": 46,
    "colors": [
     "#E03A3E",
     "#111111"
@@ -338,8 +338,8 @@
    "city": "Sacramento",
    "name": "Kings",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 40,
+   "l": 42,
    "colors": [
     "#5A2D81",
     "#C4CED4"
@@ -351,8 +351,8 @@
    "city": "San Antonio",
    "name": "Spurs",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 34,
+   "l": 48,
    "colors": [
     "#111111",
     "#C4CED4"
@@ -364,8 +364,8 @@
    "city": "Toronto",
    "name": "Raptors",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 30,
+   "l": 52,
    "colors": [
     "#CE1141",
     "#FFFFFF"
@@ -377,8 +377,8 @@
    "city": "Utah",
    "name": "Jazz",
    "division": "Western",
-   "w": 0,
-   "l": 0,
+   "w": 17,
+   "l": 65,
    "colors": [
     "#002B5C",
     "#F9A01B"
@@ -390,8 +390,8 @@
    "city": "Washington",
    "name": "Wizards",
    "division": "Eastern",
-   "w": 0,
-   "l": 0,
+   "w": 18,
+   "l": 64,
    "colors": [
     "#002B5C",
     "#E31837"
