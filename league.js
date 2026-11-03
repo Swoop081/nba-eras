@@ -1394,7 +1394,9 @@
   /* ---------- AI clubs: trades, signings, offers ---------- */
   function wire(save, text) {
     var w = save.lg.wire || (save.lg.wire = []);
-    w.push({ d: save.day || 0, y: save.year, t: text, o: save.off ? 1 : 0 });
+    var off = save.phase === 'regular' ? Math.round((save.day || 0) * 2.2) : 145 + (save.pd || 0) * 2, dd = new Date(Date.UTC(save.year, 10, 1 + off));
+    var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    w.push({ d: save.day || 0, y: save.year, t: text, o: save.off ? 1 : 0, dt: p2(dd.getUTCDate()) + '/' + p2(dd.getUTCMonth() + 1) + '/' + p2(dd.getUTCFullYear() % 100) });
     if (w.length > 40) w.shift();
   }
   function cityOf(teams, id) { var t = teams.filter(function (x) { return x.id === id; })[0]; return t ? t.city : id; }
