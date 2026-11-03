@@ -290,8 +290,6 @@
     var report = { mine: [], retired: [], leagueRetired: 0, notable: [] };
     report.tax = settleTax(save);
     var ny = save.year + 1;
-    /* Real sabbaticals end: Jordan in 1995, Magic in 1996. The comeback joins the free-agent pool. */
-    save.lg.players.forEach(function (p) { if (p.status === 'retired' && p.comeback && p.comeback <= ny) { p.status = 'active'; p.team = null; delete p.comeback; p.yrs = 0; } });
     save.lg.players.forEach(function (p) {
       if (p.status !== 'active') return;
       var before = p.ratings.ovr, age = p.age || 26;
@@ -311,9 +309,9 @@
       if (p.p0 === undefined) p.p0 = 0;
       var pr = 0, real = CAREERS && CAREERS[p.id] && ny <= 2026 ? CAREERS[p.id] : null, forced = false;
       if (real) {
-        var gap = (real[1] || []).filter(function (g) { return g[0] <= ny && ny < g[1]; })[0];
-        if (real[0] && real[0] < ny) { pr = 1; forced = true; }          /* his real last season is behind us */
-        else if (gap) { pr = 1; forced = true; p.comeback = gap[1]; }     /* a real sabbatical */
+        if (real[1]) {   /* left the league early (injury, overseas): the sim does not repeat it, so he retires at a best-guess age instead */
+          if (p.age >= real[1]) { pr = 1; forced = true; } else pr = -1;
+        } else if (real[0] && real[0] < ny) { pr = 1; forced = true; }   /* his real last season is behind us */
         else pr = -1;                                                      /* he really plays on */
       }
       /* Real veterans go on while they can play: a star at 37 is rarely gone, a fringe 34-year-old often is. */
@@ -326,7 +324,7 @@
         p.status = 'retired';
         if (p.team === myId) report.retired.push({ p: p, ovr: before });
         else { report.leagueRetired++; var cg = (p.career || []).reduce(function (a, c) { return a + (c.g || 0); }, 0); if (before >= 62 || cg >= 500) report.notable.push({ p: p, ovr: before, g: cg }); }
-        if (root.Coach && !p.comeback) try { root.Coach.fromRetired(save, p); } catch (e) {}
+        if (root.Coach) try { root.Coach.fromRetired(save, p); } catch (e) {}
         p.retiredTeam = p.team; p.team = null;
       } else if (p.team === myId) {
         report.mine.push({ p: p, from: before, to: p.ratings.ovr });
