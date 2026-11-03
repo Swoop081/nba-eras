@@ -5606,10 +5606,9 @@
       renderTrade();
       hubSheet('Trade completed', function (sh, close) {
         sh.appendChild(el('p', 'sub', line.replace('Trade: ', '') + '.'));
-        var back = el('button', 'btn primary wide', 'Back to the season'); back.type = 'button';
+        var back = el('button', 'btn primary wide', 'Done'); back.type = 'button';
         back.addEventListener('click', function () { close(); if (trade.back === 'off') { renderOff(); show('screen-off'); } else { renderSeason(); show('screen-season'); } });
-        var stay = el('button', 'btn wide', 'Keep trading'); stay.type = 'button'; stay.addEventListener('click', close);
-        sh.appendChild(back); sh.appendChild(stay);
+        sh.appendChild(back);
       });
     });
     btnRow.appendChild(send);
