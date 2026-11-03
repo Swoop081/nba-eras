@@ -4046,7 +4046,7 @@
       var pg = el('div', 'news-page');
       all.slice(i, i + 7).forEach(function (w) {
         var d = el('div', 'fi', w.t);
-        d.appendChild(el('small', null, w.d ? 'Game day ' + w.d : 'Off-season'));
+        d.appendChild(el('small', null, w.d ? 'Game day ' + w.d : w.o ? 'Off-season' : 'Before opening night'));
         pg.appendChild(d);
       });
       pages.push({ title: 'League news', node: pg });
