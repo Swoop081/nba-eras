@@ -138,6 +138,7 @@
     flickT = setTimeout(function () { body.classList.remove('flicker'); }, 700);
   }
   function finishIntro() {
+    Snd.stop();
     for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]);
     timers = [];
     clearTimeout(flickT);
@@ -145,6 +146,80 @@
     setPhase('modern');
     body.dataset.menu = 'show';
   }
+
+  /* ---------- intro sound: old-TV static, built live with Web Audio (no audio files) ---------- */
+  var Snd = (function () {
+    var ac = null, bed = null, t0 = 0, armed = false;
+    function ctxr() {
+      if (!ac) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; try { ac = new C(); } catch (e) { return null; } }
+      return ac;
+    }
+    function noiseBuf(a, secs) {
+      var n = Math.floor(a.sampleRate * secs), b = a.createBuffer(1, n, a.sampleRate), d = b.getChannelData(0);
+      for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+      return b;
+    }
+    /* a burst of static: gated noise through a band filter, with a sharp start and a ragged tail */
+    function burst(at, dur, vol, lo) {
+      var a = ac; if (!a) return;
+      var s = a.createBufferSource(); s.buffer = noiseBuf(a, dur + 0.1);
+      var f = a.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = lo || 2600; f.Q.value = 0.5;
+      var g = a.createGain(); g.gain.setValueAtTime(0.0001, at);
+      var steps = Math.floor(dur / 0.018);
+      for (var i = 0; i < steps; i++) {
+        var k = i / steps, env = Math.pow(1 - k, 1.6);
+        g.gain.setValueAtTime(vol * env * (Math.random() < 0.28 ? 0.15 : 0.6 + Math.random() * 0.4), at + i * 0.018);
+      }
+      g.gain.setValueAtTime(0.0001, at + dur);
+      s.connect(f); f.connect(g); g.connect(a.destination); s.start(at); s.stop(at + dur + 0.05);
+    }
+    function pop(at, vol) { burst(at, 0.012 + Math.random() * 0.02, vol, 1800 + Math.random() * 3000); }
+    function thump(at) {
+      var a = ac, o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(95, at); o.frequency.exponentialRampToValueAtTime(38, at + 0.28);
+      g.gain.setValueAtTime(0.0001, at); g.gain.exponentialRampToValueAtTime(0.5, at + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, at + 0.34);
+      o.connect(g); g.connect(a.destination); o.start(at); o.stop(at + 0.4);
+    }
+    /* the whole intro, scheduled from "from" seconds in. Matches the flicker timings in playIntro. */
+    function play(from) {
+      var a = ctxr(); if (!a || a.state !== 'running') return;
+      var now = a.currentTime + 0.03;
+      function at(t) { return t >= from ? now + (t - from) : -1; }
+      var x;
+      // dry crackle bed, thicker through the 90s and black-and-white phases
+      for (var t = Math.max(0, from); t < 7.5; t += 0.05 + Math.random() * 0.22) {
+        var dens = t > 2.5 && t < 7 ? 1 : 0.35;
+        if (Math.random() < dens) pop(now + (t - from), 0.05 + Math.random() * 0.07);
+      }
+      if ((x = at(2.2)) > 0) burst(x, 0.7, 0.34, 2200);
+      if ((x = at(2.55)) > 0) burst(x, 0.25, 0.2, 3600);
+      if ((x = at(5.0)) > 0) burst(x, 0.7, 0.4, 2000);
+      if ((x = at(5.35)) > 0) burst(x, 0.3, 0.22, 3000);
+      if ((x = at(6.7)) > 0) burst(x, 0.7, 0.4, 2400);
+      if ((x = at(7.05)) > 0) { burst(x, 0.22, 0.25, 3200); thump(x + 0.02); }
+    }
+    return {
+      swallow: false,
+      /* start now if the browser allows it, otherwise on the first touch */
+      start: function () {
+        if (!store.get('introSnd', true)) return;
+        var a = ctxr(); if (!a) return;
+        t0 = performance.now();
+        var go = function () { if (a.state === 'running' && !bed) { bed = 1; play(Math.max(0, (performance.now() - t0) / 1000)); } };
+        if (a.state === 'running') { go(); return; }
+        a.resume().then(go).catch(function () {});
+        if (armed) return; armed = true;
+        var first = function () { Snd.swallow = body.dataset.menu !== 'show'; a.resume().then(go).catch(function () {}); };
+        document.addEventListener('pointerdown', first, { once: true, passive: true });
+        document.addEventListener('touchend', first, { once: true, passive: true });
+      },
+      stop: function () { bed = 1; if (ac) { try { ac.close(); } catch (e) {} ac = null; } }
+    };
+  })();
+  var sndBox = document.getElementById('intro-snd');
+  sndBox.checked = store.get('introSnd', true);
+  sndBox.addEventListener('change', function () { store.set('introSnd', sndBox.checked); });
+
   function playIntro() {
     if (reduceMotion || !store.get('intro', true)) {
       finishIntro();
@@ -152,6 +227,7 @@
     }
     body.dataset.menu = 'hide';
     setPhase('modern');
+    Snd.start();
     later(flick, 2200);
     later(function () { setPhase('nineties'); }, 2550);
     later(flick, 5000);
@@ -163,6 +239,7 @@
   }
 
   document.getElementById('screen-title').addEventListener('click', function () {
+    if (Snd.swallow) { Snd.swallow = false; return; }
     if (body.dataset.menu !== 'show') finishIntro();
   });
 
