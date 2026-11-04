@@ -448,6 +448,7 @@
   /* Looks for assets/logos/<team-id>-<era>.png or .svg first (for example
      chicago-stags-1946.png), then assets/logos/<team-id>.png or .svg.
      If none exists the coloured initials badge stays. */
+  var TODAY_CLUBS = ["atlanta-hawks", "boston-celtics", "brooklyn-nets", "charlotte-hornets", "chicago-bulls", "cleveland-cavaliers", "dallas-mavericks", "denver-nuggets", "detroit-pistons", "golden-state-warriors", "houston-rockets", "indiana-pacers", "la-clippers", "los-angeles-lakers", "memphis-grizzlies", "miami-heat", "milwaukee-bucks", "minnesota-timberwolves", "new-orleans-pelicans", "new-york-knicks", "oklahoma-city-thunder", "orlando-magic", "philadelphia-76ers", "phoenix-suns", "portland-trail-blazers", "sacramento-kings", "san-antonio-spurs", "toronto-raptors", "utah-jazz", "washington-wizards"];
   function applyLogo(badge, team) {
     var base = 'assets/logos/' + team.id;
     var era = currentEra ? (currentEra.logo || currentEra.id.replace(/s\d+$/, '')) : '';
@@ -456,7 +457,8 @@
     // the generic file may be a vintage logo, so the present day only uses a file made for it
     if (!(currentEra && currentEra.current)) urls.push(base + '.png', base + '.svg');
     // private use: the present day can show the NBA's own logo straight from its CDN
-    if (currentEra && currentEra.current && team.nbaId) urls.push('https://cdn.nba.com/logos/nba/' + team.nbaId + '/primary/L/logo.svg');
+    // a club that has since moved or changed its name must not show today's logo for its franchise
+    if (currentEra && currentEra.current && team.nbaId && TODAY_CLUBS.indexOf(team.id) >= 0) urls.push('https://cdn.nba.com/logos/nba/' + team.nbaId + '/primary/L/logo.svg');
     var i = 0;
     var img = new Image();
     img.alt = '';
