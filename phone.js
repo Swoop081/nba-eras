@@ -196,6 +196,13 @@
     var b = document.createElement('div'); b.className = 'pb';
     var ic = document.createElement('span'); ic.className = 'pb-ic'; ic.style.background = n.c; ic.textContent = n.g;
     if (n.title === 'ESPN Insider') { ic.textContent = ''; ic.classList.add('photo'); }
+    /* general managers and coaches write as themselves, so use their photo when we have one */
+    if (n.app === 'Messages' && n.title && n.title[0] !== '@') {
+      var slug = n.title.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim().replace(/\s+/g, '-'), exts = ['webp', 'png', 'jpg'], k = 0, im = new Image();
+      im.onload = function () { ic.textContent = ''; ic.style.backgroundImage = 'url(' + im.src + ')'; ic.style.backgroundSize = 'cover'; ic.style.backgroundPosition = 'center 20%'; };
+      im.onerror = function () { if (k < exts.length) im.src = 'assets/coaches/' + slug + '.' + exts[k++]; };
+      im.onerror();
+    }
     var tx = document.createElement('div'); tx.className = 'pb-tx';
     var top = document.createElement('small'); top.textContent = n.app.toUpperCase() + ' · now';
     var t = document.createElement('b'); t.textContent = n.title;

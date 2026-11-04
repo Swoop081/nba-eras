@@ -4556,6 +4556,13 @@
     } else {
       a = el('span', 'avatar fa', (p.g || (p.who || '?')[0]).toString().slice(0, 2));
       if (p.c) a.style.background = p.c;
+      (function (node, who) {
+        if (!who || who[0] === '@') return;
+        var slug = who.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim().replace(/\s+/g, '-'), exts = ['webp', 'png', 'jpg'], k = 0, im = new Image();
+        im.onload = function () { node.textContent = ''; node.style.backgroundImage = 'url(' + im.src + ')'; node.style.backgroundSize = 'cover'; node.style.backgroundPosition = 'center 20%'; };
+        im.onerror = function () { if (k < exts.length) im.src = 'assets/coaches/' + slug + '.' + exts[k++]; };
+        im.onerror();
+      })(a, p.who);
     }
     a.classList.add('fa-av');
     return a;
