@@ -2009,16 +2009,17 @@
       var gains = [];
       save.ids.forEach(function (id) { var lr = save.lastRec && save.lastRec[id], rc = save.rec[id]; if (!lr || !rc.w) return; if (save.coach && save.coach.since && Math.floor((save.coach.since[id + 'hcd'] || 0) / 1000) === save.year) return; var pc = rc.w / (rc.w + rc.l), im = pc - lr.w / Math.max(1, lr.w + lr.l); if (pc < 0.5) return; gains.push({ id: id, g: pc + 0.5 * Math.max(-0.1, Math.min(0.3, im)) }); });
       y.t.coy = vote(gains, function (g) { return g.g; }, function (g) { var s = Coach.staff(save, g.id), t = teamById(g.id); return { id: (s && s.hc && COACHPH.indexOf(s.hc.id) >= 0) ? s.hc.id : '', name: (s && s.hc && s.hc.n) || t.city + ' head coach', tid: g.id, line: save.rec[g.id].w + '-' + save.rec[g.id].l }; }, M3);
+      Object.keys(AWSTART).forEach(function (k) { if (save.year < AWSTART[k] && y.t[k]) y.t[k] = []; });
       ['mvp', 'dpoy', 'roy', 'smoy', 'mip', 'coy'].forEach(function (k) { y[k] = y.t[k][0] || null; });
       var an = top(rows, 'sc', 15, function (r) { return r.el; }).map(card); y.allnba = [an.slice(0, 5), an.slice(5, 10), an.slice(10, 15)];
-      var ad = top(rows, 'df', 10, function (r) { return r.el; }).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
-      var ar = top(rows, 'sc', 10, function (r) { return r.rk; }).map(card); y.allrook = [ar.slice(0, 5), ar.slice(5, 10)];
+      var ad = save.year < AWSTART.alldef ? [] : top(rows, 'df', 10, function (r) { return r.el; }).map(card); y.alldef = [ad.slice(0, 5), ad.slice(5, 10)];
+      var ar = save.year < AWSTART.allrook ? [] : top(rows, 'sc', 10, function (r) { return r.rk; }).map(card); y.allrook = [ar.slice(0, 5), ar.slice(5, 10)];
       (save.lg.ya = save.lg.ya || []).push(y); e = y;
       (save.lg.awq || (save.lg.awq = [])).push({ kind: 'ye', y: save.year });
     }
     if (save.phase === 'done' && save.champion) {
       e = yearEnd();
-      if (e && !e.fmvp) {
+      if (e && !e.fmvp && save.year >= AWSTART.fmvp) {
         var st2 = save.lg.stats, bestP = null, bs = -1;
         rosterOf(save.champion).forEach(function (p) { var o = st2[p.id]; if (!o || !o.g) return; var sc = perfScore(o, 0.6); if (sc > bs) { bs = sc; bestP = p; } });
         if (bestP) { e.fmvp = { id: bestP.id, name: bestP.name, tid: save.champion, line: 'NBA champions' }; (save.lg.awq || (save.lg.awq = [])).push({ kind: 'ye', y: save.year, keys: ['fmvp'] }); }
@@ -2026,6 +2027,9 @@
     }
   }
   var TROPHY = '<svg viewBox="0 0 100 120" aria-hidden="true"><defs><linearGradient id="tg" x1="0" x2="1"><stop offset="0" stop-color="#8a6a1f"/><stop offset=".45" stop-color="#f6dc86"/><stop offset="1" stop-color="#9c7a26"/></linearGradient></defs><path d="M26 8h48v30c0 20-12 32-24 32S26 58 26 38z" fill="url(#tg)"/><path d="M26 16H10c0 22 8 32 22 34M74 16h16c0 22-8 32-22 34" fill="none" stroke="url(#tg)" stroke-width="6" stroke-linecap="round"/><rect x="44" y="68" width="12" height="22" fill="url(#tg)"/><rect x="30" y="90" width="40" height="10" rx="2" fill="url(#tg)"/><rect x="22" y="100" width="56" height="12" rx="3" fill="#5b4510"/><path d="M36 14v28" stroke="#fff6cf" stroke-width="3" opacity=".55" stroke-linecap="round"/></svg>';
+  /* The season each award began (keyed by the season that just ended): MVP 1955-56, Rookie of the Year 1952-53, Coach of the Year and All-Rookie 1962-63,
+     Finals MVP, All-Defensive 1968-69, Defensive Player and Sixth Man 1982-83, Most Improved 1985-86. */
+  var AWSTART = { mvp: 1955, roy: 1952, coy: 1962, allrook: 1962, fmvp: 1968, alldef: 1968, dpoy: 1982, smoy: 1982, mip: 1985 };
   var AWNAMES = { mvp: 'Most Valuable Player', dpoy: 'Defensive Player of the Year', roy: 'Rookie of the Year', smoy: 'Sixth Man of the Year', mip: 'Most Improved Player', coy: 'Coach of the Year', fmvp: 'Finals MVP' };
   function awardShow(pages, onDone) {
     var ov = el('div', 'aw-full'), track = el('div', 'aw-track'), dots = el('div', 'aw-dots'), n = pages.length, cur = 0;
@@ -5916,7 +5920,7 @@
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null, me: save.myId, po: madePlayoffs() });
     (function () {
       function award(id, name) { var q = League.byId(save, id); if (q) (q.awards || (q.awards = [])).push({ y: save.year, a: name }); }
-      if (review.mvp) award(review.mvp.id, 'Most Valuable Player');
+      if (review.mvp && save.year >= AWSTART.mvp) award(review.mvp.id, 'Most Valuable Player');
       if (review.pts[0]) award(review.pts[0].id, 'Scoring champion');
       if (review.ast[0]) award(review.ast[0].id, 'Assists leader');
       review.allLeague.first.forEach(function (x) { award(x.id, 'All-League First Team'); });
