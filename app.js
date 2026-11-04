@@ -804,7 +804,9 @@
   fetch('data/gms-2025.json').then(function (r) { return r.json(); }).then(function (d) { GMS25 = d.gm; }).catch(function () {});
   fetch('data/coaches-2026.json').then(function (r) { return r.json(); }).then(function (d) { COACH26 = d; COACHDATA = COACH26; }).catch(function () {});
   fetch('data/coaches-2025.json').then(function (r) { return r.json(); }).then(function (d) { COACH25 = d; }).catch(function () {});
-  var NBAIDS = {};
+  var NBAIDS = {}, NOPHOTO = {}, WIKIPHOTO = {};
+  fetch('data/nba-photo-none.json').then(function (r) { return r.json(); }).then(function (d) { d.forEach(function (i) { NOPHOTO[i] = 1; }); }).catch(function () {});   /* the NBA site answers with a silhouette for these ids */
+  fetch('data/photos-wiki.json').then(function (r) { return r.json(); }).then(function (d) { WIKIPHOTO = d; }).catch(function () {});
   fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(d, NBAIDS); }).catch(function () {});
   fetch('data/nba-ids-extra.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(NBAIDS, d); }).catch(function () {});
   fetch('data/careers.json').then(function (r) { return r.json(); }).then(function (d) { League.setCareers(d); }).catch(function () {});
@@ -823,7 +825,8 @@
     img.onerror = function () { next(); };
     function next() {
       if (i < exts.length) img.src = 'assets/' + exts[i++];
-      else if (i === exts.length && NBAIDS[p.id]) { i++; img.src = 'https://cdn.nba.com/headshots/nba/latest/1040x760/' + NBAIDS[p.id] + '.png'; }
+      else if (i === exts.length && NBAIDS[p.id] && !NOPHOTO[NBAIDS[p.id]]) { i++; img.src = 'https://cdn.nba.com/headshots/nba/latest/1040x760/' + NBAIDS[p.id] + '.png'; }
+      else if (i <= exts.length + 1 && WIKIPHOTO[p.id]) { i = exts.length + 2; img.src = WIKIPHOTO[p.id][0]; }
     }
     next();
     return wrap;
