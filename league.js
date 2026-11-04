@@ -18,6 +18,9 @@
     MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : Math.round(1000 * SCALE / 100) * 100;
     MIN_ROSTER = MODERN ? (year >= 2023 ? 14 : year >= 1996 ? 13 : 11) : 9;
     OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
+    /* Real roster limits: 10 through the 1950s, 12 until the 1980 expansion era of 15-man benches. */
+    MAX_ROSTER = year < 1960 ? 10 : year < 1979 ? 12 : 15;
+    if (year < 1960) { MIN_ROSTER = 8; OPENING_ROSTER = 10; } else if (!MODERN) { OPENING_ROSTER = Math.min(OPENING_ROSTER, MAX_ROSTER); }
     if (root.League) { root.League.MIN_ROSTER = MIN_ROSTER; root.League.MAX_ROSTER = MAX_ROSTER; }
   }
   /* The founding years count money in dollars and the modern game in thousands. When a long game crosses 1979 every figure converts once. */
@@ -921,6 +924,11 @@
       return pa - pb;
     });
     var lot = !first && root.Rules ? lotteryOrder(order, root.Rules.get(save.year).lottery, save.year + 1) : order;
+    /* 1966-84: no lottery, the two worst clubs flip a coin for the first pick. */
+    var dy = save.year + 1;
+    if (!first && lot === order && dy >= 1966 && dy <= 1984 && order.length > 2) {
+      lot = order.slice(); if (Math.random() < 0.5) { var tmp = lot[0]; lot[0] = lot[1]; lot[1] = tmp; }
+    }
     var picks = [];
     for (var r = 1; r <= rounds; r++) (r === 1 ? lot : order).forEach(function (id, i) { picks.push({ round: r, pick: picks.length + 1, team: id, player: null }); });
     return picks;
