@@ -2110,8 +2110,39 @@
     h.push({ y: save.year, day: save.day, date: (save.dates && save.dates[save.day - 1]) || '', title: title, cards: cards.map(function (c) { return { conf: c.conf, id: c.p.id, name: c.p.name, tid: c.tid, line: c.line, rec: c.rec }; }) });
     if (!bulk) (save.lg.awq || (save.lg.awq = [])).push({ title: title, cards: cards });
   }
+  /* The All-Star Game (from 1950-51): the best players so far in each conference, a game at the break. */
+  function allStarCheck() {
+    if (!save || save.year < 1950 || save.phase !== 'regular') return;
+    if (save.lg.asg && save.lg.asg.y === save.year) return;
+    var games = (window.Rules && Rules.get(save.year).games) || 82, r0 = save.rec[save.myId] || { w: 0, l: 0 };
+    if (r0.w + r0.l < Math.round(games * 0.55)) return;
+    var per = save.year < 1960 ? 5 : 6, picks = { East: [], West: [] }, st = save.lg.stats, flip = 0;
+    var cands = save.lg.players.filter(function (p) { var o = st[p.id]; return p.status === 'active' && p.team && o && o.g >= 8; }).map(function (p) {
+      var o = st[p.id], rc = save.rec[p.team] || { w: 0, l: 0 }, wp = rc.w / Math.max(1, rc.w + rc.l);
+      return { p: p, o: o, sc: perfScore(o, wp) };
+    }).sort(function (x, y) { return y.sc - x.sc; });
+    var conf = {};
+    cands.forEach(function (c) {
+      var k = confOf(c.p.team); if (k === 'League') { if (!conf[c.p.team]) conf[c.p.team] = (flip++ % 2) ? 'East' : 'West'; k = conf[c.p.team]; }
+      if (picks[k].length < per * 2 && picks[k].filter(function (x) { return x.p.team === c.p.team; }).length < 2) picks[k].push(c);
+    });
+    var tot = function (l) { return l.reduce(function (a, c) { return a + c.sc; }, 0); };
+    var base = save.year < 1960 ? 110 : save.year < 1990 ? 125 : save.year < 2003 ? 135 : save.year < 2012 ? 150 : 170;
+    var d = (tot(picks.East) - tot(picks.West)) / Math.max(1, tot(picks.East) + tot(picks.West)) * 40 + (Math.random() - 0.5) * 24;
+    var eS = Math.round(base + d / 2 + (Math.random() - 0.5) * 8), wS = Math.round(base - d / 2 + (Math.random() - 0.5) * 8);
+    if (eS === wS) eS++;
+    var winK = eS > wS ? 'East' : 'West', mvpC = picks[winK].slice().sort(function (x, y) { return y.sc * (0.8 + Math.random() * 0.4) - x.sc * (0.8 + Math.random() * 0.4); })[0];
+    var card = function (c) { return { id: c.p.id, name: c.p.name, tid: c.p.team, line: (c.o.pts / c.o.g).toFixed(1) + ' pts' }; };
+    if (save.lg.asg) (save.lg.asgH = save.lg.asgH || []).push(save.lg.asg);
+    save.lg.asg = { y: save.year, east: picks.East.map(card), west: picks.West.map(card), es: eS, ws: wS, mvp: mvpC ? card(mvpC) : null };
+    picks.East.concat(picks.West).forEach(function (c) { (c.p.awards || (c.p.awards = [])).push({ y: save.year, a: 'All-Star' }); });
+    if (mvpC) (mvpC.p.awards || (mvpC.p.awards = [])).push({ y: save.year, a: 'All-Star Game MVP' });
+    var mine = picks.East.concat(picks.West).filter(function (c) { return c.p.team === save.myId; }).map(function (c) { return lastName(c.p.name); });
+    (save.lg.wire || (save.lg.wire = [])).push({ d: save.day, y: save.year, t: 'All-Star Game: ' + (eS > wS ? 'East' : 'West') + ' beat the ' + (eS > wS ? 'West' : 'East') + ' ' + Math.max(eS, wS) + '-' + Math.min(eS, wS) + (mvpC ? '. MVP: ' + mvpC.p.name + '.' : '.') + (mine.length ? ' Your All-Stars: ' + mine.join(', ') + '.' : '') });
+  }
   function awardsCheck() {
     if (!save || save.phase !== 'regular' || !save.lg.aw) return;
+    allStarCheck();
     var aw = save.lg.aw, last = save.lg.awLast || (save.lg.awLast = { wk: 0, mo: '' }), q = save.lg.awq || (save.lg.awq = []), d = save.day;
     if (d >= 7 && d - last.wk >= 7) {
       last.wk = d;
@@ -3600,6 +3631,8 @@
         var rows = ya.filter(function (e) { return e[k[0]]; }).map(function (e) { var c = e[k[0]]; return { cells: [e.label, c.name, (teamById(c.tid) || { city: '\u2013' }).city] }; });
         if (rows.length) section(k[1], ['Season', 'Winner', 'Team'], rows);
       });
+      var asRows = (save.lg.asgH || []).concat(save.lg.asg ? [save.lg.asg] : []).filter(function (g, i, arr) { return arr.indexOf(g) === i; }).reverse().map(function (g) { return { cells: [seasonLabel(g.y), (g.es > g.ws ? 'East ' + g.es + '-' + g.ws : 'West ' + g.ws + '-' + g.es), g.mvp ? g.mvp.name : '\u2013'] }; });
+      if (asRows.length) section('All-Star Game', ['Season', 'Result', 'MVP'], asRows);
       [['allnba', 'All-NBA', ['First', 'Second', 'Third']], ['alldef', 'All-Defensive', ['First', 'Second']], ['allrook', 'All-Rookie', ['First', 'Second']]].forEach(function (k) {
         var rows = [];
         ya.forEach(function (e) { (e[k[0]] || []).forEach(function (tm, i) { if (tm.length) rows.push({ cells: [e.label + ' \u00B7 ' + k[2][i], tm.map(function (c) { return c.name; }).join(', ')] }); }); });
