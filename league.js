@@ -764,31 +764,36 @@
     };
   }
 
+  /* What a drafted rookie really rated in his first season, by era: anchors for picks 1, 3.5, 10, 22 and 45, fitted to every real draft class 1950-2025 against the ratings built from their rookie-year lines. */
+  var ROOK = { 1950: [56, 56, 49.5, 46.4, 44.9], 1960: [60, 56.2, 47.6, 45.1, 44.2], 1970: [59, 56.4, 50.6, 49.4, 47.5], 1980: [61, 57.5, 53.2, 48.1, 46.6],
+    1990: [65, 58.7, 52, 48.4, 46.7], 2000: [60, 55.9, 51.2, 49.4, 48], 2010: [58, 51.1, 49.4, 48.1, 47.6], 2020: [56, 52, 49.3, 48.2, 47.3] };
+  function rookieTarget(pick, year) {
+    var a = ROOK[clamp(Math.floor(year / 10) * 10, 1950, 2020)], x = [1, 3.5, 10, 22, 45], i = 0;
+    while (i < 3 && pick > x[i + 1]) i++;
+    var m = pick >= 45 ? a[4] : a[i] + (a[i + 1] - a[i]) * clamp((pick - x[i]) / (x[i + 1] - x[i]), 0, 1);
+    var sd = pick <= 5 ? 11 : pick <= 14 ? 8.5 : pick <= 30 ? 7 : 5;
+    return clamp(Math.round(m + gauss() * sd / 0.58), 36, 88);
+  }
+
   function makeClass(year, real, total) {
     var seen = {}, list = [];
     (real || []).forEach(function (rp) {
-      var target = MODERN && rp.age ? clamp(Math.round(68 - (rp.realPick - 1) * 0.42 + gauss() * 2), 42, 70) : clamp(Math.round(62 - (rp.realPick - 1) * 0.28 + gauss() * 2), 44, 66);
+      var target = rookieTarget(rp.realPick, year);
       var age = rp.age || Math.round(rnd(21, 24));
       var pot = rp.pot !== undefined ? rp.pot : target + (rp.age ? Math.round((age <= 18 ? 17 : age <= 19 ? 14 : age <= 20 ? 11 : age <= 22 ? 7 : 4) * (1.15 - rp.realPick / 120) + gauss() * 2) : Math.round(rnd(4, 14)));
       list.push(makePlayer(rp, target, age, pot));
       seen[rp.id] = 1;
     });
+    /* A real class is used as it is, with no made-up names. Only a year with no real list at all is generated. */
     var n = 0, k0 = list.length;
+    if (k0 >= 20) total = k0;
     while (list.length < total) {
       var fn = MODERN ? pick(FIRST_M) : pick(FIRST), ln = MODERN ? pick(LAST_M) : pick(LAST);
       var name = fn + ' ' + ln, id = name.toLowerCase().replace(/[^a-z ]/g, '').replace(/ +/g, '-');
       if (seen[id] || n++ > 500) continue;
       seen[id] = 1;
-      var rank = list.length - k0, target, age, pot;
-      if (MODERN) {
-        target = k0 >= 30 ? clamp(Math.round(rnd(38, 47) + gauss() * 2), 34, 50) : rank < 14 ? clamp(Math.round(71 - rank * 1.1 + gauss() * 2), 54, 73) : clamp(Math.round(rnd(42, 55) + gauss() * 2), 38, 58);
-        age = Math.round(rnd(19, 22));
-        pot = target + Math.round(k0 < 30 && rank < 14 ? rnd(8, 17) : rnd(3, 10));
-      } else {
-        target = clamp(Math.round(rnd(40, 56) + gauss() * 2), 38, 60);
-        age = Math.round(rnd(21, 24));
-        pot = target + Math.round(rnd(3, 14));
-      }
+      var rank = list.length - k0, target = rookieTarget(rank + 1, year), age = MODERN ? Math.round(rnd(19, 22)) : Math.round(rnd(21, 24)), pot;
+      pot = target + (MODERN ? Math.round(rank < 14 ? rnd(8, 17) : rnd(3, 10)) : Math.round(rnd(3, 14)));
       list.push(makePlayer({ id: id, name: name, pos: pick(['G', 'G', 'F', 'F', 'F/C', 'C', 'G/F']), college: MODERN ? pick(COLLEGES_M) : pick(COLLEGES) }, target, age, pot));
     }
     list.forEach(function (p) {
@@ -910,6 +915,7 @@
       var k = (save.lg.picks || []).filter(function (x) { return x.y === save.year + 1 && x.r === sl.round && x.o === sl.team; })[0];
       if (k && k.t !== sl.team) { sl.orig = sl.team; sl.team = k.t; }
     });
+    if (dp.length > pool.length) dp = dp.slice(0, pool.length);   /* a real class can be shorter than the slots */
     save.lg.draft = { year: save.year + 1, rounds: rounds, pool: pool, picks: dp, at: 0 };
   }
 
