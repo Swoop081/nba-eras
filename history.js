@@ -1,7 +1,7 @@
 /* Real franchise changes, keyed by the season that just ended. Each season with real events asks the
    player whether to keep history or change it, and resolves any contradiction with the league as it stands. */
 (function (root) {
-  function club(id, city, name, c1, c2, nbaId) { return { id: id, city: city, name: name, division: 'Western', colors: [c1, c2], w: 0, l: 0, nbaId: nbaId || null }; }
+  function club(id, city, name, c1, c2, nbaId, div) { return { id: id, city: city, name: name, division: div || 'Western', colors: [c1, c2], w: 0, l: 0, nbaId: nbaId || null }; }
   function ev(id, title, news, alt, o) { var e = { id: id, title: title, news: news, alt: alt, fold: [], join: [], move: {}, rename: {} }; for (var k in o) e[k] = o[k]; return e; }
   function rn(city, name, c1, c2, nbaId) { return { city: city, name: name, colors: [c1, c2], nbaId: nbaId || null }; }
   var HISTORY = {
@@ -31,6 +31,18 @@
   };
   /* Real league events from 1950 on, keyed by the season that just ended. A club that does not exist in your league is simply skipped. */
   function add(y, e) { (HISTORY[y] = HISTORY[y] || []).push(e); }
+  /* The merger years. 1948: the BAA absorbs six National Basketball League clubs and Denver, becoming the NBA with three divisions. */
+  add(1948, ev('nba-merger-1949', 'The BAA and NBL merge into the NBA', 'Syracuse, Anderson, Tri-Cities, Sheboygan, Waterloo and Indianapolis come over from the National Basketball League and Denver joins as a new club. Providence and the Indianapolis Jets fold. The league is renamed the National Basketball Association, 17 clubs in three divisions.', 'Nobody merges. The league stays at 12 clubs.', {
+    fold: ['providence-steamrollers', 'indianapolis-jets'],
+    join: [club('syracuse-nationals', 'Syracuse', 'Nationals', '#1F6E43', '#FFFFFF', null, 'Eastern'), club('anderson-packers', 'Anderson', 'Packers', '#2E7D32', '#F5C518'), club('tri-cities-blackhawks', 'Tri-Cities', 'Blackhawks', '#222222', '#E03C31'), club('sheboygan-red-skins', 'Sheboygan', 'Red Skins', '#B22222', '#F2F2F2'), club('waterloo-hawks', 'Waterloo', 'Hawks', '#4B5563', '#F5C518'), club('indianapolis-olympians', 'Indianapolis', 'Olympians', '#D4A017', '#1D428A'), club('denver-nuggets', 'Denver', 'Nuggets', '#0B3D91', '#FFC72C')],
+    move: { 'chicago-stags': { from: 'Western', to: 'Central' }, 'st-louis-bombers': { from: 'Western', to: 'Central' }, 'fort-wayne-pistons': { from: 'Western', to: 'Central' }, 'minneapolis-lakers': { from: 'Western', to: 'Central' }, 'rochester-royals': { from: 'Western', to: 'Central' } } }));
+  add(1949, ev('nba-contraction-1950', 'Six clubs leave the league', 'Anderson, Sheboygan and Waterloo leave for the new National Professional Basketball League, and Denver, Chicago and St. Louis fold. The NBA is down to 11 clubs in two divisions.', 'Everybody stays. The league keeps its 17 clubs.', {
+    fold: ['anderson-packers', 'sheboygan-red-skins', 'waterloo-hawks', 'denver-nuggets', 'chicago-stags', 'st-louis-bombers'],
+    move: { 'fort-wayne-pistons': { from: 'Central', to: 'Western' }, 'minneapolis-lakers': { from: 'Central', to: 'Western' }, 'rochester-royals': { from: 'Central', to: 'Western' } } }));
+  add(1950, ev('was-fold-1951', 'The Capitols fold and Tri-Cities becomes Milwaukee', 'Washington folds in January 1951 and its season is wiped from the books. The Tri-Cities Blackhawks move to Milwaukee as the Hawks.', 'The Capitols play on and the Blackhawks stay put.', {
+    fold: ['washington-capitols'], rename: { 'tri-cities-blackhawks': rn('Milwaukee', 'Hawks', '#E03A3E', '#C1D32F') } }));
+  add(1952, ev('ind-fold-1953', 'The Olympians fold', 'Indianapolis folds after the 1952-53 season. Nine clubs remain.', 'The Olympians play on.', { fold: ['indianapolis-olympians'] }));
+  add(1953, ev('bal-fold-1954', 'The Bullets fold', 'Baltimore folds after 14 games of 1954-55. The league is down to eight clubs, where it stays until 1961.', 'The Bullets stay in business.', { fold: ['baltimore-bullets'] }));
   add(1954, ev('mil-stl-1955', 'The Hawks move to St. Louis', 'The Milwaukee Hawks relocate to St. Louis.', 'The Hawks stay in Milwaukee.', { rename: { 'milwaukee-hawks': rn('St. Louis', 'Hawks', '#E03A3E', '#C1D32F', 1610612737) } }));
   add(1956, ev('ftw-det-1957', 'The Pistons move to Detroit', 'The Fort Wayne Pistons relocate to Detroit; the Rochester Royals become the Cincinnati Royals.', 'Both clubs stay where they are.', { rename: { 'fort-wayne-pistons': rn('Detroit', 'Pistons', '#C8102E', '#1D42BA', 1610612765), 'rochester-royals': rn('Cincinnati', 'Royals', '#6F2C91', '#FFFFFF', 1610612758) } }));
   add(1959, ev('min-la-1960', 'The Lakers move to Los Angeles', 'The Minneapolis Lakers relocate to Los Angeles.', 'The Lakers stay in Minneapolis.', { rename: { 'minneapolis-lakers': rn('Los Angeles', 'Lakers', '#552583', '#FDB927', 1610612747) } }));

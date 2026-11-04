@@ -206,7 +206,7 @@
     var division = {}, rec = {};
     teams.forEach(function (t) { division[t.id] = t.division; rec[t.id] = { w: 0, l: 0 }; });
     return {
-      v: 1, fmt: (root.Rules ? root.Rules.get(year).kind : 'top'), eraId: eraId, year: year, myId: myId, ids: ids, division: division,
+      v: 1, fmt: (root.Rules ? root.Rules.get(year).kind : 'top'), fin232: !!(root.Rules && root.Rules.get(year).fin232), rpo: root.Rules ? (root.Rules.get(year).po || null) : null, playin: !!(root.Rules && root.Rules.get(year).playin), eraId: eraId, year: year, myId: myId, ids: ids, division: division,
       days: days, day: 0, results: [], rec: rec, dates: cal ? cal.dates : null, gmeta: cal ? cal.meta : null, cup: cal ? cal.cup : null,
       phase: 'regular', playoffs: null, champion: null
     };
@@ -234,6 +234,7 @@
     { name: 'Finals', best: 7 }
   ];
   var HOME_PATTERN = {
+    1: [0],
     3: [0, 1, 0],
     5: [0, 0, 1, 1, 0],
     7: [0, 0, 1, 1, 0, 1, 0]
@@ -260,7 +261,42 @@
   function startPlayoffs(state) {
     var st = standings(state), divs = Object.keys(st), kind = state.fmt || 'top';
     var order, names, best, round = null, extra = {};
-    if (kind === 'ladder47' && divs.length === 2 && divs.every(function (d) { return st[d].length >= 3; })) {
+    var P = state.rpo;
+    if (kind === 'nba50' && divs.length === 3 && divs.every(function (d) { return st[d].length >= 4; })) {
+      round = [];
+      divs.forEach(function (d) { var t = st[d].map(function (x) { return x.id; }); round.push(ser(state, t[0], t[3], 1, 4, 3, null, d), ser(state, t[1], t[2], 2, 3, 3, null, d)); });
+      names = ['Division semifinals', 'Division finals', 'Semifinal', 'Finals'];
+      best = [3, 3, 3, 7];
+    } else if (kind === 'grp' && P && divs.length === 2 && divs.every(function (d) { return st[d].length >= P.q; })) {
+      var q = P.q, S = 1; while (S < q) S *= 2;
+      var ord = S === 8 ? [1, 8, 4, 5, 2, 7, 3, 6] : S === 4 ? [1, 4, 2, 3] : [1, 2];
+      var lay = function (d, t) {
+        var out = [];
+        for (var i = 0; i < ord.length; i += 2) {
+          var a = ord[i], b = ord[i + 1];
+          if (b > q) out.push({ a: t[a - 1], b: t[a - 1], sa: a, sb: a, w: [1, 0], winner: t[a - 1], best: 1, div: d, bye: true });
+          else out.push(ser(state, t[a - 1], t[b - 1], a, b, P.best[0], null, d));
+        }
+        return out;
+      };
+      var nr = Math.log(S) / Math.LN2 + 1;
+      names = nr === 4 ? ['First round', 'Conference semifinals', 'Conference finals', 'Finals'] : nr === 3 ? ['Division semifinals', 'Division finals', 'Finals'] : ['Division finals', 'Finals'];
+      best = P.best.slice(0, nr);
+      if (state.playin && q === 8 && divs.every(function (d) { return st[d].length >= 10; })) {
+        round = [];
+        var direct = {};
+        divs.forEach(function (d) {
+          var t = st[d].map(function (x) { return x.id; });
+          direct[d] = t.slice(0, 6);
+          round.push(ser(state, t[6], t[7], 7, 8, 1, 'Play-in', d), ser(state, t[8], t[9], 9, 10, 1, 'Play-in', d));
+        });
+        extra.playin = { stage: 1, direct: direct, divs: divs };
+        names = ['Play-in', 'Play-in final'].concat(names); best = [1, 1].concat(best);
+      } else {
+        round = [];
+        divs.forEach(function (d) { round = round.concat(lay(d, st[d].map(function (x) { return x.id; }))); });
+      }
+    } else if (kind === 'ladder47' && divs.length === 2 && divs.every(function (d) { return st[d].length >= 3; })) {
       var E = st[divs[0]].map(function (t) { return t.id; }), W = st[divs[1]].map(function (t) { return t.id; });
       round = [
         ser(state, E[0], W[0], 1, 1, 7, 'Semifinal'),
@@ -321,6 +357,8 @@
       names = q === 8 ? ['Quarterfinals', 'Semifinals', 'Finals'] : ['Semifinals', 'Finals'];
       best = q === 8 ? [3, 5, 7] : [5, 7];
       kind = 'top';
+    } else if (kind === 'grp' || kind === 'nba50') {
+      /* best, names set above */
     } else {
       if (kind === 'nba12') best = [3, 7, 7, 7];
       else best = names.length === 4 ? [(root.Rules && root.Rules.get(state.year).firstBest) || 7, 7, 7, 7] : names.length === 3 ? [3, 3, 7] : [7, 7];
@@ -330,6 +368,7 @@
       if (kind === 'div4x') best = [7, 7, 7];
     }
     state.playoffs = { kind: kind, round: 0, rounds: [round], names: names, best: best };
+    if (extra.playin) state.playoffs.playin = extra.playin;
     state.phase = 'playoffs';
   }
 
@@ -343,7 +382,7 @@
       if (s.winner) return;
       var best = s.best || roundInfo(state, po.round).best;
       var n = s.w[0] + s.w[1];
-      var aHome = HOME_PATTERN[best][n] === 0;
+      var aHome = (s.f232 ? [0, 0, 1, 1, 1, 0, 0] : HOME_PATTERN[best])[n] === 0;
       list.push({ home: aHome ? s.a : s.b, away: aHome ? s.b : s.a, series: i, round: po.round });
     });
     return list;
@@ -353,6 +392,25 @@
   function advance(state) {
     var po = state.playoffs, cur = po.rounds[po.round];
     if (cur.some(function (s) { return !s.winner; })) return;
+    if (po.playin && po.playin.stage) {
+      var pi = po.playin;
+      if (pi.stage === 1) {
+        var nx = [];
+        pi.divs.forEach(function (d, k) { var a = cur[2 * k], b = cur[2 * k + 1]; nx.push(ser(state, a.winner === a.a ? a.b : a.a, b.winner, 8, 9, 1, 'Play-in final', d)); pi['s7' + k] = a.winner; });
+        po.rounds.push(nx); po.round++; pi.stage = 2; return;
+      }
+      var fr = [];
+      pi.divs.forEach(function (d, k) {
+        var t = pi.direct[d].concat([pi['s7' + k], cur[k].winner]);
+        [[1, 8], [4, 5], [2, 7], [3, 6]].forEach(function (pp) { fr.push(ser(state, t[pp[0] - 1], t[pp[1] - 1], pp[0], pp[1], po.best[2], null, d)); });
+      });
+      po.rounds.push(fr); po.round++; pi.stage = 0; return;
+    }
+    if (po.kind === 'nba50' && po.round === 1) {
+      var ws = cur.map(function (x) { return x.winner; }), rk = ranked(state, ws), top = rk[0], oth = rk.slice(1);
+      po.rounds.push([{ a: top, b: top, sa: 1, sb: 1, w: [1, 0], winner: top, best: 1, bye: true }, ser(state, oth[0], oth[1], 2, 3, 3, 'Semifinal')]);
+      po.round++; return;
+    }
     if (po.kind === 'ladder47' && po.round < 2) {
       if (po.round === 0) {
         po.semiWinner = cur[0].winner;
@@ -371,6 +429,7 @@
       var first = sx <= sy;
       next.push({ best: po.best[po.round + 1], div: x.div, a: first ? x.winner : y.winner, b: first ? y.winner : x.winner, sa: Math.min(sx, sy), sb: Math.max(sx, sy), w: [0, 0], winner: null });
     }
+    if (next.length === 1 && state.fin232) next[0].f232 = true;
     po.rounds.push(next);
     po.round++;
   }
