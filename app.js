@@ -6408,7 +6408,7 @@
   /* ---------- draft night broadcast ---------- */
   var dn = { run: 0, timer: null, clock: 0, brk: '', brkT: null, tick: null, feed: [] };
   function dnStop() { dn.run = 0; clearTimeout(dn.timer); clearInterval(dn.tick); dn.tick = null; }
-  function dnLive() { return save && save.off && (save.off.step === 'draft') && document.getElementById('screen-off').classList.contains('active'); }
+  function dnLive() { return save && save.off && (save.off.step === 'draft' || save.off.step === 'dispersal') && document.getElementById('screen-off').classList.contains('active'); }
   function dnTime(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
   function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
   function dnRank(d, p) { var ip = d.pool.indexOf(p); return d.pool.filter(function (q, i) { return q.board > p.board || (q.board === p.board && i < ip); }).length + 1; }
@@ -6520,6 +6520,7 @@
     document.getElementById('off-dock').textContent = '';
     var slot = d.picks[d.at], mine = slot.team === me.id, team = teamById(slot.team);
     var avail = League.draftAvailable(save);
+    if (!avail.length) { dnStop(); dnFinish(me); return; }
     if (!offSel || !avail.some(function (p) { return p.id === offSel; })) offSel = avail[0].id;
     offHeader(isDisp ? 'Dispersal draft' : d.year + ' NBA Draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length);
     var wrap = el('div', 'dn');
