@@ -1,0 +1,605 @@
+{
+"1946": {
+"champ": "Philadelphia Warriors",
+"runnerUp": "Chicago Stags",
+"result": "4-1"
+},
+"1947": {
+"champ": "Baltimore Bullets",
+"runnerUp": "Philadelphia Warriors",
+"result": "4-2"
+},
+"1948": {
+"champ": "Minneapolis Lakers",
+"runnerUp": "Washington Capitols",
+"result": "4-2"
+},
+"1949": {
+"champ": "Minneapolis Lakers",
+"runnerUp": "Syracuse Nationals",
+"result": "4-2"
+},
+"1950": {
+"champ": "Rochester Royals",
+"runnerUp": "New York Knicks",
+"result": "4-3"
+},
+"1951": {
+"champ": "Minneapolis Lakers",
+"runnerUp": "New York Knicks",
+"result": "4-3"
+},
+"1952": {
+"champ": "Minneapolis Lakers",
+"runnerUp": "New York Knicks",
+"result": "4-1",
+"roy": "Don Meineke"
+},
+"1953": {
+"champ": "Minneapolis Lakers",
+"runnerUp": "Syracuse Nationals",
+"result": "4-3",
+"roy": "Ray Felix"
+},
+"1954": {
+"champ": "Syracuse Nationals",
+"runnerUp": "Fort Wayne Pistons",
+"result": "4-3",
+"roy": "Bob Pettit"
+},
+"1955": {
+"champ": "Philadelphia Warriors",
+"runnerUp": "Fort Wayne Pistons",
+"result": "4-1",
+"roy": "Maurice Stokes",
+"mvp": "Bob Pettit"
+},
+"1956": {
+"champ": "Boston Celtics",
+"runnerUp": "St. Louis Hawks",
+"result": "4-3",
+"roy": "Tom Heinsohn",
+"mvp": "Bob Cousy"
+},
+"1957": {
+"champ": "St. Louis Hawks",
+"runnerUp": "Boston Celtics",
+"result": "4-2",
+"roy": "Woody Sauldsberry",
+"mvp": "Bill Russell"
+},
+"1958": {
+"champ": "Boston Celtics",
+"runnerUp": "Minneapolis Lakers",
+"result": "4-0",
+"roy": "Elgin Baylor",
+"mvp": "Bob Pettit"
+},
+"1959": {
+"champ": "Boston Celtics",
+"runnerUp": "St. Louis Hawks",
+"result": "4-3",
+"roy": "Wilt Chamberlain",
+"mvp": "Wilt Chamberlain"
+},
+"1960": {
+"champ": "Boston Celtics",
+"runnerUp": "St. Louis Hawks",
+"result": "4-1",
+"roy": "Oscar Robertson",
+"mvp": "Bill Russell"
+},
+"1961": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-3",
+"roy": "Walt Bellamy",
+"mvp": "Bill Russell"
+},
+"1962": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-2",
+"roy": "Terry Dischinger",
+"mvp": "Bill Russell"
+},
+"1963": {
+"champ": "Boston Celtics",
+"runnerUp": "San Francisco Warriors",
+"result": "4-1",
+"mvp": "Oscar Robertson",
+"roy": "Jerry Lucas"
+},
+"1964": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-1",
+"roy": "Willis Reed",
+"mvp": "Bill Russell"
+},
+"1965": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-3",
+"roy": "Rick Barry",
+"mvp": "Wilt Chamberlain"
+},
+"1966": {
+"champ": "Philadelphia 76ers",
+"runnerUp": "San Francisco Warriors",
+"result": "4-2",
+"roy": "Dave Bing",
+"mvp": "Wilt Chamberlain"
+},
+"1967": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-2",
+"roy": "Earl Monroe",
+"mvp": "Wilt Chamberlain"
+},
+"1968": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-3",
+"fmvp": "Jerry West",
+"roy": "Wes Unseld",
+"mvp": "Wes Unseld"
+},
+"1969": {
+"champ": "New York Knicks",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-3",
+"fmvp": "Willis Reed",
+"roy": "Lew Alcindor",
+"mvp": "Willis Reed"
+},
+"1970": {
+"champ": "Milwaukee Bucks",
+"runnerUp": "Baltimore Bullets",
+"result": "4-0",
+"fmvp": "Lew Alcindor",
+"roy": "Dave Cowens",
+"mvp": "Lew Alcindor"
+},
+"1971": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "New York Knicks",
+"result": "4-1",
+"fmvp": "Wilt Chamberlain",
+"roy": "Sidney Wicks",
+"mvp": "Kareem Abdul-Jabbar"
+},
+"1972": {
+"champ": "New York Knicks",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-1",
+"fmvp": "Willis Reed",
+"roy": "Bob McAdoo",
+"mvp": "Dave Cowens"
+},
+"1973": {
+"champ": "Boston Celtics",
+"runnerUp": "Milwaukee Bucks",
+"result": "4-3",
+"fmvp": "John Havlicek",
+"roy": "Ernie DiGregorio",
+"mvp": "Kareem Abdul-Jabbar"
+},
+"1974": {
+"champ": "Golden State Warriors",
+"runnerUp": "Washington Bullets",
+"result": "4-0",
+"fmvp": "Rick Barry",
+"roy": "Jamaal Wilkes",
+"mvp": "Bob McAdoo"
+},
+"1975": {
+"champ": "Boston Celtics",
+"runnerUp": "Phoenix Suns",
+"result": "4-2",
+"fmvp": "Jo Jo White",
+"roy": "Alvan Adams",
+"mvp": "Kareem Abdul-Jabbar"
+},
+"1976": {
+"champ": "Portland Trail Blazers",
+"runnerUp": "Philadelphia 76ers",
+"result": "4-2",
+"fmvp": "Bill Walton",
+"mvp": "Kareem Abdul-Jabbar",
+"roy": "Adrian Dantley"
+},
+"1977": {
+"champ": "Washington Bullets",
+"runnerUp": "Seattle SuperSonics",
+"result": "4-3",
+"fmvp": "Wes Unseld",
+"roy": "Walter Davis",
+"mvp": "Bill Walton"
+},
+"1978": {
+"champ": "Seattle SuperSonics",
+"runnerUp": "Washington Bullets",
+"result": "4-1",
+"fmvp": "Dennis Johnson",
+"roy": "Phil Ford",
+"mvp": "Moses Malone"
+},
+"1979": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Philadelphia 76ers",
+"result": "4-2",
+"fmvp": "Magic Johnson",
+"roy": "Larry Bird",
+"mvp": "Kareem Abdul-Jabbar"
+},
+"1980": {
+"champ": "Boston Celtics",
+"runnerUp": "Houston Rockets",
+"result": "4-2",
+"fmvp": "Cedric Maxwell",
+"roy": "Darrell Griffith",
+"mvp": "Julius Erving"
+},
+"1981": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Philadelphia 76ers",
+"result": "4-2",
+"fmvp": "Magic Johnson",
+"roy": "Buck Williams",
+"mvp": "Moses Malone"
+},
+"1982": {
+"champ": "Philadelphia 76ers",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-0",
+"fmvp": "Moses Malone",
+"roy": "Terry Cummings",
+"mvp": "Moses Malone"
+},
+"1983": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-3",
+"fmvp": "Larry Bird",
+"mvp": "Larry Bird",
+"roy": "Ralph Sampson"
+},
+"1984": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Boston Celtics",
+"result": "4-2",
+"fmvp": "Kareem Abdul-Jabbar",
+"roy": "Michael Jordan",
+"mvp": "Larry Bird"
+},
+"1985": {
+"champ": "Boston Celtics",
+"runnerUp": "Houston Rockets",
+"result": "4-2",
+"fmvp": "Larry Bird",
+"roy": "Patrick Ewing",
+"mvp": "Larry Bird"
+},
+"1986": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Boston Celtics",
+"result": "4-2",
+"fmvp": "Magic Johnson",
+"roy": "Chuck Person",
+"mvp": "Magic Johnson"
+},
+"1987": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Detroit Pistons",
+"result": "4-3",
+"fmvp": "James Worthy",
+"roy": "Mark Jackson",
+"mvp": "Michael Jordan"
+},
+"1988": {
+"champ": "Detroit Pistons",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-0",
+"fmvp": "Joe Dumars",
+"roy": "Mitch Richmond",
+"mvp": "Magic Johnson"
+},
+"1989": {
+"champ": "Detroit Pistons",
+"runnerUp": "Portland Trail Blazers",
+"result": "4-1",
+"fmvp": "Isiah Thomas",
+"roy": "David Robinson",
+"mvp": "Magic Johnson"
+},
+"1990": {
+"champ": "Chicago Bulls",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-1",
+"fmvp": "Michael Jordan",
+"roy": "Derrick Coleman",
+"mvp": "Michael Jordan"
+},
+"1991": {
+"champ": "Chicago Bulls",
+"runnerUp": "Portland Trail Blazers",
+"result": "4-2",
+"fmvp": "Michael Jordan",
+"roy": "Larry Johnson",
+"mvp": "Michael Jordan"
+},
+"1992": {
+"champ": "Chicago Bulls",
+"runnerUp": "Phoenix Suns",
+"result": "4-2",
+"fmvp": "Michael Jordan",
+"roy": "Shaquille O'Neal",
+"mvp": "Charles Barkley"
+},
+"1993": {
+"champ": "Houston Rockets",
+"runnerUp": "New York Knicks",
+"result": "4-3",
+"fmvp": "Hakeem Olajuwon",
+"roy": "Chris Webber",
+"mvp": "Hakeem Olajuwon"
+},
+"1994": {
+"champ": "Houston Rockets",
+"runnerUp": "Orlando Magic",
+"result": "4-0",
+"fmvp": "Hakeem Olajuwon",
+"roy": "Grant Hill",
+"mvp": "David Robinson"
+},
+"1995": {
+"champ": "Chicago Bulls",
+"runnerUp": "Seattle SuperSonics",
+"result": "4-2",
+"fmvp": "Michael Jordan",
+"roy": "Damon Stoudamire",
+"mvp": "Michael Jordan"
+},
+"1996": {
+"champ": "Chicago Bulls",
+"runnerUp": "Utah Jazz",
+"result": "4-2",
+"fmvp": "Michael Jordan",
+"roy": "Allen Iverson",
+"mvp": "Karl Malone"
+},
+"1997": {
+"champ": "Chicago Bulls",
+"runnerUp": "Utah Jazz",
+"result": "4-2",
+"fmvp": "Michael Jordan",
+"roy": "Tim Duncan",
+"mvp": "Michael Jordan"
+},
+"1998": {
+"champ": "San Antonio Spurs",
+"runnerUp": "New York Knicks",
+"result": "4-1",
+"fmvp": "Tim Duncan",
+"mvp": "Karl Malone",
+"roy": "Vince Carter"
+},
+"1999": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Indiana Pacers",
+"result": "4-2",
+"fmvp": "Shaquille O'Neal",
+"roy": "Elton Brand",
+"mvp": "Shaquille O'Neal"
+},
+"2000": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Philadelphia 76ers",
+"result": "4-1",
+"fmvp": "Shaquille O'Neal",
+"roy": "Mike Miller",
+"mvp": "Allen Iverson"
+},
+"2001": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "New Jersey Nets",
+"result": "4-0",
+"fmvp": "Shaquille O'Neal",
+"roy": "Pau Gasol",
+"mvp": "Tim Duncan"
+},
+"2002": {
+"champ": "San Antonio Spurs",
+"runnerUp": "New Jersey Nets",
+"result": "4-2",
+"fmvp": "Tim Duncan",
+"roy": "Amare Stoudemire",
+"mvp": "Tim Duncan"
+},
+"2003": {
+"champ": "Detroit Pistons",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-1",
+"fmvp": "Chauncey Billups",
+"roy": "LeBron James",
+"mvp": "Kevin Garnett"
+},
+"2004": {
+"champ": "San Antonio Spurs",
+"runnerUp": "Detroit Pistons",
+"result": "4-3",
+"fmvp": "Tim Duncan",
+"roy": "Emeka Okafor",
+"mvp": "Steve Nash"
+},
+"2005": {
+"champ": "Miami Heat",
+"runnerUp": "Dallas Mavericks",
+"result": "4-2",
+"fmvp": "Dwyane Wade",
+"roy": "Chris Paul",
+"mvp": "Steve Nash"
+},
+"2006": {
+"champ": "San Antonio Spurs",
+"runnerUp": "Cleveland Cavaliers",
+"result": "4-0",
+"fmvp": "Tony Parker",
+"roy": "Brandon Roy",
+"mvp": "Dirk Nowitzki"
+},
+"2007": {
+"champ": "Boston Celtics",
+"runnerUp": "Los Angeles Lakers",
+"result": "4-2",
+"fmvp": "Paul Pierce",
+"roy": "Kevin Durant",
+"mvp": "Kobe Bryant"
+},
+"2008": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Orlando Magic",
+"result": "4-1",
+"fmvp": "Kobe Bryant",
+"roy": "Derrick Rose",
+"mvp": "LeBron James"
+},
+"2009": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Boston Celtics",
+"result": "4-3",
+"fmvp": "Kobe Bryant",
+"roy": "Tyreke Evans",
+"mvp": "LeBron James"
+},
+"2010": {
+"champ": "Dallas Mavericks",
+"runnerUp": "Miami Heat",
+"result": "4-2",
+"fmvp": "Dirk Nowitzki",
+"roy": "Blake Griffin",
+"mvp": "Derrick Rose"
+},
+"2011": {
+"champ": "Miami Heat",
+"runnerUp": "Oklahoma City Thunder",
+"result": "4-1",
+"fmvp": "LeBron James",
+"mvp": "LeBron James",
+"roy": "Kyrie Irving"
+},
+"2012": {
+"champ": "Miami Heat",
+"runnerUp": "San Antonio Spurs",
+"result": "4-3",
+"fmvp": "LeBron James",
+"roy": "Damian Lillard",
+"mvp": "LeBron James"
+},
+"2013": {
+"champ": "San Antonio Spurs",
+"runnerUp": "Miami Heat",
+"result": "4-1",
+"fmvp": "Kawhi Leonard",
+"roy": "Michael Carter-Williams",
+"mvp": "Kevin Durant"
+},
+"2014": {
+"champ": "Golden State Warriors",
+"runnerUp": "Cleveland Cavaliers",
+"result": "4-2",
+"fmvp": "Andre Iguodala",
+"roy": "Andrew Wiggins",
+"mvp": "Stephen Curry"
+},
+"2015": {
+"champ": "Cleveland Cavaliers",
+"runnerUp": "Golden State Warriors",
+"result": "4-3",
+"fmvp": "LeBron James",
+"roy": "Karl-Anthony Towns",
+"mvp": "Stephen Curry"
+},
+"2016": {
+"champ": "Golden State Warriors",
+"runnerUp": "Cleveland Cavaliers",
+"result": "4-1",
+"fmvp": "Kevin Durant",
+"roy": "Malcolm Brogdon",
+"mvp": "Russell Westbrook"
+},
+"2017": {
+"champ": "Golden State Warriors",
+"runnerUp": "Cleveland Cavaliers",
+"result": "4-0",
+"fmvp": "Kevin Durant",
+"roy": "Ben Simmons",
+"mvp": "James Harden"
+},
+"2018": {
+"champ": "Toronto Raptors",
+"runnerUp": "Golden State Warriors",
+"result": "4-2",
+"fmvp": "Kawhi Leonard",
+"roy": "Luka Dončić",
+"mvp": "Giannis Antetokounmpo"
+},
+"2019": {
+"champ": "Los Angeles Lakers",
+"runnerUp": "Miami Heat",
+"result": "4-2",
+"fmvp": "LeBron James",
+"mvp": "Giannis Antetokounmpo",
+"roy": "Ja Morant"
+},
+"2020": {
+"champ": "Milwaukee Bucks",
+"runnerUp": "Phoenix Suns",
+"result": "4-2",
+"fmvp": "Giannis Antetokounmpo",
+"roy": "LaMelo Ball",
+"mvp": "Nikola Jokić"
+},
+"2021": {
+"champ": "Golden State Warriors",
+"runnerUp": "Boston Celtics",
+"result": "4-2",
+"fmvp": "Stephen Curry",
+"roy": "Scottie Barnes",
+"mvp": "Nikola Jokić"
+},
+"2022": {
+"champ": "Denver Nuggets",
+"runnerUp": "Miami Heat",
+"result": "4-1",
+"fmvp": "Nikola Jokić",
+"roy": "Paolo Banchero",
+"mvp": "Joel Embiid"
+},
+"2023": {
+"champ": "Boston Celtics",
+"runnerUp": "Dallas Mavericks",
+"result": "4-1",
+"fmvp": "Jaylen Brown",
+"roy": "Victor Wembanyama",
+"mvp": "Nikola Jokić"
+},
+"2024": {
+"champ": "Oklahoma City Thunder",
+"runnerUp": "Indiana Pacers",
+"result": "4-3",
+"fmvp": "Shai Gilgeous-Alexander",
+"roy": "Stephon Castle",
+"mvp": "Shai Gilgeous-Alexander"
+},
+"2025": {
+"champ": "New York Knicks",
+"runnerUp": "San Antonio Spurs",
+"result": "4-1",
+"fmvp": "Jalen Brunson",
+"roy": "Cooper Flagg",
+"mvp": "Shai Gilgeous-Alexander"
+}
+}
