@@ -6399,7 +6399,7 @@
       fetch('data/draft-' + year + '.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; })
         .catch(function () { return { prospects: [] }; })
         .then(function (d) {
-          League.startDraft(save, save.ids.map(teamById), League.applyBoard(save, d.prospects), League.draftRounds());
+          League.startDraft(save, save.ids.map(teamById), League.applyBoard(save, d.prospects), League.draftRounds(save.year + 1));
           offStep('draft');
         });
     });
@@ -6962,6 +6962,7 @@
     next.ownerPrev = save.ownerPrev;
     next.rules = save.rules;
     save = next;
+    League.advanceEra(save);
     League.ensurePicks(save, save.ids.map(teamById));
     rosterCache = {};
     offSel = null;

@@ -20,12 +20,27 @@
     OPENING_ROSTER = MODERN ? (year >= 1996 ? 15 : 13) : 12;
     if (root.League) { root.League.MIN_ROSTER = MIN_ROSTER; root.League.MAX_ROSTER = MAX_ROSTER; }
   }
+  /* The founding years count money in dollars and the modern game in thousands. When a long game crosses 1979 every figure converts once. */
+  function convertUnits(save) {
+    var lg = save.lg, k = function (v) { return Math.max(0, Math.round(v / 1000)); };
+    lg.players.forEach(function (p) { if (p.salary) p.salary = k(p.salary) || MINSAL; if (p.s0) p.s0 = k(p.s0); if (p.ask) p.ask = k(p.ask); });
+    Object.keys(lg.dead || {}).forEach(function (t) { lg.dead[t].forEach(function (x) { x.s = k(x.s); }); });
+    Object.keys(lg.tpe || {}).forEach(function (t) { lg.tpe[t].forEach(function (x) { x.a = k(x.a); }); });
+    Object.keys(lg.hard || {}).forEach(function (t) { if (lg.hard[t] && lg.hard[t].a > 1) lg.hard[t].a = k(lg.hard[t].a); });
+  }
+  /* Called as each season starts: the era's money, roster limits and scale follow the calendar. */
+  function advanceEra(save) {
+    var was = MODERN; setEra(save.year);
+    if (!was && MODERN && save.lg) convertUnits(save);
+    if (save.lg) save.lg.cap = capFor(save.year);
+  }
+
   function money(n, cap) {
     if (MODERN) return '$' + (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'M';
     if (n >= 1000000) return '$' + (n / 1000000).toFixed(2).replace(/0$/, '') + 'M';
     return '$' + n.toLocaleString('en-US');
   }
-  function draftRounds() { return MODERN ? 2 : 5; }
+  function draftRounds(year) { return year >= 1989 ? 2 : year === 1988 ? 3 : year >= 1985 ? 7 : year >= 1974 ? 10 : MODERN ? 2 : 5; }
 
   function rnd(a, b) { return a + Math.random() * (b - a); }
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
@@ -903,12 +918,34 @@
       var pa = ra.w / Math.max(1, ra.w + ra.l), pb = rb.w / Math.max(1, rb.w + rb.l);
       return pa - pb;
     });
+    var lot = !first && root.Rules ? lotteryOrder(order, root.Rules.get(save.year).lottery, save.year + 1) : order;
     var picks = [];
-    for (var r = 1; r <= rounds; r++) order.forEach(function (id, i) { picks.push({ round: r, pick: picks.length + 1, team: id, player: null }); });
+    for (var r = 1; r <= rounds; r++) (r === 1 ? lot : order).forEach(function (id, i) { picks.push({ round: r, pick: picks.length + 1, team: id, player: null }); });
     return picks;
   }
 
+  /* The draft lottery (from 1985): the worst clubs by record draw for the top picks, the rest follow in order of record. */
+  var LOT = { early: [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1], mid: [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5], late: [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5] };
+  function lotteryOrder(order, n, year) {
+    if (!n || order.length <= n) return order;
+    var pool = order.slice(0, n), rest = order.slice(n), out = [];
+    if (year <= 1989) {
+      while (pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      return out.concat(rest);
+    }
+    var w = (year <= 1993 ? LOT.early : year <= 2018 ? LOT.mid : LOT.late).slice(0, n), top = year >= 2019 ? 4 : 3;
+    for (var k = 0; k < top && pool.length; k++) {
+      var tot = 0; for (var i = 0; i < pool.length; i++) tot += w[i];
+      var r = Math.random() * tot, j = 0;
+      while (j < pool.length - 1 && r >= w[j]) { r -= w[j]; j++; }
+      out.push(pool.splice(j, 1)[0]); w.splice(j, 1);
+    }
+    return out.concat(pool, rest);
+  }
+
   function startDraft(save, teams, real, rounds) {
+    var realN = (real || []).filter(function (q) { return !q.und; });
+    if (realN.length >= 20) rounds = Math.min(25, Math.max.apply(null, realN.map(function (q) { return q.round || 1; })));
     var pool = makeClass(save.year + 1, real, teams.length * rounds + 12);
     var dp = draftOrder(save, teams, rounds);
     dp.forEach(function (sl) {
@@ -1574,6 +1611,6 @@
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,
     setCareers: setCareers, aiReSign: aiReSign, rightsLevel: rightsLevel, reSignLimit: reSignLimit, tpeList: tpeList, honours: honours, aiTrade: aiTrade, starMoves: starMoves, cbaOf: cbaOf, signRoute: signRoute, tradeIssue: tradeIssue, taxBill: taxBill, repeater: repeater, settleTax: settleTax, holdOf: holdOf, holdsOf: holdsOf, minFor: minFor, maxFor: maxFor, clampSal: clampSal, scaleFor: scaleFor, yosOf: yosOf, lyear: lyear, isHard: isHard, sntOffers: sntOffers, sntDo: sntDo, committedPay: committedPay, willingness: willingness, decision: decision, interest: interest, suitScore: suitScore, isRFA: isRFA, winPct: winPct, mleOf: mleOf, mleUsed: mleUsed, optionPass: optionPass, freeAgents: freeAgents, aiRosterPass: aiRosterPass, startDraft: startDraft, draftAvailable: draftAvailable,
-    maxR: maxR, makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
+    maxR: maxR, makePick: makePick, startDispersal: startDispersal, makeVeterans: makeVeterans, aiPick: aiPick, salaryFor: salaryFor, capFor: capFor, setEra: setEra, advanceEra: advanceEra, convertUnits: convertUnits, money: money, draftRounds: draftRounds, MIN_ROSTER: MIN_ROSTER, MAX_ROSTER: MAX_ROSTER, ovrOf: ovrOf
   };
 })(window);
