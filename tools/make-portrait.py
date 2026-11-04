@@ -17,7 +17,11 @@ def face_box(im):
     rgb = Image.new('RGB', im.size, (128, 128, 128))
     rgb.paste(im, mask=im.split()[3])
     gray = cv2.cvtColor(np.array(rgb), cv2.COLOR_RGB2GRAY)
-    det = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    import os
+    xml = os.path.join(cv2.data.haarcascades, 'haarcascade_frontalface_default.xml')
+    if not os.path.exists(xml):
+        xml = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'haarcascade_frontalface_default.xml')
+    det = cv2.CascadeClassifier(xml)
     f = det.detectMultiScale(gray, 1.1, 5, minSize=(int(im.width * 0.15),) * 2)
     if not len(f):
         return None

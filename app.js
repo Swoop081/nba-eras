@@ -45,12 +45,16 @@
     st.setProperty('--on', lum(a) > 0.32 ? '#0A0B10' : '#FFFFFF');
   }
   function show(id) {
+    var wasActive = document.getElementById(id).classList.contains('active');
     for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
     if (typeof Phone !== 'undefined' && Phone.onScreen) Phone.onScreen(id);
     teamTheme();
     var target = document.getElementById(id);
+    var entering = !wasActive;
     target.classList.add('active');
     target.scrollTop = 0;
+    /* entering a screen always starts on its first page, whatever page it was left on (or a previous save was on) */
+    if (entering && typeof PGMEM !== 'undefined' && PGMEM) (typeof PAGED !== 'undefined' ? PAGED : []).forEach(function (bid) { var b = target.querySelector('#' + bid); if (b) { b._pi = 0; PGMEM[pgKey(b)] = 0; } });
     body.dataset.screen = id;
     if (id !== 'screen-title') { body.classList.remove('flicker'); if (body.dataset.menu !== 'show') finishIntro(); }
     pageifyScreen(id);
@@ -736,6 +740,7 @@
 
   takeBtn.addEventListener('click', function () {
     if (!selected) return;
+    resetPages();
     var holder = document.getElementById('ready-badge');
     holder.textContent = '';
     holder.style.background = 'transparent';
@@ -1340,6 +1345,27 @@
     if (p.draftedYear) body.appendChild(el('p', 'sub', 'Drafted ' + p.draftedYear + (p.draftPick ? ', pick ' + p.draftPick : '') + '.'));
   }
 
+  /* arrows in the roster header step through every club, alphabetically, wrapping round */
+  function rosterArrows(team) {
+    var bar = document.querySelector('#screen-roster .bar'), nav = document.getElementById('roster-nav');
+    if (!bar) return;
+    if (!nav) {
+      nav = el('div', 'rost-nav'); nav.id = 'roster-nav';
+      ['prev', 'next'].forEach(function (k) {
+        var b = el('button', 'rost-arrow', k === 'prev' ? '\u2039' : '\u203A'); b.type = 'button'; b.dataset.k = k; b.setAttribute('aria-label', k === 'prev' ? 'Previous team' : 'Next team');
+        b.addEventListener('click', function () {
+          var cur = nav._team, list = save.ids.map(teamById).filter(Boolean).sort(function (x, y) { return (x.city + x.name) < (y.city + y.name) ? -1 : 1; });
+          var i = list.map(function (t) { return t.id; }).indexOf(cur.id), n = list[(i + (k === 'next' ? 1 : list.length - 1)) % list.length];
+          renderRoster(n);
+          var box = document.getElementById('roster-list'); box._pi = 0; PGMEM['roster-list'] = 0;
+          requestAnimationFrame(function () { pageify(box); });
+        });
+        nav.appendChild(b);
+      });
+      bar.appendChild(nav);
+    }
+    nav._team = team;
+  }
   function renderRoster(team) {
     var list = document.getElementById('roster-list');
     list.textContent = '';
@@ -1347,6 +1373,7 @@
     bd.textContent = '';
     bd.appendChild(teamBadge(team));
     document.getElementById('roster-title').textContent = team.city + ' ' + team.name;
+    rosterArrows(team);
     var squad = team.id === save.myId ? rotOrder(team.id) : League.rosterOf(save, team.id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
     if (team.id === save.myId && modernUI()) {
       var starters = squad.slice(0, 5).sort(function (u, v) { return slotRank(u) - slotRank(v); });
@@ -3968,6 +3995,7 @@
   /* ---------- no vertical scrolling: long lists become swipeable pages ---------- */
   var PAGED = ['roster-list', 'trade-body', 'off-body', 'records-body', 'player-body', 'match-body', 'ev-body'];
   var PGMEM = {};
+  function resetPages() { PGMEM = {}; PAGED.forEach(function (bid) { var b = document.getElementById(bid); if (b) b._pi = 0; }); }
   function pgKey(box) {
     var tb = document.getElementById('trade-body');
     return !box.id && tb && tb.contains(box) ? 'trade|' + (tb.dataset.pk || '') : box.id;
