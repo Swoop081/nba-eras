@@ -11,9 +11,9 @@
   var MIN_ROSTER = 9, MAX_ROSTER = 15, OPENING_ROSTER = 12, OFF_ROSTER = 21;
   function maxR(save) { return save && save.off && save.off.step ? OFF_ROSTER : MAX_ROSTER; }
   /* The modern game counts money in thousands of dollars (a $165,000 cap is $165 million); the founding era counts dollars. */
-  var MODERN = false, MINSAL = 1000;
+  var MODERN = false, MINSAL = 1000, lyearNow = 2026;
   function setEra(year) {
-    MODERN = year >= 1979;
+    MODERN = year >= 1979; lyearNow = year;
     SCALE = MODERN ? capFor(year) / 165000 : capFor(year) / 55000;
     MINSAL = MODERN ? Math.max(60, Math.round(1300 * SCALE / 10) * 10) : Math.round(1000 * SCALE / 100) * 100;
     MIN_ROSTER = MODERN ? (year >= 2023 ? 14 : year >= 1996 ? 13 : 11) : 9;
@@ -375,11 +375,12 @@
   /* All-League and MVP honours in the last three seasons. */
   function honours(save, p) { return (p.awards || []).filter(function (a) { return a.y >= save.year - 2 && (a.a === 'Most Valuable Player' || /^All-League/.test(a.a)); }).length; }
   function maxFor(save, p, own) {
-    var y = yosOf(p), pc = y >= 10 ? 0.35 : y >= 7 ? 0.30 : 0.25;
-    if (own && aprons(save)) {
+    var y = yosOf(p), pc = y >= 10 ? 0.35 : y >= 7 ? 0.30 : 0.25, ly = lyear(save);
+    if (ly < 1999) return Math.round(save.lg.cap * 0.8 / 10) * 10;   /* no maximum contract before the 1999 agreement */
+    if (own && ly >= 2011) {
       var h = honours(save, p);
-      if (y >= 7 && y <= 9 && h >= 2) pc = 0.35;        /* designated veteran (supermax) */
-      else if (y <= 6 && p.rkEnd && h >= 2) pc = 0.30;   /* Rose rule on a rookie extension */
+      if (ly >= 2017 && y >= 7 && y <= 9 && h >= 2) pc = 0.35;        /* designated veteran (supermax), 2017 */
+      else if (y <= 6 && p.rkEnd && h >= 2) pc = 0.30;   /* Rose rule on a rookie extension, 2011 */
     }
     return Math.round(save.lg.cap * pc / 10) * 10;
   }
@@ -589,7 +590,7 @@
   /* ---------- player decisions & free-agency model ---------- */
   function winPct(save, id) { var r = save.rec && save.rec[id]; return r && r.w + r.l ? r.w / (r.w + r.l) : 0.5; }
   function loyalty(p) { if (p.loy == null) p.loy = Math.round(15 + Math.random() * 70); return p.loy; }
-  function isRFA(p) { return (p.rkEnd || p.age <= 24) && p.ratings.ovr >= 52; }
+  function isRFA(p) { return lyearNow >= 1988 && (p.rkEnd || p.age <= 24) && p.ratings.ovr >= 52; }
   function mleOf(save) { return Math.round(save.lg.cap * 0.0912); }
   function mleUsed(save, id) { return !!(save.lg.mle && save.lg.mle[id] === lyear(save)); }
   /* How much a player wants to be at a club, 0-100: loyalty, the relationship, winning, his role, his age and the stage of his career. */
