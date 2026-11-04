@@ -645,7 +645,7 @@
   /* Clubs decide who to keep: value for money, the tax line, their stage of the cycle, the player's age. The player has a say as well. Whoever leaves reaches the market tagged with the old club's rights. */
   function aiReSign(save, teams, myId) {
     save.lg.players.forEach(function (p) { if (p.status === 'active' && !p.team) { if (p.birdY !== save.year) { delete p.bird; delete p.rfa; } } });
-    var tax = Math.min(cbaOf(save).tax, save.lg.cap * 1.25);
+    var tax = Math.min(cbaOf(save).tax, save.lg.cap * 1.25), reserve = !!(root.Rules && root.Rules.get(save.year).reserve);
     try { starMoves(save, teams, myId); } catch (e) {}
     teams.forEach(function (t) {
       if (t.id === myId) return;
@@ -664,7 +664,9 @@
         else if (committed + price > save.lg.cap * 1.05) want *= 0.92;
         if (kept >= 13) want *= o >= 60 ? 0.9 : 0.5;
         var pw = Math.max(0.15, Math.min(1, (willingness(save, p, t.id) - 10) / 40));
-        if (o >= 45 && Math.random() < Math.min(0.97, want * pw)) {
+        /* Before 1976 the reserve clause binds a player to his club: nobody reaches free agency, the club simply renews him. */
+        if (reserve && o >= 36) { want = 1; pw = 1; }
+        if ((reserve ? o >= 36 : o >= 45) && Math.random() < Math.min(reserve ? 1 : 0.97, want * pw)) {
           p.salary = price; p.yrs = o >= 64 ? 2 + Math.floor(Math.random() * 4) : 1 + Math.floor(Math.random() * 3); logDeal(save, p, 'Re-signed');
           committed += price; kept++;
         } else { p.bird = t.id; p.birdY = save.year; if (isRFA(p)) p.rfa = t.id; p.team = null; }

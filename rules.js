@@ -3,7 +3,7 @@
 (function (root) {
   var TABLE = {
     1946: {
-      games: 60, kind: 'ladder47',
+      games: 60, kind: 'ladder47', reserve: true,
       playoffs: 'Six clubs qualify, three from each division. The two division winners meet in a best-of-seven semifinal. The four runners-up play best-of-three series against each other, and the survivor meets the semifinal winner in a best-of-seven Finals.',
       notes: ['Four 12-minute quarters', 'Six personal fouls and you are out', 'No shot clock, no three-point line', '$55,000 team salary cap']
     },
@@ -58,6 +58,7 @@
       po: { q: 5, best: [3, 7, 7, 7] },
       playoffs: 'Ten clubs qualify, five from each conference. The fourth and fifth seeds play a best-of-three; the top three seeds get a bye. Every later round is a best-of-seven.'
     },
+    1975: { reserve: false },
     1976: {
       games: 82, po: { q: 6, best: [3, 7, 7, 7] },
       playoffs: 'Twelve clubs qualify, six from each conference. The top two seeds in each conference get a bye; seeds three to six play a best-of-three first round. Every later round is a best-of-seven.',
@@ -90,7 +91,7 @@
     var best = null;
     Object.keys(TABLE).map(Number).sort(function (a, b) { return a - b; }).forEach(function (y) { if (y <= year) best = y; });
     var out = { since: best };
-    ['games', 'kind', 'playoffs', 'notes', 'firstBest', 'po', 'fin232', 'playin', 'lottery'].forEach(function (k) {
+    ['games', 'kind', 'playoffs', 'notes', 'firstBest', 'po', 'fin232', 'playin', 'lottery', 'reserve'].forEach(function (k) {
       for (var y = best; y !== null && y >= 1946; y--) if (TABLE[y] && TABLE[y][k] !== undefined) { out[k] = TABLE[y][k]; break; }
     });
     return out;
