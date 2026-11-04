@@ -357,9 +357,12 @@
   /* Everything is a share of the cap, so the rules scale with the era. The apron system applies from 2023. */
   function lyear(save) { return save.off ? save.year + 1 : save.year; }
   function aprons(save) { return lyear(save) >= 2023; }
+  /* Eras of the cap: none before 1984, a soft cap with Bird rights after, mid-level exception from 1999, tax from 2002, rookie scale from 1995. */
+  function taxEra(save) { return lyear(save) >= 2002; }
+  function rkScale(save) { return MODERN && lyear(save) >= 1995; }
   function cbaOf(save) {
     var c = save.lg.cap, on = aprons(save), big = 1e12;
-    return { cap: c, floor: c * 0.9, tax: on ? c * 1.215 : big, ap1: on ? c * 1.2671 : big, ap2: on ? c * 1.3439 : big,
+    return { cap: c, floor: c * 0.9, tax: on ? c * 1.215 : lyear(save) >= 2002 ? c * 1.32 : big, ap1: on ? c * 1.2671 : big, ap2: on ? c * 1.3439 : big,
       mle: c * 0.0912, tmle: c * 0.03676, room: c * 0.05678, bae: c * 0.0332, add: c * 0.05514, step: c * 0.03676, on: on };
   }
   /* Years of service: a rough count from the career log, or from age. */
@@ -405,7 +408,8 @@
   /* Luxury tax: brackets a sixth of a mid-level wide. Repeat offenders pay far more. */
   function taxBill(save, id, rep) {
     var cb = cbaOf(save), over = payroll(save, id) - cb.tax;
-    if (!cb.on || over <= 0) return 0;
+    if (!taxEra(save) || over <= 0) return 0;
+    if (!cb.on) return Math.round(over * 1.5);
     var r = rep ? [3, 3.25, 5.5, 6.75] : [1, 1.25, 3.5, 4.75], bill = 0, i = 0;
     while (over > 0 && i < 12) { var w = Math.min(over, cb.step), rate = i < 4 ? r[i] : r[3] + 0.5 * (i - 3); bill += w * rate; over -= w; i++; }
     return Math.round(bill);
@@ -413,7 +417,7 @@
   function repeater(save, id) { var h = (save.lg.taxH && save.lg.taxH[id]) || []; return h.filter(function (y) { return y >= save.year - 4 && y < save.year; }).length >= 3; }
   /* End of the season: who pays tax, who is below the floor. */
   function settleTax(save) {
-    var L = save.lg; if (!aprons(save) || L.taxDone === save.year) return [];
+    var L = save.lg; if (!taxEra(save) || L.taxDone === save.year) return [];
     L.taxDone = save.year; L.taxH = L.taxH || {};
     var cb = cbaOf(save), out = [];
     save.ids.forEach(function (id) {
@@ -446,9 +450,10 @@
     var hc = isHard(save, id), lim = hc === 2 ? cb.ap2 : hc === 1 ? cb.ap1 : 1e12;
     if (post > lim) return null;
     if (held + salary <= cb.cap) return { via: 'cap' };
+    if (ly < 1984) return post <= cb.cap * 1.6 ? { via: 'cap' } : null;   /* no salary cap before 1984 */
     var vmin = p ? minFor(save, p) : MINSAL * 3;
     if (salary <= vmin * 1.001) return { via: 'min' };
-    if (!cb.on) return salary <= cb.mle && !mleUsed(save, id) && post <= cb.cap * 1.18 ? { via: 'mle', a: 1 } : null;
+    if (!cb.on) return ly >= 1999 && salary <= cb.mle && !mleUsed(save, id) && post <= cb.cap * 1.18 ? { via: 'mle', a: 1 } : null;
     var used = mleUsed(save, id);
     if (!used && held < cb.cap && salary <= cb.room && post <= cb.ap1) return { via: 'room', a: 1 };
     if (!used && pay < cb.ap1 && salary <= cb.mle && post <= cb.ap1) return { via: 'mle', a: 1 };
@@ -1006,8 +1011,8 @@
     var d = save.lg.draft, slot = d.picks[d.at];
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
-    else if (aprons(save) && slot.pick <= 30) { p.salary = scaleFor(save, slot.pick); p.yrs = 4; p.rk = 1; p.s0 = p.salary; p.rz = 0.05; p.draftedYear = d.year; p.draftPick = slot.pick; }
-    else if (aprons(save)) { p.salary = minFor(save, null) ; p.salary = Math.round(save.lg.cap * 1358 / 164961 / 10) * 10; p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    else if (rkScale(save) && slot.pick <= 30) { p.salary = scaleFor(save, slot.pick); p.yrs = 4; p.rk = 1; p.s0 = p.salary; p.rz = 0.05; p.draftedYear = d.year; p.draftPick = slot.pick; }
+    else if (rkScale(save)) { p.salary = minFor(save, null) ; p.salary = Math.round(save.lg.cap * 1358 / 164961 / 10) * 10; p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     else { p.salary = Math.max(MINSAL, salaryFor(p.ratings.ovr) - (MODERN ? Math.round(1000 * SCALE) : Math.round(500 * SCALE))); p.yrs = 2; p.draftedYear = d.year; p.draftPick = slot.pick; }
     logDeal(save, p, d.kind === 'dispersal' ? 'Dispersal pick' : 'Drafted, pick ' + slot.pick, slot.team);
     slot.player = p.id;
