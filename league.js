@@ -819,7 +819,7 @@
   }
   function boardInit(save, prospects) {
     var L = save.lg;
-    var list = (prospects || []).slice(0, 60).map(function (p, i) {
+    var list = (prospects || []).filter(function (p) { return !p.und; }).slice(0, 60).map(function (p, i) {
       var seed = hashN(p.id), base = p.realPick || i + 1;
       var bp = { id: p.id, name: p.name, pos: p.pos, college: p.college, age: p.age || 19, base: base, form: 0, rank: i + 1, prev: i + 1, g: 0, tot: { pts: 0, reb: 0, ast: 0, fg: 0, tp: 0 }, lvl: 0,
         ht: (/C/.test(p.pos) ? 82 : /^G/.test(p.pos) ? 75 : 79) + Math.round((seed - 0.5) * 4), nz: (seed - 0.5) * 2, nz2: (hashN(p.id + 'p') - 0.5) * 2 };
