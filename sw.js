@@ -1,5 +1,5 @@
 /* Offline support: always try the network first, fall back to the cache. */
-var CACHE = 'nba-eras-v441';
+var CACHE = 'nba-eras-v442';
 var SHELL = [
   './',
   'index.html',
