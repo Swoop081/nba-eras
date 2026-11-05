@@ -96,5 +96,19 @@
    "to": 2025,
    "file": "lebron-james@los-angeles-lakers"
   }
+ ],
+ "deandre-ayton": [
+  {
+   "from": 2025,
+   "to": 2025,
+   "file": "deandre-ayton@los-angeles-lakers"
+  }
+ ],
+ "rui-hachimura": [
+  {
+   "from": 2022,
+   "to": 2025,
+   "file": "rui-hachimura@los-angeles-lakers"
+  }
  ]
 }
