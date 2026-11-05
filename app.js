@@ -831,7 +831,7 @@
   function photoFirst(p) {
     var out = [], y = photoYear(), rs = PHSEA[p.id];
     if (rs) rs.forEach(function (r) { if (!out.length && (r.from == null || y >= r.from) && (r.to == null || y <= r.to)) out.push(r.file); });
-    if (p.team) out.push(p.id + '@' + p.team);
+    if (p.team && !rs) out.push(p.id + '@' + p.team);
     return out;
   }
   /* Uses assets/players/<player-id>.jpg (or .png / .webp) when present; assets/photos works too. */
