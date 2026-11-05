@@ -269,6 +269,7 @@
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
     { years: '1990s-2000s', title: 'The Multimedia Era', blurb: 'Locked for now' },
+    { id: '2028', logo: '2026', years: '2028-29', title: 'Expansion Year', blurb: 'A made-up season. Seattle and Las Vegas join the league as 32 clubs. Take over one of them from the start, or any other club on opening night.', open: true, current: true, teams: 'data/teams-2028.json', players: 'data/players-2028.json', hiddenFromPicker: true },
     { id: '2027', logo: '2026', years: '2027-28', title: 'Defending: Mavericks', blurb: 'A made-up season. The league was played forward from 2026-27, so the stars are a year older and the rookies are new. Nothing here has happened yet.', open: true, current: true, hiddenFromPicker: true /* hidden for now, not removed: set to false to bring 2027-28 back */, teams: 'data/teams-2027.json', players: 'data/players-2027.json' },
     { id: '2026', years: '2026-27', title: 'Defending: Knicks', blurb: 'Opening night of the current NBA season. 30 teams, 82 games, the three-point line, a 16-team playoff and a salary cap. Real rosters; build forward from here.', open: true, current: true, teams: 'data/teams-2026.json', players: 'data/players-2026.json' },
     { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Play it, then the offseason, then straight into 2026-27.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025-open.json' }
@@ -406,6 +407,7 @@
   /* expansion starts: the real June before a new club's first season */
   var XP = {
     '1995': { file: 'data/expansion-1995.json', draft: 'data/draft-1995.json', year: 1995, prev: 1994, champ: 'houston-rockets', clubs: ['toronto-raptors', 'vancouver-grizzlies'], label: 'June 1995', first: '1995-96', noFirst: 1996 },
+    '2028': { file: 'data/expansion-2028.json', draft: 'data/draft-2028.json', year: 2028, prev: 2027, champ: 'memphis-grizzlies', clubs: ['seattle-supersonics-2028', 'las-vegas-2028'], label: 'June 2028', first: '2028-29', noFirst: 2029, noFlip: true, made: true },
     '2004': { file: 'data/expansion-2004.json', draft: 'data/draft-2004.json', year: 2004, prev: 2003, champ: 'detroit-pistons', clubs: ['charlotte-bobcats'], label: 'June 2004', first: '2004-05', noFirst: 2005 }
   };
   function xpOf(era, team) { var c = era && XP[era.id]; return c && team && c.clubs.indexOf(team.id) >= 0 ? c : null; }
@@ -594,7 +596,7 @@
     var head = el('div', 'rail-head');
     head.appendChild(count);
     teamList.appendChild(head);
-    var JN = { '1994': ['Toronto and Vancouver join next season. Want to be there from the start, with no players yet?', '1995', [['toronto-raptors', 'Join Toronto'], ['vancouver-grizzlies', 'Join Vancouver']]], '2003': ['Charlotte gets a new team next season, the Bobcats. Want to be there from the start, with no players yet?', '2004', [['charlotte-bobcats', 'Join Charlotte']]] };
+    var JN = { '1994': ['Toronto and Vancouver join next season. Want to be there from the start, with no players yet?', '1995', [['toronto-raptors', 'Join Toronto'], ['vancouver-grizzlies', 'Join Vancouver']]], '2027': ['Two new clubs join next season, Seattle and Las Vegas. Want to be there from the start, with no players yet?', '2028', [['seattle-supersonics-2028', 'Join Seattle'], ['las-vegas-2028', 'Join Las Vegas']]], '2003': ['Charlotte gets a new team next season, the Bobcats. Want to be there from the start, with no players yet?', '2004', [['charlotte-bobcats', 'Join Charlotte']]] };
     if (currentEra && JN[currentEra.id]) {
       var jc = JN[currentEra.id], jn = el('div', 'join-new');
       jn.appendChild(el('p', 'xnote', jc[0]));
@@ -1423,7 +1425,7 @@
     body.appendChild(dataTable(['Season', 'Honour'], aw.map(function (x) { return [seasonLabel(x.y), x.a]; })));
   }
 
-  var TABR = { 'anderson-packers': 'AND', 'atlanta-hawks': 'ATL', 'baltimore-bullets': 'BAL', 'boston-celtics': 'BOS', 'brooklyn-nets': 'BKN', 'buffalo-braves': 'BUF', 'capital-bullets': 'CAP', 'charlotte-bobcats': 'CHA', 'charlotte-hornets': 'CHA', 'chicago-bulls': 'CHI', 'chicago-packers': 'CHP', 'chicago-stags': 'CHS', 'chicago-zephyrs': 'CHZ', 'cincinnati-royals': 'CIN', 'cleveland-cavaliers': 'CLE', 'cleveland-rebels': 'CLR', 'dallas-mavericks': 'DAL', 'denver-nuggets': 'DEN', 'detroit-falcons': 'DTF', 'detroit-pistons': 'DET', 'fort-wayne-pistons': 'FTW', 'golden-state-warriors': 'GSW', 'houston-rockets': 'HOU', 'indiana-pacers': 'IND', 'indianapolis-olympians': 'INO', 'kansas-city-kings': 'KCK', 'kansas-cityomaha-kings': 'KCO', 'la-clippers': 'LAC', 'los-angeles-lakers': 'LAL', 'memphis-grizzlies': 'MEM', 'miami-heat': 'MIA', 'milwaukee-bucks': 'MIL', 'milwaukee-hawks': 'MLH', 'minneapolis-lakers': 'MNL', 'minnesota-timberwolves': 'MIN', 'new-jersey-nets': 'NJN', 'new-orleans-hornets': 'NOH', 'new-orleans-jazz': 'NOJ', 'new-orleans-pelicans': 'NOP', 'new-york-knicks': 'NYK', 'new-york-nets': 'NYN', 'oklahoma-city-thunder': 'OKC', 'orlando-magic': 'ORL', 'philadelphia-76ers': 'PHI', 'philadelphia-warriors': 'PHW', 'phoenix-suns': 'PHX', 'pittsburgh-ironmen': 'PIT', 'portland-trail-blazers': 'POR', 'providence-steamrollers': 'PRO', 'rochester-royals': 'ROC', 'sacramento-kings': 'SAC', 'san-antonio-spurs': 'SAS', 'san-diego-clippers': 'SDC', 'san-diego-rockets': 'SDR', 'san-francisco-warriors': 'SFW', 'seattle-supersonics': 'SEA', 'sheboygan-red-skins': 'SHE', 'st-louis-bombers': 'STB', 'st-louis-hawks': 'STL', 'syracuse-nationals': 'SYR', 'toronto-huskies': 'TOH', 'toronto-raptors': 'TOR', 'tri-cities-blackhawks': 'TCB', 'utah-jazz': 'UTA', 'vancouver-grizzlies': 'VAN', 'washington-bullets': 'WSB', 'washington-capitols': 'WAS', 'washington-wizards': 'WAS', 'waterloo-hawks': 'WAT' };
+  var TABR = { 'seattle-supersonics-2028': 'SEA', 'las-vegas-2028': 'LVA', 'anderson-packers': 'AND', 'atlanta-hawks': 'ATL', 'baltimore-bullets': 'BAL', 'boston-celtics': 'BOS', 'brooklyn-nets': 'BKN', 'buffalo-braves': 'BUF', 'capital-bullets': 'CAP', 'charlotte-bobcats': 'CHA', 'charlotte-hornets': 'CHA', 'chicago-bulls': 'CHI', 'chicago-packers': 'CHP', 'chicago-stags': 'CHS', 'chicago-zephyrs': 'CHZ', 'cincinnati-royals': 'CIN', 'cleveland-cavaliers': 'CLE', 'cleveland-rebels': 'CLR', 'dallas-mavericks': 'DAL', 'denver-nuggets': 'DEN', 'detroit-falcons': 'DTF', 'detroit-pistons': 'DET', 'fort-wayne-pistons': 'FTW', 'golden-state-warriors': 'GSW', 'houston-rockets': 'HOU', 'indiana-pacers': 'IND', 'indianapolis-olympians': 'INO', 'kansas-city-kings': 'KCK', 'kansas-cityomaha-kings': 'KCO', 'la-clippers': 'LAC', 'los-angeles-lakers': 'LAL', 'memphis-grizzlies': 'MEM', 'miami-heat': 'MIA', 'milwaukee-bucks': 'MIL', 'milwaukee-hawks': 'MLH', 'minneapolis-lakers': 'MNL', 'minnesota-timberwolves': 'MIN', 'new-jersey-nets': 'NJN', 'new-orleans-hornets': 'NOH', 'new-orleans-jazz': 'NOJ', 'new-orleans-pelicans': 'NOP', 'new-york-knicks': 'NYK', 'new-york-nets': 'NYN', 'oklahoma-city-thunder': 'OKC', 'orlando-magic': 'ORL', 'philadelphia-76ers': 'PHI', 'philadelphia-warriors': 'PHW', 'phoenix-suns': 'PHX', 'pittsburgh-ironmen': 'PIT', 'portland-trail-blazers': 'POR', 'providence-steamrollers': 'PRO', 'rochester-royals': 'ROC', 'sacramento-kings': 'SAC', 'san-antonio-spurs': 'SAS', 'san-diego-clippers': 'SDC', 'san-diego-rockets': 'SDR', 'san-francisco-warriors': 'SFW', 'seattle-supersonics': 'SEA', 'sheboygan-red-skins': 'SHE', 'st-louis-bombers': 'STB', 'st-louis-hawks': 'STL', 'syracuse-nationals': 'SYR', 'toronto-huskies': 'TOH', 'toronto-raptors': 'TOR', 'tri-cities-blackhawks': 'TCB', 'utah-jazz': 'UTA', 'vancouver-grizzlies': 'VAN', 'washington-bullets': 'WSB', 'washington-capitols': 'WAS', 'washington-wizards': 'WAS', 'waterloo-hawks': 'WAT' };
   function tabr(id) { return id ? (TABR[id] || id.slice(0, 3).toUpperCase()) : ''; }
 
   function pvCareer(body, p) {
@@ -6563,6 +6565,7 @@
       Engine.setRules({});
       League.init(save, x.players, x.teams, []);
       Coach.build(save, { hc: (COACHH && COACHH[xc.year]) || {} }, save.ids);
+      if (xc.year >= 2026 && COACHDATA) Coach.build(save, COACHDATA, save.ids);
       /* the new clubs start with nobody: anyone the setup parked there goes back to the free-agent pool */
       save.lg.players.forEach(function (p) { if (EXPN.indexOf(p.team) >= 0 && p.status === 'active') { p.team = null; } });
       save.lastRec = {}; x.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w || t.lw || 0, l: t.l || t.ll || 0 }; });
@@ -6570,7 +6573,7 @@
       save.lg.noFirst = {}; xc.clubs.forEach(function (c) { save.lg.noFirst[c] = xc.noFirst; });
       ensureTm();
       League.ensurePicks(save, save.ids.map(teamById));
-      save.off = { step: 'brand', exp: { key: String(xc.year), clubs: xc.clubs.slice(), draft: xc.draft, real: x.real, counts: x.rules.picks, brand0: { city: teamById(save.myId).city, name: teamById(save.myId).name, colors: teamById(save.myId).colors.slice() } } };
+      save.off = { step: 'brand', exp: { noFlip: !!xc.noFlip, key: String(xc.year), clubs: xc.clubs.slice(), draft: xc.draft, real: x.real, counts: x.rules.picks, brand0: { city: teamById(save.myId).city, name: teamById(save.myId).name, colors: teamById(save.myId).colors.slice() } } };
       persist();
       openOff();
     }).catch(function () { alert('Could not build the ' + xc.label + ' league. Open the game from its web address.'); });
@@ -6598,7 +6601,7 @@
     ['city', 'name', 'c0', 'c1'].forEach(function (k) { inputs[k].addEventListener('input', refresh); });
     refresh(); card.appendChild(prev);
     body.appendChild(card);
-    var reset = el('button', 'btn ghost wide', 'Use the real name and colours'); reset.type = 'button';
+    var reset = el('button', 'btn ghost wide', save.off.exp.noFlip ? 'Use the starting name and colours' : 'Use the real name and colours'); reset.type = 'button';
     reset.addEventListener('click', function () { var b0 = save.off.exp.brand0; inputs.city.value = b0.city; inputs.name.value = b0.name; inputs.c0.value = b0.colors[0]; inputs.c1.value = b0.colors[1]; refresh(); });
     body.appendChild(reset);
     offDock('Confirm the brand', function () {
@@ -6608,9 +6611,9 @@
       save.off.exp.brandSet = 1;
       League.wire(save, city + ' ' + name + ' unveil their name and colours.');
       rosterCache = {};
-      if (save.off.exp.clubs.length > 1) { offStep('flip'); return; }
+      if (save.off.exp.clubs.length > 1 && !save.off.exp.noFlip) { offStep('flip'); return; }
       EXPN = save.off.exp.clubs.slice();
-      League.startExpansion(save, EXPN, EXPN[0], save.off.exp.real, save.off.exp.counts);
+      League.startExpansion(save, EXPN, save.myId, save.off.exp.real, save.off.exp.counts);
       League.wire(save, 'The league holds the expansion draft. ' + teamById(save.myId).city + ' pick from the lists the other clubs leave open.');
       offStep('expansion');
     });
