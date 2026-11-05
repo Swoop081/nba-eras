@@ -12,3 +12,6 @@ Data that needs Basketball Reference scraping through the browser (shell and Web
 7. Anything sourced from bbref season pages for the events and rules audit (task 74, 75).
 
 Portraits: not sourced by me. 1,696 players still have none, listed in MISSING-PORTRAITS.md.
+
+8. 2025-26 opening-night rosters, audited through transactions (data/players-2025-open.json). Every team is at 15, and the doubles and wrong-team players found so far are fixed (v423). What is left: for each of the 30 teams, take the real opening-night 15 (Oct 21-22, 2025) from the 2024-25 end roster plus the July-October 2025 transactions, then confirm each player against his 2025-26 game log. Sources that work in a browser: RealGM team Transaction-History pages and Basketball Reference game logs. The shell and WebFetch only reach some of those pages, and RealGM's league summaries contradict its team pages (for example, which side Hunter Tyson was traded from on Feb 5, 2026).
+   Known to check first: Nets (Cam Thomas, Highsmith, Tyrese Martin, Jalen Wilson), Pacers, Clippers (Paul and Beal), Knicks, Bulls, Hornets, Jazz.
