@@ -401,6 +401,7 @@
   var dock = document.getElementById('team-dock');
   var takeBtn = document.getElementById('btn-take');
   var selected = null;
+  var startMode = 'open';   /* 'expansion' = June 1995, the expansion draft first */
   var currentEra = null;
   var seasons = {};
 
@@ -776,6 +777,28 @@
       ? (selected.isNew ? 'A brand new club for the 1947-48 season. Opening night is next.' : 'Last season this club went ' + selected.w + '-' + selected.l + '. Opening night of 1947-48 is next.')
       : 'In real history this team went ' + selected.w + '-' + selected.l + '. What will you do differently?';
     store.set('team', selected.id);
+    startMode = 'open';
+    var oldRm = document.getElementById('ready-mode'); if (oldRm) oldRm.parentNode.removeChild(oldRm);
+    if (currentEra.id === '1995' && (selected.id === 'toronto-raptors' || selected.id === 'vancouver-grizzlies')) {
+      startMode = 'expansion';
+      var rm = el('div', 'seg'); rm.id = 'ready-mode';
+      var go = document.getElementById('btn-play');
+      var setM = function (m) {
+        startMode = m;
+        go.textContent = m === 'expansion' ? 'Start at the expansion draft' : 'Start the season';
+        document.getElementById('ready-line').textContent = m === 'expansion'
+          ? 'June 1995. Your club has no players and no history. Build the name and colours, pick your roster in the expansion draft, then the NBA draft.'
+          : 'Opening night of 1995-96 with the roster the club really took into its first season.';
+        Array.prototype.forEach.call(rm.children, function (b) { b.classList.toggle('on', b.dataset.m === m); });
+      };
+      [['expansion', 'Expansion draft'], ['open', 'Opening night']].forEach(function (o) {
+        var b = el('button', '', o[1]); b.type = 'button'; b.dataset.m = o[0];
+        b.addEventListener('click', function () { setM(o[0]); });
+        rm.appendChild(b);
+      });
+      go.parentNode.insertBefore(rm, go);
+      setM('expansion');
+    } else document.getElementById('btn-play').textContent = 'Start the season';
     if (currentEra.second || currentEra.current) { var ob = document.getElementById('fates-box'); if (ob) ob.parentNode.removeChild(ob); } else buildFatesBox();
     show('screen-ready');
   });
@@ -1996,6 +2019,7 @@
       startNextSeason();
       return;
     }
+    if (startMode === 'expansion' && currentEra.id === '1995') { startExpansionGame(); return; }
     var data = seasons[currentEra.id];
     loadPlayers(function (pl) {
       if (!pl) return;
@@ -6212,8 +6236,10 @@
     if (step === 'dev') return offDev(body, me);
     if (step === 'fates') return offFates(body, me);
     if (step === 'newclub') return offNewClub(body, me);
+    if (step === 'brand') return offBrand(body, me);
+    if (step === 'flip') return offFlip(body, me);
     if (step === 'contracts') return offContracts(body, me);
-    if (step === 'draft' || step === 'dispersal') return offDraft(body, me);
+    if (step === 'draft' || step === 'dispersal' || step === 'expansion') return offDraft(body, me);
     if (step === 'fa') return offFA(body, me);
     return offReady(body, me);
   }
@@ -6495,6 +6521,82 @@
     return foldAll.length > 0;
   }
 
+  /* ---------- the 1995 expansion start: June 1995, before the expansion draft ---------- */
+  var EXPN = ['toronto-raptors', 'vancouver-grizzlies'];
+  function startExpansionGame() {
+    fetch('data/expansion-1995.json').then(function (r) { return r.json(); }).then(function (x) {
+      prefetchSched(1995);
+      rosterCache = {};
+      save = Season.create('1995', 1994, x.teams, selected.id, 82, undefined);
+      Engine.setRules({});
+      League.init(save, x.players, x.teams, []);
+      Coach.build(save, { hc: (COACHH && COACHH[1995]) || {} }, save.ids);
+      /* the new clubs start with nobody: anyone the setup parked there goes back to the free-agent pool */
+      save.lg.players.forEach(function (p) { if (EXPN.indexOf(p.team) >= 0 && p.status === 'active') { p.team = null; } });
+      save.lastRec = {}; x.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w || t.lw || 0, l: t.l || t.ll || 0 }; });
+      save.phase = 'done'; save.champion = 'houston-rockets';
+      save.lg.noFirst = { 'toronto-raptors': 1996, 'vancouver-grizzlies': 1996 };
+      ensureTm();
+      League.ensurePicks(save, save.ids.map(teamById));
+      save.off = { step: 'brand', exp: { real: x.real, counts: x.rules.picks, brand0: { city: teamById(save.myId).city, name: teamById(save.myId).name, colors: teamById(save.myId).colors.slice() } } };
+      persist();
+      openOff();
+    }).catch(function () { alert('Could not build the June 1995 league. Open the game from its web address.'); });
+  }
+  /* name and colours: the real ones are the defaults, and they are yours to change */
+  function offBrand(body, me) {
+    offHeader('Your club', 'Build the brand from day one');
+    body.appendChild(el('p', 'sub how', 'The league has just announced you. Keep the real name and colours or make your own. Every screen in the game uses what you choose here, and it stays yours unless you agree to change it.'));
+    var t = me, card = el('div', 'stat-card');
+    var inputs = {};
+    function field(label, key, val) {
+      var wrap = el('label', 'field'); wrap.appendChild(el('small', null, label));
+      var i = document.createElement('input'); i.type = 'text'; i.value = val; i.maxLength = 24; i.className = 'inp'; wrap.appendChild(i); inputs[key] = i; card.appendChild(wrap);
+    }
+    field('City', 'city', t.city); field('Nickname', 'name', t.name);
+    ['Main colour', 'Trim colour'].forEach(function (lab, k) {
+      var wrap = el('label', 'field'); wrap.appendChild(el('small', null, lab));
+      var i = document.createElement('input'); i.type = 'color'; i.value = t.colors[k] || '#888888'; wrap.appendChild(i); inputs['c' + k] = i; card.appendChild(wrap);
+    });
+    var prev = el('div', 'brand-prev'); var pb = teamBadge(t); prev.appendChild(pb); var pt = el('strong', null, t.city + ' ' + t.name); prev.appendChild(pt); card.appendChild(prev);
+    body.appendChild(card);
+    var reset = el('button', 'btn ghost wide', 'Use the real name and colours'); reset.type = 'button';
+    reset.addEventListener('click', function () { var b0 = save.off.exp.brand0; inputs.city.value = b0.city; inputs.name.value = b0.name; inputs.c0.value = b0.colors[0]; inputs.c1.value = b0.colors[1]; });
+    body.appendChild(reset);
+    offDock('Confirm the brand', function () {
+      var city = inputs.city.value.trim() || save.off.exp.brand0.city, name = inputs.name.value.trim() || save.off.exp.brand0.name;
+      t.city = city; t.name = name; t.colors = [inputs.c0.value, inputs.c1.value];
+      save.off.exp.brandSet = 1;
+      League.wire(save, city + ' ' + name + ' unveil their name and colours.');
+      rosterCache = {};
+      offStep('flip');
+    });
+  }
+  /* the coin flip: in real life Vancouver won it and took the higher draft slot, so Toronto picked first in the expansion draft */
+  function offFlip(body, me) {
+    var ex = save.off.exp, other = EXPN.filter(function (i) { return i !== me.id; })[0], oc = teamById(other), vanMe = me.id === 'vancouver-grizzlies';
+    offHeader('Coin flip', 'Who picks first?');
+    body.appendChild(el('p', 'sub how', 'The two new clubs flip a coin. The winner picks one: the higher spot in the NBA draft (No. 6) or the first pick in the expansion draft. Toronto then takes 14 players and Vancouver 13, and no club can lose more than one.'));
+    function go(vanGetsSix) {
+      ex.swapSix = !vanGetsSix;
+      ex.firstId = vanGetsSix ? 'toronto-raptors' : 'vancouver-grizzlies';
+      League.startExpansion(save, EXPN, ex.firstId, ex.real, ex.counts);
+      League.wire(save, (vanGetsSix ? 'Vancouver win the coin flip and take the higher draft pick. Toronto pick first in the expansion draft.' : 'Vancouver win the coin flip and pick first in the expansion draft. Toronto take the higher draft pick.'));
+      offStep('expansion');
+    }
+    if (vanMe) {
+      body.appendChild(el('p', null, 'You won the flip. What do you want?'));
+      var a = el('button', 'card'); a.type = 'button'; a.appendChild(el('strong', null, 'Take the No. 6 pick in the NBA draft')); a.appendChild(el('span', 'meta', 'This is what happened in real life. Toronto pick first in the expansion draft and take No. 7.'));
+      a.addEventListener('click', function () { go(true); });
+      var b = el('button', 'card'); b.type = 'button'; b.appendChild(el('strong', null, 'Pick first in the expansion draft')); b.appendChild(el('span', 'meta', 'You choose your players before Toronto, and Toronto get No. 6.'));
+      b.addEventListener('click', function () { go(false); });
+      body.appendChild(a); body.appendChild(b);
+    } else {
+      body.appendChild(el('p', null, oc.city + ' win the flip and take the higher pick in the NBA draft (No. 6). You pick first in the expansion draft and hold No. 7.'));
+      offDock('Start the expansion draft', function () { go(true); });
+    }
+  }
+
   function offNewClub(body, me) {
     offHeader('Choose a new club', 'Your franchise has folded');
     body.appendChild(el('p', 'sub how', 'The league needs GMs. Pick the club you want to take over.'));
@@ -6618,7 +6720,7 @@
   /* ---------- draft night broadcast ---------- */
   var dn = { run: 0, timer: null, clock: 0, brk: '', brkT: null, tick: null, feed: [] };
   function dnStop() { dn.run = 0; clearTimeout(dn.timer); clearInterval(dn.tick); dn.tick = null; }
-  function dnLive() { return save && save.off && (save.off.step === 'draft' || save.off.step === 'dispersal') && document.getElementById('screen-off').classList.contains('active'); }
+  function dnLive() { return save && save.off && (save.off.step === 'draft' || save.off.step === 'dispersal' || save.off.step === 'expansion') && document.getElementById('screen-off').classList.contains('active'); }
   function dnTime(s) { s = Math.max(0, s); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
   function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
   function dnRank(d, p) { var ip = d.pool.indexOf(p); return d.pool.filter(function (q, i) { return q.board > p.board || (q.board === p.board && i < ip); }).length + 1; }
@@ -6647,6 +6749,7 @@
     return open + 'He is ' + a + (b ? ', and ' + b : '') + '.' + verdict;
   }
   function dnNote(d, p, slot) {
+    if (d.kind === 'expansion') return p.name + ' (' + (p.pos || '') + ', ' + p.ratings.ovr + ') goes to ' + teamById(slot.team).city + ', taken from ' + teamById(slot.from).city + '. A club can lose only one man, so ' + teamById(slot.from).city + ' are now closed to the other side.';
     if (slot.round === 1 || slot.pick <= 30) { var tw = dnTweet(d, p, slot); if (tw) return tw; }
     var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = dnLast(p.name), gap = n - r;
     var o = p.scout ? p.scout.ovr : p.ratings.ovr, pot = p.scout ? p.scout.pot : p.pot, up = pot - o, col = p.college || 'his program';
@@ -6670,6 +6773,7 @@
   }
   /* a trade involving upcoming picks (never the user's) or a player deal */
   function dnTrade(d, me) {
+    if (d.kind === 'expansion') return false;
     var teams = save.ids.map(teamById), i = d.at + 1;
     var near = [];
     for (var k = d.at; k < Math.min(d.picks.length, d.at + 14); k++) if (d.picks[k].team !== me.id && !d.picks[k].player) near.push(k);
@@ -6712,6 +6816,16 @@
   }
   function dnFinish(me) {
     var d = save.lg.draft, isDisp = d.kind === 'dispersal';
+    if (d.kind === 'expansion') {
+      var ex = save.off.exp;
+      fetch('data/draft-1995.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; }).catch(function () { return { prospects: [] }; })
+        .then(function (dd) {
+          var tms = save.ids.map(teamById), ab = {}; tms.forEach(function (t) { ab[t.id] = TABR[t.id]; });
+          League.startRealDraft(save, tms, League.applyBoard(save, dd.prospects), 2, ab, ex.swapSix ? [6, 7] : null);
+          offStep('draft');
+        });
+      return;
+    }
     d.pool.forEach(function (p) {
       if (p.status !== 'prospect') return;
       p.status = 'active'; p.team = null; p.salary = League.salaryFor(p.ratings.ovr); p.yrs = 1;
@@ -6747,7 +6861,7 @@
     offDraftUI(body, me);
   }
   function offDraftUI(body, me, keep) {
-    var d = save.lg.draft, isDisp = d.kind === 'dispersal';
+    var d = save.lg.draft, isDisp = d.kind === 'dispersal', isExp = d.kind === 'expansion';
     if (d.at >= d.picks.length) { dnStop(); dnFinish(me); return; }
     var oldT = body.querySelector('.hrail-track'), keepX = oldT ? oldT.scrollLeft : 0;
     body.textContent = '';
@@ -6756,12 +6870,12 @@
     var avail = League.draftAvailable(save);
     if (!avail.length) { dnStop(); dnFinish(me); return; }
     if (!offSel || !avail.some(function (p) { return p.id === offSel; })) offSel = avail[0].id;
-    offHeader(isDisp ? 'Dispersal draft' : d.year + ' NBA Draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length);
+    offHeader(isExp ? 'Expansion draft' : isDisp ? 'Dispersal draft' : d.year + ' NBA Draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length);
     var wrap = el('div', 'dn');
     var top = el('div', 'dn-top');
     var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; if (save.year < 1980) lg.style.display = 'none'; lg.onerror = function () { lg.style.display = 'none'; };
     top.appendChild(lg);
-    top.appendChild(el('strong', null, isDisp ? 'DISPERSAL DRAFT' : 'NBA DRAFT ' + d.year));
+    top.appendChild(el('strong', null, isExp ? 'EXPANSION DRAFT' : isDisp ? 'DISPERSAL DRAFT' : 'NBA DRAFT ' + d.year));
     top.appendChild(el('em', null, save.year >= 1980 ? 'LIVE' : 'DRAFT ROOM'));
     wrap.appendChild(top);
     var clock = el('div', 'dn-clock' + (mine ? ' mine' : ''));
@@ -6799,7 +6913,7 @@
       r.appendChild(el('i', null, String(dnRank(d, p))));
       r.appendChild(makeAvatar(p));
       var t = el('span'); t.appendChild(el('b', null, p.name));
-      t.appendChild(el('small', null, (p.pos || '') + ' · ' + (isDisp ? 'from ' + (teamById(p.formerTeam) || { city: 'a folded club' }).city : (p.college || '')) + ' · ' + p.age));
+      t.appendChild(el('small', null, (p.pos || '') + ' · ' + ((isDisp || isExp) ? 'from ' + (teamById(p.formerTeam || p.team) || { city: 'a folded club' }).city : (p.college || '')) + ' · ' + p.age));
       r.appendChild(t);
       r.appendChild(el('em', null, (p.scout ? p.scout.ovr : p.ratings.ovr) + '/' + (p.scout ? p.scout.pot : p.pot)));
       if (mine && !dn.run) r.addEventListener('click', function () { offSel = p.id; drawDraft(); });

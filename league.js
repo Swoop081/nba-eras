@@ -955,6 +955,15 @@
     if (!first && lot === order && dy >= 1966 && dy <= 1984 && order.length > 2) {
       lot = order.slice(); if (Math.random() < 0.5) { var tmp = lot[0]; lot[0] = lot[1]; lot[1] = tmp; }
     }
+    /* an expansion club cannot take the first pick in its first lottery: it gives it up and the next club on the list takes it */
+    var nf = save.lg && save.lg.noFirst;
+    if (!first && nf && lot.length > 1 && nf[lot[0]] && nf[lot[0]] >= dy) {
+      var j0 = 0; while (j0 < lot.length && nf[lot[j0]] && nf[lot[j0]] >= dy) j0++;
+      if (j0 < lot.length) {
+        lot = lot.slice(); var gave = lot[0], got = lot[j0]; lot.splice(j0, 1); lot.splice(0, 0, got);
+        save.lg.noFirstNote = { club: gave, to: got, year: dy };
+      }
+    }
     var picks = [];
     for (var r = 1; r <= rounds; r++) (r === 1 ? lot : order).forEach(function (id, i) { picks.push({ round: r, pick: picks.length + 1, team: id, player: null }); });
     return picks;
@@ -992,6 +1001,40 @@
     save.lg.draft = { year: save.year + 1, rounds: rounds, pool: pool, picks: dp, at: 0 };
   }
 
+  /* ---------- expansion draft ---------- */
+  function expValue(p) { var a = p.age || 26; return p.ratings.ovr + Math.max(0, (p.pot || p.ratings.ovr) - p.ratings.ovr) * 0.25 - Math.max(0, a - 29) * 1.2; }
+  /* a CPU club protects its best eight, but leaves open the man who really was taken from it */
+  function cpuProtect(save, id, spare) {
+    return rosterOf(save, id).filter(function (p) { return (spare || []).indexOf(p.id) < 0; })
+      .sort(function (a, b) { return expValue(b) - expValue(a); }).slice(0, 8).map(function (p) { return p.id; });
+  }
+  /* newIds pick from every other club's unprotected players, alternating from firstId; a club loses one player at most */
+  function startExpansion(save, newIds, firstId, real, counts) {
+    var prot = {}, spare = [];
+    newIds.forEach(function (n) { spare = spare.concat(real[n] || []); });
+    save.ids.forEach(function (id) { if (newIds.indexOf(id) < 0) prot[id] = cpuProtect(save, id, spare); });
+    var pool = save.lg.players.filter(function (p) { return p.status === 'active' && p.team && newIds.indexOf(p.team) < 0 && (prot[p.team] || []).indexOf(p.id) < 0; });
+    pool.forEach(function (p) { p.board = expValue(p); p.formerTeam = p.team; });
+    var order = [firstId].concat(newIds.filter(function (x) { return x !== firstId; })), left = {}, picks = [], n = 0;
+    newIds.forEach(function (id) { left[id] = counts[id] || 13; });
+    while (newIds.some(function (id) { return left[id] > 0; })) order.forEach(function (id) { if (left[id] > 0) { left[id]--; n++; picks.push({ round: 1, pick: n, team: id, player: null }); } });
+    save.lg.draft = { kind: 'expansion', year: save.year + 1, rounds: 1, pool: pool, picks: picks, at: 0, lost: [], real: spare, prot: prot, newIds: newIds };
+    bump(save);
+  }
+  /* The real draft order: each slot goes to the club that really held it (abbr maps a club id to its letters). */
+  function startRealDraft(save, teams, prospects, rounds, abbr, swapSix) {
+    var realN = (prospects || []).filter(function (q) { return !q.und; });
+    if (realN.length >= 20) rounds = Math.min(25, Math.max.apply(null, realN.map(function (q) { return q.round || 1; })));
+    var pool = makeClass(save.year + 1, prospects, teams.length * rounds + 12);
+    var byAbbr = {}; teams.forEach(function (t) { byAbbr[abbr[t.id]] = t.id; });
+    var slotTeam = {}; (prospects || []).forEach(function (q) { if (q.realPick && q.team && byAbbr[q.team]) slotTeam[q.realPick] = byAbbr[q.team]; });
+    var dp = draftOrder(save, teams, rounds);
+    dp.forEach(function (sl, i) { if (slotTeam[i + 1]) sl.team = slotTeam[i + 1]; });
+    if (swapSix && swapSix.length === 2) { var x = dp[5].team; dp[5].team = dp[6].team; dp[6].team = x; }
+    if (dp.length > pool.length) dp = dp.slice(0, pool.length);
+    save.lg.draft = { year: save.year + 1, rounds: rounds, pool: pool, picks: dp, at: 0 };
+  }
+
   /* Players from folded clubs go into a pool that the surviving and new clubs pick from. */
   function startDispersal(save, teams, foldedIds, newIds, rounds) {
     var pool = save.lg.players.filter(function (p) { return p.status === 'active' && p.team && foldedIds.indexOf(p.team) >= 0; });
@@ -1025,11 +1068,18 @@
 
   function draftAvailable(save) {
     var d = save.lg.draft;
+    if (d.kind === 'expansion') return d.pool.filter(function (p) { return p.status === 'active' && p.team && d.newIds.indexOf(p.team) < 0 && d.lost.indexOf(p.team) < 0; }).sort(function (a, b) { return b.board - a.board; });
     return d.pool.filter(function (p) { return p.status === 'prospect'; }).sort(function (a, b) { return b.board - a.board; });
   }
 
   function makePick(save, p) {
     var d = save.lg.draft, slot = d.picks[d.at];
+    if (d.kind === 'expansion') {
+      slot.from = p.team; d.lost.push(p.team); p.team = slot.team; p.status = 'active';
+      logDeal(save, p, 'Expansion draft, pick ' + slot.pick, slot.team);
+      slot.player = p.id; d.at++; bump(save);
+      return slot;
+    }
     p.status = slot.team === save.myId ? 'rights' : 'active'; p.team = slot.team;
     if (d.kind === 'dispersal') { p.salary = salaryFor(p.ratings.ovr); p.yrs = 2; }
     else if (rkScale(save) && slot.pick <= 30) { p.salary = scaleFor(save, slot.pick); p.yrs = 4; p.rk = 1; p.s0 = p.salary; p.rz = 0.05; p.draftedYear = d.year; p.draftPick = slot.pick; }
@@ -1046,6 +1096,10 @@
 
   function aiPick(save) {
     var d = save.lg.draft;
+    if (d.kind === 'expansion') {
+      var sc = draftAvailable(save).slice(0, 40).map(function (p) { return { p: p, v: p.board + (d.real.indexOf(p.id) >= 0 ? 40 : 0) + rnd(-2, 2) }; }).sort(function (x, y) { return y.v - x.v; });
+      return makePick(save, sc[0].p);
+    }
     var best = draftAvailable(save).slice(0, 6);
     /* a club drafts for need as well as talent: thin at a position, it leans that way; stacked there, it looks elsewhere */
     var have = { G: 0, F: 0, C: 0 }, slot = d.picks[d.at];
@@ -1697,6 +1751,7 @@
   }
 
   root.League = {
+    startExpansion: startExpansion, startRealDraft: startRealDraft, cpuProtect: cpuProtect,
     makeClass: makeClass,
     setNumbers: setNumbers, fixNumbers: fixNumbers, normName: normName,
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
