@@ -280,6 +280,8 @@
     }
   })();
 
+  /* First playable season: 1979-80, Magic's and Bird's rookie year. Earlier eras stay in the data, hidden for now. */
+  var FIRST_PLAYABLE = 1979;
   var eraList = document.getElementById('era-list');
   var eraBlurbs = {};
   var eraDecade = '2020';
@@ -305,7 +307,7 @@
   }
   function buildEraList() {
     eraList.textContent = '';
-    var all = ERAS.filter(function (era) { return era.current; });
+    var all = ERAS.filter(function (era) { return era.current && +era.id >= FIRST_PLAYABLE; });
     var pgr = el('div', 'pgr'), track = el('div', 'pgr-track era-track'), dots = el('div', 'pgr-dots');
     eraPages = [];
     var byDec = {}, order = [];
@@ -356,7 +358,7 @@
   var eraTrack = null;
   (function () {
     var decs = [];
-    ERAS.forEach(function (era) { if (era.current) { var d = String(Math.floor(+era.id / 10) * 10); if (decs.indexOf(d) < 0) decs.push(d); } });
+    ERAS.forEach(function (era) { if (era.current && +era.id >= FIRST_PLAYABLE) { var d = String(Math.floor(+era.id / 10) * 10); if (decs.indexOf(d) < 0) decs.push(d); } });
     decs.forEach(function (d) {
       var b = el('button', d === eraDecade ? 'on' : '', d + 's');
       b.type = 'button';
