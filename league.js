@@ -812,7 +812,8 @@
       var pot = rp.pot !== undefined ? rp.pot : target + (rp.age ? Math.round((age <= 18 ? 17 : age <= 19 ? 14 : age <= 20 ? 11 : age <= 22 ? 7 : 4) * (1.15 - rp.realPick / 120) + gauss() * 2) : Math.round(rnd(4, 14)));
       var np = makePlayer(rp, target, age, pot);
       if (rp.ratings) { /* a real prospect arrives as the player he really was */
-        np.ratings = JSON.parse(JSON.stringify(rp.ratings)); np.pot = Math.max(np.ratings.ovr, rp.pot || np.ratings.ovr);
+        np.ratings = JSON.parse(JSON.stringify(rp.ratings)); /* era ratings top out at 87 by construction, so the real peak is a floor for his ceiling, not the ceiling */
+        np.pot = Math.min(99, Math.max(np.ratings.ovr, Math.round(np.ratings.ovr + potGap(age) * (1 - Math.max(0, np.ratings.ovr - 50) / 100)), (rp.pot || 0) + 6));
         if (rp.hgt) np.hgt = rp.hgt;
       }
       list.push(np);
