@@ -199,7 +199,7 @@
       q.yrs = 1 + Math.floor(Math.random() * 3);
       if (q.contract) { q.salary = q.contract.s; q.yrs = Math.max(1, q.contract.y); q.opt = q.contract.o; q.known = true; delete q.contract; }
       var age = q.age || 26;
-      q.pot = potFor(q.ratings.ovr, age);
+      q.pot = q.pot ? Math.max(q.pot, q.ratings.ovr) : potFor(q.ratings.ovr, age);   /* a potential written in the data (a made-up year, or a hand-set star) is kept */
       lg.players.push(q);
       logDeal(save, q, 'Original deal', q.team);
     });
