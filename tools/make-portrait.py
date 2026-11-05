@@ -9,8 +9,9 @@ import numpy as np
 from PIL import Image
 from rembg import remove, new_session
 
-FACE_W = 0.45   # face width as a share of the frame; matches the older portraits (0.43-0.46 by this detector)
-HEAD_GAP = 0.04  # gap above the top of the hair, as a share of the frame height
+FACE_W = 0.44   # face width as a share of the frame (median of the existing portraits by this detector)
+FACE_TOP = 0.147  # top of the detected face box, as a share of the frame height; every head lines up here
+HEAD_GAP = 0.04  # only used when no face is found
 SIZE = 600
 
 def face_box(im):
@@ -53,15 +54,13 @@ def main(src, pid, outdir='assets/players'):
         x, y, w, h = [int(v) for v in box]
         side = w / FACE_W
         left = x + w / 2 - side / 2
-        alpha = np.array(cut)[:, :, 3]
-        rows = np.where((alpha > 128).sum(1) > 3)[0]
-        hair = rows[0] if len(rows) else y
+        # faces line up on FACE_TOP; tall hair above the frame is simply cropped off
         # if the photo ends above the frame's bottom, zoom in a little (down to 75%) so no empty strip is left
-        fit = (cut.height - hair) / (1 - HEAD_GAP)
+        fit = (cut.height - y) / (1 - FACE_TOP)
         if fit < side:
             side = max(fit, side * 0.75)
             left = x + w / 2 - side / 2
-        top = hair - HEAD_GAP * side
+        top = y - FACE_TOP * side
         canvas = Image.new('RGBA', (int(side), int(side)), (0, 0, 0, 0))
         canvas.paste(cut, (int(-left), int(-top)))
         crop = canvas
