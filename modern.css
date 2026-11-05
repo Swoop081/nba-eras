@@ -1253,3 +1253,7 @@ body[data-modern="1"] .lr .avatar{width:48px;height:48px}
 body[data-modern="1"] .lr b{font-size:12px}
 body[data-modern="1"] .lr .lr-pts{font-size:26px}
 body[data-modern="1"] .lr small{font-size:10px}
+
+/* the notification slot in the season header holds no space of its own: the banner sits straight under the title */
+body[data-modern="1"] #screen-season .bar>#phone-banners{min-height:0;margin:0;align-self:flex-start}
+body[data-modern="1"] #screen-season .bar>#phone-banners:empty{display:none}
