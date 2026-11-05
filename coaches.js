@@ -40,8 +40,9 @@
       if (!list.length) { var lg = [data && data.ao && data.ao[id], data && data.ad && data.ad[id]].filter(Boolean); list = lg; }
       var real = list.map(function (x) { return real_(x, id); });
       s.ao = real[0] || made(r, 'ao', id.slice(0, 3) + 'o');
-      s.ad = real[1] || made(r, 'ad', id.slice(0, 3) + 'd');
-      s.ao.role = 'ao'; s.ad.role = 'ad';
+      /* one assistant at most before the mid-1980s; the offensive/defensive pair arrives later */
+      s.ad = save.year < 1985 ? null : (real[1] || made(r, 'ad', id.slice(0, 3) + 'd'));
+      s.ao.role = 'ao'; if (s.ad) s.ad.role = 'ad';
       real.slice(2).forEach(function (c) { extra.push(c); });
       st[id] = s;
     });
@@ -57,7 +58,7 @@
   /* how much the staff lifts or drags the team's offensive and defensive ratings (a fraction, e.g. 0.02 = 2%) */
   function bonus(save, id, trust) {
     var s = staff(save, id); if (!s) return null;
-    var hc = s.hc || { off: 50, def: 50, mot: 50 }, ao = s.ao || { off: 50 }, ad = s.ad || { def: 50 };
+    var hc = s.hc || { off: 50, def: 50, mot: 50 }, ao = s.ao || { off: 50, def: 50 }, ad = s.ad || ao;
     var k = trust === undefined ? 1 : 0.5 + Math.max(0, Math.min(100, trust)) / 100;
     var m = ((hc.mot || 50) - 60) / 100 * 0.03;
     var ao_ = ((ao.off || 50) + (ad.off || 50)) / 2, ad_ = ((ao.def || 50) + (ad.def || 50)) / 2;
@@ -77,7 +78,7 @@
   /* extra growth points for young players from a good developer */
   function devBonus(save, id) {
     var s = staff(save, id); if (!s || !s.hc) return 0;
-    var d = 0.6 * s.hc.dev + 0.4 * ((s.ao ? s.ao.dev : 55) + (s.ad ? s.ad.dev : 55)) / 2;
+    var d = 0.6 * s.hc.dev + 0.4 * ((s.ao ? s.ao.dev : 55) + (s.ad ? s.ad.dev : (s.ao ? s.ao.dev : 55))) / 2;
     return (d - 60) / 60;
   }
 
@@ -156,11 +157,11 @@
         if (!C.fy || C.fy.y !== save.year) C.fy = { y: save.year, n: 0 }; C.fy.n++;
         if (nw) { hire(save, id, 'hc', nw); if (root.League && root.League.wire) root.League.wire(save, id.split('-').map(function (w) { return w[0].toUpperCase() + w.slice(1); }).join(' ') + ' part ways with ' + out.n + ' and hire ' + nw.n + ' as head coach.'); }
       }
-      ['hc', 'ao', 'ad'].forEach(function (rl) { if (!s[rl]) { var b = bestFor(C.pool, rl); if (b) hire(save, id, rl, b); } });
+      ['hc', 'ao', 'ad'].forEach(function (rl) { if (!s[rl] && !(rl === 'ad' && save.year < 1985)) { var b = bestFor(C.pool, rl); if (b) hire(save, id, rl, b); } });
     });
     while (C.pool.length < 14) C.pool.push(made(Math.random, ['hc', 'ao', 'ad'][C.pool.length % 3], 'n' + Math.floor(Math.random() * 99999)));
   }
-  function owned(save, myId) { var s = staff(save, myId); return s ? [['hc', 'Head coach'], ['ao', 'Assistant coach'], ['ad', 'Assistant coach']].map(function (x) { return { role: x[0], label: x[1], c: s[x[0]] }; }) : []; }
+  function owned(save, myId) { var s = staff(save, myId); return s ? [['hc', 'Head coach'], ['ao', 'Assistant coach'], ['ad', 'Assistant coach']].filter(function (x) { return !(x[0] === 'ad' && !s.ad); }).map(function (x) { return { role: x[0], label: x[1], c: s[x[0]] }; }) : []; }
 
   root.Coach = { build: build, staff: staff, bonus: bonus, apply: apply, devBonus: devBonus, fromRetired: fromRetired, leadership: leadership, fire: fire, hire: hire, offseason: offseason, inSeason: inSeason, sack: sack, owned: owned, bestFor: bestFor, score: score, slug: slug };
 })(typeof window !== 'undefined' ? window : globalThis);
