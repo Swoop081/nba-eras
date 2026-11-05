@@ -1205,9 +1205,22 @@
     var rows = [['Games', g]];
     if (full) rows.push(['Minutes', mode === 'Per game' ? f1(x.min, g) : mode === 'Totals' ? x.min : '48.0']);
     rows.push(['Points', v('pts')], ['Assists', v('ast')]);
-    if (full) rows.push(['Rebounds', v('trb')], ['Steals', v('stl')], ['Blocks', v('blk')], ['Turnovers', v('tov')]);
+    if (full) {
+      rows.push(['Rebounds', v('trb')]);
+      if (save.year >= 1973) rows.push(['Offensive rebounds', v('orb')], ['Defensive rebounds', v('drb')], ['Steals', v('stl')], ['Blocks', v('blk')]);
+      if (save.year >= 1977) rows.push(['Turnovers', v('tov')]);
+    }
     rows.push(['Fouls', v('pf')], ['FG made', v('fg')], ['FG attempts', v('fga')], ['FG%', pctS(x.fg, x.fga)], ['FT made', v('ft')], ['FT attempts', v('fta')], ['FT%', pctS(x.ft, x.fta)]);
+    if (full && save.year >= 1979 && x.tpa) rows.push(['3P made', v('tp')], ['3P attempts', v('tpa')], ['3P%', pctS(x.tp, x.tpa)]);
+    if (full) rows.push(['Double-doubles', String(x.dd || 0)], ['Triple-doubles', String(x.td || 0)]);
     body.appendChild(dataTable(['Stat', mode], rows));
+    if (full && (x.hi || p.hi)) {
+      var hr = [], H = [['Points', 'pts'], ['Rebounds', 'trb'], ['Assists', 'ast'], ['Steals', 'stl'], ['Blocks', 'blk']];
+      if (save.year < 1973) H = H.slice(0, 3);
+      H.forEach(function (h) { hr.push([h[0], String((x.hi || {})[h[1]] || 0), String((p.hi || {})[h[1]] || 0)]); });
+      body.appendChild(el('div', 'group-title', 'Single-game highs'));
+      body.appendChild(dataTable(['', 'This season', 'Career'], hr));
+    }
     if (full) {
       var lead = {};
       ['pts', 'ast'].forEach(function (k) {

@@ -265,6 +265,17 @@
       var played = l.s.min > 0 || l.s.fga > 0 || l.s.fta > 0 || l.s.pts > 0;
       if (played) { x.g++; var rc = x.rc || (x.rc = []); rc.push([l.s.pts || 0, l.s.fg || 0, l.s.fga || 0, l.s.trb || 0, l.s.ast || 0]); if (rc.length > 6) rc.shift(); }
       STAT_KEYS.forEach(function (k) { x[k] = (x[k] || 0) + (l.s[k] || 0); });
+      if (played) {
+        var cats = ['pts', 'trb', 'ast', 'stl', 'blk'], tens = cats.filter(function (k) { return (l.s[k] || 0) >= 10; }).length;
+        if (tens >= 2) x.dd = (x.dd || 0) + 1;
+        if (tens >= 3) x.td = (x.td || 0) + 1;
+        var pl = byId(save, l.id), hi = x.hi || (x.hi = {}), ch = pl ? (pl.hi || (pl.hi = {})) : null;
+        ['pts', 'trb', 'ast', 'stl', 'blk', 'tp'].forEach(function (k) {
+          var v = l.s[k] || 0;
+          if (v > (hi[k] || 0)) hi[k] = v;
+          if (ch && v > (ch[k] || 0)) ch[k] = v;
+        });
+      }
       if (meta && played) {
         var home = i < meta.nh, tid = home ? meta.h : meta.a;
         noteHigh(save, l, tid, home ? meta.a : meta.h, meta.day);
