@@ -6546,8 +6546,9 @@
     got.sort(function (a, b) { return b.pc - a.pc; });
     if (!got.length) return '';
     var t = teamById(slot.team).city, w = dnLast(p.name), a = dnPick(got[0].phrases), b = got[1] ? dnPick(got[1].phrases) : '';
+    var gap = slot.pick - dnRank(d, p), verdict = gap >= 6 ? dnPick([' This could be one of the steals of the draft.', ' Steal. He was top ' + (slot.pick - gap + 2) + ' on my board.', ' I love this: serious value at ' + slot.pick + '.']) : gap <= -6 ? dnPick([' Too high for me. I had him ' + (slot.pick - gap) + 'th, and I question this one.', ' A reach at ' + slot.pick + '. Plenty of better names were still there.', ' Not sure about this. ' + t + ' could have waited.']) : '';
     var open = dnPick(['No. ' + slot.pick + ': ' + t + ' take ' + w + '. ', t + ' land ' + w + ' at ' + slot.pick + '. ', 'Pick ' + slot.pick + ' is ' + w + ' to ' + t + '. ']);
-    return open + 'He is ' + a + (b ? ', and ' + b : '') + '.';
+    return open + 'He is ' + a + (b ? ', and ' + b : '') + '.' + verdict;
   }
   function dnNote(d, p, slot) {
     if (slot.round === 1 || slot.pick <= 30) { var tw = dnTweet(d, p, slot); if (tw) return tw; }
