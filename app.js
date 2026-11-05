@@ -3955,13 +3955,9 @@
   }
 
   /* ---------- owner ---------- */
-  var OWNERS = ['Harold Pruitt', 'Walter Kessler', 'Ray Delgado', 'Irving Blum', 'Frank Mazur', 'Dutch Holloway', 'Stan Oberman', 'Lou Castellano', 'Bernie Tate', 'Gil Ainsworth', 'Marv Kowalczyk', 'Art Devereaux', 'Sol Ritter', 'Chuck Bellamy', 'Vince Rourke', 'Hank Lindqvist', 'Max Feldstein', 'Carl Okafor', 'Ted Brannigan', 'Leo Santangelo', 'Roy Whitcomb', 'Nate Szymanski'];
   function ownerOn() { return !!save && save.year < 1990; }
-  function ownerName() {
-    if (!save.ownerNames) save.ownerNames = {};
-    if (!save.ownerNames[save.myId]) { var h = 0, k = save.myId + save.year; for (var i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0; save.ownerNames[save.myId] = OWNERS[h % OWNERS.length]; }
-    return save.ownerNames[save.myId];
-  }
+  /* no made-up names: he is simply the club's owner */
+  function ownerName() { var t = teamById(save.myId); return 'The ' + t.city + ' ' + t.name + ' owner'; }
   function capWord() { return ownerOn() ? 'budget' : 'cap'; }
   function ensureOwner() {
     if (!ownerOn()) { save.owner = null; return; }
@@ -6218,7 +6214,7 @@
     }
     if (r.owner) {
       var ow = el('div', 'stat-card');
-      ow.appendChild(el('div', 'group-title', 'The owner, ' + ownerName()));
+      ow.appendChild(el('div', 'group-title', ownerName()));
       ow.appendChild(el('p', 'sub', ownerName() + "'s goal: " + r.owner.goal + '.'));
       (r.owner.sides || []).forEach(function (s) { ow.appendChild(el('p', 'sub side' + (s.ok ? ' ok' : ''), (s.ok ? '\u2713 ' : '\u2717 ') + s.text + ' \u00B7 ' + s.now)); });
       ow.appendChild(el('p', 'sub', r.owner.msg + ' (trust ' + (r.owner.delta > 0 ? '+' : '') + r.owner.delta + ')'));
