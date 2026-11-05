@@ -30,9 +30,14 @@ def face_box(im):
 SESSION = None
 def main(src, pid, outdir='assets/players'):
     global SESSION
-    im = Image.open(src).convert('RGB')
-    SESSION = SESSION or new_session('u2net')
-    cut = remove(im, session=SESSION).convert('RGBA')
+    raw = Image.open(src)
+    if raw.mode in ('RGBA', 'LA', 'P') and np.array(raw.convert('RGBA'))[:, :, 3].min() == 0 \
+            and (np.array(raw.convert('RGBA'))[:, :, 3] == 0).mean() > 0.05:
+        cut = raw.convert('RGBA')   # already cut out: keep its own transparency
+    else:
+        im = raw.convert('RGB')
+        SESSION = SESSION or new_session('u2net')
+        cut = remove(im, session=SESSION).convert('RGBA')
     box = face_box(cut)
     if box is None:
         alpha = np.array(cut)[:, :, 3]
