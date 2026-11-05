@@ -286,3 +286,6 @@ Send each photo with the name; save as assets/players/<id>.webp (tools/make-port
 | 280 | greg-griffin | Greg Griffin | phoenix-suns | 42 |
 | 281 | dave-wohl | Dave Wohl | new-jersey-nets | 41 |
 | 282 | bird-averitt | Bird Averitt | buffalo-braves | 41 |
+
+## AI-made portraits (replace when a real photo turns up)
+- pete-maravich
