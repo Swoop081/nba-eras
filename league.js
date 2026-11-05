@@ -1030,7 +1030,13 @@
   function aiPick(save) {
     var d = save.lg.draft;
     var best = draftAvailable(save).slice(0, 6);
-    var scored = best.map(function (p) { return { p: p, v: p.board + rnd(-4, 4) }; }).sort(function (a, b) { return b.v - a.v; });
+    /* a club drafts for need as well as talent: thin at a position, it leans that way; stacked there, it looks elsewhere */
+    var have = { G: 0, F: 0, C: 0 }, slot = d.picks[d.at];
+    if (slot && slot.team) rosterOf(save, slot.team).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, 9).forEach(function (q) { have[/C/.test(q.pos || '') && !/G/.test(q.pos || '') ? 'C' : /^G/.test(q.pos || '') ? 'G' : 'F']++; });
+    var scored = best.map(function (p) {
+      var g = /C/.test(p.pos || '') && !/G/.test(p.pos || '') ? 'C' : /^G/.test(p.pos || '') ? 'G' : 'F', need = have[g] <= 1 ? 3 : have[g] >= 4 ? -3 : 0;
+      return { p: p, v: p.board + rnd(-4, 4) + need };
+    }).sort(function (a, b) { return b.v - a.v; });
     return makePick(save, scored[0].p);
   }
 
