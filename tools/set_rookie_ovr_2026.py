@@ -2,7 +2,7 @@
 import json, os
 R = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 W = {'sco': .39, 'sht': .10, 'ft': .04, 'ply': .08, 'tov': .04, 'orb': .05, 'drb': .07, 'stl': .07, 'blk': .05, 'fou': .03, 'dur': .08}
-TARGET = {'aj-dybantsa': 73, 'darryn-peterson': 73, 'cameron-boozer': 73}
+TARGET = {'aj-dybantsa': 74, 'darryn-peterson': 73, 'cameron-boozer': 73}
 def shift(r, d):
     f0 = sum(W[k] * r[k] for k in W)
     for _ in range(8):
