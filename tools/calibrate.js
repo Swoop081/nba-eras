@@ -117,7 +117,7 @@ for (let it = 1; it <= ITER; it++) {
     if (s.fga / g > 3 && real.fg) { const sfg = s.fg / s.fga; k.sht = clamp(k.sht * clamp(Math.pow((real.fg + .02) / (sfg + .02), .6), .94, 1.07), 3, 99); }
     k.ovr = ovrOf(k);
   });
-  lockOvr();
+  if (!process.env.NOLOCK) lockOvr();
   if (it % 4 === 0) fitLeague(1);
   r = run(S); report(r, 'iter ' + it);
 }
@@ -132,7 +132,7 @@ for (let it = 1; it <= (+process.argv[5] || 10); it++) {
   r = run(S); report(r, 'imp ' + it);
 }
 if (process.argv.includes('--write')) {
-  players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = p.ovr0; p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; delete p.ovr0; });
+  players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = process.env.NOLOCK ? ovrOf(p.ratings) : p.ovr0; p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; delete p.ovr0; });
   fs.writeFileSync(path.join(R, 'data/players-' + ERA + '.json'), JSON.stringify(doc, null, 1));
   fs.mkdirSync(path.join(R, 'data/params'), { recursive: true });
   const pf = path.join(R, 'data/params/' + ERA + '.json');
