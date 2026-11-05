@@ -316,7 +316,7 @@
     order.forEach(function (d) {
       for (var i = 0; i < byDec[d].length; i += 2) {
         var grp = byDec[d].slice(i, i + 2);
-        var pg = el('section', 'pg era-pg era2');
+        var pg = el('section', 'pg era-pg era2'); pg.dataset.d = d;
         grp.forEach(function (era, k) {
           var card = el('button', 'card era era2c' + (k === 0 && i === 0 ? ' first' : ''));
           card.type = 'button';
@@ -350,6 +350,12 @@
     track.addEventListener('scroll', function () {
       clearTimeout(tick);
       tick = setTimeout(function () {
+        if (window.matchMedia && window.matchMedia('(min-width:1000px) and (min-height:600px)').matches) {   /* desktop: the decade tab follows the card at the top */
+          var top = track.getBoundingClientRect().top, cs = track.querySelectorAll('.card'), dd = null;
+          for (var q = 0; q < cs.length; q++) { if (cs[q].getBoundingClientRect().bottom > top + 60) { dd = cs[q].parentNode.dataset.d; break; } }
+          if (dd) Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x.dataset.d === dd); });
+          return;
+        }
         var w = track.firstChild ? track.firstChild.offsetWidth : 1, n = Math.round(track.scrollLeft / (w + 10));
         setDots(Math.max(0, Math.min(eraPages.length - 1, n)));
       }, 40);
@@ -367,6 +373,12 @@
       b.type = 'button';
       b.dataset.d = d;
       b.addEventListener('click', function () {
+        if (window.matchMedia && window.matchMedia('(min-width:1000px) and (min-height:600px)').matches && eraTrack) {   /* desktop: all eras sit in one grid, so a tab scrolls to its decade */
+          var first = eraTrack.querySelector('[data-d="' + d + '"]');
+          if (first && first.firstChild) first.firstChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x.dataset.d === d); });
+          return;
+        }
         var n = 0;
         eraPages.forEach(function (id, k) { if (String(Math.floor(+id / 10) * 10) === d && !n) n = k; });
         if (eraTrack && eraTrack.firstChild) eraTrack.scrollTo({ left: n * (eraTrack.firstChild.offsetWidth + 10), behavior: 'smooth' });

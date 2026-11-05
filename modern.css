@@ -1289,3 +1289,23 @@ body[data-modern="1"] #era-list .card.era2c .era-photo2{align-self:stretch}
 /* era card: the first sentence is the hook, so it reads as a headline rather than a label */
 body[data-modern="1"] #era-list .card.era2c strong{font:700 19px/1.2 var(--disp);text-transform:none;letter-spacing:.01em;color:var(--ink)}
 body[data-modern="1"] #era-list .card.era2c .et .meta{color:var(--mute,#9aa0b4)}
+
+/* ---------- desktop: a real landscape layout (phones are untouched) ---------- */
+@media (min-width:1000px) and (min-height:600px){
+  #app{inset:0;width:100vw;transform:none;box-shadow:none}
+  /* every screen not yet laid out for landscape stays a centered phone column */
+  .screen:not(#screen-era):not(#screen-title){inset:0 auto 0 50%;width:min(540px,100vw);transform:translateX(-50%);box-shadow:0 0 0 1px #2a3150,0 0 80px rgba(0,0,0,.7)}
+  #screen-era{padding:0 40px 24px;max-width:1700px;margin:0 auto;width:100%;box-sizing:border-box}
+  body[data-modern="1"] #era-list{flex:1;min-height:0;display:flex}
+  body[data-modern="1"] #era-list .pgr{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+  body[data-modern="1"] #era-list .pgr-dots{display:none}
+  body[data-modern="1"] #era-list .era-track{flex:1;min-height:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));grid-auto-rows:min(520px,60vh);gap:20px;overflow-x:hidden;overflow-y:auto;scroll-snap-type:none;scroll-snap-align:none;padding:4px 4px 40px;align-content:start}
+  body[data-modern="1"] #era-list .pg.era2{display:contents}
+  body[data-modern="1"] #era-list .card.era2c{height:100%;flex:none;min-height:0}
+  body[data-modern="1"] #era-list .card.era2c .era-photo2{flex:1 1 62%}
+  body[data-modern="1"] #era-list .card.era2c .year{font-size:56px}
+  body[data-modern="1"] #era-list .card.era2c strong{font-size:22px}
+  body[data-modern="1"] #era-list .card.era2c .et .meta{font-size:14.5px}
+  body[data-modern="1"] #era-list .card.era2c:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.5)}
+  #screen-era .dec-tabs{padding:0 4px 14px}
+}
