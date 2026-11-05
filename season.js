@@ -39,6 +39,15 @@
   /* Real calendar: group the dated games into days; two generated rounds fill the games the Cup decides. */
   function fromSchedule(ids, sched, r) {
     var by = {}, order = [];
+    /* a schedule written with the real club ids (san-diego-clippers) must land on the same franchise in a save that kept the older id (buffalo-braves) */
+    var CH = [['buffalo-braves', 'san-diego-clippers', 'la-clippers'], ['kansas-city-kings', 'sacramento-kings'], ['new-jersey-nets', 'brooklyn-nets'], ['seattle-supersonics', 'oklahoma-city-thunder'], ['new-orleans-jazz', 'utah-jazz'], ['washington-bullets', 'washington-wizards'], ['charlotte-bobcats', 'charlotte-hornets'], ['new-orleans-hornets', 'new-orleans-pelicans'], ['vancouver-grizzlies', 'memphis-grizzlies'], ['san-diego-rockets', 'houston-rockets']];
+    var have = {}; ids.forEach(function (i) { have[i] = 1; });
+    var alias = {};
+    sched.games.forEach(function (g) { [g.h, g.a].forEach(function (t) {
+      if (have[t] || alias[t]) return;
+      CH.forEach(function (c) { if (c.indexOf(t) >= 0) c.forEach(function (o) { if (have[o] && !alias[t]) alias[t] = o; }); });
+    }); });
+    sched.games.forEach(function (g) { if (alias[g.h]) g.h = alias[g.h]; if (alias[g.a]) g.a = alias[g.a]; });
     sched.games.forEach(function (g) { if (!by[g.d]) { by[g.d] = []; order.push(g.d); } by[g.d].push(g); });
     order.sort();
     var days = [], dates = [], meta = [], cupAt = -1;
