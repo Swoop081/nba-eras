@@ -810,7 +810,12 @@
       var target = rookieTarget(rp.realPick, year);
       var age = rp.age || Math.round(rnd(21, 24));
       var pot = rp.pot !== undefined ? rp.pot : target + (rp.age ? Math.round((age <= 18 ? 17 : age <= 19 ? 14 : age <= 20 ? 11 : age <= 22 ? 7 : 4) * (1.15 - rp.realPick / 120) + gauss() * 2) : Math.round(rnd(4, 14)));
-      list.push(makePlayer(rp, target, age, pot));
+      var np = makePlayer(rp, target, age, pot);
+      if (rp.ratings) { /* a real prospect arrives as the player he really was */
+        np.ratings = JSON.parse(JSON.stringify(rp.ratings)); np.pot = Math.max(np.ratings.ovr, rp.pot || np.ratings.ovr);
+        if (rp.hgt) np.hgt = rp.hgt;
+      }
+      list.push(np);
       seen[rp.id] = 1;
     });
     /* A real class is used as it is, with no made-up names. Only a year with no real list at all is generated. */
@@ -1680,6 +1685,7 @@
   }
 
   root.League = {
+    makeClass: makeClass,
     setNumbers: setNumbers, fixNumbers: fixNumbers, normName: normName,
     ensurePicks: ensurePicks, picksOf: picksOf, pickValue: pickValue, pickId: pickId, pickLabel: pickLabel,
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
