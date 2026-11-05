@@ -819,14 +819,28 @@
   fetch('data/careers.json').then(function (r) { return r.json(); }).then(function (d) { League.setCareers(d); }).catch(function () {});
   fetch('data/era-params.json').then(function (r) { return r.json(); }).then(function (d) { Engine.register(d); }).catch(function () {});
 
+  /* Season-specific portraits (data/photo-seasons.json): the season is the year it starts; before a game exists it is the era being picked. */
+  var PHSEA = {};
+  fetch('data/photo-seasons.json').then(function (r) { return r.json(); }).then(function (d) { PHSEA = d; }).catch(function () {});
+  function photoYear() {
+    var pre = ['screen-title', 'screen-era', 'screen-team', 'screen-ready'].indexOf(document.body.dataset.screen) >= 0;
+    if ((pre || !save || !save.lg) && currentEra) return parseInt(currentEra.id, 10) || 2026;
+    return save && save.year ? save.year : 2026;
+  }
+  /* file names (no folder, no extension) to try before the player's normal portrait: a season range first, then a club-specific file */
+  function photoFirst(p) {
+    var out = [], y = photoYear(), rs = PHSEA[p.id];
+    if (rs) rs.forEach(function (r) { if (!out.length && (r.from == null || y >= r.from) && (r.to == null || y <= r.to)) out.push(r.file); });
+    if (p.team) out.push(p.id + '@' + p.team);
+    return out;
+  }
   /* Uses assets/players/<player-id>.jpg (or .png / .webp) when present; assets/photos works too. */
   function makeAvatar(p) {
     var wrap = el('span', 'avatar');
     wrap.setAttribute('aria-hidden', 'true');
     wrap.appendChild(el('span', null, playerInitials(p.name)));
     var exts = [];
-    /* a photo made for a player on a particular club (assets/players/<id>@<team-id>.webp) wins while he is on that club */
-    if (p.team) ['webp', 'png', 'jpg'].forEach(function (e) { exts.push('players/' + p.id + '@' + p.team + '.' + e); });
+    photoFirst(p).forEach(function (f) { ['webp', 'png', 'jpg'].forEach(function (e) { exts.push('players/' + f + '.' + e); }); });
     ['players', 'photos', 'coaches'].forEach(function (d) { ['webp', 'png', 'jpg'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
     var i = 0;
     var img = new Image();
@@ -2680,8 +2694,10 @@
     node.appendChild(lab);
     if (node._pp) node.appendChild(node._pp);
     img.onload = function () { if (node.dataset.pid !== p.id) return; node.textContent = ''; node.classList.add('face'); node.appendChild(img); node.appendChild(lab); if (node._pp) node.appendChild(node._pp); };
-    var pre = p.team ? 'players/' + p.id + '@' + p.team : null;
-    img.onerror = function () { if (pre && k === 0) { k = -1; img.src = 'assets/' + pre + '.webp'; return; } if (k < 0) k = 0; if (k < exts.length) img.src = 'assets/players/' + p.id + '.' + exts[k++]; };
+    var urls = [];
+    photoFirst(p).forEach(function (f) { ['webp'].forEach(function (e) { urls.push('assets/players/' + f + '.' + e); }); });
+    exts.forEach(function (e) { urls.push('assets/players/' + p.id + '.' + e); });
+    img.onerror = function () { if (k < urls.length) img.src = urls[k++]; };
     img.onerror();
   }
 

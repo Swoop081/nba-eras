@@ -1,0 +1,12 @@
+{
+  "_note": "Season-specific portraits. Seasons are the year a season starts (2026 = 2026-27). Each file lives in assets/players/<file>.webp. The first range that holds the season wins; otherwise the team-specific file (<id>@<team-id>) and then the normal portrait are used.",
+  "klay-thompson": [ { "to": 2025, "file": "klay-thompson@golden-state-warriors" } ],
+  "anthony-davis": [
+    { "from": 2012, "to": 2018, "file": "anthony-davis@new-orleans-pelicans" },
+    { "from": 2019, "to": 2024, "file": "anthony-davis@los-angeles-lakers" },
+    { "from": 2025, "file": "anthony-davis@dallas-mavericks" }
+  ],
+  "jaylen-brown": [ { "from": 2016, "to": 2025, "file": "jaylen-brown@boston-celtics" } ],
+  "lamelo-ball": [ { "from": 2020, "to": 2025, "file": "lamelo-ball@charlotte-hornets" } ],
+  "miles-bridges": [ { "from": 2018, "file": "miles-bridges@charlotte-hornets" } ]
+}
