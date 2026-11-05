@@ -269,6 +269,7 @@
     { years: '1970s', title: 'The Colour TV Era', blurb: 'Locked for now' },
     { years: '1980s', title: 'The Cable Era', blurb: 'Locked for now' },
     { years: '1990s-2000s', title: 'The Multimedia Era', blurb: 'Locked for now' },
+    { id: '2027', logo: '2026', years: '2027-28', title: 'Defending: Mavericks', blurb: 'A made-up season. The league was played forward from 2026-27, so the stars are a year older and the rookies are new. Nothing here has happened yet.', open: true, current: true, teams: 'data/teams-2027.json', players: 'data/players-2027.json' },
     { id: '2026', years: '2026-27', title: 'Defending: Knicks', blurb: 'Opening night of the current NBA season. 30 teams, 82 games, the three-point line, a 16-team playoff and a salary cap. Real rosters; build forward from here.', open: true, current: true, teams: 'data/teams-2026.json', players: 'data/players-2026.json' },
     { id: '2025', logo: '2026', years: '2025-26', title: 'Last Season', blurb: 'Opening night of 2025-26, one year back. Play it, then the offseason, then straight into 2026-27.', open: true, current: true, teams: 'data/teams-2025.json', players: 'data/players-2025-open.json' }
   ];
