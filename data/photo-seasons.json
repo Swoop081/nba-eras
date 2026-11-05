@@ -110,5 +110,19 @@
    "to": 2025,
    "file": "rui-hachimura@los-angeles-lakers"
   }
+ ],
+ "tyler-herro": [
+  {
+   "from": 2019,
+   "to": 2025,
+   "file": "tyler-herro@miami-heat"
+  }
+ ],
+ "giannis-antetokounmpo": [
+  {
+   "from": 2013,
+   "to": 2025,
+   "file": "giannis-antetokounmpo@milwaukee-bucks"
+  }
  ]
 }
