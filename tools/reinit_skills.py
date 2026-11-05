@@ -11,6 +11,8 @@ def per36(p, k): return p['prev'].get(k, 0) / max(p['prev']['mpg'], 1) * 36
 ps = pct(None, [per36(p, 'stl') for p in rot]); pb = pct(None, [per36(p, 'blk') for p in rot])
 ptv = pct(None, [(per36(p, 'tov')) / (per36(p, 'pts') + per36(p, 'ast') + per36(p, 'tov') + 1) for p in rot])
 POS = {'C': (.35, .75, 38), 'F-C': (.42, .62, 42), 'F': (.5, .48, 50), 'G-F': (.55, .35, 54), 'G': (.55, .22, 58)}
+has = lambda k: sum(1 for p in rot if p['prev'].get(k)) >= 0.5 * max(1, len(rot))
+HS, HB, HT = has('stl'), has('blk'), has('tov')
 n = 0
 for p in P:
     pv = p.get('prev'); r = p['ratings']
@@ -18,8 +20,11 @@ for p in P:
     sb, bb, fo = POS.get(p.get('pos'), POS['F'])
     mins = pv.get('g', 0) * pv.get('mpg', 0); w = mins / (mins + 450.0)
     if pv.get('mpg', 0) >= 3:
+      if HS:
         r['stl'] = int(max(5, min(99, round(100 * (w * ps(per36(p, 'stl')) + (1 - w) * sb)))))
+      if HB:
         r['blk'] = int(max(5, min(99, round(100 * (w * pb(per36(p, 'blk')) + (1 - w) * bb)))))
+      if HT:
         rate = per36(p, 'tov') / (per36(p, 'pts') + per36(p, 'ast') + per36(p, 'tov') + 1)
         r['tov'] = int(max(10, min(95, round(100 * (w * (1 - ptv(rate)) + (1 - w) * .5)))))
     ft = pv.get('ft')

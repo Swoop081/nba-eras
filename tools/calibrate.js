@@ -20,7 +20,7 @@ if (!Object.keys(realW).length) {
   teams.forEach(t => { const k = Object.keys(CODE).find(c => (t.id === c || t.id.startsWith(c + '-'))); realW[t.id] = stand[CODE[k]]; });
 }
 const players = doc.players.filter(p => p.prev && !p.tw && p.teamId);
-players.forEach(p => { p.ovr0 = p.ratings.ovr; p.ratings.ovr = ovrOf(p.ratings); p.avail = Math.min(1, (p.prev.g || 0) / GAMES); });
+players.forEach(p => { p.ovr0 = p.ratings.ovr; if (!process.env.KEEPOVR) p.ratings.ovr = ovrOf(p.ratings); p.avail = Math.min(1, (p.prev.g || 0) / GAMES); });
 function ovrOf(r) { let s = 0; for (const k in W) s += W[k] * r[k]; return Math.round(35 + 0.6 * s); }
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const byTeam = {}; players.forEach(p => (byTeam[p.teamId] = byTeam[p.teamId] || []).push(p));
@@ -55,6 +55,7 @@ function report(r, tag) {
 const ITER = +process.argv[3] || 0, S = +process.argv[4] || 6;
 const P = Object.assign({}, Engine.params(2000), (doc.params || {}));
 if (LG) { P.poss = P.poss && doc.params ? P.poss : LG.poss; P.threes = LG['3pa'] > 1; }
+if (process.env.UEXP) P.uexp = +process.env.UEXP;
 Engine.register({ [YEAR]: P });
 const HAS = { tov: !LG || LG.tov > 0, orb: !LG || LG.orb > 0, stl: !LG || LG.stl > 0, blk: !LG || LG.blk > 0, tp: !LG || LG['3pa'] > 1 };
 function lgOf(r) {
@@ -107,7 +108,8 @@ for (let it = 1; it <= ITER; it++) {
     const g = s.g, sim = { pts: s.pts / g, trb: s.trb / g, ast: s.ast / g, stl: s.stl / g, blk: s.blk / g, tov: s.tov / g };
     const real = p.prev, k = p.ratings, wt = 0.4;
     const adj = (a, b) => clamp(Math.pow((b + 0.35) / (a + 0.35), wt), 0.88, 1.14);
-    k.sco = clamp(k.sco * adj(sim.pts, real.pts), 3, 99);
+    if (k.usg) { k.usg = clamp(k.usg * adj(sim.pts, real.pts), 6, 45); if (real.ts && s.fga > 0) { const sts = s.pts / (2 * (s.fga + 0.44 * s.fta)); k.sco = clamp(k.sco * clamp(Math.pow((real.ts + .02) / (sts + .02), .5), .94, 1.07), 3, 99); } }
+    else k.sco = clamp(k.sco * adj(sim.pts, real.pts), 3, 99);
     k.ply = clamp(k.ply * adj(sim.ast, real.ast), 3, 99);
     const rr = adj(sim.trb, real.trb); k.orb = clamp(k.orb * rr, 3, 99); k.drb = clamp(k.drb * rr, 3, 99);
     if (HAS.stl) k.stl = clamp(k.stl * adj(sim.stl, real.stl), 3, 99);
@@ -115,7 +117,7 @@ for (let it = 1; it <= ITER; it++) {
     if (HAS.tov) k.tov = clamp(k.tov * adj(real.tov, sim.tov), 3, 99);     // more turnovers than real -> better ball security
     if (HAS.tp && s.tpa / g > 0.4 && real.tp !== null && real.tp !== undefined) { const stp = s.tp / s.tpa; k.tpt = clamp(k.tpt * clamp(Math.pow((real.tp + .02) / (stp + .02), .5), .93, 1.08), 3, 99); }
     if (s.fga / g > 3 && real.fg) { const sfg = s.fg / s.fga; k.sht = clamp(k.sht * clamp(Math.pow((real.fg + .02) / (sfg + .02), .6), .94, 1.07), 3, 99); }
-    k.ovr = ovrOf(k);
+    if (!process.env.KEEPOVR) k.ovr = ovrOf(k);
   });
   if (!process.env.NOLOCK) lockOvr();
   if (it % 4 === 0) fitLeague(1);
@@ -132,7 +134,7 @@ for (let it = 1; it <= (+process.argv[5] || 10); it++) {
   r = run(S); report(r, 'imp ' + it);
 }
 if (process.argv.includes('--write')) {
-  players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = process.env.NOLOCK ? ovrOf(p.ratings) : p.ovr0; p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; delete p.ovr0; });
+  players.forEach(p => { SK.forEach(k => p.ratings[k] = Math.round(p.ratings[k])); p.ratings.ovr = (process.env.NOLOCK && !process.env.KEEPOVR) ? ovrOf(p.ratings) : p.ovr0; p.imp = Math.round((p.imp || 0) * 10000) / 10000; delete p.avail; delete p.ovr0; });
   fs.writeFileSync(path.join(R, 'data/players-' + ERA + '.json'), JSON.stringify(doc, null, 1));
   fs.mkdirSync(path.join(R, 'data/params'), { recursive: true });
   const pf = path.join(R, 'data/params/' + ERA + '.json');
