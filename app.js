@@ -6527,7 +6527,30 @@
   function dnSecs(d) { return d.picks[d.at] && d.picks[d.at].round === 1 ? 300 : 120; }
   function dnRank(d, p) { var ip = d.pool.indexOf(p); return d.pool.filter(function (q, i) { return q.board > p.board || (q.board === p.board && i < ip); }).length + 1; }
   function dnPick(list) { return list[Math.floor(Math.random() * list.length)]; }
+  /* first-round reaction: what stands out about him next to the rest of the class (usage, rebounding, shooting...) */
+  var DN_TRAITS = [
+    ['usg', ['a high-usage scorer who wants the ball', 'a go-to scorer with real usage'], function (r) { return r.usg || (8 + 0.2 * r.sco); }],
+    ['tpt', ['a threat from three', 'deep range, he can really shoot it', 'a sniper from outside'], function (r) { return r.tpt; }],
+    ['ply', ['a natural playmaker', 'great vision, pass-first instincts', 'a real table-setter'], function (r) { return r.ply; }],
+    ['reb', ['a monster on the glass', 'a relentless rebounder', 'cleans the glass'], function (r) { return (r.orb + r.drb) / 2; }],
+    ['blk', ['a rim protector', 'changes shots at the rim'], function (r) { return r.blk; }],
+    ['stl', ['a ball hawk on defence', 'disruptive hands, gets steals'], function (r) { return r.stl; }],
+    ['sht', ['an efficient finisher', 'high-percentage shooter'], function (r) { return r.sht; }]
+  ];
+  function dnTweet(d, p, slot) {
+    var pool = d.pool.filter(function (q) { return q.ratings; }), got = [];
+    DN_TRAITS.forEach(function (tr) {
+      var v = tr[2](p.ratings), below = pool.filter(function (q) { return tr[2](q.ratings) < v; }).length / Math.max(1, pool.length);
+      if (below >= 0.8) got.push({ k: tr[0], phrases: tr[1], pc: below });
+    });
+    got.sort(function (a, b) { return b.pc - a.pc; });
+    if (!got.length) return '';
+    var t = teamById(slot.team).city, w = dnLast(p.name), a = dnPick(got[0].phrases), b = got[1] ? dnPick(got[1].phrases) : '';
+    var open = dnPick(['No. ' + slot.pick + ': ' + t + ' take ' + w + '. ', t + ' land ' + w + ' at ' + slot.pick + '. ', 'Pick ' + slot.pick + ' is ' + w + ' to ' + t + '. ']);
+    return open + 'He is ' + a + (b ? ', and ' + b : '') + '.';
+  }
   function dnNote(d, p, slot) {
+    if (slot.round === 1 || slot.pick <= 30) { var tw = dnTweet(d, p, slot); if (tw) return tw; }
     var r = dnRank(d, p), n = slot.pick, t = teamById(slot.team).city, w = dnLast(p.name), gap = n - r;
     var o = p.scout ? p.scout.ovr : p.ratings.ovr, pot = p.scout ? p.scout.pot : p.pot, up = pot - o, col = p.college || 'his program';
     var pos = /C/.test(p.pos || '') ? 'big man' : /G/.test(p.pos || '') ? 'guard' : 'forward';
