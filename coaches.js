@@ -10,8 +10,13 @@
   function clamp(v, a, b) { return Math.max(a, Math.min(b, Math.round(v))); }
   function slug(n) { return n.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 
+  /* before 1990 the unnamed assistants carry the names of their day */
+  var FIRST70 = ['Frank', 'Bill', 'Jim', 'Bob', 'Tom', 'Dick', 'Ray', 'Walt', 'Don', 'Gene', 'Hal', 'Lou', 'Ed', 'Jack', 'Larry', 'Al', 'Joe', 'Ken', 'Mike', 'Red', 'Sam', 'Vern', 'Bud', 'Chuck', 'Norm', 'Pete', 'Stan', 'Wayne', 'Dave', 'Marv'];
+  var LAST70 = ['Kowalski', 'Mahoney', 'Delaney', 'Ferraro', 'Hutchins', 'Lombardi', 'Brannigan', 'Whitaker', 'Donahue', 'Petrosky', 'Gallagher', 'Sorensen', 'Maddox', 'Rizzo', 'Calloway', 'Tarkanian', 'Bellamy', 'Novak', 'Hargrove', 'McAllister', 'Prescott', 'Santoro', 'Jankowski', 'Fitzgerald', 'Teague', 'Wilkerson', 'Albright', 'Costello', 'Dunbar', 'Pruitt'];
+  var YEAR = 2026;
   function made(r, role, tag) {
-    var n = FIRST[Math.floor(r() * FIRST.length)] + ' ' + LAST[Math.floor(r() * LAST.length)];
+    var old = YEAR < 1990, F = old ? FIRST70 : FIRST, Lz = old ? LAST70 : LAST;
+    var n = F[Math.floor(r() * F.length)] + ' ' + Lz[Math.floor(r() * Lz.length)];
     var o = role === 'ao', d = role === 'ad', hc = role === 'hc';
     var c = { id: slug(n) + '-' + tag, n: n, age: 38 + Math.floor(r() * 24), role: role,
       off: clamp(58 + (r() - 0.5) * 26 + (hc ? 4 : 0), 30, 90), def: clamp(58 + (r() - 0.5) * 26 + (hc ? 4 : 0),30, 90),
@@ -25,6 +30,7 @@
     return { id: slug(row[0]), n: row[0], wiki: row[1] || row[0].replace(/ /g, '_'), age: 48, role: 'ao', real: 1, off: v(2, 58), def: v(3, 58), dev: v(4, 58), mot: v(5, 58) };
   }
   function build(save, data, teamIds) {
+    YEAR = save.year;
     var st = {}, extra = [];
     teamIds.forEach(function (id) {
       var r = rng(hash(id + 'staff')), row = data && data.hc && data.hc[id], s = {};
