@@ -539,7 +539,7 @@
         nm.appendChild(nb);
         right.appendChild(nm);
         var stats = el('div', 'fc-stats');
-        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew ? '\u2013' : (team.w || team.lw || 0) + '-' + (team.l || team.ll || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
+        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew || (currentEra && currentEra.id === '1995' && (team.id === 'toronto-raptors' || team.id === 'vancouver-grizzlies')) ? '\u2013' : (team.w || team.lw || 0) + '-' + (team.l || team.ll || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
           var d = el('div');
           d.appendChild(el('small', null, x[0]));
           d.appendChild(el('b', null, x[1]));
@@ -548,7 +548,8 @@
         right.appendChild(stats);
         top.appendChild(right);
         c.appendChild(top);
-        var out = team.rank <= 6 ? 'Contender' : team.rank <= 14 ? 'Playoff team' : team.rank <= 22 ? 'On the bubble' : 'Rebuilding';
+        var xpc = currentEra && currentEra.id === '1995' && (team.id === 'toronto-raptors' || team.id === 'vancouver-grizzlies');
+        var out = xpc ? 'New club · expansion draft' : team.rank <= 6 ? 'Contender' : team.rank <= 14 ? 'Playoff team' : team.rank <= 22 ? 'On the bubble' : 'Rebuilding';
         var ol = el('div', 'fc-out', out);
         c.appendChild(ol);
         var trio = el('div', 'fc-trio');
@@ -799,13 +800,14 @@
       var go = document.getElementById('btn-play');
       var setM = function (m) {
         startMode = m;
-        go.textContent = m === 'expansion' ? 'Start at the expansion draft' : 'Start the season';
-        document.getElementById('ready-line').textContent = m === 'expansion'
+        go.textContent = m === 'expansion' ? 'Start in June 1995' : 'Start the season';
+        var rl = document.getElementById('ready-line'); rl.classList.toggle('how', m !== 'expansion'); rl.classList.toggle('xnote', m === 'expansion');
+        rl.textContent = m === 'expansion'
           ? 'June 1995. Your club has no players and no history. Build the name and colours, pick your roster in the expansion draft, then the NBA draft.'
           : 'Opening night of 1995-96 with the roster the club really took into its first season.';
         Array.prototype.forEach.call(rm.children, function (b) { b.classList.toggle('on', b.dataset.m === m); });
       };
-      [['expansion', 'Expansion draft'], ['open', 'Opening night']].forEach(function (o) {
+      [['expansion', 'Expansion'], ['open', 'Opening day']].forEach(function (o) {
         var b = el('button', '', o[1]); b.type = 'button'; b.dataset.m = o[0];
         b.addEventListener('click', function () { setM(o[0]); });
         rm.appendChild(b);
@@ -6560,7 +6562,7 @@
   /* name and colours: the real ones are the defaults, and they are yours to change */
   function offBrand(body, me) {
     offHeader('Your club', 'Build the brand from day one');
-    body.appendChild(el('p', 'sub how', 'The league has just announced you. Keep the real name and colours or make your own. Every screen in the game uses what you choose here, and it stays yours unless you agree to change it.'));
+    body.appendChild(el('p', 'xnote', 'The league has just announced you. Keep the real name and colours or make your own. Every screen in the game uses what you choose here, and it stays yours unless you agree to change it.'));
     var t = me, card = el('div', 'stat-card');
     var inputs = {};
     function field(label, key, val) {
@@ -6572,10 +6574,16 @@
       var wrap = el('label', 'field'); wrap.appendChild(el('small', null, lab));
       var i = document.createElement('input'); i.type = 'color'; i.value = t.colors[k] || '#888888'; wrap.appendChild(i); inputs['c' + k] = i; card.appendChild(wrap);
     });
-    var prev = el('div', 'brand-prev'); var pb = teamBadge(t); prev.appendChild(pb); var pt = el('strong', null, t.city + ' ' + t.name); prev.appendChild(pt); card.appendChild(prev);
+    var prev = el('div', 'brand-prev'), pt = el('strong', null, t.city + ' ' + t.name);
+    function refresh() {
+      var tmp = { id: t.id, city: inputs.city.value || t.city, name: inputs.name.value || t.name, colors: [inputs.c0.value, inputs.c1.value] };
+      prev.textContent = ''; prev.appendChild(teamBadge(tmp)); pt.textContent = tmp.city + ' ' + tmp.name; prev.appendChild(pt);
+    }
+    ['city', 'name', 'c0', 'c1'].forEach(function (k) { inputs[k].addEventListener('input', refresh); });
+    refresh(); card.appendChild(prev);
     body.appendChild(card);
     var reset = el('button', 'btn ghost wide', 'Use the real name and colours'); reset.type = 'button';
-    reset.addEventListener('click', function () { var b0 = save.off.exp.brand0; inputs.city.value = b0.city; inputs.name.value = b0.name; inputs.c0.value = b0.colors[0]; inputs.c1.value = b0.colors[1]; });
+    reset.addEventListener('click', function () { var b0 = save.off.exp.brand0; inputs.city.value = b0.city; inputs.name.value = b0.name; inputs.c0.value = b0.colors[0]; inputs.c1.value = b0.colors[1]; refresh(); });
     body.appendChild(reset);
     offDock('Confirm the brand', function () {
       var city = inputs.city.value.trim() || save.off.exp.brand0.city, name = inputs.name.value.trim() || save.off.exp.brand0.name;
@@ -6590,7 +6598,7 @@
   function offFlip(body, me) {
     var ex = save.off.exp, other = EXPN.filter(function (i) { return i !== me.id; })[0], oc = teamById(other), vanMe = me.id === 'vancouver-grizzlies';
     offHeader('Coin flip', 'Who picks first?');
-    body.appendChild(el('p', 'sub how', 'The two new clubs flip a coin. The winner picks one: the higher spot in the NBA draft (No. 6) or the first pick in the expansion draft. Toronto then takes 14 players and Vancouver 13, and no club can lose more than one.'));
+    body.appendChild(el('p', 'xnote', 'The two new clubs flip a coin. The winner picks one: the higher spot in the NBA draft (No. 6) or the first pick in the expansion draft. Toronto then takes 14 players and Vancouver 13, and no club can lose more than one.'));
     function go(vanGetsSix) {
       ex.swapSix = !vanGetsSix;
       ex.firstId = vanGetsSix ? 'toronto-raptors' : 'vancouver-grizzlies';
