@@ -280,8 +280,8 @@
     }
   })();
 
-  /* First playable season: 1979-80, Magic's and Bird's rookie year. Earlier eras stay in the data, hidden for now. */
-  var FIRST_PLAYABLE = 1979;
+  /* First playable season: 1977-78, the season before Bird's draft (1978); Magic's draft (1979) is the next one. Earlier eras stay in the data, hidden for now. */
+  var FIRST_PLAYABLE = 1977;
   var eraList = document.getElementById('era-list');
   var eraBlurbs = {};
   var eraDecade = '2020';
