@@ -1366,6 +1366,9 @@
     var tb = dataTable(['Season', 'Team', 'GP', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'FG%', '3P%', 'FT%', 'MIN', 'TOV'], rows.map(function (r) { return r.cells; }));
     tb.classList.add('careerwrap');
     body.appendChild(tb);
+    var seg0 = body.firstChild;   // fit the table to the page so it scrolls inside itself instead of spilling onto a second page
+    var room = (body.clientHeight || 0) - 48 - 104;   // minus the page margin, the title line, the toggle and their gaps
+    tb.style.maxHeight = (room > 160 ? room : Math.max(200, window.innerHeight - 420)) + 'px';
     var oh = (p.ovrHist || []).map(function (h) { return h.o; }).concat([p.ratings.ovr]);
     if (oh.length >= 2) {
       body.appendChild(el('div', 'group-title', 'Overall rating by season'));
