@@ -534,7 +534,7 @@
         nm.appendChild(nb);
         right.appendChild(nm);
         var stats = el('div', 'fc-stats');
-        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew ? '\u2013' : (team.w || 0) + '-' + (team.l || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
+        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew ? '\u2013' : (team.w || team.lw || 0) + '-' + (team.l || team.ll || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
           var d = el('div');
           d.appendChild(el('small', null, x[0]));
           d.appendChild(el('b', null, x[1]));
@@ -1990,7 +1990,7 @@
       Engine.setRules({});
       League.init(save, pl.players, data.teams, pl.dead);
       if (currentEra.current) { Coach.build(save, save.year >= 2026 ? COACHDATA : save.year === 2025 && COACH25 ? COACH25 : { hc: (COACHH && COACHH[save.year]) || {} }, save.ids); }
-      if (currentEra.current) { save.lastRec = {}; data.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w, l: t.l }; }); }
+      if (currentEra.current) { save.lastRec = {}; data.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w || t.lw || 0, l: t.l || t.ll || 0 }; }); }
       ensureTm();
       persist();
       renderSeason();
