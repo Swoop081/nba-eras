@@ -92,6 +92,18 @@
     store.set('eraFilter', eraFilterBox.checked);
     eraLook(currentEra);
   });
+  var histJoinBox = document.getElementById('hist-join'), histMovesBox = document.getElementById('hist-moves');
+  histJoinBox.checked = store.get('histJoin', true); histMovesBox.checked = store.get('histMoves', true);
+  histJoinBox.addEventListener('change', function () { store.set('histJoin', histJoinBox.checked); });
+  histMovesBox.addEventListener('change', function () { store.set('histMoves', histMovesBox.checked); });
+  /* the real-history events a game plays out: new clubs, folds, moves and renames, each switchable */
+  function histEvents(year) {
+    return History.get(year).filter(function (d) {
+      if (d.join && d.join.length && !histJoinBox.checked) return false;
+      if (!histMovesBox.checked && ((d.fold && d.fold.length) || Object.keys(d.move || {}).length || Object.keys(d.rename || {}).length)) return false;
+      return true;
+    });
+  }
   introBox.addEventListener('change', function () {
     store.set('intro', introBox.checked);
   });
@@ -6203,7 +6215,7 @@
       dev: rep.mine.map(function (x) { return { id: x.p.id, name: x.p.name, from: x.from, to: x.to, age: x.p.age }; }),
       retired: rep.retired.map(function (x) { return { id: x.p.id, name: x.p.name, ovr: x.ovr }; })
     };
-    var hist = History.get(save.year).filter(function (d) {
+    var hist = histEvents(save.year).filter(function (d) {
       if (d.join.length || d.fold.length || Object.keys(d.move || {}).length) return true;
       return Object.keys(d.rename || {}).some(function (k) { return !!clubBySlug(k); });
     });
