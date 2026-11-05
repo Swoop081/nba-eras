@@ -49,6 +49,11 @@
     var wasActive = document.getElementById(id).classList.contains('active');
     for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
     if (typeof Phone !== 'undefined' && Phone.onScreen) Phone.onScreen(id);
+    /* the menu and the era list always wear the present-day look; a season's skin starts once an era is chosen */
+    if (typeof Skin !== 'undefined') {
+      if (id === 'screen-title' || id === 'screen-era') Skin.apply(0);
+      else if (typeof currentEra !== 'undefined' && currentEra && currentEra.current) Skin.apply(+currentEra.id, eraFilterBox.checked);
+    }
     teamTheme();
     var target = document.getElementById(id);
     var entering = !wasActive;
