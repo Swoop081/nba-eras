@@ -171,10 +171,11 @@
       var room = rookie ? 10 : 6, used = p.formAdj || 0;
       if (Math.abs(used + step) > room) step = Math.sign(step) * Math.max(0, room - Math.abs(used)) * (Math.sign(used) === Math.sign(step) ? 1 : 0) || 0;
       if (Math.abs(step) < 0.35) return;
-      var dr = step / 0.6;
+      var dr = step / 0.6, f0 = ovrOf(p.ratings);
       SKILLS.forEach(function (k) { if (p.ratings[k] !== undefined) p.ratings[k] = clamp(Math.round(p.ratings[k] + dr + gauss() * 0.6), 12, 99); });
       var before = p.ratings.ovr;
-      p.ratings.ovr = ovrOf(p.ratings);
+      p.ratings.ovr = clamp(before + ovrOf(p.ratings) - f0, 30, 99);   /* keeps his real-production offset instead of snapping to the skill formula */
+      if (p.ratings.usg) p.ratings.usg = clamp(Math.round((p.ratings.usg + 0.1 * (p.ratings.ovr - before)) * 10) / 10, 6, 42);
       p.formAdj = used + (p.ratings.ovr - before);
       if (p.ratings.ovr > p.pot) p.pot = Math.min(99, p.ratings.ovr + (age <= 22 ? 2 : 0));
       else if (age <= 23 && p.ratings.ovr - before >= 2) p.pot = Math.min(99, p.pot + 1);
@@ -316,14 +317,15 @@
       (p.ovrHist || (p.ovrHist = [])).push({ y: save.year, o: before, a: age });
       p.age = age + 1;
       var d = ageDelta(age + 1) + (age + 1 <= 25 ? (p.pot - before) * 0.2 : 0) + gauss() * 1.3 + (p.team && root.Coach && age + 1 <= 27 ? root.Coach.devBonus(save, p.team) * 0.9 : 0);
-      var dr = d / 0.6;
+      var dr = d / 0.6, f0 = ovrOf(p.ratings);
       SKILLS.forEach(function (k) {
         if (p.ratings[k] === undefined) return;
         var v = p.ratings[k] + dr + gauss() * 2.2;
         if (k === 'dur' && age + 1 > 30) v -= 1.5;
         p.ratings[k] = clamp(Math.round(v), 12, 99);
       });
-      p.ratings.ovr = ovrOf(p.ratings);
+      p.ratings.ovr = clamp(before + ovrOf(p.ratings) - f0, 30, 99);   /* keeps his real-production offset instead of snapping to the skill formula */
+      if (p.ratings.usg) p.ratings.usg = clamp(Math.round((p.ratings.usg + 0.1 * (p.ratings.ovr - before) + gauss() * 0.4 - (age + 1 >= 33 ? 0.3 : 0)) * 10) / 10, 6, 42);
       if (p.p0 === undefined) p.p0 = 0;
       var pr = 0, real = CAREERS && CAREERS[p.id] && ny <= 2026 ? CAREERS[p.id] : null, forced = false;
       if (real) {
@@ -782,6 +784,7 @@
       SKILLS.forEach(function (k) { r[k] = clamp(Math.round(r[k] + shift), 12, 99); });
     }
     r.ovr = ovrOf(r);
+    r.usg = clamp(Math.round((12 + (r.sco - 50) * 0.22 + gauss() * 1.2) * 10) / 10, 8, 30);
     var hgt = arch === 'C' ? Math.round(rnd(77, 84)) : arch === 'G' ? Math.round(rnd(69, 75)) : Math.round(rnd(73, 79));
     return {
       id: base.id, name: base.name, pos: base.pos.replace('/', '-'), college: base.college, age: age, hgt: hgt,

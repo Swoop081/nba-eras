@@ -143,7 +143,8 @@
     }
     var dbl = cntd(O, 'double') > 0;
     var shooter = pick(r, O, function (x) {
-      var s = x.p.ratings.sco;
+      var s = x.p.ratings.sco, u = x.p.ratings.usg || (pr.uexp !== 0 ? Math.max(8, Math.min(32, 8 + 0.2 * s)) : 0);
+      if (u && !mo.flat) return x.share * Math.pow(u, pr.uexp || 1.0) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
       return x.share * (x.go || 1) * Math.pow(s, mo.flat ? 0.15 : ((pr.use || 2) + USEADD)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
     });
     ev.who = shooter.p.name;
