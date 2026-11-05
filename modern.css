@@ -1257,3 +1257,6 @@ body[data-modern="1"] .lr small{font-size:10px}
 /* the notification slot in the season header holds no space of its own: the banner sits straight under the title */
 body[data-modern="1"] #screen-season .bar>#phone-banners{min-height:0;margin:0;align-self:flex-start}
 body[data-modern="1"] #screen-season .bar>#phone-banners:empty{display:none}
+
+/* the header's children are position:relative, so the slot's old fixed-position offsets (top: safe-area) pushed it down on iPhones */
+body[data-modern="1"] #phone-banners{top:auto;left:auto;right:auto;bottom:auto}
