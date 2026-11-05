@@ -308,49 +308,45 @@
     var all = ERAS.filter(function (era) { return era.current; });
     var pgr = el('div', 'pgr'), track = el('div', 'pgr-track era-track'), dots = el('div', 'pgr-dots');
     eraPages = [];
-    for (var i = 0; i < all.length; i += 4) {
-      var grp = all.slice(i, i + 4);
-      var pg = el('section', 'pg era-pg');
-      var LAY = ERA_LAYOUTS[(i / 4) % ERA_LAYOUTS.length];
-      grp.forEach(function (era, k) {
-        var card = el('button', 'card era e' + k);
-        card.type = 'button';
-        card.appendChild(el('span', 'year', era.years));
-        var text = el('span', 'et');
-        text.appendChild(el('strong', null, era.title));
-        text.appendChild(el('span', 'meta', eraBlurb(era)));
-        card.appendChild(text);
-        card.addEventListener('click', function () { openTeams(era); });
-        var cp = LAY.c[k];
-        card.style.gridColumn = cp[0]; card.style.gridRow = cp[1];
-        card.classList.add(cp[2] ? 'full' : 'half');
-        pg.appendChild(card);
-        if (k === 0) {
-          var ph = el('div', 'era-photo');
-          ph.style.gridColumn = LAY.p[0]; ph.style.gridRow = LAY.p[1];
-          var src = k, mine = grp.slice();
-          card.classList.add('src');
-          ph.addEventListener('click', function () { openTeams(mine[src]); });
+    var byDec = {}, order = [];
+    all.forEach(function (era) { var d = String(Math.floor(+era.id / 10) * 10); if (!byDec[d]) { byDec[d] = []; order.push(d); } byDec[d].push(era); });
+    order.forEach(function (d) {
+      for (var i = 0; i < byDec[d].length; i += 2) {
+        var grp = byDec[d].slice(i, i + 2);
+        var pg = el('section', 'pg era-pg era2');
+        grp.forEach(function (era, k) {
+          var card = el('button', 'card era era2c' + (k === 0 && i === 0 ? ' first' : ''));
+          card.type = 'button';
+          var ph = el('span', 'era-photo2');
           ph.appendChild(el('span', 'big', String(+era.id + 1).slice(2)));
-          eraPhoto(ph, mine.map(function (g) { return g.id; }), function (id) {
-            mine.forEach(function (g, n) { if (g.id === id) src = n; });
-            Array.prototype.forEach.call(ph.parentNode.querySelectorAll('.card.era'), function (c, n) { c.classList.toggle('src', n === src); });
-          });
-          pg.appendChild(ph);
-        }
-      });
-      track.appendChild(pg);
-      dots.appendChild(el('i', i === 0 ? 'on' : ''));
-      eraPages.push(grp[0].id);
+          eraPhoto(ph, [era.id], null);
+          card.appendChild(ph);
+          var text = el('span', 'et');
+          text.appendChild(el('span', 'year', era.years));
+          text.appendChild(el('strong', null, era.title));
+          text.appendChild(el('span', 'meta', eraBlurb(era)));
+          card.appendChild(text);
+          card.addEventListener('click', function () { openTeams(era); });
+          pg.appendChild(card);
+        });
+        track.appendChild(pg);
+        eraPages.push(grp[0].id);
+      }
+    });
+    function setDots(n) {
+      var dec = String(Math.floor(+eraPages[n] / 10) * 10), idx = [], at = 0;
+      eraPages.forEach(function (id, k) { if (String(Math.floor(+id / 10) * 10) === dec) { if (k === n) at = idx.length; idx.push(k); } });
+      dots.textContent = '';
+      idx.forEach(function (k, j) { dots.appendChild(el('i', j === at ? 'on' : '')); });
+      Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x.dataset.d === dec); });
     }
+    setDots(0);
     var tick = null;
     track.addEventListener('scroll', function () {
       clearTimeout(tick);
       tick = setTimeout(function () {
         var w = track.firstChild ? track.firstChild.offsetWidth : 1, n = Math.round(track.scrollLeft / (w + 10));
-        Array.prototype.forEach.call(dots.children, function (d, k) { d.classList.toggle('on', k === n); });
-        var dec = String(Math.floor(+eraPages[n] / 10) * 10);
-        Array.prototype.forEach.call(decTabs.children, function (x) { x.classList.toggle('on', x.dataset.d === dec); });
+        setDots(Math.max(0, Math.min(eraPages.length - 1, n)));
       }, 40);
     });
     pgr.appendChild(track); pgr.appendChild(dots);
