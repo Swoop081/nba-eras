@@ -27,14 +27,23 @@ def face_box(im):
         return None
     return max(f, key=lambda r: r[2])
 
-def main(src, pid):
+SESSION = None
+def main(src, pid, outdir='assets/players'):
+    global SESSION
     im = Image.open(src).convert('RGB')
-    cut = remove(im, session=new_session('u2net')).convert('RGBA')
+    SESSION = SESSION or new_session('u2net')
+    cut = remove(im, session=SESSION).convert('RGBA')
     box = face_box(cut)
     if box is None:
-        s = min(cut.size)
-        crop = cut.crop((0, 0, s, s))
-        print('no face found, plain square crop')
+        alpha = np.array(cut)[:, :, 3]
+        ys, xs = np.where(alpha > 128)
+        side = max(int((xs.max() - xs.min()) * 1.1), 1)
+        left = (xs.min() + xs.max()) / 2 - side / 2
+        top = ys.min() - HEAD_GAP * side
+        canvas = Image.new('RGBA', (side, side), (0, 0, 0, 0))
+        canvas.paste(cut, (int(-left), int(-top)))
+        crop = canvas
+        print('no face found, framed on the cut-out')
     else:
         x, y, w, h = [int(v) for v in box]
         side = w / FACE_W
@@ -47,9 +56,9 @@ def main(src, pid):
         canvas.paste(cut, (int(-left), int(-top)))
         crop = canvas
     out = crop.resize((SIZE, SIZE), Image.LANCZOS)
-    path = 'assets/players/%s.webp' % pid
+    path = '%s/%s.webp' % (outdir, pid)
     out.save(path, 'WEBP', quality=85, method=6, exact=True)
     print('saved', path)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], sys.argv[2], *(sys.argv[3:4]))

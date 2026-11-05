@@ -825,6 +825,8 @@
     wrap.setAttribute('aria-hidden', 'true');
     wrap.appendChild(el('span', null, playerInitials(p.name)));
     var exts = [];
+    /* a photo made for a player on a particular club (assets/players/<id>@<team-id>.webp) wins while he is on that club */
+    if (p.team) ['webp', 'png', 'jpg'].forEach(function (e) { exts.push('players/' + p.id + '@' + p.team + '.' + e); });
     ['players', 'photos', 'coaches'].forEach(function (d) { ['webp', 'png', 'jpg'].forEach(function (e) { exts.push(d + '/' + p.id + '.' + e); }); });
     var i = 0;
     var img = new Image();
@@ -2678,7 +2680,8 @@
     node.appendChild(lab);
     if (node._pp) node.appendChild(node._pp);
     img.onload = function () { if (node.dataset.pid !== p.id) return; node.textContent = ''; node.classList.add('face'); node.appendChild(img); node.appendChild(lab); if (node._pp) node.appendChild(node._pp); };
-    img.onerror = function () { if (k < exts.length) img.src = 'assets/players/' + p.id + '.' + exts[k++]; };
+    var pre = p.team ? 'players/' + p.id + '@' + p.team : null;
+    img.onerror = function () { if (pre && k === 0) { k = -1; img.src = 'assets/' + pre + '.webp'; return; } if (k < 0) k = 0; if (k < exts.length) img.src = 'assets/players/' + p.id + '.' + exts[k++]; };
     img.onerror();
   }
 
