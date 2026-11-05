@@ -3728,8 +3728,10 @@
   var RV = { tab: 'Champions' };
   var REAL = null, FH = null;
   function loadReal(cb) { if (REAL && FH) return cb(); Promise.all([fetch('data/real-records.json').then(function (r) { return r.json(); }), fetch('data/franchise-history.json').then(function (r) { return r.json(); })]).then(function (a) { REAL = a[0]; FH = a[1]; cb(); }).catch(function () { REAL = { seasons: {}, career: [] }; FH = {}; cb(); }); }
-  var RTABS = ['Power', 'Awards', 'Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
-  function openRecords() { RV.tab = RV.tab || 'Champions'; if (save.cup && save.dates && save.day >= save.cup.at - 14 && save.day <= save.cup.at + 10) RV.tab = 'Cup'; renderRecords(); show('screen-records'); }
+  var RTABS_ALL = ['Power', 'Awards', 'Cup', 'Champions', 'My legacy', 'Game highs', 'Season highs', 'Career', 'Honours'];
+  var RTABS = RTABS_ALL;
+  function openRecords() {
+    RTABS = RTABS_ALL.filter(function (t) { return !(t === 'Cup' && save.year < 2023); }); if (RTABS.indexOf(RV.tab) < 0) RV.tab = 'Champions'; RV.tab = RV.tab || 'Champions'; if (save.cup && save.dates && save.day >= save.cup.at - 14 && save.day <= save.cup.at + 10) RV.tab = 'Cup'; renderRecords(); show('screen-records'); }
   function renderRecords() {
     var v = League.recordsView(save), body = document.getElementById('records-body'), tabs = document.getElementById('records-tabs');
     tabs.textContent = ''; body.textContent = '';
@@ -3981,7 +3983,7 @@
     var young = ros.filter(function (p) { return (p.age || 26) <= 23; }).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; })[0];
     var pool = [];
     var lim = Math.max(Math.round(pay * 1.04), Math.round(cap * 0.92));
-    pool.push({ id: 'payroll', v: lim, text: 'Keep payroll under ' + money(lim) });
+    pool.push({ id: 'payroll', v: lim, text: (ownerOn() ? 'Keep spending under ' : 'Keep payroll under ') + money(lim) });
     if (young) pool.push({ id: 'youth', v: Math.min(90, young.ratings.ovr + 3), text: 'Grow a player 23 or younger to ' + Math.min(90, young.ratings.ovr + 3) + ' overall' });
     pool.push({ id: 'fans', v: 60, text: 'Keep fan interest above 60' });
     pool.push({ id: 'home', v: 0.6, text: 'Win 60% of your home games' });
@@ -4264,6 +4266,12 @@
       { id: 'orb', t: 'Offensive rebounds', lvl: 0, f: function (x) { return x.orb !== undefined ? x.orb / x.g : -1; }, fmt: function (v) { return v.toFixed(1); } },
       { id: 'drb', t: 'Defensive rebounds', lvl: 0, f: function (x) { return x.drb !== undefined ? x.drb / x.g : -1; }, fmt: function (v) { return v.toFixed(1); } }
     ];
+    /* stats the sport did not have yet stay off the board: no threes before 1979, no advanced numbers before 1990 */
+    all = all.filter(function (c) {
+      if ((c.id === 'tpp' || c.id === 'tpm') && save.year < 1979) return false;
+      if (['ts', 'efg', 'per', 'eff', 'ato'].indexOf(c.id) >= 0 && save.year < 1990) return false;
+      return true;
+    });
     return { all: all, qual: qual, level: DETAILS.indexOf(detail) };
   }
 
@@ -5725,7 +5733,7 @@
     if (mode === 'finder') {
       var strip = el('div', 'tstrip');
       var dd = daysToDeadline();
-      [['Payroll', money(pay)], [pay > cap ? 'Over cap' : 'Cap room', money(Math.abs(cap - pay))], ['Roster', mine.length + '/' + tradeMax()], ['Deadline', dd === null ? 'Closed' : dd + ' days']].forEach(function (x) {
+      [[ownerOn() ? 'Spending' : 'Payroll', money(pay)], [pay > cap ? (ownerOn() ? 'Over budget' : 'Over cap') : (ownerOn() ? 'Budget room' : 'Cap room'), money(Math.abs(cap - pay))], ['Roster', mine.length + '/' + tradeMax()], ['Deadline', dd === null ? 'Closed' : dd + ' days']].forEach(function (x) {
         var c = el('div', 'ts'); c.appendChild(el('small', null, x[0])); c.appendChild(el('b', null, x[1])); strip.appendChild(c);
       });
       body.appendChild(strip);
@@ -5741,7 +5749,7 @@
       tool('◎', 'Target a player', 'Pick anyone in the league and find packages that land him', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: false, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
       tool('▲', 'Find upgrades', 'Players better than your starters, with deals that work', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: true, young: false, q: '' }; trade.fromTarget = true; renderTrade(); });
       tool('★', 'Young talent', 'Players 24 and under to build around', function () { trade.visit = (trade.visit || 0) + 1; trade.view = 'target'; trade.tf = { pos: '', up: false, young: true, q: '' }; trade.fromTarget = true; renderTrade(); });
-      tool('$', 'Teams with cap space', 'Teams that can absorb salary', function () { trade.home = 'clubs'; trade.sort = 'cap'; renderTrade(); });
+      tool('$', ownerOn() ? 'Teams with money to spend' : 'Teams with cap space', ownerOn() ? 'Clubs that can take on salary' : 'Teams that can absorb salary', function () { trade.home = 'clubs'; trade.sort = 'cap'; renderTrade(); });
     } else if (mode === 'clubs') {
       body.appendChild(chipRow([['rating', 'Best'], ['cap', 'Cap space'], ['win', 'Contending'], ['rebuild', 'Rebuilding']], trade.sort, function (v) { trade.sort = v; renderTrade(); }));
       var clubs = save.ids.filter(function (id) { return id !== me.id; }).map(function (id) {
@@ -5789,7 +5797,7 @@
     dock.textContent = '';
     var me = teamById(save.myId);
     document.getElementById('trade-title').textContent = trade.partner ? 'Trade with ' + teamById(trade.partner).city : 'Trades';
-    document.getElementById('trade-sub').textContent = 'Your payroll ' + money(League.payroll(save, me.id)) + ' of ' + money(save.lg.cap);
+    document.getElementById('trade-sub').textContent = (ownerOn() ? 'Your spending ' : 'Your payroll ') + money(League.payroll(save, me.id)) + ' of ' + money(save.lg.cap);
     if (trade.closed) {
       body.appendChild(el('p', 'note', trade.closed));
       return;
@@ -6029,7 +6037,7 @@
         card.appendChild(assetBlock('You send', o.give, o.giveK));
         card.appendChild(assetBlock('You get', o.get, o.getK));
         card.appendChild(adjustBtn(o.tid, o.give, o.get, o.giveK, o.getK));
-        card.appendChild(el('small', 'tf-pay', 'Your payroll after ' + money(payAfter(o.give, o.get)) + (payAfter(o.give, o.get) > cap ? ' · over the cap' : '')));
+        card.appendChild(el('small', 'tf-pay', (ownerOn() ? 'Your spending after ' : 'Your payroll after ') + money(payAfter(o.give, o.get)) + (payAfter(o.give, o.get) > cap ? (ownerOn() ? ' · over budget' : ' · over the cap') : '')));
         list2.appendChild(card);
       });
       body.appendChild(list2);
@@ -6305,7 +6313,7 @@
     offHeader('Farewell', list.length + ' retire' + (list.length === 1 ? 's' : ''));
     var wrap = el('div', 'dn');
     var top = el('div', 'dn-top');
-    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; if (save.year < 1980) lg.style.display = 'none'; lg.onerror = function () { lg.style.display = 'none'; };
     top.appendChild(lg); top.appendChild(el('strong', null, 'RETIREMENTS')); top.appendChild(el('em', null, seasonLabel(save.year)));
     wrap.appendChild(top);
     var pages = list.map(function (x) {
@@ -6735,10 +6743,10 @@
     offHeader(isDisp ? 'Dispersal draft' : d.year + ' NBA Draft', 'Round ' + slot.round + ' · pick ' + slot.pick + ' of ' + d.picks.length);
     var wrap = el('div', 'dn');
     var top = el('div', 'dn-top');
-    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; if (save.year < 1980) lg.style.display = 'none'; lg.onerror = function () { lg.style.display = 'none'; };
     top.appendChild(lg);
     top.appendChild(el('strong', null, isDisp ? 'DISPERSAL DRAFT' : 'NBA DRAFT ' + d.year));
-    top.appendChild(el('em', null, 'LIVE'));
+    top.appendChild(el('em', null, save.year >= 1980 ? 'LIVE' : 'DRAFT ROOM'));
     wrap.appendChild(top);
     var clock = el('div', 'dn-clock' + (mine ? ' mine' : ''));
     clock.appendChild(teamBadge(team));
@@ -6761,7 +6769,7 @@
     im.src = 'assets/photos/draft-expert.png';
     ex.appendChild(av);
     var et = el('div', 'dn-et');
-    var hd = el('small'); hd.appendChild(el('b', null, 'Draft Expert')); hd.appendChild(document.createTextNode(' @DraftExpert'));
+    var hd = el('small'); hd.appendChild(el('b', null, 'Draft Expert')); if (save.year >= 2009) hd.appendChild(document.createTextNode(' @DraftExpert'));
     et.appendChild(hd);
     var bp = avail[0];
     var line = d.expert && d.expert.pick === slot.pick - 1 ? d.expert.text : 'Best available: ' + bp.name + ', ' + (bp.pos || '') + (bp.college ? ' out of ' + bp.college : '') + '. ' + (bp.pot - bp.ratings.ovr >= 12 ? 'Huge upside.' : 'Ready to help right away.');
@@ -6854,7 +6862,7 @@
     var rep = League.repeater(save, me.id), bill = League.taxBill(save, me.id, rep);
     var card = el('div', 'stat-card');
     card.appendChild(el('div', 'group-title', 'Cap sheet \u00B7 ' + seasonLabel(ly)));
-    var rows = [['Salary cap', money(cb.cap)], ['Your payroll', money(pay) + (League.deadOf(save, me.id) ? ' (' + money(League.deadOf(save, me.id)) + ' dead)' : '')]];
+    var rows = [[ownerOn() ? 'Owner budget' : 'Salary cap', money(cb.cap)], [ownerOn() ? 'Your spending' : 'Your payroll', money(pay) + (League.deadOf(save, me.id) ? ' (' + money(League.deadOf(save, me.id)) + ' dead)' : '')]];
     if (holds) rows.push(['Cap holds', money(holds)]);
     rows.push(['Cap space', money(Math.max(0, cb.cap - pay - holds))]);
     if (cb.on) {
@@ -6993,7 +7001,7 @@
     var p = League.byId(save, s.pid), t = teamById(s.team);
     var ov = el('div', 'fa-flash');
     var band = el('div', 'fa-band');
-    var lg = new Image(); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    var lg = new Image(); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; if (save.year < 1980) lg.style.display = 'none'; lg.onerror = function () { lg.style.display = 'none'; };
     band.appendChild(lg); band.appendChild(el('b', null, 'BREAKING')); band.appendChild(el('span', null, 'Free agency · day ' + s.day));
     ov.appendChild(band);
     var pic = el('div', 'fa-pic'); pic.appendChild(makeAvatar(p)); ov.appendChild(pic);
@@ -7004,7 +7012,7 @@
     var terms = el('div', 'fa-terms');
     [[s.yrs + ' YRS', 'Length'], [money(s.salary), 'Per year'], [money(s.salary * s.yrs), 'Total']].forEach(function (x) { var c = el('div'); c.appendChild(el('b', null, x[0])); c.appendChild(el('small', null, x[1])); terms.appendChild(c); });
     ov.appendChild(terms);
-    ov.appendChild(el('p', 'fa-by', s.snt ? teamById(s.snt).city + ' receive ' + s.bk : '\u2014 ESPN Insider'));
+    ov.appendChild(el('p', 'fa-by', s.snt ? teamById(s.snt).city + ' receive ' + s.bk : (save.year < 1980 ? '\u2014 The wire' : '\u2014 ESPN Insider')));
     if (s.os) {
       var of = f.offers && f.offers[s.pid] || { team: s.team, salary: s.salary, yrs: s.yrs };
       ov.appendChild(el('p', 'fa-by', 'You hold the right to match. ' + p.name + ' is restricted.'));
@@ -7042,7 +7050,7 @@
     offHeader('Free agency', f.day === 0 ? 'The market opens' : 'Day ' + f.day + ' of ' + FADAYS);
     var wrap = el('div', 'dn');
     var top = el('div', 'dn-top');
-    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; lg.onerror = function () { lg.style.display = 'none'; };
+    var lg = el('img', 'dn-logo'); lg.src = 'assets/sites/espn.png'; lg.alt = 'ESPN'; if (save.year < 1980) lg.style.display = 'none'; lg.onerror = function () { lg.style.display = 'none'; };
     top.appendChild(lg); top.appendChild(el('strong', null, 'FREE AGENCY ' + (save.year + 1)));
     top.appendChild(el('em', null, f.day === 0 ? 'DAY 1 EVE' : 'DAY ' + f.day));
     wrap.appendChild(top);
