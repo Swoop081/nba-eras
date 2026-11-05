@@ -296,12 +296,13 @@
     { c: [['1 / 3', '1', 1], ['1 / 3', '2', 1], ['2', '3'], ['2', '4']], p: ['1', '3 / 5'] },
     { c: [['1 / 3', '1', 1], ['1', '2'], ['1', '3'], ['1 / 3', '4', 1]], p: ['2', '2 / 4'] }
   ];
+  var ERA_FOCUS = { 2025: '50% 80%' };   /* where the faces are in each era photo, so a card crop keeps them */
   function eraPhoto(box, ids, done) {
     var urls = [];
     ids.forEach(function (id) { ['webp', 'jpg', 'png'].forEach(function (x) { urls.push('assets/eras/' + id + '.' + x); }); });
     var i = 0, img = new Image();
     img.alt = '';
-    img.onload = function () { box.textContent = ''; box.classList.add('has'); box.appendChild(img); if (done) done(ids[Math.floor(i / 3)]); };
+    img.onload = function () { var fo = ERA_FOCUS[ids[0]]; if (fo) img.style.objectPosition = fo; box.textContent = ''; box.classList.add('has'); box.appendChild(img); if (done) done(ids[Math.floor(i / 3)]); };
     img.onerror = function () { i++; if (i < urls.length) img.src = urls[i]; };
     img.src = urls[0];
   }
@@ -321,6 +322,7 @@
           card.type = 'button';
           var ph = el('span', 'era-photo2');
           ph.appendChild(el('span', 'big', String(+era.id + 1).slice(2)));
+          if (ERA_FOCUS[era.id]) ph.setAttribute('data-focus', era.id);
           eraPhoto(ph, [era.id], null);
           card.appendChild(ph);
           var text = el('span', 'et');
