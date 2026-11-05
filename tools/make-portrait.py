@@ -56,6 +56,11 @@ def main(src, pid, outdir='assets/players'):
         alpha = np.array(cut)[:, :, 3]
         rows = np.where((alpha > 128).sum(1) > 3)[0]
         hair = rows[0] if len(rows) else y
+        # if the photo ends above the frame's bottom, zoom in a little (down to 75%) so no empty strip is left
+        fit = (cut.height - hair) / (1 - HEAD_GAP)
+        if fit < side:
+            side = max(fit, side * 0.75)
+            left = x + w / 2 - side / 2
         top = hair - HEAD_GAP * side
         canvas = Image.new('RGBA', (int(side), int(side)), (0, 0, 0, 0))
         canvas.paste(cut, (int(-left), int(-top)))
