@@ -1316,3 +1316,21 @@ body[data-skin="nba-jam"] .bar h2,body[data-skin="nba-jam"] .card strong,body[da
 body[data-skin="nba-jam"] .btn.primary{background:linear-gradient(180deg,#FFE600,#FF4A00 60%,#C80000);color:#fff;text-shadow:2px 2px 0 #3A0A00;border:3px solid #FFE600;border-radius:6px}
 body[data-skin="nba-jam"] .card,body[data-skin="nba-jam"] .stat-card{border-radius:6px;box-shadow:inset 0 0 0 2px rgba(255,214,0,.35)}
 body[data-skin="nba-jam"] .screen:not(#screen-title){background:radial-gradient(120% 40% at 50% 108%,#FF4A00 0,rgba(255,74,0,.35) 40%,transparent 70%),var(--bg)}
+
+/* wide display faces (Bungee, Audiowide, Orbitron...) run big: scale the loud type down so nothing clips */
+body[data-skin="colour-tv"] .fc-name b,body[data-skin="cable"] .fc-name b,body[data-skin="neon"] .fc-name b,body[data-skin="gloss"] .fc-name b,body[data-skin="y2k"] .fc-name b,body[data-skin="web-1-0"] .fc-name b{font-size:19px !important;line-height:1;white-space:nowrap}
+body[data-skin="colour-tv"] .fc-name small,body[data-skin="cable"] .fc-name small,body[data-skin="neon"] .fc-name small,body[data-skin="gloss"] .fc-name small,body[data-skin="y2k"] .fc-name small,body[data-skin="web-1-0"] .fc-name small{font-size:13px}
+body[data-skin="colour-tv"] .fc-ps b,body[data-skin="cable"] .fc-ps b,body[data-skin="neon"] .fc-ps b,body[data-skin="gloss"] .fc-ps b,body[data-skin="y2k"] .fc-ps b,body[data-skin="web-1-0"] .fc-ps b{font-size:12px;letter-spacing:-.02em}
+body[data-skin="colour-tv"] .fc-stats b,body[data-skin="cable"] .fc-stats b,body[data-skin="neon"] .fc-stats b,body[data-skin="gloss"] .fc-stats b,body[data-skin="y2k"] .fc-stats b,body[data-skin="web-1-0"] .fc-stats b{font-size:16px}
+body[data-skin="colour-tv"] #btn-take,body[data-skin="cable"] #btn-take,body[data-skin="neon"] #btn-take,body[data-skin="gloss"] #btn-take,body[data-skin="y2k"] #btn-take,body[data-skin="web-1-0"] #btn-take{font-size:15px;letter-spacing:.02em}
+body[data-skin="colour-tv"] .bar h2,body[data-skin="cable"] .bar h2,body[data-skin="neon"] .bar h2,body[data-skin="gloss"] .bar h2,body[data-skin="y2k"] .bar h2,body[data-skin="web-1-0"] .bar h2{font-size:26px;line-height:1.05}
+body[data-skin="colour-tv"] .btn.primary,body[data-skin="cable"] .btn.primary,body[data-skin="neon"] .btn.primary,body[data-skin="gloss"] .btn.primary,body[data-skin="y2k"] .btn.primary,body[data-skin="web-1-0"] .btn.primary{font-size:18px}
+body[data-skin="colour-tv"] .card strong,body[data-skin="cable"] .card strong,body[data-skin="neon"] .card strong,body[data-skin="gloss"] .card strong,body[data-skin="y2k"] .card strong,body[data-skin="web-1-0"] .card strong{font-size:19px}
+body[data-skin="colour-tv"] .ovr,body[data-skin="cable"] .ovr,body[data-skin="neon"] .ovr,body[data-skin="gloss"] .ovr,body[data-skin="y2k"] .ovr,body[data-skin="web-1-0"] .ovr{font-size:26px}
+body[data-skin="colour-tv"] .fc-p > b,body[data-skin="cable"] .fc-p > b,body[data-skin="neon"] .fc-p > b,body[data-skin="gloss"] .fc-p > b,body[data-skin="y2k"] .fc-p > b,body[data-skin="web-1-0"] .fc-p > b{font-size:22px}
+
+/* wide faces, second pass: these were out-ranked by earlier rules */
+body[data-skin="colour-tv"] .fc-ps b,body[data-skin="cable"] .fc-ps b,body[data-skin="neon"] .fc-ps b,body[data-skin="gloss"] .fc-ps b,body[data-skin="y2k"] .fc-ps b,body[data-skin="web-1-0"] .fc-ps b{font-size:13px !important;letter-spacing:-.03em}
+body[data-skin="colour-tv"] .fc-p > b,body[data-skin="cable"] .fc-p > b,body[data-skin="neon"] .fc-p > b,body[data-skin="gloss"] .fc-p > b,body[data-skin="y2k"] .fc-p > b,body[data-skin="web-1-0"] .fc-p > b{font-size:22px !important}
+body[data-skin="colour-tv"] #btn-take,body[data-skin="cable"] #btn-take,body[data-skin="neon"] #btn-take,body[data-skin="gloss"] #btn-take,body[data-skin="y2k"] #btn-take,body[data-skin="web-1-0"] #btn-take{font-size:15px !important;letter-spacing:.01em}
+body[data-skin="colour-tv"] .fc-stats b,body[data-skin="cable"] .fc-stats b,body[data-skin="neon"] .fc-stats b,body[data-skin="gloss"] .fc-stats b,body[data-skin="y2k"] .fc-stats b,body[data-skin="web-1-0"] .fc-stats b{font-size:15px !important}
