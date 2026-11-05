@@ -402,6 +402,12 @@
   var takeBtn = document.getElementById('btn-take');
   var selected = null;
   var teamHint = null;   /* a club to select when the list opens */
+  /* expansion starts: the real June before a new club's first season */
+  var XP = {
+    '1995': { file: 'data/expansion-1995.json', draft: 'data/draft-1995.json', year: 1995, prev: 1994, champ: 'houston-rockets', clubs: ['toronto-raptors', 'vancouver-grizzlies'], label: 'June 1995', first: '1995-96', noFirst: 1996 },
+    '2004': { file: 'data/expansion-2004.json', draft: 'data/draft-2004.json', year: 2004, prev: 2003, champ: 'detroit-pistons', clubs: ['charlotte-bobcats'], label: 'June 2004', first: '2004-05', noFirst: 2005 }
+  };
+  function xpOf(era, team) { var c = era && XP[era.id]; return c && team && c.clubs.indexOf(team.id) >= 0 ? c : null; }
   var startMode = 'open';   /* 'expansion' = June 1995, the expansion draft first */
   var currentEra = null;
   var seasons = {};
@@ -539,7 +545,7 @@
         nm.appendChild(nb);
         right.appendChild(nm);
         var stats = el('div', 'fc-stats');
-        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew || (currentEra && currentEra.id === '1995' && (team.id === 'toronto-raptors' || team.id === 'vancouver-grizzlies')) ? '\u2013' : (team.w || team.lw || 0) + '-' + (team.l || team.ll || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
+        [['Rating', String(team.rating)], [currentEra && (currentEra.current || currentEra.second) ? 'Last year' : 'Record', team.isNew || xpOf(currentEra, team) ? '\u2013' : (team.w || team.lw || 0) + '-' + (team.l || team.ll || 0)], ['Avg age', team.avgAge.toFixed(1)]].forEach(function (x) {
           var d = el('div');
           d.appendChild(el('small', null, x[0]));
           d.appendChild(el('b', null, x[1]));
@@ -548,7 +554,7 @@
         right.appendChild(stats);
         top.appendChild(right);
         c.appendChild(top);
-        var xpc = currentEra && currentEra.id === '1995' && (team.id === 'toronto-raptors' || team.id === 'vancouver-grizzlies');
+        var xpc = xpOf(currentEra, team);
         var out = xpc ? 'New club · expansion draft' : team.rank <= 6 ? 'Contender' : team.rank <= 14 ? 'Playoff team' : team.rank <= 22 ? 'On the bubble' : 'Rebuilding';
         var ol = el('div', 'fc-out', out);
         c.appendChild(ol);
@@ -587,12 +593,13 @@
     var head = el('div', 'rail-head');
     head.appendChild(count);
     teamList.appendChild(head);
-    if (currentEra && currentEra.id === '1994') {
-      var jn = el('div', 'join-new');
-      jn.appendChild(el('p', 'sub how', 'Toronto and Vancouver join next season. Want to be there from the start, with no players yet?'));
-      [['toronto-raptors', 'Join Toronto'], ['vancouver-grizzlies', 'Join Vancouver']].forEach(function (o) {
+    var JN = { '1994': ['Toronto and Vancouver join next season. Want to be there from the start, with no players yet?', '1995', [['toronto-raptors', 'Join Toronto'], ['vancouver-grizzlies', 'Join Vancouver']]], '2003': ['Charlotte gets a new team next season, the Bobcats. Want to be there from the start, with no players yet?', '2004', [['charlotte-bobcats', 'Join Charlotte']]] };
+    if (currentEra && JN[currentEra.id]) {
+      var jc = JN[currentEra.id], jn = el('div', 'join-new');
+      jn.appendChild(el('p', 'xnote', jc[0]));
+      jc[2].forEach(function (o) {
         var b = el('button', 'btn small primary', o[1]); b.type = 'button';
-        b.addEventListener('click', function () { teamHint = o[0]; openTeams(eraStart('1995')); });
+        b.addEventListener('click', function () { teamHint = o[0]; openTeams(eraStart(jc[1])); });
         jn.appendChild(b);
       });
       teamList.appendChild(jn);
@@ -794,17 +801,18 @@
     store.set('team', selected.id);
     startMode = 'open';
     var oldRm = document.getElementById('ready-mode'); if (oldRm) oldRm.parentNode.removeChild(oldRm);
-    if (currentEra.id === '1995' && (selected.id === 'toronto-raptors' || selected.id === 'vancouver-grizzlies')) {
+    var xc = xpOf(currentEra, selected);
+    if (xc) {
       startMode = 'expansion';
       var rm = el('div', 'seg'); rm.id = 'ready-mode';
       var go = document.getElementById('btn-play');
       var setM = function (m) {
         startMode = m;
-        go.textContent = m === 'expansion' ? 'Start in June 1995' : 'Start the season';
+        go.textContent = m === 'expansion' ? 'Start in ' + xc.label : 'Start the season';
         var rl = document.getElementById('ready-line'); rl.classList.toggle('how', m !== 'expansion'); rl.classList.toggle('xnote', m === 'expansion');
         rl.textContent = m === 'expansion'
-          ? 'June 1995. Your club has no players and no history. Build the name and colours, pick your roster in the expansion draft, then the NBA draft.'
-          : 'Opening night of 1995-96 with the roster the club really took into its first season.';
+          ? xc.label + '. Your club has no players and no history. Build the name and colours, pick your roster in the expansion draft, then the NBA draft.'
+          : 'Opening night of ' + xc.first + ' with the roster the club really took into its first season.';
         Array.prototype.forEach.call(rm.children, function (b) { b.classList.toggle('on', b.dataset.m === m); });
       };
       [['expansion', 'Expansion'], ['open', 'Opening day']].forEach(function (o) {
@@ -2035,7 +2043,7 @@
       startNextSeason();
       return;
     }
-    if (startMode === 'expansion' && currentEra.id === '1995') { startExpansionGame(); return; }
+    if (startMode === 'expansion' && XP[currentEra.id]) { startExpansionGame(XP[currentEra.id]); return; }
     var data = seasons[currentEra.id];
     loadPlayers(function (pl) {
       if (!pl) return;
@@ -6545,25 +6553,26 @@
 
   /* ---------- the 1995 expansion start: June 1995, before the expansion draft ---------- */
   var EXPN = ['toronto-raptors', 'vancouver-grizzlies'];
-  function startExpansionGame() {
-    fetch('data/expansion-1995.json').then(function (r) { return r.json(); }).then(function (x) {
-      prefetchSched(1995);
+  function startExpansionGame(xc) {
+    EXPN = xc.clubs.slice();
+    fetch(xc.file).then(function (r) { return r.json(); }).then(function (x) {
+      prefetchSched(xc.year);
       rosterCache = {};
-      save = Season.create('1995', 1994, x.teams, selected.id, 82, undefined);
+      save = Season.create(String(xc.year), xc.prev, x.teams, selected.id, 82, undefined);
       Engine.setRules({});
       League.init(save, x.players, x.teams, []);
-      Coach.build(save, { hc: (COACHH && COACHH[1995]) || {} }, save.ids);
+      Coach.build(save, { hc: (COACHH && COACHH[xc.year]) || {} }, save.ids);
       /* the new clubs start with nobody: anyone the setup parked there goes back to the free-agent pool */
       save.lg.players.forEach(function (p) { if (EXPN.indexOf(p.team) >= 0 && p.status === 'active') { p.team = null; } });
       save.lastRec = {}; x.teams.forEach(function (t) { save.lastRec[t.id] = { w: t.w || t.lw || 0, l: t.l || t.ll || 0 }; });
-      save.phase = 'done'; save.champion = 'houston-rockets';
-      save.lg.noFirst = { 'toronto-raptors': 1996, 'vancouver-grizzlies': 1996 };
+      save.phase = 'done'; save.champion = xc.champ;
+      save.lg.noFirst = {}; xc.clubs.forEach(function (c) { save.lg.noFirst[c] = xc.noFirst; });
       ensureTm();
       League.ensurePicks(save, save.ids.map(teamById));
-      save.off = { step: 'brand', exp: { real: x.real, counts: x.rules.picks, brand0: { city: teamById(save.myId).city, name: teamById(save.myId).name, colors: teamById(save.myId).colors.slice() } } };
+      save.off = { step: 'brand', exp: { key: String(xc.year), clubs: xc.clubs.slice(), draft: xc.draft, real: x.real, counts: x.rules.picks, brand0: { city: teamById(save.myId).city, name: teamById(save.myId).name, colors: teamById(save.myId).colors.slice() } } };
       persist();
       openOff();
-    }).catch(function () { alert('Could not build the June 1995 league. Open the game from its web address.'); });
+    }).catch(function () { alert('Could not build the ' + xc.label + ' league. Open the game from its web address.'); });
   }
   /* name and colours: the real ones are the defaults, and they are yours to change */
   function offBrand(body, me) {
@@ -6598,12 +6607,17 @@
       save.off.exp.brandSet = 1;
       League.wire(save, city + ' ' + name + ' unveil their name and colours.');
       rosterCache = {};
-      offStep('flip');
+      if (save.off.exp.clubs.length > 1) { offStep('flip'); return; }
+      EXPN = save.off.exp.clubs.slice();
+      League.startExpansion(save, EXPN, EXPN[0], save.off.exp.real, save.off.exp.counts);
+      League.wire(save, 'The league holds the expansion draft. ' + teamById(save.myId).city + ' pick from the lists the other clubs leave open.');
+      offStep('expansion');
     });
   }
   /* the coin flip: in real life Vancouver won it and took the higher draft slot, so Toronto picked first in the expansion draft */
   function offFlip(body, me) {
-    var ex = save.off.exp, other = EXPN.filter(function (i) { return i !== me.id; })[0], oc = teamById(other), vanMe = me.id === 'vancouver-grizzlies';
+    var ex = save.off.exp; if (ex.clubs) EXPN = ex.clubs.slice();
+    var other = EXPN.filter(function (i) { return i !== me.id; })[0], oc = teamById(other), vanMe = me.id === 'vancouver-grizzlies';
     offHeader('Coin flip', 'Who picks first?');
     body.appendChild(el('p', 'xnote', 'The two new clubs flip a coin. The winner picks one: the higher spot in the NBA draft (No. 6) or the first pick in the expansion draft. Toronto then takes 14 players and Vancouver 13, and no club can lose more than one.'));
     function go(vanGetsSix) {
@@ -6847,7 +6861,7 @@
     var d = save.lg.draft, isDisp = d.kind === 'dispersal';
     if (d.kind === 'expansion') {
       var ex = save.off.exp;
-      fetch('data/draft-1995.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; }).catch(function () { return { prospects: [] }; })
+      fetch(ex.draft || 'data/draft-1995.json').then(function (r) { return r.ok ? r.json() : { prospects: [] }; }).catch(function () { return { prospects: [] }; })
         .then(function (dd) {
           var tms = save.ids.map(teamById), ab = {}; tms.forEach(function (t) { ab[t.id] = TABR[t.id]; });
           League.startRealDraft(save, tms, League.applyBoard(save, dd.prospects), 2, ab, ex.swapSix ? [6, 7] : null);
