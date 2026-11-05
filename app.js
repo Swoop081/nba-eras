@@ -276,7 +276,7 @@
       2018: 'Raptors', 2019: 'Lakers', 2020: 'Bucks', 2021: 'Warriors', 2022: 'Nuggets', 2023: 'Celtics' };
     for (var y = 2024; y >= 1951; y--) {
       var yrs = y + '-' + String((y + 1) % 100).replace(/^(\d)$/, '0$1');
-      ERAS.push({ id: String(y), logo: '2026', years: yrs, title: 'Defending: ' + CH[y - 1], blurb: 'Opening night, real rosters as they were.', open: true, current: true, teams: 'data/teams-' + y + '.json', players: 'data/players-' + y + '.json' });
+      ERAS.push({ id: String(y), logo: y < 2000 ? String(y) : '2026', years: yrs, title: 'Defending: ' + CH[y - 1], blurb: 'Opening night, real rosters as they were.', open: true, current: true, teams: 'data/teams-' + y + '.json', players: 'data/players-' + y + '.json' });
     }
   })();
 
@@ -475,7 +475,7 @@
     if (!(currentEra && currentEra.current)) urls.push(base + '.png', base + '.svg');
     // private use: the present day can show the NBA's own logo straight from its CDN
     // a club that has since moved or changed its name must not show today's logo for its franchise
-    if (currentEra && currentEra.current && team.nbaId && TODAY_CLUBS.indexOf(team.id) >= 0) urls.push('https://cdn.nba.com/logos/nba/' + team.nbaId + '/primary/L/logo.svg');
+    if (currentEra && currentEra.current && +currentEra.id >= 2000 && team.nbaId && TODAY_CLUBS.indexOf(team.id) >= 0) urls.push('https://cdn.nba.com/logos/nba/' + team.nbaId + '/primary/L/logo.svg');
     var i = 0;
     var img = new Image();
     img.alt = '';
@@ -4866,7 +4866,7 @@
     bodyEl.className = 'hub';
     var titleEl = document.getElementById('season-title');
     titleEl.textContent = me.city + ' ' + me.name;
-    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + (rec.w + rec.l ? rec.w + '-' + rec.l : recText(me.id, rec, 1)) + ' · ' + money(League.payroll(save, me.id)) + (save.phase === 'done' ? '' : ' · Title ' + pctText(titleOdds(me.id)));
+    document.getElementById('season-sub').textContent = seasonLabel(save.year) + ' · ' + (rec.w + rec.l ? rec.w + '-' + rec.l : recText(me.id, rec, 1)) + ' · ' + money(League.payroll(save, me.id)) + (save.phase === 'done' || save.year < 2009 ? '' : ' · Title ' + pctText(titleOdds(me.id)));
     var hdr = document.querySelector('#screen-season .bar');
     (function () {
       hdr.classList.remove('star'); hdr.style.removeProperty('--star');

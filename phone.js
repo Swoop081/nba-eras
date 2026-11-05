@@ -189,6 +189,7 @@
 
   function buzz(n) {
     if (!n) return;
+    var sv = src && src.save && src.save(); if (sv && sv.year < 2009) return;   /* no phones before 2009 */
     n = era(n);
     if (social()) { try { root.Social.fromBanner(src.save(), n); } catch (e) {} }
     var h = host();
@@ -266,7 +267,7 @@
 
   function onScreen(id) {
     var modern = document.body.dataset.modern === '1';
-    if (!modern || !OK[id] || !src || !src.save()) { stop(); return; }
+    if (!modern || !OK[id] || !src || !src.save() || src.save().year < 2009) { stop(); return; }   /* no phones, no group chat before 2009 */
     var was = allowed;
     allowed = true;
     place(id);
