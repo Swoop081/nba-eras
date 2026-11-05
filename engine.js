@@ -144,13 +144,13 @@
     var dbl = cntd(O, 'double') > 0;
     var shooter = pick(r, O, function (x) {
       var s = x.p.ratings.sco, u = x.p.ratings.usg || (pr.uexp !== 0 ? Math.max(8, Math.min(32, 8 + 0.2 * s)) : 0);
-      if (u && !mo.flat) return x.share * Math.pow(u, pr.uexp || 1.0) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
-      return x.share * (x.go || 1) * Math.pow(s, mo.flat ? 0.15 : ((pr.use || 2) + USEADD)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
+      if (u && !mo.flat) return (1 + 1.5 * (x.hot || 0)) * x.share * Math.pow(u, pr.uexp || 1.0) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
+      return (1 + 1.5 * (x.hot || 0)) * x.share * (x.go || 1) * Math.pow(s, mo.flat ? 0.15 : ((pr.use || 2) + USEADD)) * (mo.focus === x.p.id ? (mo.focusW || 6) : 1) * (md.double === x.p.id ? 0.45 : 1) * (ni(x).use || 1) * (nd(x).double ? 0.45 : 1) * (nd(x).deny ? 0.6 : 1) * (dbl && !nd(x).double ? 1.12 : 1);
     });
     ev.who = shooter.p.name;
     var pts = 0;
     var si = ni(shooter), sd = nd(shooter);
-    var fouled = r() < pr.foul + Math.max(0, shooter.p.ratings.sco - 55) * 0.0005 + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + (sd.double ? 0.015 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
+    var fouled = r() < pr.foul + 0.045 * (shooter.hot || 0) + Math.max(0, shooter.p.ratings.sco - 55) * 0.0005 + (md.foulAdd || 0) + (si.rim ? 0.035 : 0) + (sd.double ? 0.015 : 0) + 0.01 * cnt(D, 'press') + 0.006 * cnt(D, 'paint');
     if (fouled) {
       pick(r, D, function (x) { return x.share * (110 - x.p.ratings.fou) * (md.protect === x.p.id ? 0.35 : 1) * (ni(x).press || ni(x).paint ? 1.35 : 1); }).s.pf++;
       if (r() > 0.74) fouled = false; // a loose-ball or non-shooting foul: no free throws
@@ -159,6 +159,7 @@
     q *= 1 - (avg(D, function (x) { return x.p.ratings.blk; }) - 45) / 700;
     q += (50 - avg(D, function (x) { return (x.p.ratings.drb + x.p.ratings.stl) / 2; })) / 900;
     q *= 1 - 0.02 * D.reduce(function (t, x) { return t + (ni(x).paint ? x.p.ratings.blk / 70 : 0); }, 0);
+    q *= 1 + 0.1 * (shooter.hot || 0);
     q *= (si.rim ? 1.015 : 1) * (si.use > 1.5 ? 0.985 : 1) * (mo.fgMul || 1) * (md.oppFgMul || 1) * (md.double === shooter.p.id ? 0.93 : 1);
     if (st.eo || st.ed) q *= Math.exp((st.eo || 0) - (st.ed || 0));
     var three = mo.force3 ? mo.force3 === 3 : pr.threes && r() < Math.max(0, (pr.tpBase !== undefined ? pr.tpBase + shooter.p.ratings.tpt / pr.tpDiv : 0.15 + shooter.p.ratings.tpt / 500) + (si.tp || 0) + (sd.sag ? 0.12 : 0) - (si.rim ? 0.12 : 0));
@@ -289,8 +290,25 @@
       plan: plan, pm: { H: planMods(plan.H), A: planMods(plan.A) }, mods: { H: {}, A: {} }, rest: { H: {}, A: {} }, st: {}, onH: [], onA: [], edge: edges || { H: teamImp(prep0H), A: teamImp(prep0A) }
     };
     g.limit = Math.floor(perQ + g.r());
+    heaters(g);
     setLineups(g);
     return g;
+  }
+
+  /* Once in a long while a high-usage scorer has the night where everything goes in: more shots, better ones, more free throws. */
+  var HEAT = typeof root.__HEAT === 'number' ? root.__HEAT : 0.07;
+  function heaters(g) {
+    /* by era: the old big-man years and today's volume game give the huge nights; the slow, physical 70s to 2000s rarely do (Jordan topped out at 69, Kobe got 81) */
+    var ey = g.year, em = ey < 1969 ? 1.3 : ey < 2010 ? 0.6 : 1;
+    [g.H, g.A].forEach(function (T) {
+      T.forEach(function (x) {
+        var sc = x.p.ratings.sco || 0;
+        if (sc < 74) return;
+        var w = (sc - 70) / 30, roll = g.r();
+        if (roll < HEAT * em * w) x.hot = 1 + (g.r() < 0.35 ? 0.5 : 0) + (g.r() < 0.2 ? 0.5 : 0);
+        else if (roll < HEAT * em * w * 6) x.hot = 0.35;   /* a merely hot night */
+      });
+    });
   }
 
   /* the coach's game plan: pace, style and how hard the starters work. Always on for your side. */
