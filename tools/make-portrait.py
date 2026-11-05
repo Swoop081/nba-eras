@@ -9,8 +9,8 @@ import numpy as np
 from PIL import Image
 from rembg import remove, new_session
 
-FACE_W = 0.56   # face width as a share of the frame (the existing portraits average 0.56)
-HEAD_GAP = 0.06  # gap above the top of the hair, as a share of the frame height
+FACE_W = 0.45   # face width as a share of the frame; matches the older portraits (0.43-0.46 by this detector)
+HEAD_GAP = 0.04  # gap above the top of the hair, as a share of the frame height
 SIZE = 600
 
 def face_box(im):
