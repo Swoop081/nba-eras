@@ -249,6 +249,25 @@
   }
 
   /* what your decisions did */
+  /* a star sits the second night of a back-to-back */
+  function rest(save, d) {
+    try {
+      if (save.said) recent = save.said; else save.said = recent;
+      feed(save);
+      var ln = lastN(d.name || ''), ta = d.tid ? teamAcct(save, d.tid) : null, C = tc(save, d.tid || save.myId);
+      post(save, 'team', ta || teamAcct(save, save.myId), d.name + ' (rest) is out tonight on the second night of a back-to-back.');
+      var f = [
+        ln + ' resting tonight. There goes my parlay.',
+        'Back to back and ' + ln + ' is out. I paid full price for this ticket.',
+        'Can we get a star who can play 82 games? Asking for every fan in ' + C + '.',
+        'Load management again. ' + ln + ' sits and the league wonders why people complain.',
+        'Of course ' + ln + ' is resting. Never lines up with a game I am at.',
+        'Bet on ' + ln + ' to go over and he is resting. Unreal.'
+      ];
+      post(save, 'fan', fan(), rnd(f));
+      if (chance(0.5)) post(save, 'insider', acct(INSIDER), d.name + ' will sit tonight as part of ' + C + ' load management on the second night of a back-to-back.');
+    } catch (e) {}
+  }
   function react(save, kind, d) {
     try {
       if (save.said) recent = save.said; else save.said = recent;
@@ -375,5 +394,5 @@
   /* the feed only exists in the social-media era */
   function has(year) { return year >= 2009; }
 
-  root.Social = { faAI: faAI, draftOpen: draftOpen, draftPick: draftPick, rightsSigned: rightsSigned, faOpen: faOpen, faSigned: faSigned, lead: function (y) { return leadInsider(y).n; }, has: has, add: add, fromBanner: fromBanner, day: day, react: react, capPost: capPost, unread: unread, markRead: markRead, feed: feed };
+  root.Social = { faAI: faAI, draftOpen: draftOpen, draftPick: draftPick, rightsSigned: rightsSigned, faOpen: faOpen, faSigned: faSigned, lead: function (y) { return leadInsider(y).n; }, has: has, add: add, fromBanner: fromBanner, day: day, react: react, rest: rest, capPost: capPost, unread: unread, markRead: markRead, feed: feed };
 })(window);

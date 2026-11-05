@@ -1321,6 +1321,57 @@
     var all = rosterOf(save, id), ok = all.filter(function (p) { return !(p.inj > 0); });
     return ok.length >= 5 ? ok : all;
   }
+  /* ---------- load management: the second night of a back-to-back ---------- */
+  function playedYesterday(save, id) {
+    var d = save.day || 0;
+    if (!(d > 0) || !save.days) return false;
+    var prev = save.days[d - 1] || [];
+    if (!prev.some(function (g) { return g[0] === id || g[1] === id; })) return false;
+    if (save.dates) { var a = save.dates[d - 1], b = save.dates[d]; if (!a || !b) return false; return (Date.parse(b) - Date.parse(a)) <= 86400000 * 1.01; }
+    return true;
+  }
+  function restProb(save, p) {
+    var era = save.year < 2010 ? 0 : save.year < 2015 ? 0.35 : 1, dur = p.ratings.dur || 80;
+    var pr = Math.max(0, Math.min(0.9, (80 - dur) / 22)) + ((p.age || 26) >= 32 ? 0.1 : 0);
+    return pr > 0 ? Math.min(0.9, pr) * era : 0;
+  }
+  function lmCandidates(save, id) {
+    if (save.phase !== 'regular' || !playedYesterday(save, id)) return [];
+    return healthy(save, id).sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; }).slice(0, 8)
+      .filter(function (p) { return p.ratings.ovr >= 58; })
+      .map(function (p) { return { p: p, prob: restProb(save, p) }; }).filter(function (c) { return c.prob > 0.12; })
+      .sort(function (a, b) { return b.prob - a.prob; });
+  }
+  /* Decides tonight's rest for every club once per day. The user's club only gets a recommendation (lm.ask) and a default. */
+  function loadMgmt(save) {
+    if (save.lm && save.lm.y === save.year && save.lm.day === save.day && save.lm.ph === save.phase) return save.lm;
+    var lm = { y: save.year, day: save.day, ph: save.phase, out: {}, ask: [], rests: [] };
+    save.lm = lm;
+    if (save.phase !== 'regular') return lm;
+    ((root.Season && root.Season.today(save)) || []).forEach(function (g) {
+      [g.home, g.away].forEach(function (id) {
+        var cands = lmCandidates(save, id);
+        if (!cands.length) return;
+        if (id === save.myId) {
+          lm.ask = cands.filter(function (c) { return c.prob >= 0.35; }).slice(0, 3).map(function (c) { return { id: c.p.id, name: c.p.name, prob: Math.round(c.prob * 100) / 100, dur: c.p.ratings.dur }; });
+          lm.out[id] = lm.ask.filter(function (c) { return c.prob >= 0.5; }).map(function (c) { return c.id; });
+          return;
+        }
+        var out = [];
+        cands.forEach(function (c) { if (out.length < 2 && Math.random() < c.prob) out.push(c.p.id); });
+        if (out.length) {
+          lm.out[id] = out;
+          out.forEach(function (pid) { var p = byId(save, pid); if (p && p.ratings.ovr >= 66) lm.rests.push({ id: pid, name: p.name, tid: id }); });
+        }
+      });
+    });
+    return lm;
+  }
+  function restedToday(save, id) {
+    var lm = save.lm;
+    return lm && lm.y === save.year && lm.day === save.day && lm.ph === save.phase && lm.out[id] ? lm.out[id] : null;
+  }
+
   /* Each player who took the floor has a small chance of getting hurt; sturdier players less so. */
   /* what the injury actually is, by how long it keeps him out ({s} becomes left or right) */
   var INJ = {
@@ -1634,7 +1685,7 @@
     noteTeamGame: noteTeamGame, noteSeason: noteSeason, recordsView: recordsView,
     boardInit: boardInit, boardTick: boardTick, boardScout: boardScout, boardGrade: boardGrade, projOrder: projOrder, teamNeeds: teamNeeds, applyBoard: applyBoard,
     wire: wire, aiMoves: aiMoves, makeOffer: makeOffer, makeDeal: makeDeal, doDeal: doDeal, injuryChoice: injuryChoice, doOffer: doOffer,
-    healthy: healthy, rollInjuries: rollInjuries, injuryFor: injuryFor, injText: injText, tickInjuries: tickInjuries,
+    healthy: healthy, loadMgmt: loadMgmt, restedToday: restedToday, rollInjuries: rollInjuries, injuryFor: injuryFor, injText: injText, tickInjuries: tickInjuries,
     tradeValue: tradeValue, clubMode: clubMode, shopReason: shopReason, canSign: canSign, realContracts: realContracts, starsOf: starsOf, starsVal: starsVal, franchise: franchise, tune: tune, formCheck: formCheck, potFor: potFor, evaluateTrade: evaluateTrade, findOffers: findOffers, findPackages: findPackages, executeTrade: executeTrade, suggestAdd: suggestAdd,
     init: init, openingRosters: openingRosters, active: active, rosterOf: rosterOf, rightsOf: rightsOf, signRights: signRights, payroll: payroll, deadOf: deadOf, byId: byId, accumulate: accumulate, leaders: leaders,
     progress: progress, ask: ask, expiring: expiring, newSeasonContracts: newSeasonContracts, sign: sign, release: release,

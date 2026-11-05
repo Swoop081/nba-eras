@@ -1864,6 +1864,8 @@
   }
   function rosterFor(id) {
     var h = League.healthy(save, id);
+    var lmOut = League.restedToday(save, id);
+    if (lmOut && lmOut.length) { var hh = h.filter(function (p) { return lmOut.indexOf(p.id) < 0; }); if (hh.length >= 8) h = hh; }
     if (id !== save.myId) { var co = defaultOrder(h), cp = {}; co.forEach(function (p, i) { cp[p.id] = i; }); return Coach.apply(save, id, h).map(function (p) { return Object.assign({}, p, { slot: cp[p.id] }); }); }
     var ord = rotOrder(id), pos = {};
     ord.forEach(function (p, i) { pos[p.id] = i; });
@@ -1879,8 +1881,20 @@
     League.tickInjuries(save, g.home); League.tickInjuries(save, g.away);
     return { home: g.home, away: g.away, hs: r.home, as: r.away, series: g.series, lines: { h: r.homeLines, a: r.awayLines }, inj: inj };
   }
+  /* tonight's rested stars go on the feed once: the league's (decided at the start of the day) and ours (when we play) */
+  function lmPost(mineToo) {
+    var lm = save.lm;
+    if (!lm || lm.y !== save.year || lm.day !== save.day || !Social.has(save.year)) return;
+    if (!lm.pl) { lm.pl = 1; (lm.rests || []).forEach(function (r) { Social.rest(save, r); }); }
+    if (mineToo && !lm.pm) {
+      lm.pm = 1;
+      (lm.out[save.myId] || []).forEach(function (pid) { var p = League.byId(save, pid); if (p) Social.rest(save, { name: p.name, tid: save.myId }); });
+    }
+  }
   function simDay() {
+    if (save.phase === 'regular') { League.loadMgmt(save); lmPost(false); }
     var results = Season.today(save).map(simGame);
+    if (save.phase === 'regular') lmPost(true);
     results.forEach(function (g) {
       if (g.home !== save.myId && g.away !== save.myId) return;
       var us = g.home === save.myId ? g.hs : g.as, them = g.home === save.myId ? g.as : g.hs;
@@ -2571,6 +2585,7 @@
   }
 
   function openPregame(me, opp, mine, label) {
+    var lm0 = save.phase === 'regular' ? League.loadMgmt(save) : null;
     var g = Engine.start(rosterFor(me.id), rosterFor(opp.id), save.year, undefined, undefined, { H: save.plan || null });
     var sh = g.onH.map(function (m) { return m.p; }).sort(function (u, v) { return slotRank(u) - slotRank(v); }), sa = g.onA.map(function (m) { return m.p; }).sort(function (u, v) { return slotRank(u) - slotRank(v); });
     var starters = sh.map(function (p, i) { return { p: p, o: sa[i] }; });
@@ -2594,6 +2609,26 @@
       if (!i) vs.appendChild(el('b', 'pg-at', mine && mine.home === me.id ? 'v' : 'at'));
     });
     body.appendChild(vs);
+    if (lm0 && lm0.ask && lm0.ask.length) {   /* second night of a back-to-back: the coach suggests rest, we decide */
+      var rc = el('div', 'pg-keys pg-rest');
+      rc.appendChild(el('h3', 'box-title', 'Back to back tonight'));
+      lm0.ask.forEach(function (c) {
+        var out = (lm0.out[save.myId] || []).indexOf(c.id) >= 0, row = el('p', 'pg-key');
+        var tx = el('span', null, c.name + ' \u00B7 ' + (c.prob >= 0.5 ? 'coach recommends rest' : 'coach says he could use a night off'));
+        row.appendChild(tx);
+        [['Rest', true], ['Play', false]].forEach(function (o) {
+          var b = el('button', 'btn small' + (out === o[1] ? ' primary' : ''), o[0]);
+          b.addEventListener('click', function () {
+            var cur = lm0.out[save.myId] || [];
+            cur = cur.filter(function (x) { return x !== c.id; }); if (o[1]) cur.push(c.id);
+            lm0.out[save.myId] = cur; persist(); openPregame(me, opp, mine, label);
+          });
+          row.appendChild(b);
+        });
+        rc.appendChild(row);
+      });
+      body.appendChild(rc);
+    }
     var st = save.lg.stats;
     function side(p, r) {
       var x = st[p.id], b = el('div', 'pg-p' + (r ? ' r' : ''));
@@ -2636,6 +2671,7 @@
 
   /* Records the finished game, plays the rest of the day, and builds the event stack. */
   function completeGame(res, mine, me, opp, label) {
+    if (save.phase === 'regular') lmPost(true);
     var mineResult = {
       home: mine.home, away: mine.away, series: mine.series,
       hs: mine.home === me.id ? res.home : res.away,

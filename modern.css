@@ -1269,3 +1269,5 @@ body[data-modern="1"] .careerwrap table{min-width:640px;width:max-content}
 body[data-modern="1"] .careerwrap th,body[data-modern="1"] .careerwrap td{white-space:nowrap;padding-left:10px;padding-right:10px;text-align:right}
 body[data-modern="1"] .careerwrap th:nth-child(-n+2),body[data-modern="1"] .careerwrap td:nth-child(-n+2){text-align:left}
 body[data-modern="1"] .careerwrap th:first-child,body[data-modern="1"] .careerwrap td:first-child{position:sticky;left:0;background:var(--card);z-index:1}
+
+.pg-rest .pg-key{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pg-rest .pg-key span{flex:1 1 140px}.pg-rest .btn.small{padding:6px 12px}
