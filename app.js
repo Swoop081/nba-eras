@@ -817,6 +817,8 @@
   fetch('data/nba-ids.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(d, NBAIDS); }).catch(function () {});
   fetch('data/nba-ids-extra.json').then(function (r) { return r.json(); }).then(function (d) { NBAIDS = Object.assign(NBAIDS, d); }).catch(function () {});
   fetch('data/careers.json').then(function (r) { return r.json(); }).then(function (d) { League.setCareers(d); }).catch(function () {});
+  var CREAL = null;
+  fetch('data/career-real.json').then(function (r) { return r.json(); }).then(function (d) { CREAL = d; }).catch(function () {});
   fetch('data/era-params.json').then(function (r) { return r.json(); }).then(function (d) { Engine.register(d); }).catch(function () {});
 
   /* Season-specific portraits (data/photo-seasons.json): the season is the year it starts; before a game exists it is the era being picked. */
@@ -987,6 +989,11 @@
     var l = el('div', 'legend');
     items.forEach(function (it) { var s = el('span'); s.appendChild(el('i', it[0])); s.appendChild(document.createTextNode(it[1])); l.appendChild(s); });
     return l;
+  }
+  function histTeam(id) {
+    var t = teamById(id); if (t) return t.city;
+    var w = id.split('-'); w.pop(); if (w[w.length - 1] === 'trail') w.pop();
+    return w.map(function (x) { return x.charAt(0).toUpperCase() + x.slice(1); }).join(' ');
   }
   function oppName(id) { var t = teamById(id); return t ? t.city : '?'; }
 
@@ -1343,6 +1350,12 @@
       rows.push([label, t, g, f('pts'), f('ast'), pctS(x.fg, x.fga), pctS(x.ft, x.fta)]);
     }
     if (p.g && !(p.career || []).some(function (c) { return c.real; })) row('Real 1946-47', '', { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 });
+    var era0 = parseInt(save.eraId, 10) || 0;
+    ((CREAL && CREAL[p.id]) || []).forEach(function (r) {
+      if (r[0] >= era0) return;
+      var g = r[2];
+      row(seasonLabel(r[0]), r[1] ? histTeam(r[1]) : '', { g: g, pts: Math.round(r[3] * g), ast: Math.round(r[4] * g), fg: r[6] * 1000, fga: 1000, ft: r[7] * 1000, fta: 1000 });
+    });
     (p.career || []).forEach(function (c) { row(seasonLabel(c.y), c.t ? oppName(c.t) : '', c); });
     var cur = save.lg.stats[p.id];
     if (cur && cur.g) row(seasonLabel(save.year), p.team ? oppName(p.team) : '', cur);
