@@ -74,5 +74,27 @@
    "to": 2025,
    "file": "james-harden@la-clippers"
   }
+ ],
+ "lebron-james": [
+  {
+   "from": 2003,
+   "to": 2009,
+   "file": "lebron-james@cleveland-cavaliers-1"
+  },
+  {
+   "from": 2010,
+   "to": 2013,
+   "file": "lebron-james@miami-heat"
+  },
+  {
+   "from": 2014,
+   "to": 2017,
+   "file": "lebron-james@cleveland-cavaliers-2"
+  },
+  {
+   "from": 2018,
+   "to": 2025,
+   "file": "lebron-james@los-angeles-lakers"
+  }
  ]
 }
