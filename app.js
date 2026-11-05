@@ -401,6 +401,7 @@
   var dock = document.getElementById('team-dock');
   var takeBtn = document.getElementById('btn-take');
   var selected = null;
+  var teamHint = null;   /* a club to select when the list opens */
   var startMode = 'open';   /* 'expansion' = June 1995, the expansion draft first */
   var currentEra = null;
   var seasons = {};
@@ -568,7 +569,10 @@
         cardEls.push(c);
       });
       rail.scrollLeft = 0;
-      if (cardEls.length) pick(cardEls[0], cardEls[0]._team);
+      var hinted = teamHint && cardEls.filter(function (c) { return c._team.id === teamHint; })[0];
+      teamHint = null;
+      if (hinted) { pick(hinted, hinted._team); setTimeout(function () { rail.scrollLeft = hinted.offsetLeft - (rail.clientWidth - hinted.offsetWidth) / 2; }, 80); }
+      else if (cardEls.length) pick(cardEls[0], cardEls[0]._team);
     }
     var tick = null;
     rail.addEventListener('scroll', function () {
@@ -582,6 +586,16 @@
     var head = el('div', 'rail-head');
     head.appendChild(count);
     teamList.appendChild(head);
+    if (currentEra && currentEra.id === '1994') {
+      var jn = el('div', 'join-new');
+      jn.appendChild(el('p', 'sub how', 'Toronto and Vancouver join next season. Want to be there from the start, with no players yet?'));
+      [['toronto-raptors', 'Join Toronto'], ['vancouver-grizzlies', 'Join Vancouver']].forEach(function (o) {
+        var b = el('button', 'btn small primary', o[1]); b.type = 'button';
+        b.addEventListener('click', function () { teamHint = o[0]; openTeams(eraStart('1995')); });
+        jn.appendChild(b);
+      });
+      teamList.appendChild(jn);
+    }
     teamList.appendChild(rail);
     build();
   }

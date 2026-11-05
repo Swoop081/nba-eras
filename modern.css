@@ -1334,3 +1334,6 @@ body[data-skin="colour-tv"] .fc-ps b,body[data-skin="cable"] .fc-ps b,body[data-
 body[data-skin="colour-tv"] .fc-p > b,body[data-skin="cable"] .fc-p > b,body[data-skin="neon"] .fc-p > b,body[data-skin="gloss"] .fc-p > b,body[data-skin="y2k"] .fc-p > b,body[data-skin="web-1-0"] .fc-p > b{font-size:22px !important}
 body[data-skin="colour-tv"] #btn-take,body[data-skin="cable"] #btn-take,body[data-skin="neon"] #btn-take,body[data-skin="gloss"] #btn-take,body[data-skin="y2k"] #btn-take,body[data-skin="web-1-0"] #btn-take{font-size:15px !important;letter-spacing:.01em}
 body[data-skin="colour-tv"] .fc-stats b,body[data-skin="cable"] .fc-stats b,body[data-skin="neon"] .fc-stats b,body[data-skin="gloss"] .fc-stats b,body[data-skin="y2k"] .fc-stats b,body[data-skin="web-1-0"] .fc-stats b{font-size:15px !important}
+
+.join-new{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 16px 4px}
+.join-new p{flex-basis:100%;margin:0}
