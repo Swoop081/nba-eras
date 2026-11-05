@@ -298,12 +298,13 @@
   /* Once in a long while a high-usage scorer has the night where everything goes in: more shots, better ones, more free throws. */
   var HEAT = typeof root.__HEAT === 'number' ? root.__HEAT : 0.07;
   function heaters(g) {
-    /* by era: the old big-man years and today's volume game give the huge nights; the slow, physical 70s to 2000s rarely do (Jordan topped out at 69, Kobe got 81) */
-    var ey = g.year, em = ey < 1969 ? 1.3 : ey < 2010 ? 0.6 : 1;
+    /* by era: the old big-man years and today's volume game give the huge nights; the 70s to 90s rarely do (Thompson 73, Jordan 69) and the 2000s to early 2010s almost never (Kobe's 81 stands alone) */
+    var ey = g.year, em = ey < 1969 ? 1.3 : ey < 2000 ? 1.6 : ey < 2010 ? 0.06 : ey < 2021 ? 0.3 : 1;
     [g.H, g.A].forEach(function (T) {
+      var lead = T.slice().sort(function (a, b) { return b.p.ratings.sco - a.p.ratings.sco; })[0];   /* only a club's go-to scorer */
       T.forEach(function (x) {
         var sc = x.p.ratings.sco || 0;
-        if (sc < 74) return;
+        if (sc < 74 || x !== lead) return;
         var w = (sc - 70) / 30, roll = g.r();
         if (roll < HEAT * em * w) x.hot = 1 + (g.r() < 0.35 ? 0.5 : 0) + (g.r() < 0.2 ? 0.5 : 0);
         else if (roll < HEAT * em * w * 6) x.hot = 0.35;   /* a merely hot night */
