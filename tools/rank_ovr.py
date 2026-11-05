@@ -33,20 +33,42 @@ def zfor(year):
         c[str(year)] = {i: list(v) for i, v in zscores(json.load(open(fn))['players']).items()} if os.path.exists(fn) else {}
         json.dump(c, open(CACHE + '.tmp', 'w')); os.replace(CACHE + '.tmp', CACHE)
     return c[str(year)]
+
+DRIFT = {19: .35, 20: .30, 21: .25, 22: .20, 23: .15, 24: .10, 25: .05, 26: 0, 27: 0, 28: 0, 29: -.05, 30: -.10, 31: -.12, 32: -.15}
+def drift(age): return DRIFT.get(age, .35 if age < 19 else -.2)
+M0 = 1500.0   # minutes of evidence it takes for a season to count about half
+
+def trajectories():
+    """Career model: a player starts at a base, and each season moves him toward what he showed in proportion to the minutes he played;
+    age adds growth then decline. A season lost to injury barely moves him, so he does not dip and bounce back."""
+    lc = '/tmp/rp/lcache.json'
+    if os.path.exists(lc): return json.load(open(lc))
+    state = {}; out = {}; ages = {}
+    for y in range(1951, 2026):
+        fn = R + '/data/players-' + str(y) + '.json'
+        if not os.path.exists(fn): continue
+        P = {p['id']: p for p in json.load(open(fn))['players']}
+        Z = zfor(y); res = {}
+        for i, p in P.items():
+            age = p.get('age') or 26
+            if i in state:
+                L, ly = state[i]
+                L += sum(drift(a) for a in range(ly + 1, y + 1)) if False else drift(age)
+            else:
+                L = -0.5
+            if i in Z:
+                z, m = Z[i]; k = m / (m + (M0 if i in state else 600.0)); L = L + k * (z - L)   # a rookie's first season sets his base
+
+            if i in Z or i in state:
+                state[i] = (L, y); res[i] = L
+        out[str(y)] = res
+    json.dump(out, open(lc, 'w')); return out
 for era in sys.argv[1:]:
     fn = R + '/data/players-' + era + '.json'; doc = json.load(open(fn)); P = doc['players']
-    Z = {i: tuple(v) for i, v in zfor(era).items()}
-    if len(Z) < 30: print(era, 'too few'); continue
-    # a player's rating is his production over the last three seasons (this one counts fully, older ones less), so one injury year does not derail a star
-    back = [{i: tuple(v) for i, v in zfor(int(era) - k).items()} if era.isdigit() else {} for k in (1, 2, 3)]
-    wts = (0.8, 0.5, 0.3)
-    score = {}
-    K = 400.0
-    for i, (z, m) in Z.items():
-        num = m * z + K * -0.4; den = m + K
-        for b, w in zip(back, wts):
-            if i in b: num += w * b[i][1] * b[i][0]; den += w * b[i][1]
-        score[i] = num / den
+    T = trajectories().get(era, {})
+    if len(T) < 30: print(era, 'too few'); continue
+    P0 = {p['id'] for p in P}
+    score = {i: v for i, v in T.items() if i in P0}
     ids = sorted(score, key=lambda i: -score[i])
     vals = sorted([p['ratings']['ovr'] for p in P if p['id'] in score], reverse=True)
     new = dict(zip(ids, vals)); n = 0
@@ -58,9 +80,9 @@ for era in sys.argv[1:]:
         pv = p.get('prev') or {}
         if pv.get('g', 0) >= 50 and pv.get('mpg', 0) >= 22 and p['ratings']['ovr'] < 58: p['ratings']['ovr'] = 58
     if os.environ.get('DRY'):
-        for p in sorted(P, key=lambda p: -p['ratings']['ovr'])[:10]: print(p['name'], p['ratings']['ovr'])
+        for p in sorted(P, key=lambda p: -p['ratings']['ovr'])[:8]: print(p['name'], p['ratings']['ovr'])
         for p in P:
-            if p['id'] in os.environ['DRY'].split(','): print(p['id'], p['ratings']['ovr'])
+            if p['id'] in os.environ['DRY'].split(','): print(era, p['id'], p['ratings']['ovr'])
         continue
     json.dump(doc, open(fn + '.tmp', 'w'), ensure_ascii=False, separators=(',', ':')); os.replace(fn + '.tmp', fn)
     print(era, 'ranked', len(score), 'changed', n)
