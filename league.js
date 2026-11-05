@@ -1332,7 +1332,10 @@
       var p = byId(save, ln.id);
       if (!p || p.inj > 0) return;
       var dur = p.ratings.dur || 60;
-      if (Math.random() < 0.0055 * (mul || 1) * (1.6 - dur / 100)) {
+      // dur = 52 + 45 * (share of games he really plays), so invert it: a 64-game player misses about 18 of 82.
+      // Injuries average ~8 games each, and he can only be hurt while playing, so the per-game chance is f / ((1 - f) * 8.3).
+      var fMiss = Math.max(0.01, Math.min(0.7, 1 - (dur - 52) / 45));
+      if (Math.random() < (mul || 1) * fMiss / ((1 - fMiss) * 8.3)) {
         var r = Math.random();
         var n = r < 0.55 ? 2 + Math.floor(Math.random() * 4) : r < 0.85 ? 6 + Math.floor(Math.random() * 7) : r < 0.97 ? 13 + Math.floor(Math.random() * 13) : 30 + Math.floor(Math.random() * 30);
         p.inj = n; p.injType = injuryFor(n);

@@ -1260,3 +1260,10 @@ body[data-modern="1"] #screen-season .bar>#phone-banners:empty{display:none}
 
 /* the header's children are position:relative, so the slot's old fixed-position offsets (top: safe-area) pushed it down on iPhones */
 body[data-modern="1"] #phone-banners{top:auto;left:auto;right:auto;bottom:auto}
+
+/* Career table: scrolls sideways, season and team stay put */
+body[data-modern="1"] .careerwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+body[data-modern="1"] .careerwrap table{min-width:640px;width:max-content}
+body[data-modern="1"] .careerwrap th,body[data-modern="1"] .careerwrap td{white-space:nowrap;padding-left:10px;padding-right:10px;text-align:right}
+body[data-modern="1"] .careerwrap th:nth-child(-n+2),body[data-modern="1"] .careerwrap td:nth-child(-n+2){text-align:left}
+body[data-modern="1"] .careerwrap th:first-child,body[data-modern="1"] .careerwrap td:first-child{position:sticky;left:0;background:var(--card);z-index:1}

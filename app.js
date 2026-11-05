@@ -1340,27 +1340,32 @@
     body.appendChild(dataTable(['Season', 'Honour'], aw.map(function (x) { return [seasonLabel(x.y), x.a]; })));
   }
 
+  var TABR = { 'anderson-packers': 'AND', 'atlanta-hawks': 'ATL', 'baltimore-bullets': 'BAL', 'boston-celtics': 'BOS', 'brooklyn-nets': 'BKN', 'buffalo-braves': 'BUF', 'capital-bullets': 'CAP', 'charlotte-bobcats': 'CHA', 'charlotte-hornets': 'CHA', 'chicago-bulls': 'CHI', 'chicago-packers': 'CHP', 'chicago-stags': 'CHS', 'chicago-zephyrs': 'CHZ', 'cincinnati-royals': 'CIN', 'cleveland-cavaliers': 'CLE', 'cleveland-rebels': 'CLR', 'dallas-mavericks': 'DAL', 'denver-nuggets': 'DEN', 'detroit-falcons': 'DTF', 'detroit-pistons': 'DET', 'fort-wayne-pistons': 'FTW', 'golden-state-warriors': 'GSW', 'houston-rockets': 'HOU', 'indiana-pacers': 'IND', 'indianapolis-olympians': 'INO', 'kansas-city-kings': 'KCK', 'kansas-cityomaha-kings': 'KCO', 'la-clippers': 'LAC', 'los-angeles-lakers': 'LAL', 'memphis-grizzlies': 'MEM', 'miami-heat': 'MIA', 'milwaukee-bucks': 'MIL', 'milwaukee-hawks': 'MLH', 'minneapolis-lakers': 'MNL', 'minnesota-timberwolves': 'MIN', 'new-jersey-nets': 'NJN', 'new-orleans-hornets': 'NOH', 'new-orleans-jazz': 'NOJ', 'new-orleans-pelicans': 'NOP', 'new-york-knicks': 'NYK', 'new-york-nets': 'NYN', 'oklahoma-city-thunder': 'OKC', 'orlando-magic': 'ORL', 'philadelphia-76ers': 'PHI', 'philadelphia-warriors': 'PHW', 'phoenix-suns': 'PHX', 'pittsburgh-ironmen': 'PIT', 'portland-trail-blazers': 'POR', 'providence-steamrollers': 'PRO', 'rochester-royals': 'ROC', 'sacramento-kings': 'SAC', 'san-antonio-spurs': 'SAS', 'san-diego-clippers': 'SDC', 'san-diego-rockets': 'SDR', 'san-francisco-warriors': 'SFW', 'seattle-supersonics': 'SEA', 'sheboygan-red-skins': 'SHE', 'st-louis-bombers': 'STB', 'st-louis-hawks': 'STL', 'syracuse-nationals': 'SYR', 'toronto-huskies': 'TOH', 'toronto-raptors': 'TOR', 'tri-cities-blackhawks': 'TCB', 'utah-jazz': 'UTA', 'vancouver-grizzlies': 'VAN', 'washington-bullets': 'WSB', 'washington-capitols': 'WAS', 'washington-wizards': 'WAS', 'waterloo-hawks': 'WAT' };
+  function tabr(id) { return id ? (TABR[id] || id.slice(0, 3).toUpperCase()) : ''; }
+
   function pvCareer(body, p) {
     var mode = pvSub('career', 'Per game');
     body.appendChild(seg(['Per game', 'Totals'], mode, function (o) { pvSetSub('career', o); }));
-    var rows = [];
-    function row(label, t, x) {
-      var g = x.g;
-      var f = function (k) { return mode === 'Totals' ? String(x[k] || 0) : f1(x[k] || 0, g); };
-      rows.push([label, t, g, f('pts'), f('ast'), pctS(x.fg, x.fga), pctS(x.ft, x.fta)]);
+    var rows = [], era0 = parseInt(save.eraId, 10) || 0, tot = mode === 'Totals';
+    function pc(x) { return x ? (100 * x).toFixed(1) + '%' : '–'; }
+    function line(y, t, g, v) {   // v: totals {min, pts, trb, ast, stl, blk, tov, fg, fga, ft, fta, tp, tpa} (any may be missing)
+      var f = function (k) { return v[k] === undefined ? '–' : tot ? String(Math.round(v[k])) : f1(v[k], g); };
+      rows.push({ y: y, cells: [seasonLabel(y), tabr(t), g, f('pts'), f('trb'), f('ast'), f('stl'), f('blk'), v.fga !== undefined ? pctS(v.fg, v.fga) : pc(v.fgp), v.tpa !== undefined ? pctS(v.tp, v.tpa) : pc(v.tpp), v.fta !== undefined ? pctS(v.ft, v.fta) : pc(v.ftp), f('min'), f('tov')] });
     }
-    if (p.g && !(p.career || []).some(function (c) { return c.real; })) row('Real 1946-47', '', { g: p.g, pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 });
-    var era0 = parseInt(save.eraId, 10) || 0;
+    if (p.g && !(p.career || []).some(function (c) { return c.real; })) line(1946, '', p.g, { pts: p.pts || 0, ast: p.ast || 0, fg: p.fg || 0, fga: p.fga || 0, ft: p.ft || 0, fta: p.fta || 0 });
     ((CREAL && CREAL[p.id]) || []).forEach(function (r) {
       if (r[0] >= era0) return;
-      var g = r[2];
-      row(seasonLabel(r[0]), r[1] ? histTeam(r[1]) : '', { g: g, pts: Math.round(r[3] * g), ast: Math.round(r[4] * g), fg: r[6] * 1000, fga: 1000, ft: r[7] * 1000, fta: 1000 });
+      var g = r[2], m = function (x) { return x * g; };
+      line(r[0], r[1], g, { min: m(r[3]), pts: m(r[4]), trb: m(r[5]), ast: m(r[6]), stl: m(r[7]), blk: m(r[8]), tov: m(r[9]), fgp: r[10], tpp: r[11], ftp: r[12] });
     });
-    (p.career || []).forEach(function (c) { row(seasonLabel(c.y), c.t ? oppName(c.t) : '', c); });
+    (p.career || []).forEach(function (c) { line(c.y, c.t, c.g, c); });
     var cur = save.lg.stats[p.id];
-    if (cur && cur.g) row(seasonLabel(save.year), p.team ? oppName(p.team) : '', cur);
+    if (cur && cur.g) line(save.year, p.team, cur.g, cur);
     if (!rows.length) { body.appendChild(el('p', 'sub', 'No seasons on record yet.')); return; }
-    body.appendChild(dataTable(['Season', 'Team', 'GP', 'PTS', 'AST', 'FG%', 'FT%'], rows));
+    rows.sort(function (a, b) { return b.y - a.y; });
+    var tb = dataTable(['Season', 'Team', 'GP', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'FG%', '3P%', 'FT%', 'MIN', 'TOV'], rows.map(function (r) { return r.cells; }));
+    tb.classList.add('careerwrap');
+    body.appendChild(tb);
     var oh = (p.ovrHist || []).map(function (h) { return h.o; }).concat([p.ratings.ovr]);
     if (oh.length >= 2) {
       body.appendChild(el('div', 'group-title', 'Overall rating by season'));
