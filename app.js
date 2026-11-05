@@ -36,6 +36,7 @@
   function teamTheme() {
     var st = document.body.style;
     var t = null;
+    if (typeof Skin !== 'undefined' && Skin.current()) { var sk = Skin.current(); st.setProperty('--team', sk.team); st.setProperty('--team2', sk.team2); st.setProperty('--on', sk.on); return; }
     if (document.body.dataset.modern === '1') { try { t = save ? teamById(save.myId) : (typeof selected !== 'undefined' ? selected : null); } catch (e) { t = null; } }
     if (!t || !t.colors) { ['--team', '--team2', '--on'].forEach(function (k) { st.removeProperty(k); }); return; }
     var a = t.colors[0], b = t.colors[1] || '#FFFFFF';
@@ -79,7 +80,7 @@
   applyEraFilter(eraFilterBox.checked);
 
   /* The vintage black-and-white look belongs to the old eras; the present day is always in colour. */
-  function eraLook(era) { applyEraFilter(era && era.current ? false : eraFilterBox.checked); body.dataset.modern = era && era.current ? '1' : '0'; if (!(era && era.current)) Phone.stop(); }
+  function eraLook(era) { applyEraFilter(era && era.current ? false : eraFilterBox.checked); body.dataset.modern = era && era.current ? '1' : '0'; if (typeof Skin !== 'undefined') Skin.apply(era && era.current ? +era.id : 0, eraFilterBox.checked); if (!(era && era.current)) Phone.stop(); }
   function modernUI() { return body.dataset.modern === '1'; }
   body.dataset.modern = '1'; applyEraFilter(false);
   eraFilterBox.addEventListener('change', function () {
