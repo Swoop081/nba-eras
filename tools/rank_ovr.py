@@ -45,12 +45,17 @@ def pick_z(pick):
     if pick is None: return -0.6
     return 1.3 - 0.056 * (pick - 1) if pick <= 30 else max(-0.8, -0.3 - 0.02 * (pick - 30))
 def draft_picks():
+    """id -> {draft year: pick}; two players can share an id (father and son), so a pick only counts near his first season"""
     pk = {}
     for f in sorted(glob.glob(R + '/data/draft-*.json')):
-        d = json.load(open(f)); pr = d['prospects'] if isinstance(d, dict) else d
+        yr = int(os.path.basename(f)[6:10]); d = json.load(open(f)); pr = d['prospects'] if isinstance(d, dict) else d
         for p in pr:
-            if p.get('realPick') and (p['id'] not in pk or p['realPick'] < pk[p['id']]): pk[p['id']] = p['realPick']
+            if p.get('realPick'): pk.setdefault(p['id'], {})[yr] = p['realPick']
     return pk
+def pick_near(PK, i, y):
+    for dy, pk in sorted(PK.get(i, {}).items()):
+        if y - 3 <= dy <= y: return pk
+    return None
 
 def trajectories():
     """Career model: a player starts at a base, and each season moves him toward what he showed in proportion to the minutes he played;
@@ -65,16 +70,19 @@ def trajectories():
         Z = zfor(y); res = {}
         for i, p in P.items():
             age = p.get('age') or 26
+            cum = 0.0
             if i in state:
-                L, ly = state[i]
+                L, ly = state[i][:2]; cum = state[i][2] if len(state[i]) > 2 else 0.0
                 L += sum(drift(a) for a in range(ly + 1, y + 1)) if False else drift(age)
             else:
-                L = pick_z(PK.get(i))
+                L = pick_z(pick_near(PK, i, y))
             if i in Z:
                 z, m = Z[i]; k = m / (m + (M0 if i in state else 1200.0)); L = L + k * (z - L)   # a rookie's first season sets his base
+                if i in state and m < 400 and cum < 1500: L += 0.35 * (1 - cum / 1500.0) * (-0.6 - L)   # a draft pick who still is not playing loses his pedigree
+                cum += m
 
             if i in Z or i in state:
-                state[i] = (L, y); res[i] = L
+                state[i] = (L, y, cum); res[i] = L
         out[str(y)] = res
     json.dump(out, open(lc, 'w')); return out
 for era in sys.argv[1:]:
