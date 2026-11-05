@@ -1286,3 +1286,6 @@ body[data-modern="1"] #era-list .card.era2c .meta{font:400 13px/1.38 var(--font)
 body[data-modern="1"] #era-list .card.era2c,body[data-modern="1"] #era-list .card.era2c .et,body[data-modern="1"] #era-list .card.era2c .year{text-align:left;align-items:flex-start}
 body[data-modern="1"] #era-list .card.era2c .era-photo2 img{object-position:50% 18%}
 body[data-modern="1"] #era-list .card.era2c .era-photo2{align-self:stretch}
+/* era card: the first sentence is the hook, so it reads as a headline rather than a label */
+body[data-modern="1"] #era-list .card.era2c strong{font:700 19px/1.2 var(--disp);text-transform:none;letter-spacing:.01em;color:var(--ink)}
+body[data-modern="1"] #era-list .card.era2c .et .meta{color:var(--mute,#9aa0b4)}

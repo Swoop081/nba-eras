@@ -287,7 +287,7 @@
   var eraDecade = '2020';
   var decTabs = el('div', 'dec-tabs');
   eraList.parentNode.insertBefore(decTabs, eraList);
-  function eraBlurb(era) { return eraBlurbs[era.id] && era.id !== '2026' ? eraBlurbs[era.id] : era.blurb; }
+  function eraBlurb(era) { return eraBlurbs[era.id] || era.blurb; }
   var eraPages = [];
   /* where each page puts its cards [column, row, fullWidth] and its photo [column, row] */
   var ERA_LAYOUTS = [
@@ -327,8 +327,9 @@
           card.appendChild(ph);
           var text = el('span', 'et');
           text.appendChild(el('span', 'year', era.years));
-          text.appendChild(el('strong', null, era.title));
-          text.appendChild(el('span', 'meta', eraBlurb(era)));
+          var bl = eraBlurb(era), cut = bl.search(/[.!?]\s/);   /* the first sentence is the hook, the rest is the detail */
+          text.appendChild(el('strong', null, cut > 0 ? bl.slice(0, cut + 1) : bl));
+          if (cut > 0) text.appendChild(el('span', 'meta', bl.slice(cut + 2)));
           card.appendChild(text);
           card.addEventListener('click', function () { openTeams(era); });
           pg.appendChild(card);
