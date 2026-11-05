@@ -302,7 +302,7 @@
     { c: [['1 / 3', '1', 1], ['1 / 3', '2', 1], ['2', '3'], ['2', '4']], p: ['1', '3 / 5'] },
     { c: [['1 / 3', '1', 1], ['1', '2'], ['1', '3'], ['1 / 3', '4', 1]], p: ['2', '2 / 4'] }
   ];
-  var ERA_FOCUS = { 2025: '50% 80%' };   /* where the faces are in each era photo, so a card crop keeps them */
+  var ERA_FOCUS = { 2025: '50% 80%', 2024: '50% 20%' };   /* where the faces are in each era photo, so a card crop keeps them */
   function eraPhoto(box, ids, done) {
     var urls = [];
     ids.forEach(function (id) { ['webp', 'jpg', 'png'].forEach(function (x) { urls.push('assets/eras/' + id + '.' + x); }); });
