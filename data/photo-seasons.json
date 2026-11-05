@@ -2,7 +2,7 @@
  "_note": "Season-specific portraits. Seasons are the year a season starts (2026 = 2026-27). Each file lives in assets/players/<file>.webp. A player listed here uses only these ranges (the first that holds the season); outside them his normal, current portrait is used. Players not listed use a club-specific file (<id>@<team-id>) when one exists.",
  "klay-thompson": [
   {
-   "to": 2025,
+   "to": 2023,
    "file": "klay-thompson@golden-state-warriors"
   }
  ],
@@ -54,6 +54,13 @@
    "from": 2019,
    "to": 2025,
    "file": "kawhi-leonard@la-clippers"
+  }
+ ],
+ "ivica-zubac": [
+  {
+   "from": 2018,
+   "to": 2025,
+   "file": "ivica-zubac@la-clippers"
   }
  ]
 }
