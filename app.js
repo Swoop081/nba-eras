@@ -6415,7 +6415,7 @@
   function fateDef(f) { return History.get(save.year).filter(function (d) { return d.id === f.id; })[0]; }
   function slugOf(t) { return (t.city + ' ' + t.name).toLowerCase().replace(/[^a-z0-9 ]/g, '').trim().replace(/ +/g, '-'); }
   function clubBySlug(key) {
-    for (var i = 0; i < save.ids.length; i++) { var t = save.tm[save.ids[i]]; if (t && (slugOf(t) === key || t.id === key && slugOf(t) === key)) return t; }
+    for (var i = 0; i < save.ids.length; i++) { var t = save.tm[save.ids[i]]; if (t && (slugOf(t) === key || (t.userBrand && t.id === key))) return t; }
     return null;
   }
   function fateDerive(f) {
@@ -6504,6 +6504,12 @@
       x.rename.forEach(function (r) {
         var t = save.tm[r.id];
         t.was = (t.was || []).concat([t.city + ' ' + t.name]);
+        if (t.userBrand) {
+          /* a brand you built stays yours: the club can move cities, but the name and colours only change if you say so */
+          if (t.city !== r.to.city) { t.city = r.to.city; League.wire(save, t.name + ' relocate to ' + r.to.city + ' and keep their name and colours.'); }
+          if (r.to.nbaId) t.nbaId = r.to.nbaId;
+          return;
+        }
         t.city = r.to.city; t.name = r.to.name; t.colors = r.to.colors.slice(); if (r.to.nbaId) t.nbaId = r.to.nbaId;
       });
       x.def.join.forEach(function (t0) {
@@ -6588,6 +6594,7 @@
     offDock('Confirm the brand', function () {
       var city = inputs.city.value.trim() || save.off.exp.brand0.city, name = inputs.name.value.trim() || save.off.exp.brand0.name;
       t.city = city; t.name = name; t.colors = [inputs.c0.value, inputs.c1.value];
+      var b00 = save.off.exp.brand0; t.userBrand = city !== b00.city || name !== b00.name || t.colors[0].toLowerCase() !== b00.colors[0].toLowerCase() || t.colors[1].toLowerCase() !== b00.colors[1].toLowerCase();
       save.off.exp.brandSet = 1;
       League.wire(save, city + ' ' + name + ' unveil their name and colours.');
       rosterCache = {};
