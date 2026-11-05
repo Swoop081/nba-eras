@@ -2,6 +2,7 @@
 exists; z-scored among rotation players and pulled toward replacement level when minutes are few) and given the era's own sorted overall values in that order.
 Salaries and thresholds keep their scale, but who is rated above whom follows the season's real play. Usage: python3 -I tools/rank_ovr.py <era id>..."""
 import json, sys, os, glob, numpy as np
+LOADW = float(os.environ.get('LOADW', 2.0)); VORPW = float(os.environ.get('VORPW', 0.6))
 R = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 def zscores(P):
     """production z-score and minutes for every player with a real line in one era file"""
@@ -12,7 +13,8 @@ def zscores(P):
         m = max(pv.get('mpg', 0), 1)
         return (pv.get('stl', 0) + 0.7 * pv.get('blk', 0)) / m * 36 if pv.get('stl') is not None else None
     rot = [p for p in S if p['prev']['mpg'] >= 12 and p['prev']['g'] >= 15] or S
-    comps = [(lambda pv: pv.get('per'), 1.0), (ws48, 1.0), (lambda pv: pv.get('bpm'), 1.0), (lambda pv: pv.get('pts'), 0.8), (dfn, 0.25), (lambda pv: pv.get('mpg'), 0.6)]
+    comps = [(lambda pv: pv.get('per'), 1.0), (ws48, 1.0), (lambda pv: pv.get('bpm'), 1.0), (lambda pv: pv.get('pts'), 0.8), (dfn, 0.25), (lambda pv: pv.get('mpg'), 0.6),
+             (lambda pv: pv.get('usg') if (pv.get('mpg') or 0) >= 15 else None, LOADW), (lambda pv: (pv['vorp'] / max(pv['g'], 1) * 70) if pv.get('vorp') is not None else None, VORPW)]
     def stats(key):
         v = [key(p['prev']) for p in rot if key(p['prev']) is not None]
         return (np.mean(v), np.std(v) or 1) if len(v) > 20 else None
@@ -24,7 +26,7 @@ def zscores(P):
             if s and v is not None: zs.append(w * (v - s[0]) / s[1]); ws.append(w)
         out[p['id']] = (sum(zs) / sum(ws) if ws else -1.0, pv['g'] * pv['mpg'])
     return out
-CACHE = '/tmp/rp/zcache.json'
+CACHE = os.environ.get('ZC', '/tmp/rp/zcache.json')
 def zfor(year):
     """z-scores of an era file, cached (stats never change, only overall ratings do)"""
     c = json.load(open(CACHE)) if os.path.exists(CACHE) else {}
@@ -53,7 +55,7 @@ def draft_picks():
 def trajectories():
     """Career model: a player starts at a base, and each season moves him toward what he showed in proportion to the minutes he played;
     age adds growth then decline. A season lost to injury barely moves him, so he does not dip and bounce back."""
-    lc = '/tmp/rp/lcache.json'
+    lc = os.environ.get('LC', '/tmp/rp/lcache.json')
     if os.path.exists(lc): return json.load(open(lc))
     state = {}; out = {}; ages = {}; PK = draft_picks()
     for y in range(1951, 2026):
