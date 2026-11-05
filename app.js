@@ -477,6 +477,9 @@
     var era = currentEra ? (currentEra.logo || currentEra.id.replace(/s\d+$/, '')) : '';
     var urls = [];
     if (era) urls.push(base + '-' + era + '.png', base + '-' + era + '.svg');
+    // clubs whose mark never really changed reuse today's file in those years
+    var SAME = { 'boston-celtics': 1951, 'los-angeles-lakers': 1977 }, ey = currentEra ? +currentEra.id : 0;
+    if (SAME[team.id] && ey >= SAME[team.id]) urls.push(base + '-2026.svg', base + '-2026.png');
     // the generic file may be a vintage logo, so the present day only uses a file made for it
     if (!(currentEra && currentEra.current)) urls.push(base + '.png', base + '.svg');
     // private use: the present day can show the NBA's own logo straight from its CDN
