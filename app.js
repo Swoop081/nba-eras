@@ -1431,7 +1431,7 @@
       squad = starters.concat(squad.slice(5));
     }
     var pay = League.payroll(save, team.id);
-    document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' cap \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
+    document.getElementById('roster-sub').textContent = squad.length + ' players \u00B7 ' + money(pay) + ' of ' + money(save.lg.cap) + ' ' + capWord() + ' \u00B7 offence ' + offRating(team.id) + ' \u00B7 defence ' + defRating(team.id);
     squad.forEach(function (p) {
       var holder = el('div', 'player');
       var card = el('button', 'card');
@@ -2321,7 +2321,7 @@
           tx.appendChild(el('small', null, (p.pos || '') + ' · ' + p.age + ' · ovr ' + p.ratings.ovr + ' · pot ' + p.pot));
           row.appendChild(tx);
           var ask = League.clampSal(save, p, League.salaryFor(p.ratings.ovr)), can = n < League.MAX_ROSTER && League.canSign(save, team.id, ask, p);
-          var b = el('button', 'btn small', can ? money(ask) : (n >= League.MAX_ROSTER ? 'Full' : 'Cap')); b.type = 'button'; b.disabled = !can;
+          var b = el('button', 'btn small', can ? money(ask) : (n >= League.MAX_ROSTER ? 'Full' : (ownerOn() ? 'Budget' : 'Cap'))); b.type = 'button'; b.disabled = !can;
           b.addEventListener('click', function () { League.sign(save, p, team.id, ask, 1); League.wire(save, team.city + ' sign ' + p.name + ' (' + money(ask) + ', 1 year).'); Social.faSigned && Social.faSigned(save, p, money(ask), 1); rosterCache = {}; persist(); draw(); renderRoster(team); });
           row.appendChild(b);
           box.appendChild(row);
@@ -3955,8 +3955,16 @@
   }
 
   /* ---------- owner ---------- */
+  var OWNERS = ['Harold Pruitt', 'Walter Kessler', 'Ray Delgado', 'Irving Blum', 'Frank Mazur', 'Dutch Holloway', 'Stan Oberman', 'Lou Castellano', 'Bernie Tate', 'Gil Ainsworth', 'Marv Kowalczyk', 'Art Devereaux', 'Sol Ritter', 'Chuck Bellamy', 'Vince Rourke', 'Hank Lindqvist', 'Max Feldstein', 'Carl Okafor', 'Ted Brannigan', 'Leo Santangelo', 'Roy Whitcomb', 'Nate Szymanski'];
+  function ownerOn() { return !!save && save.year < 1990; }
+  function ownerName() {
+    if (!save.ownerNames) save.ownerNames = {};
+    if (!save.ownerNames[save.myId]) { var h = 0, k = save.myId + save.year; for (var i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) >>> 0; save.ownerNames[save.myId] = OWNERS[h % OWNERS.length]; }
+    return save.ownerNames[save.myId];
+  }
+  function capWord() { return ownerOn() ? 'budget' : 'cap'; }
   function ensureOwner() {
-    save.owner = null; return;
+    if (!ownerOn()) { save.owner = null; return; }
     if (save.ownerTrust === undefined) save.ownerTrust = 60;
     if (save.owner) { if (!save.owner.side) addSideGoals(); return; }
     var ids = save.ids.slice().sort(function (x, y) { return teamRating(y) - teamRating(x); });
@@ -4025,7 +4033,7 @@
     var fired = save.ownerTrust <= 0 || (save.ownerTrust <= 15 && d < 0 && before <= 30);
     var msg = got > want ? 'The owner is delighted. You beat his goal.' : got === want ? 'The owner is satisfied. You met his goal.' : 'The owner is unhappy. You missed his goal.';
     msg += kept;
-    if (fired) msg = 'The owner has lost patience. You are dismissed.';
+    if (fired) msg = ownerName() + ' has lost patience. You are dismissed.';
     return { goal: save.owner.text, delta: d, trust: save.ownerTrust, fired: fired, msg: msg, sides: sides };
   }
 
@@ -4522,7 +4530,7 @@
         sc.appendChild(stat('Away', x.away.w + '-' + x.away.l));
         sc.appendChild(stat('Close games', x.close.w + '-' + x.close.l, 'within 5 points'));
         var pay = League.payroll(save, me);
-        sc.appendChild(stat('Cap room', money(save.lg.cap - pay), money(pay) + ' payroll'));
+        sc.appendChild(stat(ownerOn() ? 'Budget room' : 'Cap room', money(save.lg.cap - pay), money(pay) + ' payroll'));
       }
       pages.push({ title: 'Scoring', node: sc });
     }
@@ -4537,6 +4545,11 @@
     var sm = Events.summary(save, rosterOf(me.id));
     ow.appendChild(ratingRow('Team morale', sm.morale));
     if (u.detail !== 'basic') { ow.appendChild(ratingRow('Fan interest', sm.fans)); ow.appendChild(ratingRow('Coach trust', sm.coach)); }
+    if (save.owner) {
+      ow.appendChild(el('p', 'sub', ownerName() + ' wants: ' + save.owner.text + '.'));
+      sideBlock(ow);
+      ow.appendChild(ratingRow('Owner trust', save.ownerTrust === undefined ? 60 : save.ownerTrust));
+    }
     pages.push({ title: 'The club', node: ow });
     var mo = Events.mood(save);
     var feed = el('div', 'hc feed');
@@ -5000,7 +5013,15 @@
     setTimeout(awardsPop, 400);
   }
 
+  /* early eras have no rest days to show: days your club doesn't play are simmed through quietly */
+  function skipIdleDays() {
+    var g = 0;
+    if (!save || save.year >= 1990) return;
+    while (save.phase === 'regular' && !Season.myNext(save) && g++ < 40) simDay();
+    if (g > 1) persist();
+  }
   function renderSeason() {
+    skipIdleDays();
     if (modernUI()) { renderHub(); return; }
     var me = teamById(save.myId);
     var rec = save.rec[me.id];
@@ -6075,7 +6096,7 @@
       pts: League.leaders(save, 'pts', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       ast: League.leaders(save, 'ast', 3, 15).map(function (r) { return { id: r.p.id, name: r.p.name, v: r.v.toFixed(1) }; }),
       mvp: best ? { id: best.p.id, name: best.p.name } : null,
-      title: titleLeader(), allLeague: allLeague(), recap: buildRecap(), owner: null
+      title: titleLeader(), allLeague: allLeague(), recap: buildRecap(), owner: ownerOn() ? judgeOwner() : null
     };
     save.lg.history.push({ year: save.year, champion: save.champion, rec: review.rec, mvp: review.mvp ? review.mvp.name : null, me: save.myId, po: madePlayoffs() });
     (function () {
@@ -6197,8 +6218,8 @@
     }
     if (r.owner) {
       var ow = el('div', 'stat-card');
-      ow.appendChild(el('div', 'group-title', 'The owner'));
-      ow.appendChild(el('p', 'sub', 'His goal: ' + r.owner.goal + '.'));
+      ow.appendChild(el('div', 'group-title', 'The owner, ' + ownerName()));
+      ow.appendChild(el('p', 'sub', ownerName() + "'s goal: " + r.owner.goal + '.'));
       (r.owner.sides || []).forEach(function (s) { ow.appendChild(el('p', 'sub side' + (s.ok ? ' ok' : ''), (s.ok ? '\u2713 ' : '\u2717 ') + s.text + ' \u00B7 ' + s.now)); });
       ow.appendChild(el('p', 'sub', r.owner.msg + ' (trust ' + (r.owner.delta > 0 ? '+' : '') + r.owner.delta + ')'));
       ow.appendChild(ratingRow('Owner trust', r.owner.trust));
