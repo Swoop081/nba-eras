@@ -1,7 +1,7 @@
 """Overall rating from real production. Within an era, players with a real line are ranked by a production score (PER, win shares per 48, BPM where it
 exists; z-scored among rotation players and pulled toward replacement level when minutes are few) and given the era's own sorted overall values in that order.
 Salaries and thresholds keep their scale, but who is rated above whom follows the season's real play. Usage: python3 -I tools/rank_ovr.py <era id>..."""
-import json, sys, os, numpy as np
+import json, sys, os, glob, numpy as np
 R = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 def zscores(P):
     """production z-score and minutes for every player with a real line in one era file"""
@@ -38,12 +38,24 @@ DRIFT = {19: .35, 20: .30, 21: .25, 22: .20, 23: .15, 24: .10, 25: .05, 26: 0, 2
 def drift(age): return DRIFT.get(age, .35 if age < 19 else -.2)
 M0 = 1500.0   # minutes of evidence it takes for a season to count about half
 
+def pick_z(pick):
+    """where a team drafts him is the scouting consensus: his starting level before he plays"""
+    if pick is None: return -0.6
+    return 1.3 - 0.056 * (pick - 1) if pick <= 30 else max(-0.8, -0.3 - 0.02 * (pick - 30))
+def draft_picks():
+    pk = {}
+    for f in sorted(glob.glob(R + '/data/draft-*.json')):
+        d = json.load(open(f)); pr = d['prospects'] if isinstance(d, dict) else d
+        for p in pr:
+            if p.get('realPick') and (p['id'] not in pk or p['realPick'] < pk[p['id']]): pk[p['id']] = p['realPick']
+    return pk
+
 def trajectories():
     """Career model: a player starts at a base, and each season moves him toward what he showed in proportion to the minutes he played;
     age adds growth then decline. A season lost to injury barely moves him, so he does not dip and bounce back."""
     lc = '/tmp/rp/lcache.json'
     if os.path.exists(lc): return json.load(open(lc))
-    state = {}; out = {}; ages = {}
+    state = {}; out = {}; ages = {}; PK = draft_picks()
     for y in range(1951, 2026):
         fn = R + '/data/players-' + str(y) + '.json'
         if not os.path.exists(fn): continue
@@ -55,9 +67,9 @@ def trajectories():
                 L, ly = state[i]
                 L += sum(drift(a) for a in range(ly + 1, y + 1)) if False else drift(age)
             else:
-                L = -0.5
+                L = pick_z(PK.get(i))
             if i in Z:
-                z, m = Z[i]; k = m / (m + (M0 if i in state else 600.0)); L = L + k * (z - L)   # a rookie's first season sets his base
+                z, m = Z[i]; k = m / (m + (M0 if i in state else 1200.0)); L = L + k * (z - L)   # a rookie's first season sets his base
 
             if i in Z or i in state:
                 state[i] = (L, y); res[i] = L
